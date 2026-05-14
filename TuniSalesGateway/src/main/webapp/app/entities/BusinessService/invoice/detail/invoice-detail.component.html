@@ -1,0 +1,88 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="invoice">
+      <h2 data-cy="invoiceDetailsHeading"><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.detail.title">Invoice</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ invoice.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ invoice.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.invoiceNumber">Invoice Number</span></dt>
+        <dd>
+          <span>{{ invoice.invoiceNumber }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.amountHt">Amount Ht</span></dt>
+        <dd>
+          <span>{{ invoice.amountHt }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.taxAmount">Tax Amount</span></dt>
+        <dd>
+          <span>{{ invoice.taxAmount }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.amountTtc">Amount Ttc</span></dt>
+        <dd>
+          <span>{{ invoice.amountTtc }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.status">Status</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.InvoiceStatus.' + invoice.status }}">{{ invoice.status }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.issueDate">Issue Date</span></dt>
+        <dd>
+          <span>{{ invoice.issueDate | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.dueDate">Due Date</span></dt>
+        <dd>
+          <span>{{ invoice.dueDate | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.paidAt">Paid At</span></dt>
+        <dd>
+          <span>{{ invoice.paidAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.isDeleted">Is Deleted</span></dt>
+        <dd>
+          <span>{{ invoice.isDeleted }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ invoice.createdAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.updatedAt">Updated At</span></dt>
+        <dd>
+          <span>{{ invoice.updatedAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.client">Client</span></dt>
+        <dd>
+          <div *ngIf="invoice.client">
+            <a [routerLink]="['/client', invoice.client.id, 'view']">{{ invoice.client.name }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.order">Order</span></dt>
+        <dd>
+          <div *ngIf="invoice.order">
+            <a [routerLink]="['/order', invoice.order.id, 'view']">{{ invoice.order.orderNumber }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/invoice', invoice.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

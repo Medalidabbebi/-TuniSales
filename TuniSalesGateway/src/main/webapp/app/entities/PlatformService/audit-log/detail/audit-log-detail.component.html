@@ -1,0 +1,70 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="auditLog">
+      <h2 data-cy="auditLogDetailsHeading">
+        <span jhiTranslate="tuniSalesGatewayApp.platformServiceAuditLog.detail.title">Audit Log</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ auditLog.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceAuditLog.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ auditLog.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceAuditLog.entityType">Entity Type</span></dt>
+        <dd>
+          <span>{{ auditLog.entityType }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceAuditLog.entityId">Entity Id</span></dt>
+        <dd>
+          <span>{{ auditLog.entityId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceAuditLog.action">Action</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.AuditAction.' + auditLog.action }}">{{ auditLog.action }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceAuditLog.beforeJson">Before Json</span></dt>
+        <dd>
+          <span>{{ auditLog.beforeJson }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceAuditLog.afterJson">After Json</span></dt>
+        <dd>
+          <span>{{ auditLog.afterJson }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceAuditLog.ipAddress">Ip Address</span></dt>
+        <dd>
+          <span>{{ auditLog.ipAddress }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceAuditLog.userAgent">User Agent</span></dt>
+        <dd>
+          <span>{{ auditLog.userAgent }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceAuditLog.performedByLogin">Performed By Login</span></dt>
+        <dd>
+          <span>{{ auditLog.performedByLogin }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceAuditLog.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ auditLog.createdAt | formatMediumDatetime }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/audit-log', auditLog.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

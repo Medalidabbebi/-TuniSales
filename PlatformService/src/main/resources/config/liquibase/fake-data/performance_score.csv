@@ -1,0 +1,11 @@
+id;tenant_id;user_login;period;score;classification;breakdown_json;delta_vs_previous;calculated_at
+1;71334;Avon Games Account;Intelli;95;AVERAGE;../fake-data/blob/hipster.txt;54405;2026-03-09T08:32:26
+2;27099;Account multi-byte Fuerte;Savings;96;AVERAGE;../fake-data/blob/hipster.txt;52079;2026-03-09T15:37:33
+3;48300;Indonesia Wooden Synergistic;facilit;53;AVERAGE;../fake-data/blob/hipster.txt;24107;2026-03-08T23:58:25
+4;76392;calculating;revolut;27;POOR;../fake-data/blob/hipster.txt;95404;2026-03-08T22:48:15
+5;96456;global methodologies deliverables;driver ;74;POOR;../fake-data/blob/hipster.txt;27047;2026-03-08T18:44:52
+6;45232;invoice Refined;grey;86;POOR;../fake-data/blob/hipster.txt;74191;2026-03-08T18:14:55
+7;16884;hard;transmi;85;AVERAGE;../fake-data/blob/hipster.txt;59519;2026-03-08T23:05:02
+8;17233;deposit;Kids ad;15;GOOD;../fake-data/blob/hipster.txt;23321;2026-03-09T00:34:35
+9;2308;collaborative Illinois;Texas C;83;EXCELLENT;../fake-data/blob/hipster.txt;6029;2026-03-08T16:40:04
+10;67582;Spain Computer Rupiah;Metal w;80;GOOD;../fake-data/blob/hipster.txt;3326;2026-03-08T23:03:42

@@ -1,0 +1,72 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="swap">
+      <h2 data-cy="swapDetailsHeading"><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.detail.title">Swap</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ swap.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ swap.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.clientId">Client Id</span></dt>
+        <dd>
+          <span>{{ swap.clientId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.clientName">Client Name</span></dt>
+        <dd>
+          <span>{{ swap.clientName }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.status">Status</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.SwapStatus.' + swap.status }}">{{ swap.status }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.reason">Reason</span></dt>
+        <dd>
+          <span>{{ swap.reason }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ swap.createdAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.resolvedAt">Resolved At</span></dt>
+        <dd>
+          <span>{{ swap.resolvedAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.updatedAt">Updated At</span></dt>
+        <dd>
+          <span>{{ swap.updatedAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.outgoingItem">Outgoing Item</span></dt>
+        <dd>
+          <div *ngIf="swap.outgoingItem">
+            <a [routerLink]="['/stock-item', swap.outgoingItem.id, 'view']">{{ swap.outgoingItem.imei }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.incomingItem">Incoming Item</span></dt>
+        <dd>
+          <div *ngIf="swap.incomingItem">
+            <a [routerLink]="['/stock-item', swap.incomingItem.id, 'view']">{{ swap.incomingItem.imei }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/swap', swap.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

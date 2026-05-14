@@ -1,0 +1,72 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="product">
+      <h2 data-cy="productDetailsHeading"><span jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.detail.title">Product</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ product.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ product.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.sku">Sku</span></dt>
+        <dd>
+          <span>{{ product.sku }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.name">Name</span></dt>
+        <dd>
+          <span>{{ product.name }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.brand">Brand</span></dt>
+        <dd>
+          <span>{{ product.brand }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.category">Category</span></dt>
+        <dd>
+          <span>{{ product.category }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.price">Price</span></dt>
+        <dd>
+          <span>{{ product.price }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.taxRate">Tax Rate</span></dt>
+        <dd>
+          <span>{{ product.taxRate }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.isActive">Is Active</span></dt>
+        <dd>
+          <span>{{ product.isActive }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.isDeleted">Is Deleted</span></dt>
+        <dd>
+          <span>{{ product.isDeleted }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ product.createdAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.updatedAt">Updated At</span></dt>
+        <dd>
+          <span>{{ product.updatedAt | formatMediumDatetime }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/product', product.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

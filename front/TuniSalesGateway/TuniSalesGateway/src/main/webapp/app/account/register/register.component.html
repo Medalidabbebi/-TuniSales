@@ -1,0 +1,185 @@
+<div class="tsg-login">
+  <!-- Left Brand Panel -->
+  <div class="tsg-login__left">
+    <div class="tsg-login__brand">
+      <div class="tsg-login__logo">T</div>
+      <h1>TuniSalesGateway</h1>
+      <p>Enterprise Sales Management Platform</p>
+    </div>
+    <div class="tsg-login__features">
+      <div class="tsg-login__feature">
+        <fa-icon icon="users"></fa-icon>
+        <span>Manage clients & contacts</span>
+      </div>
+      <div class="tsg-login__feature">
+        <fa-icon icon="shopping-cart"></fa-icon>
+        <span>Track orders end-to-end</span>
+      </div>
+      <div class="tsg-login__feature">
+        <fa-icon icon="chart-bar"></fa-icon>
+        <span>Performance analytics</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Form Panel -->
+  <div class="tsg-login__right">
+    <div class="tsg-login__form-wrapper">
+      <h2 data-cy="registerTitle" jhiTranslate="register.title">Create Account</h2>
+      <p class="tsg-login__subtitle">Get started with your free account</p>
+
+      <!-- Success -->
+      <div class="tsg-register__alert tsg-register__alert--success" *ngIf="success">
+        <fa-icon icon="check"></fa-icon>
+        <span jhiTranslate="register.messages.success">Account registered! Please check your confirmation email.</span>
+      </div>
+
+      <!-- Error alerts -->
+      <div class="tsg-register__alert tsg-register__alert--danger" *ngIf="error">
+        <fa-icon icon="exclamation-triangle"></fa-icon>
+        <span jhiTranslate="register.messages.error.fail">Registration failed. Please try again later.</span>
+      </div>
+
+      <div class="tsg-register__alert tsg-register__alert--danger" *ngIf="errorUserExists">
+        <fa-icon icon="exclamation-triangle"></fa-icon>
+        <span jhiTranslate="register.messages.error.userexists">Username already taken!</span>
+      </div>
+
+      <div class="tsg-register__alert tsg-register__alert--danger" *ngIf="errorEmailExists">
+        <fa-icon icon="exclamation-triangle"></fa-icon>
+        <span jhiTranslate="register.messages.error.emailexists">Email already in use!</span>
+      </div>
+
+      <div class="tsg-register__alert tsg-register__alert--danger" *ngIf="doNotMatch">
+        <fa-icon icon="exclamation-triangle"></fa-icon>
+        <span jhiTranslate="global.messages.error.dontmatch">Passwords do not match!</span>
+      </div>
+
+      <!-- Register Form -->
+      <form name="form" role="form" (ngSubmit)="register()" [formGroup]="registerForm" *ngIf="!success" class="tsg-login__form">
+        <div class="tsg-form-group">
+          <label for="login" jhiTranslate="global.form.username.label">Username</label>
+          <input
+            type="text"
+            class="form-control"
+            id="login"
+            name="login"
+            placeholder="{{ 'global.form.username.placeholder' | translate }}"
+            formControlName="login"
+            data-cy="username"
+            #login
+            autocomplete="username"
+          />
+          <div *ngIf="registerForm.get('login')!.invalid && (registerForm.get('login')!.dirty || registerForm.get('login')!.touched)">
+            <small class="tsg-field-error" *ngIf="registerForm.get('login')?.errors?.required" jhiTranslate="register.messages.validate.login.required">
+              Username is required.
+            </small>
+            <small class="tsg-field-error" *ngIf="registerForm.get('login')?.errors?.minlength" jhiTranslate="register.messages.validate.login.minlength">
+              Username must be at least 1 character.
+            </small>
+            <small class="tsg-field-error" *ngIf="registerForm.get('login')?.errors?.maxlength" jhiTranslate="register.messages.validate.login.maxlength">
+              Username cannot exceed 50 characters.
+            </small>
+            <small class="tsg-field-error" *ngIf="registerForm.get('login')?.errors?.pattern" jhiTranslate="register.messages.validate.login.pattern">
+              Invalid username format.
+            </small>
+          </div>
+        </div>
+
+        <div class="tsg-form-group">
+          <label for="email" jhiTranslate="global.form.email.label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            id="email"
+            name="email"
+            placeholder="{{ 'global.form.email.placeholder' | translate }}"
+            formControlName="email"
+            data-cy="email"
+            autocomplete="email"
+          />
+          <div *ngIf="registerForm.get('email')!.invalid && (registerForm.get('email')!.dirty || registerForm.get('email')!.touched)">
+            <small class="tsg-field-error" *ngIf="registerForm.get('email')?.errors?.required" jhiTranslate="global.messages.validate.email.required">
+              Email is required.
+            </small>
+            <small class="tsg-field-error" *ngIf="registerForm.get('email')?.errors?.invalid" jhiTranslate="global.messages.validate.email.invalid">
+              Invalid email.
+            </small>
+            <small class="tsg-field-error" *ngIf="registerForm.get('email')?.errors?.minlength" jhiTranslate="global.messages.validate.email.minlength">
+              Email must be at least 5 characters.
+            </small>
+            <small class="tsg-field-error" *ngIf="registerForm.get('email')?.errors?.maxlength" jhiTranslate="global.messages.validate.email.maxlength">
+              Email cannot exceed 50 characters.
+            </small>
+          </div>
+        </div>
+
+        <div class="tsg-form-group">
+          <label for="password" jhiTranslate="global.form.newpassword.label">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            name="password"
+            placeholder="{{ 'global.form.newpassword.placeholder' | translate }}"
+            formControlName="password"
+            data-cy="firstPassword"
+            autocomplete="new-password"
+          />
+          <div *ngIf="registerForm.get('password')!.invalid && (registerForm.get('password')!.dirty || registerForm.get('password')!.touched)">
+            <small class="tsg-field-error" *ngIf="registerForm.get('password')?.errors?.required" jhiTranslate="global.messages.validate.newpassword.required">
+              Password is required.
+            </small>
+            <small class="tsg-field-error" *ngIf="registerForm.get('password')?.errors?.minlength" jhiTranslate="global.messages.validate.newpassword.minlength">
+              Password must be at least 4 characters.
+            </small>
+            <small class="tsg-field-error" *ngIf="registerForm.get('password')?.errors?.maxlength" jhiTranslate="global.messages.validate.newpassword.maxlength">
+              Password cannot exceed 50 characters.
+            </small>
+          </div>
+          <jhi-password-strength-bar [passwordToCheck]="registerForm.get('password')!.value"></jhi-password-strength-bar>
+        </div>
+
+        <div class="tsg-form-group">
+          <label for="confirmPassword" jhiTranslate="global.form.confirmpassword.label">Confirm Password</label>
+          <input
+            type="password"
+            class="form-control"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="{{ 'global.form.confirmpassword.placeholder' | translate }}"
+            formControlName="confirmPassword"
+            data-cy="secondPassword"
+            autocomplete="new-password"
+          />
+          <div *ngIf="registerForm.get('confirmPassword')!.invalid && (registerForm.get('confirmPassword')!.dirty || registerForm.get('confirmPassword')!.touched)">
+            <small class="tsg-field-error" *ngIf="registerForm.get('confirmPassword')?.errors?.required" jhiTranslate="global.messages.validate.confirmpassword.required">
+              Confirmation is required.
+            </small>
+            <small class="tsg-field-error" *ngIf="registerForm.get('confirmPassword')?.errors?.minlength" jhiTranslate="global.messages.validate.confirmpassword.minlength">
+              Confirmation must be at least 4 characters.
+            </small>
+            <small class="tsg-field-error" *ngIf="registerForm.get('confirmPassword')?.errors?.maxlength" jhiTranslate="global.messages.validate.confirmpassword.maxlength">
+              Confirmation cannot exceed 50 characters.
+            </small>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          [disabled]="registerForm.invalid"
+          class="tsg-btn tsg-btn--primary tsg-login__submit"
+          jhiTranslate="register.form.button"
+          data-cy="submit"
+        >
+          Create Account
+        </button>
+      </form>
+
+      <div class="tsg-login__register">
+        <span>Already have an account?</span>
+        <a routerLink="/login" jhiTranslate="global.messages.info.authenticated.link">Sign in</a>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Start-Process -FilePath \"cmd.exe\" -ArgumentList \"/c cd /d c:\\\\SalesManager\\\\TuniSalesGateway && mvnw.cmd -Pdev spring-boot:run > c:\\\\SalesManager\\\\TuniSalesGateway\\\\run.log 2>&1\" -WindowStyle Normal)",
+      "Bash(curl -s http://localhost:8081/actuator/health)",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s http://localhost:8082/actuator/health)",
+      "Bash(curl -s http://localhost:8083/actuator/health)",
+      "Bash(curl -s http://localhost:8080/actuator/health)"
+    ]
+  }
+}

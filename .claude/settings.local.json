@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Get-ChildItem -Path \"c:\\\\SalesManager\\\\front\" -Force | Select-Object Name, @{Name=\"Type\";Expression={if\\($_.PSIsContainer\\){\"Directory\"}else{\"File\"}}} | Format-Table -AutoSize)",
+      "PowerShell(Start-Process -FilePath \"cmd.exe\" -ArgumentList \"/c cd /d c:\\\\SalesManager\\\\front\\\\TuniSalesGateway\\\\TuniSalesGateway && npm start > c:\\\\SalesManager\\\\front\\\\TuniSalesGateway\\\\TuniSalesGateway\\\\frontend.log 2>&1\" -WindowStyle Normal)",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\SalesManager\\\\front\\\\TuniSalesGateway\\\\TuniSalesGateway\\\\src\\\\main\\\\webapp\\\\app\\\\entities\\\\BusinessService\\\\invoice\" -Directory | ForEach-Object { $_.Name })",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\SalesManager\\\\front\\\\TuniSalesGateway\\\\TuniSalesGateway\\\\src\\\\main\\\\webapp\\\\app\\\\home\" -Directory | ForEach-Object { $_.Name })",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\SalesManager\\\\front\\\\TuniSalesGateway\\\\TuniSalesGateway\\\\src\\\\main\\\\webapp\\\\app\\\\entities\\\\BusinessService\\\\order\" -Directory | ForEach-Object { $_.Name })",
+      "Bash(netstat -ano)",
+      "Read(//c/Program Files/**)",
+      "Read(//c/Program Files \\(x86\\)/**)",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Java\\\\jdk-17\"; Set-Location \"c:\\\\SalesManager\\\\BusinessService\"; .\\\\mvnw.cmd compile 2>&1 | Tee-Object -FilePath \"compile.log\"; Get-Content \"compile.log\" | Select-String -Pattern \"error:|ERROR\" | Select-Object -First 20)",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Java\\\\jdk-17\"; Set-Location \"c:\\\\SalesManager\\\\InventoryService\"; .\\\\mvnw.cmd compile 2>&1 | Select-String \"BUILD|error:\" | Select-Object -Last 5)",
+      "PowerShell($env:JAVA_HOME = \"C:\\\\Program Files\\\\Java\\\\jdk-17\"; Set-Location \"c:\\\\SalesManager\\\\PlatformService\"; .\\\\mvnw.cmd compile 2>&1 | Select-String \"BUILD|error:\" | Select-Object -Last 5)",
+      "Read(//c/SalesManager/TuniSalesGateway/**)",
+      "PowerShell(docker exec postgresSales psql -U postgres -d TuniSalesGateway -c \"SELECT authority_name FROM jhi_user_authority WHERE user_id = 1 ORDER BY authority_name;\" 2>&1)",
+      "PowerShell($body = '{\"username\":\"admin\",\"password\":\"admin\",\"rememberMe\":false}'; $r = Invoke-WebRequest -Uri \"http://localhost:8080/api/authenticate\" -Method POST -Body $body -ContentType \"application/json\" -UseBasicParsing; $token = \\($r.Content | ConvertFrom-Json\\).id_token; $wc = New-Object System.Net.WebClient; $wc.Headers.Add\\(\"Authorization\", \"Bearer $token\"\\); try { $data = $wc.DownloadString\\(\"http://localhost:8080/services/inventoryservice/api/stock-items?page=0&size=5\"\\); Write-Host \"OK: $data\" } catch [System.Net.WebException] { $resp = $_.Exception.Response; $sr = New-Object System.IO.StreamReader\\($resp.GetResponseStream\\(\\)\\); Write-Host \"Error $\\($resp.StatusCode\\): $\\($sr.ReadToEnd\\(\\)\\)\" })"
+    ]
+  }
+}

@@ -1,0 +1,72 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="stockAudit">
+      <h2 data-cy="stockAuditDetailsHeading">
+        <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.detail.title">Stock Audit</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ stockAudit.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ stockAudit.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.status">Status</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.AuditStatus.' + stockAudit.status }}">{{ stockAudit.status }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.theoreticalCount">Theoretical Count</span></dt>
+        <dd>
+          <span>{{ stockAudit.theoreticalCount }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.physicalCount">Physical Count</span></dt>
+        <dd>
+          <span>{{ stockAudit.physicalCount }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.discrepancyCount">Discrepancy Count</span></dt>
+        <dd>
+          <span>{{ stockAudit.discrepancyCount }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.notes">Notes</span></dt>
+        <dd>
+          <span>{{ stockAudit.notes }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.auditorLogin">Auditor Login</span></dt>
+        <dd>
+          <span>{{ stockAudit.auditorLogin }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.startedAt">Started At</span></dt>
+        <dd>
+          <span>{{ stockAudit.startedAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.closedAt">Closed At</span></dt>
+        <dd>
+          <span>{{ stockAudit.closedAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.warehouse">Warehouse</span></dt>
+        <dd>
+          <div *ngIf="stockAudit.warehouse">
+            <a [routerLink]="['/warehouse', stockAudit.warehouse.id, 'view']">{{ stockAudit.warehouse.name }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/stock-audit', stockAudit.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

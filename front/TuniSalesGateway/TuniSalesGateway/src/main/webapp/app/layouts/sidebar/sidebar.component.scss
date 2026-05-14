@@ -1,0 +1,229 @@
+@import 'design-system';
+
+.tsg-sidebar {
+  position: fixed;
+  inset-inline-start: 0;
+  top: 0;
+  bottom: 0;
+  width: $tsg-sidebar-width;
+  background: $tsg-sidebar-bg;
+  z-index: $z-sidebar;
+  display: flex;
+  flex-direction: column;
+  transition: width $transition-slow;
+  @include scrollbar-thin;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  &--collapsed {
+    width: $tsg-sidebar-collapsed-width;
+  }
+
+  // Logo
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    padding: $space-5 $space-5;
+    cursor: pointer;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    margin-bottom: $space-2;
+  }
+
+  &__logo-icon {
+    @include flex-center;
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-sm;
+    background: $tsg-accent;
+    color: #fff;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    flex-shrink: 0;
+  }
+
+  &__logo-text {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: #fff;
+    white-space: nowrap;
+  }
+
+  // Toggle
+  &__toggle {
+    position: absolute;
+    top: 22px;
+    inset-inline-end: -12px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: $tsg-surface;
+    border: 1px solid $tsg-border;
+    @include flex-center;
+    cursor: pointer;
+    z-index: 10;
+    font-size: 10px;
+    color: $tsg-text-secondary;
+    box-shadow: $shadow-sm;
+    transition: all $transition-fast;
+
+    &:hover {
+      background: $tsg-accent;
+      color: #fff;
+      border-color: $tsg-accent;
+    }
+  }
+
+  // Navigation
+  &__nav {
+    flex: 1;
+    padding: $space-2 $space-3;
+  }
+
+  &__section {
+    margin-bottom: $space-1;
+  }
+
+  &__section-header {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    width: 100%;
+    padding: $space-2 $space-3;
+    border: none;
+    background: none;
+    color: $tsg-sidebar-text;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    cursor: pointer;
+    border-radius: $radius-sm;
+    transition: all $transition-fast;
+    text-align: start;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: $tsg-sidebar-text-active;
+    }
+  }
+
+  &__chevron {
+    margin-inline-start: auto;
+    font-size: 10px;
+    opacity: 0.5;
+    transition: transform $transition-fast;
+  }
+
+  &__children {
+    padding-inline-start: $space-2;
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    padding: $space-2 $space-3;
+    color: $tsg-sidebar-text;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-regular;
+    border-radius: $radius-sm;
+    transition: all $transition-fast;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    margin-bottom: 1px;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: $tsg-sidebar-text-active;
+    }
+
+    &--active {
+      background: $tsg-sidebar-active;
+      color: $tsg-accent;
+      font-weight: $font-weight-medium;
+
+      .tsg-sidebar__item-icon { color: $tsg-accent; }
+    }
+
+    &--child {
+      padding-inline-start: $space-10;
+      font-size: $font-size-sm;
+    }
+  }
+
+  &__item-icon {
+    font-size: $font-size-base;
+    width: 20px;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  &__item-text {
+    @include text-truncate;
+  }
+
+  // Footer / User
+  &__footer {
+    padding: $space-4 $space-4;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    flex-shrink: 0;
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+  }
+
+  &__user-avatar {
+    @include flex-center;
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-sm;
+    background: rgba($tsg-accent, 0.2);
+    color: $tsg-accent;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    flex-shrink: 0;
+    text-transform: uppercase;
+  }
+
+  &__user-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__user-name {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: #fff;
+    @include text-truncate;
+  }
+
+  &__user-role {
+    font-size: $font-size-xs;
+    color: $tsg-sidebar-text;
+  }
+}
+
+// Mobile overlay
+@media (max-width: 768px) {
+  .tsg-sidebar {
+    transform: translateX(-100%);
+
+    &--open {
+      transform: translateX(0);
+    }
+  }
+
+  [dir='rtl'] .tsg-sidebar {
+    transform: translateX(100%);
+
+    &--open {
+      transform: translateX(0);
+    }
+  }
+}

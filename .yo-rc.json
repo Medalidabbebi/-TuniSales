@@ -1,0 +1,7 @@
+{
+  "generator-jhipster": {
+    "entities": ["Product"],
+    "lastLiquibaseTimestamp": 1777819696000,
+    "skipClient": true
+  }
+}

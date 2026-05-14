@@ -1,0 +1,114 @@
+<div class="container-fluid py-4">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="PerformanceScoreHeading">
+        <fa-icon icon="chart-bar" class="me-2 text-primary"></fa-icon>
+        Scores de Performance
+      </h2>
+      <small class="text-muted">Liste des scores — {{ totalItems }} score(s) au total</small>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+        Actualiser
+      </button>
+      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/performance-score/new']">
+        <fa-icon icon="plus" class="me-1"></fa-icon>
+        Nouveau Score
+      </a>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- Chargement -->
+  <div class="text-center py-5" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
+    <p class="text-muted mt-2">Chargement...</p>
+  </div>
+
+  <!-- Aucun résultat -->
+  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && performanceScores?.length === 0">
+    <fa-icon icon="chart-bar" size="3x" class="text-muted mb-3"></fa-icon>
+    <p class="text-muted">Aucun score de performance trouvé.</p>
+    <a class="btn btn-primary mt-2" [routerLink]="['/performance-score/new']">
+      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+    </a>
+  </div>
+
+  <!-- Table -->
+  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && performanceScores && performanceScores.length > 0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
+        <thead class="table-light">
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+            <th scope="col" jhiSortBy="id" style="width:60px">
+              <div class="d-flex align-items-center gap-1">ID <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="userLogin">
+              <div class="d-flex align-items-center gap-1">Commercial <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="score">
+              <div class="d-flex align-items-center gap-1">Score <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="period">
+              <div class="d-flex align-items-center gap-1">Période <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" style="width:140px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let performanceScore of performanceScores; trackBy: trackId" data-cy="entityTable">
+            <td>
+              <a [routerLink]="['/performance-score', performanceScore.id, 'view']" class="fw-semibold text-decoration-none">{{ performanceScore.id }}</a>
+            </td>
+            <td class="fw-semibold">{{ performanceScore.userLogin || '—' }}</td>
+            <td>
+              <span class="badge rounded-pill"
+                [ngClass]="{
+                  'bg-success': (performanceScore.score ?? 0) >= 80,
+                  'bg-warning text-dark': (performanceScore.score ?? 0) >= 50 && (performanceScore.score ?? 0) < 80,
+                  'bg-danger': (performanceScore.score ?? 0) < 50 && performanceScore.score !== null,
+                  'bg-secondary': performanceScore.score === null || performanceScore.score === undefined
+                }">
+                {{ performanceScore.score ?? '—' }}
+              </span>
+            </td>
+            <td>{{ performanceScore.period || '—' }}</td>
+            <td>
+              <div class="d-flex gap-1 justify-content-end">
+                <a [routerLink]="['/performance-score', performanceScore.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+                  <fa-icon icon="eye"></fa-icon>
+                </a>
+                <a [routerLink]="['/performance-score', performanceScore.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                  <fa-icon icon="pencil-alt"></fa-icon>
+                </a>
+                <button (click)="delete(performanceScore)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="performanceScores && performanceScores.length > 0">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [page]="page"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="navigateToPage($event)"
+    ></ngb-pagination>
+  </div>
+
+</div>

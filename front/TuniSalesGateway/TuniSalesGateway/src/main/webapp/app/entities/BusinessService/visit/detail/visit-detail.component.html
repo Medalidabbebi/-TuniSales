@@ -1,0 +1,128 @@
+<div class="tsg-detail-page" *ngIf="visit">
+  <div class="tsg-page-header">
+    <div>
+      <h1 class="tsg-page-header__title" data-cy="visitDetailsHeading" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.detail.title">
+        Visit
+      </h1>
+      <p class="tsg-page-header__subtitle">{{ visit.client?.name || visit.mission?.title || ('Visit #' + visit.id) }}</p>
+    </div>
+    <div class="tsg-page-header__actions">
+      <button type="button" (click)="previousState()" class="tsg-btn tsg-btn--secondary" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Back</span>
+      </button>
+      <button type="button" [routerLink]="['/visit', visit.id, 'edit']" class="tsg-btn tsg-btn--primary">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="tsg-summary-grid">
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Visit order</div>
+      <div class="tsg-summary-card__value">#{{ visit.visitOrder || visit.id }}</div>
+      <div class="tsg-summary-card__meta">Visit ID {{ visit.id }}</div>
+    </div>
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Objective</div>
+      <div class="tsg-summary-card__value">{{ getObjectiveLabel() }}</div>
+      <div class="tsg-summary-card__meta">Operational purpose</div>
+    </div>
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Status</div>
+      <div class="tsg-summary-card__value">
+        <span class="tsg-badge" [ngClass]="getStatusBadgeClass()">{{ getStatusLabel() }}</span>
+      </div>
+      <div class="tsg-summary-card__meta">Execution state</div>
+    </div>
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Check-in</div>
+      <div class="tsg-summary-card__value">{{ visit.checkinAt | formatMediumDatetime }}</div>
+      <div class="tsg-summary-card__meta">Field start time</div>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <div class="tsg-detail-grid">
+    <section class="tsg-detail-card">
+      <div class="tsg-detail-card__header">
+        <h2>Visit details</h2>
+      </div>
+      <dl class="tsg-detail-list">
+        <div>
+          <dt jhiTranslate="global.field.id">ID</dt>
+          <dd>{{ visit.id }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.visitOrder">Visit Order</dt>
+          <dd>{{ visit.visitOrder || '—' }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.objective">Objective</dt>
+          <dd>{{ getObjectiveLabel() }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.status">Status</dt>
+          <dd>{{ getStatusLabel() }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="tsg-detail-card">
+      <div class="tsg-detail-card__header">
+        <h2>Location and timing</h2>
+      </div>
+      <dl class="tsg-detail-list">
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.latitude">Latitude</dt>
+          <dd>{{ visit.latitude || '—' }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.longitude">Longitude</dt>
+          <dd>{{ visit.longitude || '—' }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.checkinAt">Checkin At</dt>
+          <dd>{{ visit.checkinAt | formatMediumDatetime }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.checkoutAt">Checkout At</dt>
+          <dd>{{ visit.checkoutAt | formatMediumDatetime }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="tsg-detail-card tsg-detail-card--wide">
+      <div class="tsg-detail-card__header">
+        <h2>Links and notes</h2>
+      </div>
+      <dl class="tsg-detail-list tsg-detail-list--split">
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.client">Client</dt>
+          <dd>
+            <a *ngIf="visit.client" [routerLink]="['/client', visit.client.id, 'view']">{{ visit.client.name }}</a>
+            <span *ngIf="!visit.client">—</span>
+          </dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.mission">Mission</dt>
+          <dd>
+            <a *ngIf="visit.mission" [routerLink]="['/mission', visit.mission.id, 'view']">{{ visit.mission.title }}</a>
+            <span *ngIf="!visit.mission">—</span>
+          </dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.notes">Notes</dt>
+          <dd>{{ visit.notes || 'No notes provided.' }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.createdAt">Created At</dt>
+          <dd>{{ visit.createdAt | formatMediumDatetime }}</dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="clientContact">
+      <h2 data-cy="clientContactDetailsHeading">
+        <span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.detail.title">Client Contact</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ clientContact.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.fullName">Full Name</span></dt>
+        <dd>
+          <span>{{ clientContact.fullName }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.email">Email</span></dt>
+        <dd>
+          <span>{{ clientContact.email }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.phone">Phone</span></dt>
+        <dd>
+          <span>{{ clientContact.phone }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.role">Role</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.ContactRole.' + clientContact.role }}">{{ clientContact.role }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.isPrimary">Is Primary</span></dt>
+        <dd>
+          <span>{{ clientContact.isPrimary }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ clientContact.createdAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.client">Client</span></dt>
+        <dd>
+          <div *ngIf="clientContact.client">
+            <a [routerLink]="['/client', clientContact.client.id, 'view']">{{ clientContact.client.name }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/client-contact', clientContact.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

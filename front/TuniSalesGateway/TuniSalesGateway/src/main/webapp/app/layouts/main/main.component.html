@@ -1,0 +1,21 @@
+<!-- Login page: no shell -->
+<ng-container *ngIf="!account">
+  <router-outlet></router-outlet>
+</ng-container>
+
+<!-- Authenticated: full dashboard shell -->
+<ng-container *ngIf="account">
+  <div class="tsg-app-shell">
+    <jhi-sidebar [(collapsed)]="sidebarCollapsed"></jhi-sidebar>
+
+    <div class="tsg-main-wrapper" [class.sidebar-collapsed]="sidebarCollapsed">
+      <jhi-header></jhi-header>
+
+      <main class="tsg-content">
+        <jhi-alert></jhi-alert>
+        <jhi-alert-error></jhi-alert-error>
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </div>
+</ng-container>

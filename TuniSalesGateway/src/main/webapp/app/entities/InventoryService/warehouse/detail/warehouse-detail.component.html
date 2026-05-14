@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="warehouse">
+      <h2 data-cy="warehouseDetailsHeading">
+        <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.detail.title">Warehouse</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ warehouse.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ warehouse.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.name">Name</span></dt>
+        <dd>
+          <span>{{ warehouse.name }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.type">Type</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.WarehouseType.' + warehouse.type }}">{{ warehouse.type }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.address">Address</span></dt>
+        <dd>
+          <span>{{ warehouse.address }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.city">City</span></dt>
+        <dd>
+          <span>{{ warehouse.city }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.minThreshold">Min Threshold</span></dt>
+        <dd>
+          <span>{{ warehouse.minThreshold }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.isActive">Is Active</span></dt>
+        <dd>
+          <span>{{ warehouse.isActive }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ warehouse.createdAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.updatedAt">Updated At</span></dt>
+        <dd>
+          <span>{{ warehouse.updatedAt | formatMediumDatetime }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/warehouse', warehouse.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

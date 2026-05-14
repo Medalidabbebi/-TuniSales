@@ -1,0 +1,38 @@
+{
+  "tuniSalesGatewayApp": {
+    "businessServiceVisit": {
+      "home": {
+        "title": "Visits",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Visit",
+        "createOrEditLabel": "Create or edit a Visit",
+        "notFound": "No Visits found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Visit {{ id }}?"
+      },
+      "detail": {
+        "title": "Visit"
+      },
+      "id": "ID",
+      "visitOrder": "Visit Order",
+      "objective": "Objective",
+      "status": "Status",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "checkinAt": "Checkin At",
+      "checkoutAt": "Checkout At",
+      "notes": "Notes",
+      "createdAt": "Created At",
+      "client": "Client",
+      "mission": "Mission"
+    }
+  },
+  "businessServiceApp": {
+    "businessServiceVisit": {
+      "created": "A new Visit is created with identifier {{ param }}",
+      "updated": "A Visit is updated with identifier {{ param }}",
+      "deleted": "A Visit is deleted with identifier {{ param }}"
+    }
+  }
+}

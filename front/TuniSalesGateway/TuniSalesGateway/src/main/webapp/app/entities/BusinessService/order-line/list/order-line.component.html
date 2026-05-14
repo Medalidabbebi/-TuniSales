@@ -1,0 +1,118 @@
+<div class="container-fluid py-4">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="OrderLineHeading">
+        <fa-icon icon="list-alt" class="me-2 text-primary"></fa-icon>
+        Lignes de Commande
+      </h2>
+      <small class="text-muted">Liste des lignes de commande — {{ totalItems }} ligne(s) au total</small>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+        Actualiser
+      </button>
+      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/order-line/new']">
+        <fa-icon icon="plus" class="me-1"></fa-icon>
+        Nouvelle Ligne
+      </a>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- Chargement -->
+  <div class="text-center py-5" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
+    <p class="text-muted mt-2">Chargement...</p>
+  </div>
+
+  <!-- Aucun résultat -->
+  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && orderLines?.length === 0">
+    <fa-icon icon="list-alt" size="3x" class="text-muted mb-3"></fa-icon>
+    <p class="text-muted">Aucune ligne de commande trouvée.</p>
+    <a class="btn btn-primary mt-2" [routerLink]="['/order-line/new']">
+      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+    </a>
+  </div>
+
+  <!-- Table -->
+  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && orderLines && orderLines.length > 0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
+        <thead class="table-light">
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+            <th scope="col" jhiSortBy="id" style="width:60px">
+              <div class="d-flex align-items-center gap-1">ID <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="order.orderNumber">
+              <div class="d-flex align-items-center gap-1">Commande <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="product.name">
+              <div class="d-flex align-items-center gap-1">Produit <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="quantity">
+              <div class="d-flex align-items-center gap-1">Quantité <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="unitPrice">
+              <div class="d-flex align-items-center gap-1">Prix unitaire <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="lineTotal">
+              <div class="d-flex align-items-center gap-1">Total ligne <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" style="width:140px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let orderLine of orderLines; trackBy: trackId" data-cy="entityTable">
+            <td>
+              <a [routerLink]="['/order-line', orderLine.id, 'view']" class="fw-semibold text-decoration-none">{{ orderLine.id }}</a>
+            </td>
+            <td>
+              <a *ngIf="orderLine.order" [routerLink]="['/order', orderLine.order.id, 'view']" class="text-decoration-none">{{ orderLine.order.orderNumber }}</a>
+              <span *ngIf="!orderLine.order" class="text-muted fst-italic">—</span>
+            </td>
+            <td>
+              <a *ngIf="orderLine.product" [routerLink]="['/product', orderLine.product.id, 'view']" class="text-decoration-none">{{ orderLine.product.name }}</a>
+              <span *ngIf="!orderLine.product" class="text-muted fst-italic">—</span>
+            </td>
+            <td>{{ orderLine.quantity }}</td>
+            <td>{{ orderLine.unitPrice | number:'1.2-2' }} TND</td>
+            <td><span class="badge bg-primary rounded-pill">{{ orderLine.lineTotal | number:'1.2-2' }} TND</span></td>
+            <td>
+              <div class="d-flex gap-1 justify-content-end">
+                <a [routerLink]="['/order-line', orderLine.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+                  <fa-icon icon="eye"></fa-icon>
+                </a>
+                <a [routerLink]="['/order-line', orderLine.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                  <fa-icon icon="pencil-alt"></fa-icon>
+                </a>
+                <button (click)="delete(orderLine)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="orderLines && orderLines.length > 0">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [page]="page"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="navigateToPage($event)"
+    ></ngb-pagination>
+  </div>
+
+</div>

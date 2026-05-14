@@ -1,0 +1,94 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="order">
+      <h2 data-cy="orderDetailsHeading"><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.detail.title">Order</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ order.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ order.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.orderNumber">Order Number</span></dt>
+        <dd>
+          <span>{{ order.orderNumber }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.status">Status</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.OrderStatus.' + order.status }}">{{ order.status }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.subtotal">Subtotal</span></dt>
+        <dd>
+          <span>{{ order.subtotal }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.discountAmount">Discount Amount</span></dt>
+        <dd>
+          <span>{{ order.discountAmount }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.taxAmount">Tax Amount</span></dt>
+        <dd>
+          <span>{{ order.taxAmount }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.totalAmount">Total Amount</span></dt>
+        <dd>
+          <span>{{ order.totalAmount }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.paymentTermsDays">Payment Terms Days</span></dt>
+        <dd>
+          <span>{{ order.paymentTermsDays }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.dueDate">Due Date</span></dt>
+        <dd>
+          <span>{{ order.dueDate | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.rejectionReason">Rejection Reason</span></dt>
+        <dd>
+          <span>{{ order.rejectionReason }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.submittedAt">Submitted At</span></dt>
+        <dd>
+          <span>{{ order.submittedAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.validatedAt">Validated At</span></dt>
+        <dd>
+          <span>{{ order.validatedAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.isDeleted">Is Deleted</span></dt>
+        <dd>
+          <span>{{ order.isDeleted }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ order.createdAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.updatedAt">Updated At</span></dt>
+        <dd>
+          <span>{{ order.updatedAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.client">Client</span></dt>
+        <dd>
+          <div *ngIf="order.client">
+            <a [routerLink]="['/client', order.client.id, 'view']">{{ order.client.name }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/order', order.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+{
+  "tuniSalesGatewayApp": {
+    "VisitObjective": {
+      "null": "",
+      "SALE": "SALE",
+      "PROSPECTING": "PROSPECTING",
+      "AUDIT": "AUDIT",
+      "COLLECTION": "COLLECTION",
+      "SUPPORT": "SUPPORT"
+    }
+  }
+}

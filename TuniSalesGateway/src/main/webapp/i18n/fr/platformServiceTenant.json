@@ -1,0 +1,32 @@
+{
+  "tuniSalesGatewayApp": {
+    "platformServiceTenant": {
+      "home": {
+        "title": "Tenants",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Tenant",
+        "createOrEditLabel": "Créer ou éditer un Tenant",
+        "notFound": "Aucun Tenant trouvé"
+      },
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Tenant {{ id }} ?"
+      },
+      "detail": {
+        "title": "Tenant"
+      },
+      "id": "ID",
+      "name": "Name",
+      "code": "Code",
+      "status": "Status",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    }
+  },
+  "platformServiceApp": {
+    "platformServiceTenant": {
+      "created": "Un nouveau Tenant a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Tenant avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Tenant avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

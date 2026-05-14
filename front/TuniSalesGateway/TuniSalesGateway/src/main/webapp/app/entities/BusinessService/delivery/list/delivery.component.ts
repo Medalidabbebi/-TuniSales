@@ -1,0 +1,163 @@
+import { Component, OnInit } from '@angular/core';
+import { HttpHeaders } from '@angular/common/http';
+import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
+import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
+import { IDelivery } from '../delivery.model';
+import { DeliveryStatus } from 'app/entities/enumerations/delivery-status.model';
+
+import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
+import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
+import { EntityArrayResponseType, DeliveryService } from '../service/delivery.service';
+import { DeliveryDeleteDialogComponent } from '../delete/delivery-delete-dialog.component';
+
+@Component({
+  selector: 'jhi-delivery',
+  templateUrl: './delivery.component.html',
+  styleUrls: ['./delivery.component.scss'],
+})
+export class DeliveryComponent implements OnInit {
+  deliveries?: IDelivery[];
+  isLoading = false;
+
+  predicate = 'id';
+  ascending = true;
+
+  itemsPerPage = ITEMS_PER_PAGE;
+  totalItems = 0;
+  page = 1;
+
+  readonly deliveryStatus = DeliveryStatus;
+
+  constructor(
+    protected deliveryService: DeliveryService,
+    protected activatedRoute: ActivatedRoute,
+    public router: Router,
+    protected modalService: NgbModal
+  ) {}
+
+  trackId = (_index: number, item: IDelivery): number => this.deliveryService.getDeliveryIdentifier(item);
+
+  ngOnInit(): void {
+    this.load();
+  }
+
+  delete(delivery: IDelivery): void {
+    const modalRef = this.modalService.open(DeliveryDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
+    modalRef.componentInstance.delivery = delivery;
+    // unsubscribe not needed because closed completes on modal close
+    modalRef.closed
+      .pipe(
+        filter(reason => reason === ITEM_DELETED_EVENT),
+        switchMap(() => this.loadFromBackendWithRouteInformations())
+      )
+      .subscribe({
+        next: (res: EntityArrayResponseType) => {
+          this.onResponseSuccess(res);
+        },
+      });
+  }
+
+  load(): void {
+    this.loadFromBackendWithRouteInformations().subscribe({
+      next: (res: EntityArrayResponseType) => {
+        this.onResponseSuccess(res);
+      },
+    });
+  }
+
+  navigateToWithComponentValues(): void {
+    this.handleNavigation(this.page, this.predicate, this.ascending);
+  }
+
+  navigateToPage(page = this.page): void {
+    this.handleNavigation(page, this.predicate, this.ascending);
+  }
+
+  protected loadFromBackendWithRouteInformations(): Observable<EntityArrayResponseType> {
+    return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
+      tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
+      switchMap(() => this.queryBackend(this.page, this.predicate, this.ascending))
+    );
+  }
+
+  protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
+    const page = params.get(PAGE_HEADER);
+    this.page = +(page ?? 1);
+    const sort = (params.get(SORT) ?? data[DEFAULT_SORT_DATA]).split(',');
+    this.predicate = sort[0];
+    this.ascending = sort[1] === ASC;
+  }
+
+  protected onResponseSuccess(response: EntityArrayResponseType): void {
+    this.fillComponentAttributesFromResponseHeader(response.headers);
+    const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
+    this.deliveries = dataFromBody;
+  }
+
+  protected fillComponentAttributesFromResponseBody(data: IDelivery[] | null): IDelivery[] {
+    return data ?? [];
+  }
+
+  protected fillComponentAttributesFromResponseHeader(headers: HttpHeaders): void {
+    this.totalItems = Number(headers.get(TOTAL_COUNT_RESPONSE_HEADER));
+  }
+
+  countDeliveriesByStatus(status: DeliveryStatus): number {
+    return this.deliveries?.filter(delivery => delivery.status === status).length ?? 0;
+  }
+
+  getStatusBadgeClass(status: DeliveryStatus | null | undefined): string {
+    const map: Record<string, string> = {
+      PENDING: 'tsg-badge--pending',
+      IN_PREPARATION: 'tsg-badge--warning',
+      SHIPPED: 'tsg-badge--issued',
+      DELIVERED: 'tsg-badge--success',
+      FAILED: 'tsg-badge--danger',
+    };
+    return map[status || ''] || 'tsg-badge--neutral';
+  }
+
+  getDeliveryAvatar(delivery: IDelivery): string {
+    return (delivery.deliveryNumber || delivery.id?.toString() || '?').charAt(0).toUpperCase();
+  }
+
+  getClientOrder(delivery: IDelivery): string {
+    return delivery.order?.orderNumber || '—';
+  }
+
+  protected queryBackend(page?: number, predicate?: string, ascending?: boolean): Observable<EntityArrayResponseType> {
+    this.isLoading = true;
+    const pageToLoad: number = page ?? 1;
+    const queryObject = {
+      page: pageToLoad - 1,
+      size: this.itemsPerPage,
+      eagerload: true,
+      sort: this.getSortQueryParam(predicate, ascending),
+    };
+    return this.deliveryService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
+  }
+
+  protected handleNavigation(page = this.page, predicate?: string, ascending?: boolean): void {
+    const queryParamsObj = {
+      page,
+      size: this.itemsPerPage,
+      sort: this.getSortQueryParam(predicate, ascending),
+    };
+
+    this.router.navigate(['./'], {
+      relativeTo: this.activatedRoute,
+      queryParams: queryParamsObj,
+    });
+  }
+
+  protected getSortQueryParam(predicate = this.predicate, ascending = this.ascending): string[] {
+    const ascendingQueryParam = ascending ? ASC : DESC;
+    if (predicate === '') {
+      return [];
+    } else {
+      return [predicate + ',' + ascendingQueryParam];
+    }
+  }
+}

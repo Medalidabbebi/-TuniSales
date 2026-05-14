@@ -1,0 +1,42 @@
+{
+  "tuniSalesGatewayApp": {
+    "businessServiceClient": {
+      "home": {
+        "title": "Clients",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Client",
+        "createOrEditLabel": "Créer ou éditer un Client",
+        "notFound": "Aucun Client trouvé"
+      },
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Client {{ id }} ?"
+      },
+      "detail": {
+        "title": "Client"
+      },
+      "id": "ID",
+      "tenantId": "Tenant Id",
+      "name": "Name",
+      "taxId": "Tax Id",
+      "clientType": "Client Type",
+      "creditLimit": "Credit Limit",
+      "creditUsed": "Credit Used",
+      "paymentTermsDays": "Payment Terms Days",
+      "status": "Status",
+      "lastOrderAt": "Last Order At",
+      "isDeleted": "Is Deleted",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "contacts": "Contacts",
+      "priceLists": "Price Lists",
+      "orders": "Orders"
+    }
+  },
+  "businessServiceApp": {
+    "businessServiceClient": {
+      "created": "Un nouveau Client a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Client avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Client avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

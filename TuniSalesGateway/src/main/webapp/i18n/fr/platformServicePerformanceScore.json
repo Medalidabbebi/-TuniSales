@@ -1,0 +1,35 @@
+{
+  "tuniSalesGatewayApp": {
+    "platformServicePerformanceScore": {
+      "home": {
+        "title": "PerformanceScores",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Performance Score",
+        "createOrEditLabel": "Créer ou éditer un Performance Score",
+        "notFound": "Aucun Performance Score trouvé"
+      },
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Performance Score {{ id }} ?"
+      },
+      "detail": {
+        "title": "Performance Score"
+      },
+      "id": "ID",
+      "tenantId": "Tenant Id",
+      "userLogin": "User Login",
+      "period": "Period",
+      "score": "Score",
+      "classification": "Classification",
+      "breakdownJson": "Breakdown Json",
+      "deltaVsPrevious": "Delta Vs Previous",
+      "calculatedAt": "Calculated At"
+    }
+  },
+  "platformServiceApp": {
+    "platformServicePerformanceScore": {
+      "created": "Un nouveau Performance Score a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Performance Score avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Performance Score avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

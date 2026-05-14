@@ -1,0 +1,88 @@
+<header class="tsg-header" *ngIf="account">
+  <!-- Left: Search -->
+  <div class="tsg-header__start">
+    <div class="tsg-search tsg-header__search">
+      <fa-icon icon="search" class="tsg-search__icon"></fa-icon>
+      <input type="text" placeholder="{{ 'global.search.placeholder' | translate }}" />
+    </div>
+  </div>
+
+  <!-- Right: Actions -->
+  <div class="tsg-header__end">
+    <!-- Dark mode toggle -->
+    <button class="tsg-header__icon-btn" (click)="toggleDarkMode()" [title]="isDarkMode ? 'Light mode' : 'Dark mode'">
+      <fa-icon [icon]="isDarkMode ? 'sun' : 'moon'"></fa-icon>
+    </button>
+
+    <!-- Notifications -->
+    <div class="tsg-header__dropdown">
+      <button class="tsg-header__icon-btn" (click)="showNotifications = !showNotifications">
+        <fa-icon icon="bell"></fa-icon>
+        <span class="tsg-header__badge">3</span>
+      </button>
+      <div class="tsg-header__dropdown-menu tsg-header__dropdown-menu--notifications" *ngIf="showNotifications">
+        <div class="tsg-header__dropdown-title">Notifications</div>
+        <div class="tsg-header__notif-item">
+          <div class="tsg-header__notif-dot tsg-header__notif-dot--warning"></div>
+          <div>
+            <div class="tsg-header__notif-text">Low stock alert: Product SKU-1024</div>
+            <div class="tsg-header__notif-time">2 min ago</div>
+          </div>
+        </div>
+        <div class="tsg-header__notif-item">
+          <div class="tsg-header__notif-dot tsg-header__notif-dot--success"></div>
+          <div>
+            <div class="tsg-header__notif-text">Order #2847 delivered</div>
+            <div class="tsg-header__notif-time">15 min ago</div>
+          </div>
+        </div>
+        <div class="tsg-header__notif-item">
+          <div class="tsg-header__notif-dot tsg-header__notif-dot--info"></div>
+          <div>
+            <div class="tsg-header__notif-text">New client registered</div>
+            <div class="tsg-header__notif-time">1 hour ago</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Language -->
+    <div class="tsg-header__dropdown">
+      <button class="tsg-header__lang-btn" (click)="showLangMenu = !showLangMenu">
+        <fa-icon icon="globe"></fa-icon>
+        <span>{{ getLangDisplay(currentLang) }}</span>
+      </button>
+      <div class="tsg-header__dropdown-menu tsg-header__dropdown-menu--lang" *ngIf="showLangMenu">
+        <a *ngFor="let lang of languages"
+           class="tsg-header__dropdown-item"
+           [class.tsg-header__dropdown-item--active]="lang === currentLang"
+           (click)="changeLanguage(lang)">
+          {{ getLangDisplay(lang) }}
+        </a>
+      </div>
+    </div>
+
+    <!-- User menu -->
+    <div class="tsg-header__dropdown">
+      <button class="tsg-header__user-btn" (click)="showUserMenu = !showUserMenu">
+        <div class="tsg-header__avatar">
+          {{ account.firstName?.charAt(0) || account.login.charAt(0) || 'U' }}
+        </div>
+        <span class="tsg-header__user-name">{{ account.firstName || account.login }}</span>
+        <fa-icon icon="chevron-down" class="tsg-header__chevron"></fa-icon>
+      </button>
+      <div class="tsg-header__dropdown-menu" *ngIf="showUserMenu">
+        <a class="tsg-header__dropdown-item" routerLink="/account/settings" (click)="showUserMenu = false">
+          <fa-icon icon="user" [fixedWidth]="true"></fa-icon> Profile
+        </a>
+        <a class="tsg-header__dropdown-item" routerLink="/account/password" (click)="showUserMenu = false">
+          <fa-icon icon="lock" [fixedWidth]="true"></fa-icon> Password
+        </a>
+        <div class="tsg-header__dropdown-divider"></div>
+        <a class="tsg-header__dropdown-item tsg-header__dropdown-item--danger" (click)="logout()">
+          <fa-icon icon="sign-out-alt" [fixedWidth]="true"></fa-icon> Logout
+        </a>
+      </div>
+    </div>
+  </div>
+</header>

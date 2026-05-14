@@ -1,0 +1,743 @@
+// ============================================================
+// TuniSales — JHipster Domain Language (JDL)
+// Version: 3.1 — Mars 2026 (Architecture 3 Microservices)
+// Stack: JHipster 8 / Spring Boot 3 / Angular 17+ / PostgreSQL
+// Architecture: 1 Gateway + 3 Microservices + Consul + Kafka
+// ============================================================
+//
+// Découpage par Bounded Contexts (DDD) :
+//   1. Gateway          — Angular frontend + routage API
+//   2. BusinessService  — Catalogue, Clients, Commandes, Livraisons, Factures, Missions terrain
+//   3. InventoryService — Stock, Entrepôts, Mouvements, Swap, Audit stock
+//   4. PlatformService  — Administration (Tenant), Audit, Documents, Scores, Objectifs, Notifications
+//
+// Communication inter-services :
+//   - Synchrone : REST via Consul (BusinessService ↔ InventoryService uniquement)
+//   - Asynchrone : Kafka (événements métier)
+//   - Les FK cross-service sont remplacées par des IDs simples (Long)
+//   - Le tenantId est un discriminateur local (pas de FK cross-DB)
+// ============================================================
+
+
+// ─────────────────────────────────────────
+// APPLICATIONS
+// ─────────────────────────────────────────
+
+// =======================================================
+// APPLICATIONS
+// =======================================================
+
+application {
+  config {
+    baseName TuniSalesGateway
+    applicationType gateway
+    packageName com.tunisales.gateway
+
+    authenticationType jwt
+    serviceDiscoveryType eureka
+
+    prodDatabaseType postgresql
+    devDatabaseType postgresql
+    databaseType sql
+
+    clientFramework angularX
+    clientPackageManager npm
+    clientTheme flatly
+    clientThemeVariant primary
+
+    buildTool maven
+    serverPort 8080
+
+    cacheProvider hazelcast
+    dtoSuffix DTO
+    embeddableLaunchScript false
+    enableHibernateCache false
+    enableSwaggerCodegen false
+    enableTranslation true
+    languages [fr, ar-ly, en]
+    nativeLanguage fr
+    jhiPrefix jhi
+
+    skipClient false
+    skipServer false
+    skipUserManagement false
+    websocket false
+  }
+  entities *
+}
+
+// -------------------------------------------------------
+
+application {
+  config {
+    baseName BusinessService
+    applicationType microservice
+    packageName com.tunisales.business
+
+    authenticationType jwt
+    serviceDiscoveryType eureka
+
+    prodDatabaseType postgresql
+    devDatabaseType postgresql
+    databaseType sql
+
+    cacheProvider hazelcast
+    buildTool maven
+    serverPort 8081
+
+    dtoSuffix DTO
+    embeddableLaunchScript false
+    enableHibernateCache false
+    enableSwaggerCodegen false
+    jhiPrefix jhi
+
+    skipClient true
+    skipUserManagement true
+    websocket false
+  }
+  entities Product, Client, ClientContact, PriceList, Order, OrderLine, OrderLineItem, Delivery, Invoice, Mission, Visit
+}
+
+// -------------------------------------------------------
+
+application {
+  config {
+    baseName InventoryService
+    applicationType microservice
+    packageName com.tunisales.inventory
+
+    authenticationType jwt
+    serviceDiscoveryType eureka
+
+    prodDatabaseType postgresql
+    devDatabaseType postgresql
+    databaseType sql
+
+    cacheProvider hazelcast
+    buildTool maven
+    serverPort 8082
+
+    dtoSuffix DTO
+    embeddableLaunchScript false
+    enableHibernateCache false
+    enableSwaggerCodegen false
+    jhiPrefix jhi
+
+    skipClient true
+    skipUserManagement true
+    websocket false
+  }
+  entities Warehouse, StockItem, StockMovement, Swap, StockAudit, StockAuditLine
+}
+
+// -------------------------------------------------------
+
+application {
+  config {
+    baseName PlatformService
+    applicationType microservice
+    packageName com.tunisales.platform
+
+    authenticationType jwt
+    serviceDiscoveryType eureka
+
+    prodDatabaseType postgresql
+    devDatabaseType postgresql
+    databaseType sql
+
+    cacheProvider hazelcast
+    buildTool maven
+    serverPort 8083
+
+    dtoSuffix DTO
+    embeddableLaunchScript false
+    enableHibernateCache false
+    enableSwaggerCodegen false
+    jhiPrefix jhi
+
+    skipClient true
+    skipUserManagement true
+    websocket false
+  }
+  entities Tenant, AuditLog, Document, PerformanceScore, ClientScore, Objective, Notification
+}
+
+
+
+// ─────────────────────────────────────────
+// ENUMS — Tous unifiés en anglais
+// ─────────────────────────────────────────
+
+enum TenantStatus {
+  ACTIVE,
+  INACTIVE,
+  SUSPENDED,
+  TRIAL
+}
+
+enum WarehouseType {
+  LOCAL,
+  SITE,
+  SWAP,
+  DEFECTIVE,
+  MISSING
+}
+
+enum StockItemStatus {
+  AVAILABLE,
+  RESERVED,
+  ALLOCATED,
+  IN_TRANSIT,
+  DEPLOYED,
+  DEFECTIVE,
+  MISSING,
+  SOLD,
+  RETIRED
+}
+
+enum MovementType {
+  INBOUND,
+  OUTBOUND,
+  TRANSFER,
+  RETURN,
+  SWAP_OUT,
+  SWAP_IN,
+  INVENTORY_ADJUSTMENT
+}
+
+enum ClientType {
+  NATIONAL_DISTRIBUTOR,
+  REGIONAL_WHOLESALER,
+  INDEPENDENT_POS,
+  TELECOM_OPERATOR
+}
+
+enum ClientStatus {
+  ACTIVE,
+  INACTIVE,
+  SUSPENDED,
+  CHURN_RISK
+}
+
+enum OrderStatus {
+  DRAFT,
+  SUBMITTED,
+  UNDER_REVIEW,
+  APPROVED,
+  IN_PREPARATION,
+  SHIPPED,
+  DELIVERED,
+  INVOICED,
+  PAID,
+  REJECTED,
+  CANCELLED
+}
+
+enum DeliveryStatus {
+  PENDING,
+  IN_PREPARATION,
+  SHIPPED,
+  DELIVERED,
+  FAILED
+}
+
+enum InvoiceStatus {
+  DRAFT,
+  ISSUED,
+  PARTIALLY_PAID,
+  PAID,
+  OVERDUE,
+  CANCELLED
+}
+
+enum MissionStatus {
+  PLANNED,
+  IN_PROGRESS,
+  COMPLETED,
+  CANCELLED
+}
+
+enum VisitObjective {
+  SALE,
+  PROSPECTING,
+  AUDIT,
+  COLLECTION,
+  SUPPORT
+}
+
+enum VisitStatus {
+  PLANNED,
+  IN_PROGRESS,
+  COMPLETED,
+  MISSED,
+  CANCELLED
+}
+
+enum ScoreClassification {
+  EXCELLENT,
+  GOOD,
+  AVERAGE,
+  POOR
+}
+
+enum MetricType {
+  REVENUE,
+  UNIT_VOLUME,
+  VISIT_COUNT,
+  CONVERSION_RATE
+}
+
+enum SwapStatus {
+  PENDING,
+  IN_PROGRESS,
+  RESOLVED,
+  CANCELLED
+}
+
+enum AuditStatus {
+  IN_PROGRESS,
+  CLOSED,
+  CANCELLED
+}
+
+enum NotificationType {
+  STOCK_ALERT,
+  APPROVAL_REQUIRED,
+  ORDER_APPROVED,
+  ORDER_REJECTED,
+  DELIVERY_CONFIRMED,
+  SCORE_CALCULATED,
+  PAYMENT_DUE,
+  STOCK_DISCREPANCY
+}
+
+enum AuditAction {
+  CREATE,
+  UPDATE,
+  DELETE,
+  LOGIN,
+  LOGOUT,
+  EXPORT,
+  VALIDATE,
+  REJECT
+}
+
+enum DocumentType {
+  DELIVERY_NOTE,
+  INVOICE,
+  CONTRACT,
+  AMENDMENT,
+  AUDIT_REPORT,
+  PURCHASE_ORDER,
+  OTHER
+}
+
+enum AuditResolution {
+  FOUND,
+  LOST_STOLEN,
+  SYSTEM_ERROR,
+  IN_PROGRESS
+}
+
+enum ContactRole {
+  BUYER,
+  ACCOUNTING,
+  MANAGEMENT,
+  TECHNICAL,
+  OTHER
+}
+
+enum DocumentEntityType {
+  ORDER,
+  DELIVERY,
+  INVOICE,
+  CLIENT,
+  STOCK_AUDIT
+}
+
+
+// ─────────────────────────────────────────
+// ENTITIES
+// ─────────────────────────────────────────
+
+// ═══════════════════════════════════════════
+// BusinessService (port 8081) — 11 entités
+// Bounded Context : Catalogue, Clients, Commandes, Terrain
+// Fusion de : CatalogService + OrderService + FieldService
+// ═══════════════════════════════════════════
+
+entity Product {
+  tenantId Long required
+  sku String required unique minlength(3) maxlength(100)
+  name String required maxlength(255)
+  brand String maxlength(100)
+  category String maxlength(100)
+  price BigDecimal required min(0)
+  taxRate BigDecimal required min(0) max(100)
+  isActive Boolean required
+  isDeleted Boolean required
+  createdAt ZonedDateTime required
+  updatedAt ZonedDateTime
+}
+
+entity Client {
+  tenantId Long required
+  name String required maxlength(255)
+  taxId String unique maxlength(50)
+  clientType ClientType required
+  creditLimit BigDecimal min(0)
+  creditUsed BigDecimal min(0)
+  paymentTermsDays Integer min(0)
+  status ClientStatus required
+  lastOrderAt ZonedDateTime
+  isDeleted Boolean required
+  createdAt ZonedDateTime required
+  updatedAt ZonedDateTime
+}
+
+entity ClientContact {
+  fullName String required maxlength(255)
+  email String maxlength(255)
+  phone String maxlength(30)
+  role ContactRole
+  isPrimary Boolean required
+  createdAt ZonedDateTime required
+}
+
+entity PriceList {
+  unitPrice BigDecimal required min(0)
+  maxDiscountPct BigDecimal min(0) max(100)
+  validFrom ZonedDateTime required
+  validTo ZonedDateTime required
+  isActive Boolean required
+  createdAt ZonedDateTime required
+}
+
+entity Order {
+  tenantId Long required
+  orderNumber String required unique minlength(5) maxlength(50)
+  status OrderStatus required
+  subtotal BigDecimal required min(0)
+  discountAmount BigDecimal min(0)
+  taxAmount BigDecimal min(0)
+  totalAmount BigDecimal required min(0)
+  paymentTermsDays Integer min(0)
+  dueDate ZonedDateTime
+  rejectionReason String maxlength(1000)
+  submittedAt ZonedDateTime
+  validatedAt ZonedDateTime
+  isDeleted Boolean required
+  createdAt ZonedDateTime required
+  updatedAt ZonedDateTime
+}
+
+entity OrderLine {
+  quantity Integer required min(1)
+  unitPrice BigDecimal required min(0)
+  discountPct BigDecimal min(0) max(100)
+  lineTotal BigDecimal required min(0)
+  createdAt ZonedDateTime required
+}
+
+entity OrderLineItem {
+  stockItemId Long required                                 // Cross-svc ref → InventoryService.StockItem
+  stockItemImei String maxlength(15)                        // Dénormalisé (IMEI ne change pas)
+  assignedAt ZonedDateTime required
+}
+
+entity Delivery {
+  tenantId Long required
+  deliveryNumber String required unique minlength(5) maxlength(50)
+  status DeliveryStatus required
+  trackingNumber String maxlength(100)
+  shippedAt ZonedDateTime
+  deliveredAt ZonedDateTime
+  confirmedAt ZonedDateTime
+  notes String maxlength(2000)
+  createdAt ZonedDateTime required
+}
+
+entity Invoice {
+  tenantId Long required
+  invoiceNumber String required unique minlength(5) maxlength(50)
+  amountHt BigDecimal required min(0)
+  taxAmount BigDecimal required min(0)
+  amountTtc BigDecimal required min(0)
+  status InvoiceStatus required
+  issueDate ZonedDateTime required
+  dueDate ZonedDateTime required
+  paidAt ZonedDateTime
+  isDeleted Boolean required
+  createdAt ZonedDateTime required
+  updatedAt ZonedDateTime
+}
+
+entity Mission {
+  tenantId Long required
+  assignedToLogin String required maxlength(100)            // Ref → User (via JWT)
+  title String required maxlength(255)
+  description String maxlength(2000)
+  missionDate ZonedDateTime required
+  status MissionStatus required
+  createdAt ZonedDateTime required
+  updatedAt ZonedDateTime
+}
+
+entity Visit {
+  visitOrder Integer required min(1)
+  objective VisitObjective required
+  status VisitStatus required
+  latitude BigDecimal
+  longitude BigDecimal
+  checkinAt ZonedDateTime
+  checkoutAt ZonedDateTime
+  notes String maxlength(2000)
+  createdAt ZonedDateTime required
+}
+
+
+// ═══════════════════════════════════════════
+// InventoryService (port 8082) — 6 entités
+// Bounded Context : Stock, Entrepôts, Mouvements, Swap, Audit
+// (Inchangé par rapport à la V3)
+// ═══════════════════════════════════════════
+
+entity Warehouse {
+  tenantId Long required
+  name String required maxlength(255)
+  type WarehouseType required
+  address String maxlength(500)
+  city String maxlength(100)
+  minThreshold Integer min(0)
+  isActive Boolean required
+  createdAt ZonedDateTime required
+  updatedAt ZonedDateTime
+}
+
+entity StockItem {
+  tenantId Long required
+  productId Long required                                   // Cross-svc ref → BusinessService.Product
+  productName String maxlength(255)                         // Dénormalisé (évite appel REST)
+  imei String required unique minlength(15) maxlength(15)
+  status StockItemStatus required
+  isDeleted Boolean required
+  acquiredAt ZonedDateTime required
+  updatedAt ZonedDateTime
+}
+
+entity StockMovement {
+  movementType MovementType required
+  reason String maxlength(500)
+  reference String maxlength(100)
+  quantity Integer required min(1)
+  performedByLogin String maxlength(100)                    // Ref → User (via JWT)
+  createdAt ZonedDateTime required
+}
+
+entity Swap {
+  tenantId Long required
+  clientId Long required                                    // Cross-svc ref → BusinessService.Client
+  clientName String maxlength(255)                          // Dénormalisé
+  status SwapStatus required
+  reason String maxlength(500)
+  createdAt ZonedDateTime required
+  resolvedAt ZonedDateTime
+  updatedAt ZonedDateTime
+}
+
+entity StockAudit {
+  tenantId Long required
+  status AuditStatus required
+  theoreticalCount Integer min(0)
+  physicalCount Integer min(0)
+  discrepancyCount Integer min(0)
+  notes String maxlength(2000)
+  auditorLogin String required maxlength(100)               // Ref → User (via JWT)
+  startedAt ZonedDateTime required
+  closedAt ZonedDateTime
+}
+
+entity StockAuditLine {
+  foundPhysically Boolean required
+  resolution AuditResolution
+  resolutionNote String maxlength(500)
+  createdAt ZonedDateTime required
+}
+
+
+// ═══════════════════════════════════════════
+// PlatformService (port 8083) — 7 entités
+// Bounded Context : Administration, Audit, Analytique, Notifications
+// Fusion de : TenantService + AnalyticsService
+// ═══════════════════════════════════════════
+
+entity Tenant {
+  name String required maxlength(255)
+  code String required unique maxlength(50)
+  status TenantStatus required
+  createdAt ZonedDateTime required
+  updatedAt ZonedDateTime
+}
+
+entity AuditLog {
+  tenantId Long
+  entityType String required maxlength(100)
+  entityId String maxlength(36)
+  action AuditAction required
+  beforeJson TextBlob
+  afterJson TextBlob
+  ipAddress String maxlength(45)
+  userAgent String maxlength(500)
+  performedByLogin String maxlength(100)                    // Ref → User (via JWT)
+  createdAt ZonedDateTime required
+}
+
+entity Document {
+  tenantId Long 
+  entityType DocumentEntityType required
+  entityId String required maxlength(36)
+  docType DocumentType required
+  filename String required maxlength(255)
+  storageUrl String required maxlength(1000)
+  mimeType String maxlength(100)
+  sizeBytes Long min(0)
+  uploadedByLogin String maxlength(100)                     // Ref → User (via JWT)
+  createdAt ZonedDateTime required
+  updatedAt ZonedDateTime
+}
+
+entity PerformanceScore {
+  tenantId Long required
+  userLogin String required maxlength(100)                  // Ref → User (via JWT)
+  period String required maxlength(7)
+  score Integer required min(0) max(100)
+  classification ScoreClassification required
+  breakdownJson TextBlob
+  deltaVsPrevious Integer
+  calculatedAt ZonedDateTime required
+}
+
+entity ClientScore {
+  tenantId Long required
+  clientId Long required                                    // Cross-svc ref → BusinessService.Client
+  clientName String maxlength(255)                          // Dénormalisé
+  period String required maxlength(7)
+  score Integer required min(0) max(100)
+  classification ScoreClassification required
+  breakdownJson TextBlob
+  calculatedAt ZonedDateTime required
+}
+
+entity Objective {
+  tenantId Long required
+  assignedToLogin String required maxlength(100)            // Ref → User (via JWT)
+  period String required maxlength(7)
+  metricType MetricType required
+  targetValue BigDecimal required min(0)
+  achievedValue BigDecimal min(0)
+  createdAt ZonedDateTime required
+  updatedAt ZonedDateTime
+}
+
+entity Notification {
+  tenantId Long required
+  recipientLogin String required maxlength(100)             // Ref → User (via JWT)
+  type NotificationType required
+  title String required maxlength(255)
+  body String maxlength(2000)
+  payloadJson TextBlob
+  isRead Boolean required
+  readAt ZonedDateTime
+  createdAt ZonedDateTime required
+}
+
+
+// ─────────────────────────────────────────
+// RELATIONSHIPS (Intra-service uniquement)
+// ─────────────────────────────────────────
+// Les relations JPA n'existent qu'entre entités du MÊME service.
+// Les références cross-service sont des champs Long (IDs)
+// résolus via REST ou événements Kafka.
+//
+// Avantage clé du regroupement en 3 services :
+// Client ↔ Order/Invoice/Visit et Product ↔ OrderLine/PriceList
+// sont maintenant des FK JPA locales (plus de REST cross-service).
+
+// ── BusinessService : Relations internes ──
+// Catalogue
+relationship OneToMany {
+  Client{contacts} to ClientContact{client(name) required}
+  Client{priceLists} to PriceList{client(name) required}
+  Client{orders} to Order{client(name) required}
+}
+
+relationship ManyToOne {
+  PriceList{product(name) required} to Product
+}
+
+// Commandes
+relationship OneToMany {
+  Order{orderLines} to OrderLine{order(orderNumber) required}
+  Order{deliveries} to Delivery{order(orderNumber) required}
+  Order{invoices} to Invoice{order(orderNumber) required}
+  OrderLine{orderLineItems} to OrderLineItem{orderLine required}
+}
+
+relationship ManyToOne {
+  OrderLine{product(name) required} to Product
+  Invoice{client(name) required} to Client
+}
+
+// Missions & Visites
+relationship OneToMany {
+  Mission{visits} to Visit{mission(title) required}
+}
+
+relationship ManyToOne {
+  Visit{client(name) required} to Client
+}
+
+// ── InventoryService : Relations internes ──
+relationship OneToMany {
+  Warehouse{stockItems} to StockItem{warehouse(name) required}
+  StockItem{stockMovements} to StockMovement{stockItem(imei) required}
+  StockAudit{auditLines} to StockAuditLine{audit required}
+}
+
+relationship ManyToOne {
+  StockMovement{fromWarehouse(name)} to Warehouse
+  StockMovement{toWarehouse(name)} to Warehouse
+  Swap{outgoingItem(imei) required} to StockItem
+  Swap{incomingItem(imei)} to StockItem
+  StockAudit{warehouse(name) required} to Warehouse
+  StockAuditLine{stockItem(imei) required} to StockItem
+}
+
+
+// ─────────────────────────────────────────
+// OPTIONS
+// ─────────────────────────────────────────
+
+// === Microservice Assignment ===
+microservice Mission, Visit, Order, OrderLine, OrderLineItem, Delivery, Invoice, Product, Client, ClientContact, PriceList with BusinessService
+microservice Warehouse, StockItem, StockMovement, Swap, StockAudit, StockAuditLine with InventoryService
+microservice Tenant, AuditLog, Document, PerformanceScore, ClientScore, Objective, Notification with PlatformService
+
+// === Pagination ===
+paginate Product, Client, ClientContact, PriceList with pagination
+paginate Order, OrderLine, Delivery, Invoice with pagination
+paginate Mission, Visit with pagination
+paginate Warehouse, StockItem, StockMovement, Swap, StockAudit, StockAuditLine with pagination
+paginate Tenant, AuditLog, Document with pagination
+paginate PerformanceScore, ClientScore, Objective, Notification with pagination
+
+// === DTOs ===
+dto * with mapstruct
+
+// === Services ===
+service * with serviceClass
+
+// === Filters ===
+filter Product, Client, PriceList, Order, Invoice, Delivery, Mission, Visit
+filter Warehouse, StockItem, StockMovement, Swap, StockAudit
+filter AuditLog, Document, PerformanceScore, ClientScore, Objective, Notification

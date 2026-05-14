@@ -1,0 +1,139 @@
+<div class="container-fluid py-4">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="StockMovementHeading">
+        <fa-icon icon="exchange-alt" class="me-2 text-primary"></fa-icon>
+        Mouvements de Stock
+      </h2>
+      <small class="text-muted">Liste des mouvements — {{ totalItems }} mouvement(s) au total</small>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+        Actualiser
+      </button>
+      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/stock-movement/new']">
+        <fa-icon icon="plus" class="me-1"></fa-icon>
+        Nouveau Mouvement
+      </a>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- Chargement -->
+  <div class="text-center py-5" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
+    <p class="text-muted mt-2">Chargement...</p>
+  </div>
+
+  <!-- Aucun résultat -->
+  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && stockMovements?.length === 0">
+    <fa-icon icon="exchange-alt" size="3x" class="text-muted mb-3"></fa-icon>
+    <p class="text-muted">Aucun mouvement de stock trouvé.</p>
+    <a class="btn btn-primary mt-2" [routerLink]="['/stock-movement/new']">
+      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+    </a>
+  </div>
+
+  <!-- Table -->
+  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && stockMovements && stockMovements.length > 0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
+        <thead class="table-light">
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+            <th scope="col" jhiSortBy="id" style="width:60px">
+              <div class="d-flex align-items-center gap-1">ID <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="movementType">
+              <div class="d-flex align-items-center gap-1">Type mouvement <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="stockItem.imei">
+              <div class="d-flex align-items-center gap-1">Stock Item <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="fromWarehouse.name">
+              <div class="d-flex align-items-center gap-1">De <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="toWarehouse.name">
+              <div class="d-flex align-items-center gap-1">Vers <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="quantity">
+              <div class="d-flex align-items-center gap-1">Quantité <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="createdAt">
+              <div class="d-flex align-items-center gap-1">Date <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" style="width:140px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let stockMovement of stockMovements; trackBy: trackId" data-cy="entityTable">
+            <td>
+              <a [routerLink]="['/stock-movement', stockMovement.id, 'view']" class="fw-semibold text-decoration-none">{{ stockMovement.id }}</a>
+            </td>
+            <td>
+              <span class="badge rounded-pill"
+                [ngClass]="{
+                  'bg-success': stockMovement.movementType === 'INBOUND',
+                  'bg-danger': stockMovement.movementType === 'OUTBOUND',
+                  'bg-info text-dark': stockMovement.movementType === 'TRANSFER',
+                  'bg-warning text-dark': stockMovement.movementType === 'INVENTORY_ADJUSTMENT',
+                  'bg-primary': stockMovement.movementType === 'RETURN',
+                  'bg-secondary': !stockMovement.movementType
+                }">
+                {{ stockMovement.movementType }}
+              </span>
+            </td>
+            <td>
+              <a *ngIf="stockMovement.stockItem" [routerLink]="['/stock-item', stockMovement.stockItem.id, 'view']" class="text-decoration-none">
+                <code class="text-secondary">{{ stockMovement.stockItem.imei }}</code>
+              </a>
+              <span *ngIf="!stockMovement.stockItem" class="text-muted fst-italic">—</span>
+            </td>
+            <td>
+              <a *ngIf="stockMovement.fromWarehouse" [routerLink]="['/warehouse', stockMovement.fromWarehouse.id, 'view']" class="text-decoration-none">{{ stockMovement.fromWarehouse.name }}</a>
+              <span *ngIf="!stockMovement.fromWarehouse" class="text-muted fst-italic">—</span>
+            </td>
+            <td>
+              <a *ngIf="stockMovement.toWarehouse" [routerLink]="['/warehouse', stockMovement.toWarehouse.id, 'view']" class="text-decoration-none">{{ stockMovement.toWarehouse.name }}</a>
+              <span *ngIf="!stockMovement.toWarehouse" class="text-muted fst-italic">—</span>
+            </td>
+            <td>{{ stockMovement.quantity }}</td>
+            <td><span class="text-muted small">{{ stockMovement.createdAt | formatMediumDatetime }}</span></td>
+            <td>
+              <div class="d-flex gap-1 justify-content-end">
+                <a [routerLink]="['/stock-movement', stockMovement.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+                  <fa-icon icon="eye"></fa-icon>
+                </a>
+                <a [routerLink]="['/stock-movement', stockMovement.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                  <fa-icon icon="pencil-alt"></fa-icon>
+                </a>
+                <button (click)="delete(stockMovement)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="stockMovements && stockMovements.length > 0">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [page]="page"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="navigateToPage($event)"
+    ></ngb-pagination>
+  </div>
+
+</div>

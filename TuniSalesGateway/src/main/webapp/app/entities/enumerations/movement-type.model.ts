@@ -1,0 +1,15 @@
+export enum MovementType {
+  INBOUND = 'INBOUND',
+
+  OUTBOUND = 'OUTBOUND',
+
+  TRANSFER = 'TRANSFER',
+
+  RETURN = 'RETURN',
+
+  SWAP_OUT = 'SWAP_OUT',
+
+  SWAP_IN = 'SWAP_IN',
+
+  INVENTORY_ADJUSTMENT = 'INVENTORY_ADJUSTMENT',
+}

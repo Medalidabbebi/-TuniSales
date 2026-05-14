@@ -1,0 +1,294 @@
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-xl-10">
+
+      <!-- Header -->
+      <div class="d-flex align-items-center mb-4">
+        <button type="button" class="btn btn-outline-secondary me-3" (click)="previousState()">
+          <fa-icon icon="arrow-left"></fa-icon>
+        </button>
+        <div>
+          <h2 class="mb-0">
+            <fa-icon icon="file-invoice" class="me-2 text-primary"></fa-icon>
+            {{ isNewOrder ? 'Nouvelle offre de vente' : 'Modifier l\'offre #' + order?.orderNumber }}
+          </h2>
+          <small class="text-muted" *ngIf="isNewOrder">Statut : <span class="badge bg-warning text-dark">EN ATTENTE</span></small>
+        </div>
+      </div>
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <!-- === SECTION 1 : Informations générales === -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+          <fa-icon icon="building" class="me-2"></fa-icon>
+          <strong>1. Informations générales</strong>
+        </div>
+        <div class="card-body">
+          <div class="row g-3">
+
+            <!-- Client -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold" for="field_client">
+                Client <span class="text-danger">*</span>
+              </label>
+              <select
+                class="form-select"
+                id="field_client"
+                name="client"
+                [formControl]="editForm.controls.client"
+                [compareWith]="compareClient"
+                [class.is-invalid]="editForm.controls.client.invalid && editForm.controls.client.touched"
+              >
+                <option [ngValue]="null">-- Sélectionner un client --</option>
+                <option [ngValue]="c" *ngFor="let c of clientsSharedCollection">{{ c.name }}</option>
+              </select>
+              <div class="invalid-feedback">Le client est obligatoire.</div>
+            </div>
+
+            <!-- Mode de paiement -->
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">
+                Mode de paiement <span class="text-danger">*</span>
+              </label>
+              <div class="d-flex gap-3 mt-1">
+                <div
+                  class="border rounded p-3 flex-fill text-center cursor-pointer"
+                  *ngFor="let pm of paymentMethodValues"
+                  [class.border-primary]="editForm.controls.paymentMethod.value === pm"
+                  [class.bg-primary]="editForm.controls.paymentMethod.value === pm"
+                  [class.text-white]="editForm.controls.paymentMethod.value === pm"
+                  [class.border-secondary]="editForm.controls.paymentMethod.value !== pm"
+                  style="cursor:pointer"
+                  (click)="editForm.controls.paymentMethod.setValue(pm)"
+                >
+                  <fa-icon [icon]="pm === 'CASH' ? 'money-bill-wave' : 'money-check'" class="me-1"></fa-icon>
+                  {{ pm === 'CASH' ? 'Espèces' : 'Chèque' }}
+                </div>
+              </div>
+              <small
+                class="text-danger"
+                *ngIf="editForm.controls.paymentMethod.invalid && editForm.controls.paymentMethod.touched"
+              >
+                Le mode de paiement est obligatoire.
+              </small>
+            </div>
+
+            <!-- Remise globale -->
+            <div class="col-md-4">
+              <label class="form-label fw-semibold" for="field_discountPercent">
+                Remise globale (%)
+              </label>
+              <div class="input-group">
+                <input
+                  type="number"
+                  class="form-control"
+                  id="field_discountPercent"
+                  [formControl]="editForm.controls.discountPercent"
+                  min="0"
+                  max="100"
+                  step="0.5"
+                  (change)="recalcLine(0)"
+                />
+                <span class="input-group-text">%</span>
+              </div>
+            </div>
+
+            <!-- Date d'échéance -->
+            <div class="col-md-4">
+              <label class="form-label fw-semibold" for="field_dueDate">Date d'échéance</label>
+              <input
+                type="date"
+                class="form-control"
+                id="field_dueDate"
+                [formControl]="editForm.controls.dueDate"
+              />
+            </div>
+
+            <!-- Délai de paiement -->
+            <div class="col-md-4">
+              <label class="form-label fw-semibold" for="field_paymentTermsDays">Délai de paiement (jours)</label>
+              <div class="input-group">
+                <input
+                  type="number"
+                  class="form-control"
+                  id="field_paymentTermsDays"
+                  [formControl]="editForm.controls.paymentTermsDays"
+                  min="0"
+                />
+                <span class="input-group-text">j</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- === SECTION 2 : Lignes de produits === -->
+      <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <span>
+            <fa-icon icon="list" class="me-2"></fa-icon>
+            <strong>2. Produits</strong>
+          </span>
+          <button type="button" class="btn btn-light btn-sm" (click)="addLine()">
+            <fa-icon icon="plus"></fa-icon> Ajouter une ligne
+          </button>
+        </div>
+        <div class="card-body p-0">
+          <div class="table-responsive">
+            <table class="table table-hover mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th style="min-width:220px">Produit <span class="text-danger">*</span></th>
+                  <th style="width:110px">Quantité <span class="text-danger">*</span></th>
+                  <th style="width:140px">Prix unitaire</th>
+                  <th style="width:110px">Remise (%)</th>
+                  <th style="width:130px" class="text-end">Total ligne</th>
+                  <th style="width:50px"></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let line of linesArray.controls; let i = index" [formGroup]="line">
+                  <!-- Produit -->
+                  <td>
+                    <select
+                      class="form-select form-select-sm"
+                      formControlName="product"
+                      [compareWith]="compareProduct"
+                      [class.is-invalid]="line.get('product')!.invalid && line.get('product')!.touched"
+                      (change)="onProductChange(i)"
+                    >
+                      <option [ngValue]="null">-- Produit --</option>
+                      <option [ngValue]="p" *ngFor="let p of productsSharedCollection">
+                        {{ p.name }} <span *ngIf="p.sku">({{ p.sku }})</span>
+                      </option>
+                    </select>
+                  </td>
+
+                  <!-- Quantité -->
+                  <td>
+                    <input
+                      type="number"
+                      class="form-control form-control-sm"
+                      formControlName="quantity"
+                      min="1"
+                      [class.is-invalid]="line.get('quantity')!.invalid && line.get('quantity')!.touched"
+                      (change)="recalcLine(i)"
+                    />
+                  </td>
+
+                  <!-- Prix unitaire -->
+                  <td>
+                    <div class="input-group input-group-sm">
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="unitPrice"
+                        min="0"
+                        step="0.01"
+                        (change)="recalcLine(i)"
+                      />
+                      <span class="input-group-text">DT</span>
+                    </div>
+                  </td>
+
+                  <!-- Remise ligne -->
+                  <td>
+                    <div class="input-group input-group-sm">
+                      <input
+                        type="number"
+                        class="form-control"
+                        formControlName="discountPct"
+                        min="0"
+                        max="100"
+                        step="0.5"
+                        (change)="recalcLine(i)"
+                      />
+                      <span class="input-group-text">%</span>
+                    </div>
+                  </td>
+
+                  <!-- Total ligne -->
+                  <td class="text-end align-middle">
+                    <strong class="text-primary">
+                      {{ (line.getRawValue().lineTotal ?? 0) | number: '1.3-3' }} DT
+                    </strong>
+                  </td>
+
+                  <!-- Supprimer -->
+                  <td class="text-center align-middle">
+                    <button
+                      type="button"
+                      class="btn btn-outline-danger btn-sm"
+                      (click)="removeLine(i)"
+                      [disabled]="linesArray.length <= 1"
+                      title="Supprimer"
+                    >
+                      <fa-icon icon="times"></fa-icon>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Ligne vide si aucun produit -->
+                <tr *ngIf="linesArray.length === 0">
+                  <td colspan="6" class="text-center text-muted py-4">
+                    Aucune ligne. Cliquez sur « Ajouter une ligne ».
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- === SECTION 3 : Récapitulatif === -->
+      <div class="row">
+        <div class="col-md-5 ms-auto">
+          <div class="card shadow-sm border-primary">
+            <div class="card-header bg-primary text-white">
+              <fa-icon icon="calculator" class="me-2"></fa-icon>
+              <strong>Récapitulatif</strong>
+            </div>
+            <div class="card-body">
+              <table class="table table-borderless mb-0">
+                <tbody>
+                  <tr>
+                    <td class="text-muted">Sous-total HT</td>
+                    <td class="text-end fw-semibold">{{ subtotal | number: '1.3-3' }} DT</td>
+                  </tr>
+                  <tr *ngIf="discountPercent > 0">
+                    <td class="text-muted">Remise ({{ discountPercent }}%)</td>
+                    <td class="text-end text-danger">- {{ discountAmount | number: '1.3-3' }} DT</td>
+                  </tr>
+                  <tr class="border-top">
+                    <td class="fw-bold fs-5">Total TTC</td>
+                    <td class="text-end fw-bold fs-5 text-primary">{{ totalAmount | number: '1.3-3' }} DT</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- === Actions === -->
+      <div class="d-flex justify-content-end gap-2 mt-4">
+        <button type="button" class="btn btn-outline-secondary" (click)="previousState()" [disabled]="isSaving">
+          <fa-icon icon="ban"></fa-icon> Annuler
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary px-4"
+          (click)="save()"
+          [disabled]="isSaving"
+        >
+          <fa-icon *ngIf="!isSaving" icon="save"></fa-icon>
+          <fa-icon *ngIf="isSaving" icon="spinner" [spin]="true"></fa-icon>
+          {{ isSaving ? 'Enregistrement...' : (isNewOrder ? 'Soumettre l\'offre' : 'Mettre à jour') }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

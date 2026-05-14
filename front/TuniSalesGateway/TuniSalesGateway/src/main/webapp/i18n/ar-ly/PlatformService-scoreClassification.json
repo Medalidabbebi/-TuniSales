@@ -1,0 +1,11 @@
+{
+  "tuniSalesGatewayApp": {
+    "ScoreClassification": {
+      "null": "",
+      "EXCELLENT": "EXCELLENT",
+      "GOOD": "GOOD",
+      "AVERAGE": "AVERAGE",
+      "POOR": "POOR"
+    }
+  }
+}

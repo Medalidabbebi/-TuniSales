@@ -1,0 +1,44 @@
+/* after changing this file run 'npm run webapp:build' */
+
+/***************************
+TuniSalesGateway Design System Variables
+****************************/
+@import 'design-system';
+
+// Override Bootstrap variables with our design system
+$primary:       $tsg-primary;
+$secondary:     $tsg-secondary;
+$success:       $tsg-success;
+$info:          $tsg-accent;
+$warning:       $tsg-warning;
+$danger:        $tsg-danger;
+$light:         $tsg-bg;
+$dark:          $tsg-text;
+$body-bg:       $tsg-bg;
+$body-color:    $tsg-text;
+$font-family-sans-serif: $font-family-base;
+$font-size-base: $font-size-base;
+$border-radius:    $radius-sm;
+$border-radius-sm: 6px;
+$border-radius-lg: $radius-md;
+$border-color:     $tsg-border;
+$input-border-color: $tsg-border;
+$input-focus-border-color: $tsg-accent;
+$input-focus-box-shadow: 0 0 0 3px rgba(0, 168, 232, 0.15);
+$input-border-radius: $radius-sm;
+$input-padding-y: 0.5rem;
+$input-padding-x: 0.875rem;
+$btn-border-radius: $radius-sm;
+$btn-padding-y: 0.5rem;
+$btn-padding-x: 1.25rem;
+$btn-font-weight: $font-weight-medium;
+$card-border-radius: $radius-md;
+$card-border-color: $tsg-border;
+$modal-content-border-radius: $radius-lg;
+$dropdown-border-radius: $radius-md;
+$dropdown-box-shadow: $shadow-lg;
+
+@import 'bootstrap-variables';
+@import '~bootstrap/scss/bootstrap';
+
+/* jhipster-needle-scss-add-vendor JHipster will add new css style */

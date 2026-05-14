@@ -1,0 +1,12 @@
+{
+  "tuniSalesGatewayApp": {
+    "DeliveryStatus": {
+      "null": "",
+      "PENDING": "PENDING",
+      "IN_PREPARATION": "IN_PREPARATION",
+      "SHIPPED": "SHIPPED",
+      "DELIVERED": "DELIVERED",
+      "FAILED": "FAILED"
+    }
+  }
+}

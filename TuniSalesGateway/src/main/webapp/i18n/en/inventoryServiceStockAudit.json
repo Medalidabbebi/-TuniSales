@@ -1,0 +1,38 @@
+{
+  "tuniSalesGatewayApp": {
+    "inventoryServiceStockAudit": {
+      "home": {
+        "title": "Stock Audits",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Stock Audit",
+        "createOrEditLabel": "Create or edit a Stock Audit",
+        "notFound": "No Stock Audits found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Stock Audit {{ id }}?"
+      },
+      "detail": {
+        "title": "Stock Audit"
+      },
+      "id": "ID",
+      "tenantId": "Tenant Id",
+      "status": "Status",
+      "theoreticalCount": "Theoretical Count",
+      "physicalCount": "Physical Count",
+      "discrepancyCount": "Discrepancy Count",
+      "notes": "Notes",
+      "auditorLogin": "Auditor Login",
+      "startedAt": "Started At",
+      "closedAt": "Closed At",
+      "auditLines": "Audit Lines",
+      "warehouse": "Warehouse"
+    }
+  },
+  "inventoryServiceApp": {
+    "inventoryServiceStockAudit": {
+      "created": "A new Stock Audit is created with identifier {{ param }}",
+      "updated": "A Stock Audit is updated with identifier {{ param }}",
+      "deleted": "A Stock Audit is deleted with identifier {{ param }}"
+    }
+  }
+}

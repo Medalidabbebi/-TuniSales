@@ -1,0 +1,103 @@
+<div class="container-fluid py-4">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="OrderLineItemHeading">
+        <fa-icon icon="list" class="me-2 text-primary"></fa-icon>
+        Articles de Ligne de Commande
+      </h2>
+      <small class="text-muted">Liste des articles de ligne de commande</small>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+        Actualiser
+      </button>
+      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/order-line-item/new']">
+        <fa-icon icon="plus" class="me-1"></fa-icon>
+        Nouvel Article
+      </a>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- Chargement -->
+  <div class="text-center py-5" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
+    <p class="text-muted mt-2">Chargement...</p>
+  </div>
+
+  <!-- Aucun résultat -->
+  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && orderLineItems?.length === 0">
+    <fa-icon icon="list" size="3x" class="text-muted mb-3"></fa-icon>
+    <p class="text-muted">Aucun article de ligne de commande trouvé.</p>
+    <a class="btn btn-primary mt-2" [routerLink]="['/order-line-item/new']">
+      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+    </a>
+  </div>
+
+  <!-- Table -->
+  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && orderLineItems && orderLineItems.length > 0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
+        <thead class="table-light">
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+            <th scope="col" jhiSortBy="id" style="width:60px">
+              <div class="d-flex align-items-center gap-1">ID <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="orderLine.id">
+              <div class="d-flex align-items-center gap-1">Ligne commande <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="stockItemImei">
+              <div class="d-flex align-items-center gap-1">Produit / description <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="stockItemId">
+              <div class="d-flex align-items-center gap-1">Quantité <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="assignedAt">
+              <div class="d-flex align-items-center gap-1">Prix <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" style="width:140px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let orderLineItem of orderLineItems; trackBy: trackId" data-cy="entityTable">
+            <td>
+              <a [routerLink]="['/order-line-item', orderLineItem.id, 'view']" class="fw-semibold text-decoration-none">{{ orderLineItem.id }}</a>
+            </td>
+            <td>
+              <a *ngIf="orderLineItem.orderLine" [routerLink]="['/order-line', orderLineItem.orderLine.id, 'view']" class="text-decoration-none">
+                Ligne #{{ orderLineItem.orderLine.id }}
+              </a>
+              <span *ngIf="!orderLineItem.orderLine" class="text-muted fst-italic">—</span>
+            </td>
+            <td>
+              <code *ngIf="orderLineItem.stockItemImei" class="text-secondary">{{ orderLineItem.stockItemImei }}</code>
+              <span *ngIf="!orderLineItem.stockItemImei" class="text-muted fst-italic">Stock ID: {{ orderLineItem.stockItemId || '—' }}</span>
+            </td>
+            <td>{{ orderLineItem.stockItemId || 1 }}</td>
+            <td><span class="text-muted small">{{ orderLineItem.assignedAt | formatMediumDatetime }}</span></td>
+            <td>
+              <div class="d-flex gap-1 justify-content-end">
+                <a [routerLink]="['/order-line-item', orderLineItem.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+                  <fa-icon icon="eye"></fa-icon>
+                </a>
+                <a [routerLink]="['/order-line-item', orderLineItem.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                  <fa-icon icon="pencil-alt"></fa-icon>
+                </a>
+                <button (click)="delete(orderLineItem)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+</div>

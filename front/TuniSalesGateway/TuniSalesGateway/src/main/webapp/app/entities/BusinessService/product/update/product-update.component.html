@@ -1,0 +1,178 @@
+<div class="tsg-form-page">
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm" class="tsg-form-shell">
+    <div class="tsg-page-header">
+      <div>
+        <h1
+          class="tsg-page-header__title"
+          id="jhi-product-heading"
+          data-cy="ProductCreateUpdateHeading"
+          jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.home.createOrEditLabel"
+        >
+          Create or edit product
+        </h1>
+        <p class="tsg-page-header__subtitle">Keep catalog data, pricing, and lifecycle flags in one place.</p>
+      </div>
+      <div class="tsg-page-header__actions">
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="tsg-btn tsg-btn--secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>
+          <span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+        <button type="submit" id="save-entity" data-cy="entityCreateSaveButton" [disabled]="editForm.invalid || isSaving" class="tsg-btn tsg-btn--primary">
+          <fa-icon icon="save"></fa-icon>
+          <span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </div>
+
+    <jhi-alert-error></jhi-alert-error>
+
+    <div class="tsg-summary-grid">
+      <div class="tsg-summary-card">
+        <div class="tsg-summary-card__label">Product name</div>
+        <div class="tsg-summary-card__value">{{ getProductSnapshotName() }}</div>
+        <div class="tsg-summary-card__meta">Tenant {{ editForm.get('tenantId')?.value || '—' }}</div>
+      </div>
+      <div class="tsg-summary-card">
+        <div class="tsg-summary-card__label">Price</div>
+        <div class="tsg-summary-card__value">{{ getAmount(editForm.get('price')?.value) }}</div>
+        <div class="tsg-summary-card__meta">Tax {{ editForm.get('taxRate')?.value || '—' }}%</div>
+      </div>
+      <div class="tsg-summary-card">
+        <div class="tsg-summary-card__label">Status</div>
+        <div class="tsg-summary-card__value">
+          <span class="tsg-badge" [ngClass]="getStatusClass()">
+            {{ editForm.get('isActive')?.value ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+        <div class="tsg-summary-card__meta">Catalog visibility</div>
+      </div>
+      <div class="tsg-summary-card">
+        <div class="tsg-summary-card__label">Category</div>
+        <div class="tsg-summary-card__value">{{ editForm.get('category')?.value || '—' }}</div>
+        <div class="tsg-summary-card__meta">{{ editForm.get('brand')?.value || 'No brand' }}</div>
+      </div>
+    </div>
+
+    <div class="tsg-form-grid">
+      <section class="tsg-form-card">
+        <div class="tsg-form-card__header">
+          <h2>Catalog</h2>
+        </div>
+
+        <div class="tsg-form-group" *ngIf="editForm.controls.id.value !== null">
+          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="tsg-input" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="tsg-form-group">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.tenantId" for="field_tenantId">Tenant Id</label>
+          <input type="number" class="tsg-input" name="tenantId" id="field_tenantId" data-cy="tenantId" formControlName="tenantId" />
+          <div *ngIf="editForm.get('tenantId')!.invalid && (editForm.get('tenantId')!.dirty || editForm.get('tenantId')!.touched)">
+            <small class="tsg-field-error" *ngIf="editForm.get('tenantId')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
+            <small class="tsg-field-error" [hidden]="!editForm.get('tenantId')?.errors?.number" jhiTranslate="entity.validation.number">This field must be a number.</small>
+          </div>
+        </div>
+
+        <div class="tsg-form-group">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.sku" for="field_sku">Sku</label>
+          <input type="text" class="tsg-input" name="sku" id="field_sku" data-cy="sku" formControlName="sku" />
+          <div *ngIf="editForm.get('sku')!.invalid && (editForm.get('sku')!.dirty || editForm.get('sku')!.touched)">
+            <small class="tsg-field-error" *ngIf="editForm.get('sku')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
+            <small class="tsg-field-error" *ngIf="editForm.get('sku')?.errors?.minlength" jhiTranslate="entity.validation.minlength" [translateValues]="{ min: 3 }">This field must be at least 3 characters long.</small>
+            <small class="tsg-field-error" *ngIf="editForm.get('sku')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">This field cannot exceed 100 characters.</small>
+          </div>
+        </div>
+
+        <div class="tsg-form-group">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.name" for="field_name">Name</label>
+          <input type="text" class="tsg-input" name="name" id="field_name" data-cy="name" formControlName="name" />
+          <div *ngIf="editForm.get('name')!.invalid && (editForm.get('name')!.dirty || editForm.get('name')!.touched)">
+            <small class="tsg-field-error" *ngIf="editForm.get('name')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
+            <small class="tsg-field-error" *ngIf="editForm.get('name')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 255 }">This field cannot exceed 255 characters.</small>
+          </div>
+        </div>
+
+        <div class="tsg-form-group">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.brand" for="field_brand">Brand</label>
+          <input type="text" class="tsg-input" name="brand" id="field_brand" data-cy="brand" formControlName="brand" />
+          <div *ngIf="editForm.get('brand')!.invalid && (editForm.get('brand')!.dirty || editForm.get('brand')!.touched)">
+            <small class="tsg-field-error" *ngIf="editForm.get('brand')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">This field cannot exceed 100 characters.</small>
+          </div>
+        </div>
+
+        <div class="tsg-form-group">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.category" for="field_category">Category</label>
+          <input type="text" class="tsg-input" name="category" id="field_category" data-cy="category" formControlName="category" />
+          <div *ngIf="editForm.get('category')!.invalid && (editForm.get('category')!.dirty || editForm.get('category')!.touched)">
+            <small class="tsg-field-error" *ngIf="editForm.get('category')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">This field cannot exceed 100 characters.</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="tsg-form-card">
+        <div class="tsg-form-card__header">
+          <h2>Pricing and status</h2>
+        </div>
+
+        <div class="tsg-form-grid--two">
+          <div class="tsg-form-group">
+            <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.price" for="field_price">Price</label>
+            <input type="number" class="tsg-input" name="price" id="field_price" data-cy="price" formControlName="price" />
+            <div *ngIf="editForm.get('price')!.invalid && (editForm.get('price')!.dirty || editForm.get('price')!.touched)">
+              <small class="tsg-field-error" *ngIf="editForm.get('price')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
+              <small class="tsg-field-error" *ngIf="editForm.get('price')?.errors?.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">This field must be greater than or equal to 0.</small>
+              <small class="tsg-field-error" [hidden]="!editForm.get('price')?.errors?.number" jhiTranslate="entity.validation.number">This field must be a number.</small>
+            </div>
+          </div>
+
+          <div class="tsg-form-group">
+            <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.taxRate" for="field_taxRate">Tax Rate</label>
+            <input type="number" class="tsg-input" name="taxRate" id="field_taxRate" data-cy="taxRate" formControlName="taxRate" />
+            <div *ngIf="editForm.get('taxRate')!.invalid && (editForm.get('taxRate')!.dirty || editForm.get('taxRate')!.touched)">
+              <small class="tsg-field-error" *ngIf="editForm.get('taxRate')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
+              <small class="tsg-field-error" *ngIf="editForm.get('taxRate')?.errors?.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">This field must be greater than or equal to 0.</small>
+              <small class="tsg-field-error" *ngIf="editForm.get('taxRate')?.errors?.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 100 }">This field must be less than or equal to 100.</small>
+              <small class="tsg-field-error" [hidden]="!editForm.get('taxRate')?.errors?.number" jhiTranslate="entity.validation.number">This field must be a number.</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="tsg-form-group">
+          <label class="tsg-checkbox" for="field_isActive">
+            <input type="checkbox" name="isActive" id="field_isActive" data-cy="isActive" formControlName="isActive" />
+            <span jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.isActive">Is Active</span>
+          </label>
+          <div *ngIf="editForm.get('isActive')!.invalid && (editForm.get('isActive')!.dirty || editForm.get('isActive')!.touched)">
+            <small class="tsg-field-error" *ngIf="editForm.get('isActive')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
+          </div>
+        </div>
+
+        <div class="tsg-form-group">
+          <label class="tsg-checkbox" for="field_isDeleted">
+            <input type="checkbox" name="isDeleted" id="field_isDeleted" data-cy="isDeleted" formControlName="isDeleted" />
+            <span jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.isDeleted">Is Deleted</span>
+          </label>
+          <div *ngIf="editForm.get('isDeleted')!.invalid && (editForm.get('isDeleted')!.dirty || editForm.get('isDeleted')!.touched)">
+            <small class="tsg-field-error" *ngIf="editForm.get('isDeleted')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
+          </div>
+        </div>
+
+        <div class="tsg-form-grid--two">
+          <div class="tsg-form-group">
+            <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.createdAt" for="field_createdAt">Created At</label>
+            <input id="field_createdAt" data-cy="createdAt" type="datetime-local" class="tsg-input" name="createdAt" formControlName="createdAt" placeholder="YYYY-MM-DD HH:mm" />
+            <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
+              <small class="tsg-field-error" *ngIf="editForm.get('createdAt')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
+              <small class="tsg-field-error" [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal" jhiTranslate="entity.validation.datetimelocal">This field must be a date and time.</small>
+            </div>
+          </div>
+
+          <div class="tsg-form-group">
+            <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.updatedAt" for="field_updatedAt">Updated At</label>
+            <input id="field_updatedAt" data-cy="updatedAt" type="datetime-local" class="tsg-input" name="updatedAt" formControlName="updatedAt" placeholder="YYYY-MM-DD HH:mm" />
+          </div>
+        </div>
+      </section>
+    </div>
+  </form>
+</div>

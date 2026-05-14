@@ -1,0 +1,35 @@
+{
+  "tuniSalesGatewayApp": {
+    "platformServiceObjective": {
+      "home": {
+        "title": "Objectives",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Objective",
+        "createOrEditLabel": "Créer ou éditer un Objective",
+        "notFound": "Aucun Objective trouvé"
+      },
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Objective {{ id }} ?"
+      },
+      "detail": {
+        "title": "Objective"
+      },
+      "id": "ID",
+      "tenantId": "Tenant Id",
+      "assignedToLogin": "Assigned To Login",
+      "period": "Period",
+      "metricType": "Metric Type",
+      "targetValue": "Target Value",
+      "achievedValue": "Achieved Value",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    }
+  },
+  "platformServiceApp": {
+    "platformServiceObjective": {
+      "created": "Un nouveau Objective a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Objective avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Objective avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

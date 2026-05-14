@@ -1,0 +1,116 @@
+<div class="container-fluid py-4">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="DocumentHeading">
+        <fa-icon icon="file-alt" class="me-2 text-primary"></fa-icon>
+        Gestion des Documents
+      </h2>
+      <small class="text-muted">Liste des documents — {{ totalItems }} document(s) au total</small>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+        Actualiser
+      </button>
+      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/document/new']">
+        <fa-icon icon="plus" class="me-1"></fa-icon>
+        Nouveau Document
+      </a>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- Chargement -->
+  <div class="text-center py-5" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
+    <p class="text-muted mt-2">Chargement...</p>
+  </div>
+
+  <!-- Aucun résultat -->
+  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && documents?.length === 0">
+    <fa-icon icon="file-alt" size="3x" class="text-muted mb-3"></fa-icon>
+    <p class="text-muted">Aucun document trouvé.</p>
+    <a class="btn btn-primary mt-2" [routerLink]="['/document/new']">
+      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+    </a>
+  </div>
+
+  <!-- Table -->
+  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && documents && documents.length > 0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
+        <thead class="table-light">
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+            <th scope="col" jhiSortBy="id" style="width:60px">
+              <div class="d-flex align-items-center gap-1">ID <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="filename">
+              <div class="d-flex align-items-center gap-1">Nom <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="docType">
+              <div class="d-flex align-items-center gap-1">Type <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="sizeBytes">
+              <div class="d-flex align-items-center gap-1">Taille <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="createdAt">
+              <div class="d-flex align-items-center gap-1">Date upload <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" style="width:140px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let document of documents; trackBy: trackId" data-cy="entityTable">
+            <td>
+              <a [routerLink]="['/document', document.id, 'view']" class="fw-semibold text-decoration-none">{{ document.id }}</a>
+            </td>
+            <td>
+              <div class="fw-semibold">{{ document.filename || '—' }}</div>
+              <small class="text-muted">{{ document.mimeType || '' }}</small>
+            </td>
+            <td>
+              <span class="badge rounded-pill bg-info">{{ document.docType || '—' }}</span>
+            </td>
+            <td>
+              <span *ngIf="document.sizeBytes" class="text-muted small">{{ (document.sizeBytes / 1024) | number:'1.0-1' }} Ko</span>
+              <span *ngIf="!document.sizeBytes" class="text-muted fst-italic">—</span>
+            </td>
+            <td><span class="text-muted small">{{ document.createdAt | formatMediumDatetime }}</span></td>
+            <td>
+              <div class="d-flex gap-1 justify-content-end">
+                <a [routerLink]="['/document', document.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+                  <fa-icon icon="eye"></fa-icon>
+                </a>
+                <a [routerLink]="['/document', document.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                  <fa-icon icon="pencil-alt"></fa-icon>
+                </a>
+                <button (click)="delete(document)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="documents && documents.length > 0">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [page]="page"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="navigateToPage($event)"
+    ></ngb-pagination>
+  </div>
+
+</div>

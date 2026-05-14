@@ -1,0 +1,36 @@
+{
+  "tuniSalesGatewayApp": {
+    "businessServiceMission": {
+      "home": {
+        "title": "Missions",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mission",
+        "createOrEditLabel": "Create or edit a Mission",
+        "notFound": "No Missions found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Mission {{ id }}?"
+      },
+      "detail": {
+        "title": "Mission"
+      },
+      "id": "ID",
+      "tenantId": "Tenant Id",
+      "assignedToLogin": "Assigned To Login",
+      "title": "Title",
+      "description": "Description",
+      "missionDate": "Mission Date",
+      "status": "Status",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "visits": "Visits"
+    }
+  },
+  "businessServiceApp": {
+    "businessServiceMission": {
+      "created": "A new Mission is created with identifier {{ param }}",
+      "updated": "A Mission is updated with identifier {{ param }}",
+      "deleted": "A Mission is deleted with identifier {{ param }}"
+    }
+  }
+}

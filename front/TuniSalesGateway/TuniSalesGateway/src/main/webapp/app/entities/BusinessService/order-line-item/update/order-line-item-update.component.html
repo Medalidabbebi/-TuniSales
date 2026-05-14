@@ -1,0 +1,155 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-order-line-item-heading"
+        data-cy="OrderLineItemCreateUpdateHeading"
+        jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.home.createOrEditLabel"
+      >
+        Créer ou éditer un Order Line Item
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
+          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.stockItemId" for="field_stockItemId"
+            >Stock Item Id</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="stockItemId"
+            id="field_stockItemId"
+            data-cy="stockItemId"
+            formControlName="stockItemId"
+          />
+          <div *ngIf="editForm.get('stockItemId')!.invalid && (editForm.get('stockItemId')!.dirty || editForm.get('stockItemId')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('stockItemId')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('stockItemId')?.errors?.number"
+              jhiTranslate="entity.validation.number"
+            >
+              Ce champ doit être un nombre.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.stockItemImei" for="field_stockItemImei"
+            >Stock Item Imei</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="stockItemImei"
+            id="field_stockItemImei"
+            data-cy="stockItemImei"
+            formControlName="stockItemImei"
+          />
+          <div
+            *ngIf="
+              editForm.get('stockItemImei')!.invalid && (editForm.get('stockItemImei')!.dirty || editForm.get('stockItemImei')!.touched)
+            "
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('stockItemImei')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 15 }"
+            >
+              Ce champ doit faire moins de 15 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.assignedAt" for="field_assignedAt"
+            >Assigned At</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_assignedAt"
+              data-cy="assignedAt"
+              type="datetime-local"
+              class="form-control"
+              name="assignedAt"
+              formControlName="assignedAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          <div *ngIf="editForm.get('assignedAt')!.invalid && (editForm.get('assignedAt')!.dirty || editForm.get('assignedAt')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('assignedAt')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('assignedAt')?.errors?.datetimelocal"
+              jhiTranslate="entity.validation.datetimelocal"
+            >
+              Ce champ doit être une date et une heure.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.orderLine" for="field_orderLine"
+            >Order Line</label
+          >
+          <select
+            class="form-control"
+            id="field_orderLine"
+            data-cy="orderLine"
+            name="orderLine"
+            formControlName="orderLine"
+            [compareWith]="compareOrderLine"
+          >
+            <option *ngIf="editForm.get(['orderLine'])!.value == null" [ngValue]="null" selected></option>
+            <option [ngValue]="orderLineOption" *ngFor="let orderLineOption of orderLinesSharedCollection">{{ orderLineOption.id }}</option>
+          </select>
+        </div>
+        <div *ngIf="editForm.get(['orderLine'])!.invalid && (editForm.get(['orderLine'])!.dirty || editForm.get(['orderLine'])!.touched)">
+          <small
+            class="form-text text-danger"
+            *ngIf="editForm.get(['orderLine'])?.errors?.required"
+            jhiTranslate="entity.validation.required"
+          >
+            Ce champ est obligatoire.
+          </small>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

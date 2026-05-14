@@ -1,0 +1,129 @@
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-7 col-lg-6">
+
+      <div class="d-flex align-items-center mb-4">
+        <button type="button" class="btn btn-outline-secondary me-3" (click)="previousState()">
+          <fa-icon icon="arrow-left"></fa-icon>
+        </button>
+        <h2 class="mb-0">
+          {{ editForm.controls.id.value ? 'Modifier le Stock Item #' + editForm.controls.id.value : 'Nouveau Stock Item' }}
+        </h2>
+      </div>
+
+      <div class="alert alert-danger" *ngIf="serverError">
+        <fa-icon icon="exclamation-triangle" class="me-2"></fa-icon>
+        <strong>Erreur :</strong> {{ serverError }}
+      </div>
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <fa-icon icon="boxes" class="me-2"></fa-icon>
+            <strong>Informations du stock</strong>
+          </div>
+          <div class="card-body">
+
+            <!-- Entrepôt -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold" for="field_warehouse">Entrepôt</label>
+              <select class="form-select" id="field_warehouse" formControlName="warehouse" [compareWith]="compareWarehouse">
+                <option [ngValue]="null">-- Sélectionner un entrepôt --</option>
+                <option *ngFor="let w of warehousesSharedCollection; trackBy: trackWarehouseById" [ngValue]="w">
+                  {{ w.name }}
+                </option>
+              </select>
+            </div>
+
+            <!-- Produit ID -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold" for="field_productId">
+                ID Produit <span class="text-danger">*</span>
+              </label>
+              <input
+                type="number"
+                class="form-control"
+                id="field_productId"
+                formControlName="productId"
+                placeholder="Ex: 3"
+                [class.is-invalid]="editForm.get('productId')!.invalid && editForm.get('productId')!.touched"
+              />
+              <div class="form-text text-muted">
+                Entrez l'ID du produit tel qu'il apparaît dans BusinessService (page Produits).
+              </div>
+              <div class="invalid-feedback">L'ID produit est obligatoire.</div>
+            </div>
+
+            <!-- Nom produit -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold" for="field_productName">Nom du produit</label>
+              <input
+                type="text"
+                class="form-control"
+                id="field_productName"
+                formControlName="productName"
+                placeholder="Ex: AGP lavender"
+              />
+              <div class="form-text text-muted">Copie locale du nom (information uniquement).</div>
+            </div>
+
+            <!-- IMEI -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold" for="field_imei">
+                IMEI <span class="text-muted fw-normal">(optionnel)</span>
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="field_imei"
+                formControlName="imei"
+                placeholder="15 chiffres — laisser vide si non applicable"
+                [class.is-invalid]="editForm.get('imei')!.invalid && editForm.get('imei')!.touched"
+                maxlength="15"
+              />
+              <div class="form-text text-muted">
+                Chaque IMEI doit être unique. Laissez vide pour les produits sans numéro de série.
+              </div>
+              <div class="invalid-feedback">
+                L'IMEI doit faire exactement 15 caractères s'il est renseigné.
+              </div>
+            </div>
+
+            <!-- Statut -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold" for="field_status">
+                Statut <span class="text-danger">*</span>
+              </label>
+              <select
+                class="form-select"
+                id="field_status"
+                formControlName="status"
+                [class.is-invalid]="editForm.get('status')!.invalid && editForm.get('status')!.touched"
+              >
+                <option [ngValue]="null">-- Sélectionner un statut --</option>
+                <option *ngFor="let s of stockItemStatusValues" [value]="s">{{ s }}</option>
+              </select>
+              <div class="invalid-feedback">Le statut est obligatoire.</div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="d-flex justify-content-end gap-2 mt-4">
+          <button type="button" class="btn btn-outline-secondary" (click)="previousState()" [disabled]="isSaving">
+            <fa-icon icon="ban"></fa-icon> Annuler
+          </button>
+          <button type="submit" class="btn btn-primary px-4" [disabled]="editForm.invalid || isSaving">
+            <fa-icon *ngIf="!isSaving" icon="save"></fa-icon>
+            <fa-icon *ngIf="isSaving" icon="spinner" [spin]="true"></fa-icon>
+            {{ isSaving ? 'Enregistrement...' : 'Sauvegarder' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,166 @@
+<div>
+  <h2 id="page-heading" data-cy="StockItemHeading">
+    <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.home.title">StockItems</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-stock-item"
+        [routerLink]="['/stock-item/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.home.createLabel"> Créer un nouveau Stock Item </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="stockItems?.length === 0">
+    <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.home.notFound">Aucun Stock Item trouvé</span>
+  </div>
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="stockItems && stockItems.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+          <th scope="col" jhiSortBy="id">
+            <div class="d-flex">
+              <span jhiTranslate="global.field.id">ID</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="tenantId">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.tenantId">Tenant Id</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="productId">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.productId">Product Id</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="productName">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.productName">Product Name</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="imei">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.imei">Imei</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="status">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.status">Status</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="isDeleted">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.isDeleted">Is Deleted</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="acquiredAt">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.acquiredAt">Acquired At</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="updatedAt">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.updatedAt">Updated At</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="warehouse.name">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.warehouse">Warehouse</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let stockItem of stockItems; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/stock-item', stockItem.id, 'view']">{{ stockItem.id }}</a>
+          </td>
+          <td>{{ stockItem.tenantId }}</td>
+          <td>{{ stockItem.productId }}</td>
+          <td>{{ stockItem.productName }}</td>
+          <td>{{ stockItem.imei }}</td>
+          <td jhiTranslate="{{ 'tuniSalesGatewayApp.StockItemStatus.' + stockItem.status }}">{{ stockItem.status }}</td>
+          <td>{{ stockItem.isDeleted }}</td>
+          <td>{{ stockItem.acquiredAt | formatMediumDatetime }}</td>
+          <td>{{ stockItem.updatedAt | formatMediumDatetime }}</td>
+          <td>
+            <div *ngIf="stockItem.warehouse">
+              <a [routerLink]="['/warehouse', stockItem.warehouse.id, 'view']">{{ stockItem.warehouse.name }}</a>
+            </div>
+          </td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/stock-item', stockItem.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Voir</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/stock-item', stockItem.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Editer</span>
+              </button>
+
+              <button type="submit" (click)="delete(stockItem)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Supprimer</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="stockItems && stockItems.length > 0">
+    <div class="d-flex justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

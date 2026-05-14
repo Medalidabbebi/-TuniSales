@@ -1,0 +1,28 @@
+<form *ngIf="orderLineItem" name="deleteForm" (ngSubmit)="confirmDelete(orderLineItem.id!)">
+  <div class="modal-header">
+    <h4 class="modal-title" data-cy="orderLineItemDeleteDialogHeading" jhiTranslate="entity.delete.title">Confirmation de suppression</h4>
+
+    <button type="button" class="btn-close" data-dismiss="modal" aria-hidden="true" (click)="cancel()">&times;</button>
+  </div>
+
+  <div class="modal-body">
+    <jhi-alert-error></jhi-alert-error>
+    <p
+      id="jhi-delete-orderLineItem-heading"
+      jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.delete.question"
+      [translateValues]="{ id: orderLineItem.id }"
+    >
+      Êtes-vous certain de vouloir supprimer le Order Line Item {{ orderLineItem.id }} ?
+    </p>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="cancel()">
+      <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
+    </button>
+
+    <button id="jhi-confirm-delete-orderLineItem" data-cy="entityConfirmDeleteButton" type="submit" class="btn btn-danger">
+      <fa-icon icon="times"></fa-icon>&nbsp;<span jhiTranslate="entity.action.delete">Supprimer</span>
+    </button>
+  </div>
+</form>

@@ -1,0 +1,36 @@
+{
+  "tuniSalesGatewayApp": {
+    "inventoryServiceStockMovement": {
+      "home": {
+        "title": "StockMovements",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Stock Movement",
+        "createOrEditLabel": "Créer ou éditer un Stock Movement",
+        "notFound": "Aucun Stock Movement trouvé"
+      },
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Stock Movement {{ id }} ?"
+      },
+      "detail": {
+        "title": "Stock Movement"
+      },
+      "id": "ID",
+      "movementType": "Movement Type",
+      "reason": "Reason",
+      "reference": "Reference",
+      "quantity": "Quantity",
+      "performedByLogin": "Performed By Login",
+      "createdAt": "Created At",
+      "fromWarehouse": "From Warehouse",
+      "toWarehouse": "To Warehouse",
+      "stockItem": "Stock Item"
+    }
+  },
+  "inventoryServiceApp": {
+    "inventoryServiceStockMovement": {
+      "created": "Un nouveau Stock Movement a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Stock Movement avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Stock Movement avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

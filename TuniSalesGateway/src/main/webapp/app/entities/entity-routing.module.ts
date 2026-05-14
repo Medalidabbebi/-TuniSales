@@ -1,0 +1,244 @@
+import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
+
+import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+import { Authority } from 'app/config/authority.constants';
+
+@NgModule({
+  imports: [
+    RouterModule.forChild([
+      {
+        path: 'audit-log',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.platformServiceAuditLog.home.title',
+          authorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./PlatformService/audit-log/audit-log.module').then(m => m.PlatformServiceAuditLogModule),
+      },
+      {
+        path: 'client',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.businessServiceClient.home.title',
+          authorities: [Authority.COMMERCIAL, Authority.ADMIN_COMMERCIAL, Authority.ADMIN_SYSTEME],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./BusinessService/client/client.module').then(m => m.BusinessServiceClientModule),
+      },
+      {
+        path: 'client-contact',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.businessServiceClientContact.home.title',
+          authorities: [Authority.COMMERCIAL, Authority.ADMIN_COMMERCIAL],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () =>
+          import('./BusinessService/client-contact/client-contact.module').then(m => m.BusinessServiceClientContactModule),
+      },
+      {
+        path: 'client-score',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.platformServiceClientScore.home.title',
+          authorities: [Authority.ADMIN_COMMERCIAL, Authority.ADMIN_CLIENT],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./PlatformService/client-score/client-score.module').then(m => m.PlatformServiceClientScoreModule),
+      },
+      {
+        path: 'delivery',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.businessServiceDelivery.home.title',
+          authorities: [Authority.COMMERCIAL, Authority.ADMIN_COMMERCIAL, Authority.ADMIN_CLIENT, Authority.RESPONSABLE_PV],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./BusinessService/delivery/delivery.module').then(m => m.BusinessServiceDeliveryModule),
+      },
+      {
+        path: 'document',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.platformServiceDocument.home.title',
+          authorities: [Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.ADMIN_SYSTEME],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./PlatformService/document/document.module').then(m => m.PlatformServiceDocumentModule),
+      },
+      {
+        path: 'invoice',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.businessServiceInvoice.home.title',
+          authorities: [Authority.ADMIN_COMMERCIAL, Authority.ADMIN_SYSTEME, Authority.COMMERCIAL],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./BusinessService/invoice/invoice.module').then(m => m.BusinessServiceInvoiceModule),
+      },
+      {
+        path: 'mission',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.businessServiceMission.home.title',
+          authorities: [Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./BusinessService/mission/mission.module').then(m => m.BusinessServiceMissionModule),
+      },
+      {
+        path: 'notification',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.platformServiceNotification.home.title',
+          authorities: [
+            Authority.ADMIN_SYSTEME,
+            Authority.ADMIN_COMMERCIAL,
+            Authority.COMMERCIAL,
+            Authority.MAGASINIER,
+            Authority.CHEF_PARC,
+            Authority.RESPONSABLE_PV,
+            Authority.VENDEUR,
+            Authority.ADMIN_CLIENT,
+          ],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./PlatformService/notification/notification.module').then(m => m.PlatformServiceNotificationModule),
+      },
+      {
+        path: 'objective',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.platformServiceObjective.home.title',
+          authorities: [Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./PlatformService/objective/objective.module').then(m => m.PlatformServiceObjectiveModule),
+      },
+      {
+        path: 'order',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.businessServiceOrder.home.title',
+          authorities: [Authority.COMMERCIAL, Authority.ADMIN_COMMERCIAL],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./BusinessService/order/order.module').then(m => m.BusinessServiceOrderModule),
+      },
+      {
+        path: 'order-line',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.businessServiceOrderLine.home.title',
+          authorities: [Authority.COMMERCIAL, Authority.ADMIN_COMMERCIAL],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./BusinessService/order-line/order-line.module').then(m => m.BusinessServiceOrderLineModule),
+      },
+      {
+        path: 'order-line-item',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.businessServiceOrderLineItem.home.title',
+          authorities: [Authority.COMMERCIAL, Authority.ADMIN_COMMERCIAL],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () =>
+          import('./BusinessService/order-line-item/order-line-item.module').then(m => m.BusinessServiceOrderLineItemModule),
+      },
+      {
+        path: 'performance-score',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.platformServicePerformanceScore.home.title',
+          authorities: [Authority.ADMIN_COMMERCIAL, Authority.ADMIN_SYSTEME, Authority.COMMERCIAL, Authority.CHEF_PARC],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () =>
+          import('./PlatformService/performance-score/performance-score.module').then(m => m.PlatformServicePerformanceScoreModule),
+      },
+      {
+        path: 'price-list',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.businessServicePriceList.home.title',
+          authorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./BusinessService/price-list/price-list.module').then(m => m.BusinessServicePriceListModule),
+      },
+      {
+        path: 'product',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.businessServiceProduct.home.title',
+          authorities: [Authority.COMMERCIAL, Authority.ADMIN_COMMERCIAL, Authority.ADMIN_SYSTEME],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./BusinessService/product/product.module').then(m => m.BusinessServiceProductModule),
+      },
+      {
+        path: 'stock-audit',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.inventoryServiceStockAudit.home.title',
+          authorities: [Authority.MAGASINIER, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.ADMIN_SYSTEME],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./InventoryService/stock-audit/stock-audit.module').then(m => m.InventoryServiceStockAuditModule),
+      },
+      {
+        path: 'stock-audit-line',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.inventoryServiceStockAuditLine.home.title',
+          authorities: [Authority.MAGASINIER, Authority.COMMERCIAL, Authority.ADMIN_COMMERCIAL],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () =>
+          import('./InventoryService/stock-audit-line/stock-audit-line.module').then(m => m.InventoryServiceStockAuditLineModule),
+      },
+      {
+        path: 'stock-item',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.inventoryServiceStockItem.home.title',
+          authorities: [Authority.MAGASINIER, Authority.COMMERCIAL, Authority.ADMIN_COMMERCIAL, Authority.ADMIN_SYSTEME],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./InventoryService/stock-item/stock-item.module').then(m => m.InventoryServiceStockItemModule),
+      },
+      {
+        path: 'stock-movement',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.inventoryServiceStockMovement.home.title',
+          authorities: [Authority.MAGASINIER, Authority.ADMIN_COMMERCIAL, Authority.ADMIN_SYSTEME, Authority.COMMERCIAL],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () =>
+          import('./InventoryService/stock-movement/stock-movement.module').then(m => m.InventoryServiceStockMovementModule),
+      },
+      {
+        path: 'swap',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.inventoryServiceSwap.home.title',
+          authorities: [Authority.MAGASINIER, Authority.ADMIN_COMMERCIAL],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./InventoryService/swap/swap.module').then(m => m.InventoryServiceSwapModule),
+      },
+      {
+        path: 'tenant',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.platformServiceTenant.home.title',
+          authorities: [Authority.ADMIN_SYSTEME],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./PlatformService/tenant/tenant.module').then(m => m.PlatformServiceTenantModule),
+      },
+      {
+        path: 'visit',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.businessServiceVisit.home.title',
+          authorities: [Authority.COMMERCIAL, Authority.ADMIN_COMMERCIAL],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./BusinessService/visit/visit.module').then(m => m.BusinessServiceVisitModule),
+      },
+      {
+        path: 'warehouse',
+        data: {
+          pageTitle: 'tuniSalesGatewayApp.inventoryServiceWarehouse.home.title',
+          authorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER],
+        },
+        canActivate: [UserRouteAccessService],
+        loadChildren: () => import('./InventoryService/warehouse/warehouse.module').then(m => m.InventoryServiceWarehouseModule),
+      },
+      /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
+    ]),
+  ],
+})
+export class EntityRoutingModule {}

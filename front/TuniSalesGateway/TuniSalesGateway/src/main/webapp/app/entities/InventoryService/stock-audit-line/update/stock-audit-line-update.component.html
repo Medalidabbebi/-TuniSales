@@ -1,0 +1,195 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-stock-audit-line-heading"
+        data-cy="StockAuditLineCreateUpdateHeading"
+        jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.home.createOrEditLabel"
+      >
+        Créer ou éditer un Stock Audit Line
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
+          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="row mb-3">
+          <label
+            class="form-label"
+            jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.foundPhysically"
+            for="field_foundPhysically"
+            >Found Physically</label
+          >
+          <input
+            type="checkbox"
+            class="form-check"
+            name="foundPhysically"
+            id="field_foundPhysically"
+            data-cy="foundPhysically"
+            formControlName="foundPhysically"
+          />
+          <div
+            *ngIf="
+              editForm.get('foundPhysically')!.invalid &&
+              (editForm.get('foundPhysically')!.dirty || editForm.get('foundPhysically')!.touched)
+            "
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('foundPhysically')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.resolution" for="field_resolution"
+            >Resolution</label
+          >
+          <select class="form-control" name="resolution" formControlName="resolution" id="field_resolution" data-cy="resolution">
+            <option [ngValue]="null">{{ 'tuniSalesGatewayApp.AuditResolution.null' | translate }}</option>
+            <option *ngFor="let auditResolution of auditResolutionValues" [value]="auditResolution">
+              {{ 'tuniSalesGatewayApp.AuditResolution.' + auditResolution | translate }}
+            </option>
+          </select>
+        </div>
+
+        <div class="row mb-3">
+          <label
+            class="form-label"
+            jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.resolutionNote"
+            for="field_resolutionNote"
+            >Resolution Note</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="resolutionNote"
+            id="field_resolutionNote"
+            data-cy="resolutionNote"
+            formControlName="resolutionNote"
+          />
+          <div
+            *ngIf="
+              editForm.get('resolutionNote')!.invalid && (editForm.get('resolutionNote')!.dirty || editForm.get('resolutionNote')!.touched)
+            "
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('resolutionNote')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 500 }"
+            >
+              Ce champ doit faire moins de 500 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.createdAt" for="field_createdAt"
+            >Created At</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_createdAt"
+              data-cy="createdAt"
+              type="datetime-local"
+              class="form-control"
+              name="createdAt"
+              formControlName="createdAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('createdAt')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal"
+              jhiTranslate="entity.validation.datetimelocal"
+            >
+              Ce champ doit être une date et une heure.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.stockItem" for="field_stockItem"
+            >Stock Item</label
+          >
+          <select
+            class="form-control"
+            id="field_stockItem"
+            data-cy="stockItem"
+            name="stockItem"
+            formControlName="stockItem"
+            [compareWith]="compareStockItem"
+          >
+            <option *ngIf="!editForm.get('stockItem')!.value" [ngValue]="null" selected></option>
+            <option [ngValue]="stockItemOption" *ngFor="let stockItemOption of stockItemsSharedCollection">
+              {{ stockItemOption.imei }}
+            </option>
+          </select>
+        </div>
+        <div *ngIf="editForm.get(['stockItem'])!.invalid && (editForm.get(['stockItem'])!.dirty || editForm.get(['stockItem'])!.touched)">
+          <small
+            class="form-text text-danger"
+            *ngIf="editForm.get(['stockItem'])?.errors?.required"
+            jhiTranslate="entity.validation.required"
+          >
+            Ce champ est obligatoire.
+          </small>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.audit" for="field_audit">Audit</label>
+          <select
+            class="form-control"
+            id="field_audit"
+            data-cy="audit"
+            name="audit"
+            formControlName="audit"
+            [compareWith]="compareStockAudit"
+          >
+            <option *ngIf="editForm.get(['audit'])!.value == null" [ngValue]="null" selected></option>
+            <option [ngValue]="stockAuditOption" *ngFor="let stockAuditOption of stockAuditsSharedCollection">
+              {{ stockAuditOption.id }}
+            </option>
+          </select>
+        </div>
+        <div *ngIf="editForm.get(['audit'])!.invalid && (editForm.get(['audit'])!.dirty || editForm.get(['audit'])!.touched)">
+          <small class="form-text text-danger" *ngIf="editForm.get(['audit'])?.errors?.required" jhiTranslate="entity.validation.required">
+            Ce champ est obligatoire.
+          </small>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

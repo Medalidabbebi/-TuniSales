@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="notification">
+      <h2 data-cy="notificationDetailsHeading">
+        <span jhiTranslate="tuniSalesGatewayApp.platformServiceNotification.detail.title">Notification</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ notification.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceNotification.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ notification.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceNotification.recipientLogin">Recipient Login</span></dt>
+        <dd>
+          <span>{{ notification.recipientLogin }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceNotification.type">Type</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.NotificationType.' + notification.type }}">{{ notification.type }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceNotification.title">Title</span></dt>
+        <dd>
+          <span>{{ notification.title }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceNotification.body">Body</span></dt>
+        <dd>
+          <span>{{ notification.body }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceNotification.payloadJson">Payload Json</span></dt>
+        <dd>
+          <span>{{ notification.payloadJson }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceNotification.isRead">Is Read</span></dt>
+        <dd>
+          <span>{{ notification.isRead }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceNotification.readAt">Read At</span></dt>
+        <dd>
+          <span>{{ notification.readAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceNotification.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ notification.createdAt | formatMediumDatetime }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/notification', notification.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

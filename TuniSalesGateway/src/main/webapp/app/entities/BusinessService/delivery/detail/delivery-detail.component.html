@@ -1,0 +1,72 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="delivery">
+      <h2 data-cy="deliveryDetailsHeading">
+        <span jhiTranslate="tuniSalesGatewayApp.businessServiceDelivery.detail.title">Delivery</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ delivery.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceDelivery.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ delivery.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceDelivery.deliveryNumber">Delivery Number</span></dt>
+        <dd>
+          <span>{{ delivery.deliveryNumber }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceDelivery.status">Status</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.DeliveryStatus.' + delivery.status }}">{{ delivery.status }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceDelivery.trackingNumber">Tracking Number</span></dt>
+        <dd>
+          <span>{{ delivery.trackingNumber }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceDelivery.shippedAt">Shipped At</span></dt>
+        <dd>
+          <span>{{ delivery.shippedAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceDelivery.deliveredAt">Delivered At</span></dt>
+        <dd>
+          <span>{{ delivery.deliveredAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceDelivery.confirmedAt">Confirmed At</span></dt>
+        <dd>
+          <span>{{ delivery.confirmedAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceDelivery.notes">Notes</span></dt>
+        <dd>
+          <span>{{ delivery.notes }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceDelivery.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ delivery.createdAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceDelivery.order">Order</span></dt>
+        <dd>
+          <div *ngIf="delivery.order">
+            <a [routerLink]="['/order', delivery.order.id, 'view']">{{ delivery.order.orderNumber }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/delivery', delivery.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

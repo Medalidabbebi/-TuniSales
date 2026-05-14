@@ -1,0 +1,243 @@
+<!-- Unauthenticated Landing Page -->
+<div *ngIf="!account" class="tsg-landing">
+  <!-- Hero Section -->
+  <div class="tsg-landing__hero">
+    <div class="tsg-landing__hero-bg">
+      <div class="tsg-landing__orb tsg-landing__orb--1"></div>
+      <div class="tsg-landing__orb tsg-landing__orb--2"></div>
+      <div class="tsg-landing__orb tsg-landing__orb--3"></div>
+    </div>
+
+    <nav class="tsg-landing__nav">
+      <div class="tsg-landing__nav-brand">
+        <div class="tsg-landing__nav-logo">T</div>
+        <span>TuniSalesGateway</span>
+      </div>
+      <div class="tsg-landing__nav-actions">
+        <a routerLink="/login" class="tsg-landing__nav-link">Sign In</a>
+        <a routerLink="/account/register" class="tsg-landing__nav-cta">Get Started</a>
+      </div>
+    </nav>
+
+    <div class="tsg-landing__hero-content">
+      <h1>
+        Sales Management<br />
+        <span class="tsg-landing__accent">Made Simple</span>
+      </h1>
+      <p class="tsg-landing__hero-subtitle">
+        Streamline your entire sales pipeline — from client acquisition to delivery.
+        Built for Tunisian businesses that move fast.
+      </p>
+      <div class="tsg-landing__hero-actions">
+        <button class="tsg-landing__cta-primary" (click)="login()">
+          <fa-icon icon="sign-in-alt"></fa-icon>
+          Sign In to Dashboard
+        </button>
+        <a routerLink="/account/register" class="tsg-landing__cta-secondary">
+          Create Free Account
+        </a>
+      </div>
+    </div>
+
+    <!-- Dashboard preview mockup -->
+    <div class="tsg-landing__preview">
+      <div class="tsg-landing__preview-window">
+        <div class="tsg-landing__preview-bar">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="tsg-landing__preview-body">
+          <div class="tsg-landing__preview-sidebar"></div>
+          <div class="tsg-landing__preview-main">
+            <div class="tsg-landing__preview-kpis">
+              <div class="tsg-landing__preview-kpi"></div>
+              <div class="tsg-landing__preview-kpi"></div>
+              <div class="tsg-landing__preview-kpi"></div>
+              <div class="tsg-landing__preview-kpi"></div>
+            </div>
+            <div class="tsg-landing__preview-chart"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Features Section -->
+  <div class="tsg-landing__features">
+    <div class="tsg-landing__features-grid">
+      <div class="tsg-landing__feature-card">
+        <div class="tsg-landing__feature-icon tsg-landing__feature-icon--blue">
+          <fa-icon icon="users" size="lg"></fa-icon>
+        </div>
+        <h3>Client Management</h3>
+        <p>Track clients, contacts, credit limits, and scoring in one place.</p>
+      </div>
+      <div class="tsg-landing__feature-card">
+        <div class="tsg-landing__feature-icon tsg-landing__feature-icon--green">
+          <fa-icon icon="shopping-cart" size="lg"></fa-icon>
+        </div>
+        <h3>Order Pipeline</h3>
+        <p>Visual order tracking from draft to delivery with real-time status updates.</p>
+      </div>
+      <div class="tsg-landing__feature-card">
+        <div class="tsg-landing__feature-icon tsg-landing__feature-icon--orange">
+          <fa-icon icon="warehouse" size="lg"></fa-icon>
+        </div>
+        <h3>Inventory Control</h3>
+        <p>Manage stock across warehouses with movement tracking and low-stock alerts.</p>
+      </div>
+      <div class="tsg-landing__feature-card">
+        <div class="tsg-landing__feature-icon tsg-landing__feature-icon--purple">
+          <fa-icon icon="chart-line" size="lg"></fa-icon>
+        </div>
+        <h3>Performance Analytics</h3>
+        <p>Set objectives, track scores, and measure team performance at a glance.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="tsg-landing__footer">
+    <span>&copy; 2026 TuniSalesGateway. Built for Tunisian enterprises.</span>
+  </div>
+</div>
+
+<!-- Authenticated Dashboard -->
+<div *ngIf="account">
+  <!-- Page Header -->
+  <div class="tsg-page-header">
+    <div>
+      <h1 class="tsg-page-header__title">
+        Dashboard
+      </h1>
+      <p class="tsg-page-header__subtitle">
+        Welcome back, {{ account.firstName || account.login }}
+      </p>
+    </div>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="tsg-dashboard__kpis">
+    <div class="tsg-kpi" *ngFor="let kpi of kpis">
+      <div class="tsg-kpi__icon tsg-kpi__icon--{{ kpi.color }}">
+        <fa-icon [icon]="kpi.icon" size="lg"></fa-icon>
+      </div>
+      <div class="tsg-kpi__content">
+        <div class="tsg-kpi__label">{{ kpi.label }}</div>
+        <div class="tsg-kpi__value">{{ kpi.value }}</div>
+        <div class="tsg-kpi__trend" [ngClass]="'tsg-kpi__trend--' + kpi.trendDir">
+          <fa-icon [icon]="kpi.trendDir === 'up' ? 'chart-line' : 'chart-line'"></fa-icon>
+          {{ kpi.trend }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="tsg-dashboard__charts">
+    <div class="tsg-chart">
+      <div class="tsg-chart__header">
+        <span class="tsg-chart__title">Sales Over Time</span>
+        <div class="tsg-filters__group">
+          <button type="button" class="tsg-filters__chip" [ngClass]="{ 'tsg-filters__chip--active': selectedSalesPeriod === 7 }" (click)="setSalesPeriod(7)">7 Days</button>
+          <button type="button" class="tsg-filters__chip" [ngClass]="{ 'tsg-filters__chip--active': selectedSalesPeriod === 30 }" (click)="setSalesPeriod(30)">30 Days</button>
+          <button type="button" class="tsg-filters__chip" [ngClass]="{ 'tsg-filters__chip--active': selectedSalesPeriod === 90 }" (click)="setSalesPeriod(90)">90 Days</button>
+        </div>
+      </div>
+      <div class="tsg-chart__body tsg-chart__body--line">
+        <svg class="tsg-line-chart" viewBox="0 0 840 260" preserveAspectRatio="none" role="img" aria-label="Sales over time chart">
+          <defs>
+            <linearGradient id="salesAreaFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.35"></stop>
+              <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.02"></stop>
+            </linearGradient>
+          </defs>
+          <path [attr.d]="getSalesAreaPath()" fill="url(#salesAreaFill)"></path>
+          <path [attr.d]="getSalesPath()" class="tsg-line-chart__line"></path>
+        </svg>
+      </div>
+    </div>
+
+    <div class="tsg-chart">
+      <div class="tsg-chart__header">
+        <span class="tsg-chart__title">Orders by Status</span>
+      </div>
+      <div class="tsg-chart__body tsg-chart__body--bars">
+        <div class="tsg-orders-chart">
+          <div class="tsg-orders-chart__item" *ngFor="let status of ordersByStatus">
+            <div class="tsg-orders-chart__head">
+              <span>{{ status.label }}</span>
+              <strong>{{ status.value }}</strong>
+            </div>
+            <div class="tsg-orders-chart__track">
+              <div class="tsg-orders-chart__fill" [style.width.%]="getStatusWidth(status.value)" [style.background]="status.color"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Row: Recent Orders + Activity + Alerts -->
+  <div class="tsg-dashboard__bottom">
+    <!-- Recent Orders -->
+    <div class="tsg-card tsg-dashboard__recent-orders">
+      <div class="tsg-card__header">
+        <h3 class="tsg-card__title">Recent Orders</h3>
+        <a routerLink="/order" class="tsg-btn tsg-btn--ghost tsg-btn--sm">View All</a>
+      </div>
+      <table class="tsg-table">
+        <thead>
+          <tr>
+            <th>Order</th>
+            <th>Client</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of recentOrders">
+            <td><a routerLink="/order">{{ order.id }}</a></td>
+            <td>{{ order.client }}</td>
+            <td class="text-secondary">{{ order.amount }}</td>
+            <td><span class="tsg-badge tsg-badge--{{ getStatusClass(order.status) }}">{{ order.status }}</span></td>
+            <td class="text-secondary">{{ order.date }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Sidebar: Activity + Alerts -->
+    <div class="tsg-dashboard__sidebar-panels">
+      <!-- Activity Feed -->
+      <div class="tsg-card">
+        <div class="tsg-card__header">
+          <h3 class="tsg-card__title">Recent Activity</h3>
+        </div>
+        <div class="tsg-activity">
+          <div class="tsg-activity__item" *ngFor="let item of recentActivity">
+            <div class="tsg-activity__dot" [ngClass]="'tsg-activity__dot--' + item.type"></div>
+            <div>
+              <div class="tsg-activity__text">{{ item.text }}</div>
+              <div class="tsg-activity__time">{{ item.time }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div class="tsg-card">
+        <div class="tsg-card__header">
+          <h3 class="tsg-card__title">
+            <fa-icon icon="exclamation-triangle" style="color: #f59e0b; margin-right: 8px;"></fa-icon>
+            Alerts
+          </h3>
+        </div>
+        <div *ngFor="let alert of alerts" class="tsg-alert-item tsg-alert-item--{{ alert.type }}">
+          <fa-icon [icon]="alert.type === 'danger' ? 'times' : 'exclamation-triangle'" class="tsg-alert-item__icon"></fa-icon>
+          <span>{{ alert.text }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

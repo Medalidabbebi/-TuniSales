@@ -1,0 +1,19 @@
+export enum StockItemStatus {
+  AVAILABLE = 'AVAILABLE',
+
+  RESERVED = 'RESERVED',
+
+  ALLOCATED = 'ALLOCATED',
+
+  IN_TRANSIT = 'IN_TRANSIT',
+
+  DEPLOYED = 'DEPLOYED',
+
+  DEFECTIVE = 'DEFECTIVE',
+
+  MISSING = 'MISSING',
+
+  SOLD = 'SOLD',
+
+  RETIRED = 'RETIRED',
+}

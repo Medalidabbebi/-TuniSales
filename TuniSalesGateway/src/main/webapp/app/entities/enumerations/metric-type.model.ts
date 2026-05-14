@@ -1,0 +1,9 @@
+export enum MetricType {
+  REVENUE = 'REVENUE',
+
+  UNIT_VOLUME = 'UNIT_VOLUME',
+
+  VISIT_COUNT = 'VISIT_COUNT',
+
+  CONVERSION_RATE = 'CONVERSION_RATE',
+}

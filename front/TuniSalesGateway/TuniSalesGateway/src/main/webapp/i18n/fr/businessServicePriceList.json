@@ -1,0 +1,35 @@
+{
+  "tuniSalesGatewayApp": {
+    "businessServicePriceList": {
+      "home": {
+        "title": "PriceLists",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Price List",
+        "createOrEditLabel": "Créer ou éditer un Price List",
+        "notFound": "Aucun Price List trouvé"
+      },
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Price List {{ id }} ?"
+      },
+      "detail": {
+        "title": "Price List"
+      },
+      "id": "ID",
+      "unitPrice": "Unit Price",
+      "maxDiscountPct": "Max Discount Pct",
+      "validFrom": "Valid From",
+      "validTo": "Valid To",
+      "isActive": "Is Active",
+      "createdAt": "Created At",
+      "product": "Product",
+      "client": "Client"
+    }
+  },
+  "businessServiceApp": {
+    "businessServicePriceList": {
+      "created": "Un nouveau Price List a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Price List avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Price List avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

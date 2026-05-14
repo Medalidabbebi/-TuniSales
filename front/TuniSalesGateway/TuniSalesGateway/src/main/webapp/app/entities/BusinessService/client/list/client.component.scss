@@ -1,0 +1,37 @@
+@import 'design-system';
+
+.tsg-client-avatar {
+  @include flex-center;
+  width: 36px;
+  height: 36px;
+  border-radius: $radius-sm;
+  background: linear-gradient(135deg, $tsg-primary, $tsg-accent);
+  color: #fff;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.tsg-credit-bar {
+  width: 60px;
+  height: 6px;
+  border-radius: $radius-full;
+  background: $tsg-border-light;
+  overflow: hidden;
+
+  &__fill {
+    height: 100%;
+    border-radius: $radius-full;
+    transition: width $transition-slow;
+
+    &--normal  { background: $tsg-success; }
+    &--warning { background: $tsg-warning; }
+    &--danger  { background: $tsg-danger; }
+  }
+}
+
+.fw-medium { font-weight: 500; }
+.gap-3 { gap: 12px; }
+.gap-2 { gap: 8px; }
+.gap-1 { gap: 4px; }

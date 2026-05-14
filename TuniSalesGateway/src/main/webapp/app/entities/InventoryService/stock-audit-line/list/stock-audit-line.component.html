@@ -1,0 +1,149 @@
+<div>
+  <h2 id="page-heading" data-cy="StockAuditLineHeading">
+    <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.home.title">StockAuditLines</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-stock-audit-line"
+        [routerLink]="['/stock-audit-line/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.home.createLabel"> Créer un nouveau Stock Audit Line </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="stockAuditLines?.length === 0">
+    <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.home.notFound">Aucun Stock Audit Line trouvé</span>
+  </div>
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="stockAuditLines && stockAuditLines.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+          <th scope="col" jhiSortBy="id">
+            <div class="d-flex">
+              <span jhiTranslate="global.field.id">ID</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="foundPhysically">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.foundPhysically">Found Physically</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="resolution">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.resolution">Resolution</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="resolutionNote">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.resolutionNote">Resolution Note</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="createdAt">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.createdAt">Created At</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="stockItem.imei">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.stockItem">Stock Item</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="audit.id">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.audit">Audit</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let stockAuditLine of stockAuditLines; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/stock-audit-line', stockAuditLine.id, 'view']">{{ stockAuditLine.id }}</a>
+          </td>
+          <td>{{ stockAuditLine.foundPhysically }}</td>
+          <td jhiTranslate="{{ 'tuniSalesGatewayApp.AuditResolution.' + stockAuditLine.resolution }}">{{ stockAuditLine.resolution }}</td>
+          <td>{{ stockAuditLine.resolutionNote }}</td>
+          <td>{{ stockAuditLine.createdAt | formatMediumDatetime }}</td>
+          <td>
+            <div *ngIf="stockAuditLine.stockItem">
+              <a [routerLink]="['/stock-item', stockAuditLine.stockItem.id, 'view']">{{ stockAuditLine.stockItem.imei }}</a>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="stockAuditLine.audit">
+              <a [routerLink]="['/stock-audit', stockAuditLine.audit.id, 'view']">{{ stockAuditLine.audit.id }}</a>
+            </div>
+          </td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/stock-audit-line', stockAuditLine.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Voir</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/stock-audit-line', stockAuditLine.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Editer</span>
+              </button>
+
+              <button type="submit" (click)="delete(stockAuditLine)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Supprimer</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="stockAuditLines && stockAuditLines.length > 0">
+    <div class="d-flex justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

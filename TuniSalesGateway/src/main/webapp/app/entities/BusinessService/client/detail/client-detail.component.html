@@ -1,0 +1,76 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="client">
+      <h2 data-cy="clientDetailsHeading"><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.detail.title">Client</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ client.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ client.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.name">Name</span></dt>
+        <dd>
+          <span>{{ client.name }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.taxId">Tax Id</span></dt>
+        <dd>
+          <span>{{ client.taxId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.clientType">Client Type</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.ClientType.' + client.clientType }}">{{ client.clientType }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.creditLimit">Credit Limit</span></dt>
+        <dd>
+          <span>{{ client.creditLimit }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.creditUsed">Credit Used</span></dt>
+        <dd>
+          <span>{{ client.creditUsed }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.paymentTermsDays">Payment Terms Days</span></dt>
+        <dd>
+          <span>{{ client.paymentTermsDays }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.status">Status</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.ClientStatus.' + client.status }}">{{ client.status }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.lastOrderAt">Last Order At</span></dt>
+        <dd>
+          <span>{{ client.lastOrderAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.isDeleted">Is Deleted</span></dt>
+        <dd>
+          <span>{{ client.isDeleted }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ client.createdAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.updatedAt">Updated At</span></dt>
+        <dd>
+          <span>{{ client.updatedAt | formatMediumDatetime }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/client', client.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

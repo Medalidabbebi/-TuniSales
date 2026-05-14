@@ -1,0 +1,12 @@
+{
+  "tuniSalesGatewayApp": {
+    "ContactRole": {
+      "null": "",
+      "BUYER": "BUYER",
+      "ACCOUNTING": "ACCOUNTING",
+      "MANAGEMENT": "MANAGEMENT",
+      "TECHNICAL": "TECHNICAL",
+      "OTHER": "OTHER"
+    }
+  }
+}

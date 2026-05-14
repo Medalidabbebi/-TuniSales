@@ -1,0 +1,122 @@
+<div class="container-fluid py-4">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="ObjectiveHeading">
+        <fa-icon icon="bullseye" class="me-2 text-primary"></fa-icon>
+        Objectifs
+      </h2>
+      <small class="text-muted">Liste des objectifs — {{ totalItems }} objectif(s) au total</small>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+        Actualiser
+      </button>
+      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/objective/new']">
+        <fa-icon icon="plus" class="me-1"></fa-icon>
+        Nouvel Objectif
+      </a>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- Chargement -->
+  <div class="text-center py-5" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
+    <p class="text-muted mt-2">Chargement...</p>
+  </div>
+
+  <!-- Aucun résultat -->
+  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && objectives?.length === 0">
+    <fa-icon icon="bullseye" size="3x" class="text-muted mb-3"></fa-icon>
+    <p class="text-muted">Aucun objectif trouvé. Créez votre premier objectif.</p>
+    <a class="btn btn-primary mt-2" [routerLink]="['/objective/new']">
+      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+    </a>
+  </div>
+
+  <!-- Table -->
+  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && objectives && objectives.length > 0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
+        <thead class="table-light">
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+            <th scope="col" jhiSortBy="id" style="width:60px">
+              <div class="d-flex align-items-center gap-1">ID <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="metricType">
+              <div class="d-flex align-items-center gap-1">Titre <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="assignedToLogin">
+              <div class="d-flex align-items-center gap-1">Commercial <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="targetValue">
+              <div class="d-flex align-items-center gap-1">Valeur cible <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="achievedValue">
+              <div class="d-flex align-items-center gap-1">Valeur actuelle <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="period" style="width:130px">
+              <div class="d-flex align-items-center gap-1">Statut <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" style="width:140px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let objective of objectives; trackBy: trackId" data-cy="entityTable">
+            <td>
+              <a [routerLink]="['/objective', objective.id, 'view']" class="fw-semibold text-decoration-none">{{ objective.id }}</a>
+            </td>
+            <td class="fw-semibold">{{ objective.metricType || '—' }}</td>
+            <td>{{ objective.assignedToLogin || '—' }}</td>
+            <td>{{ objective.targetValue }}</td>
+            <td>{{ objective.achievedValue }}</td>
+            <td>
+              <span class="badge rounded-pill"
+                [ngClass]="{
+                  'bg-success': (objective.achievedValue ?? 0) >= (objective.targetValue ?? 0) && objective.targetValue !== null,
+                  'bg-info text-dark': (objective.achievedValue ?? 0) > 0 && (objective.achievedValue ?? 0) < (objective.targetValue ?? 0),
+                  'bg-warning text-dark': !objective.achievedValue || objective.achievedValue === 0,
+                  'bg-secondary': !objective.targetValue
+                }">
+                {{ objective.period || '—' }}
+              </span>
+            </td>
+            <td>
+              <div class="d-flex gap-1 justify-content-end">
+                <a [routerLink]="['/objective', objective.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+                  <fa-icon icon="eye"></fa-icon>
+                </a>
+                <a [routerLink]="['/objective', objective.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                  <fa-icon icon="pencil-alt"></fa-icon>
+                </a>
+                <button (click)="delete(objective)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="objectives && objectives.length > 0">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [page]="page"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="navigateToPage($event)"
+    ></ngb-pagination>
+  </div>
+
+</div>

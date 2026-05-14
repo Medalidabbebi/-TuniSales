@@ -1,0 +1,37 @@
+{
+  "tuniSalesGatewayApp": {
+    "businessServiceDelivery": {
+      "home": {
+        "title": "Deliveries",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Delivery",
+        "createOrEditLabel": "Créer ou éditer un Delivery",
+        "notFound": "Aucun Delivery trouvé"
+      },
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Delivery {{ id }} ?"
+      },
+      "detail": {
+        "title": "Delivery"
+      },
+      "id": "ID",
+      "tenantId": "Tenant Id",
+      "deliveryNumber": "Delivery Number",
+      "status": "Status",
+      "trackingNumber": "Tracking Number",
+      "shippedAt": "Shipped At",
+      "deliveredAt": "Delivered At",
+      "confirmedAt": "Confirmed At",
+      "notes": "Notes",
+      "createdAt": "Created At",
+      "order": "Order"
+    }
+  },
+  "businessServiceApp": {
+    "businessServiceDelivery": {
+      "created": "Un nouveau Delivery a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Delivery avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Delivery avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

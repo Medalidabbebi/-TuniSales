@@ -1,0 +1,35 @@
+{
+  "tuniSalesGatewayApp": {
+    "businessServiceOrderLine": {
+      "home": {
+        "title": "OrderLines",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Order Line",
+        "createOrEditLabel": "Créer ou éditer un Order Line",
+        "notFound": "Aucun Order Line trouvé"
+      },
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Order Line {{ id }} ?"
+      },
+      "detail": {
+        "title": "Order Line"
+      },
+      "id": "ID",
+      "quantity": "Quantity",
+      "unitPrice": "Unit Price",
+      "discountPct": "Discount Pct",
+      "lineTotal": "Line Total",
+      "createdAt": "Created At",
+      "orderLineItems": "Order Line Items",
+      "product": "Product",
+      "order": "Order"
+    }
+  },
+  "businessServiceApp": {
+    "businessServiceOrderLine": {
+      "created": "Un nouveau Order Line a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Order Line avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Order Line avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

@@ -1,0 +1,166 @@
+<div class="tsg-list-page">
+  <div class="tsg-page-header">
+    <div>
+      <h1 class="tsg-page-header__title" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.home.title">Orders</h1>
+      <p class="tsg-page-header__subtitle">Track order flow, approvals, and fulfillment state.</p>
+    </div>
+    <div class="tsg-page-header__actions">
+      <button class="tsg-btn tsg-btn--secondary" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span class="d-none d-md-inline" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.home.refreshListLabel">Refresh</span>
+      </button>
+
+      <button id="jh-create-entity" data-cy="entityCreateButton" class="tsg-btn tsg-btn--primary" [routerLink]="['/order/new']">
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.home.createLabel">New Order</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="tsg-summary-grid" *ngIf="orders && orders.length > 0">
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Visible orders</div>
+      <div class="tsg-summary-card__value">{{ orders.length }}</div>
+      <div class="tsg-summary-card__meta">Current page only</div>
+    </div>
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Submitted</div>
+      <div class="tsg-summary-card__value">{{ countOrdersByStatus(orderStatus.SUBMITTED) }}</div>
+      <div class="tsg-summary-card__meta">Awaiting review</div>
+    </div>
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Approved</div>
+      <div class="tsg-summary-card__value">{{ countOrdersByStatus(orderStatus.APPROVED) }}</div>
+      <div class="tsg-summary-card__meta">Ready for preparation</div>
+    </div>
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Rejected</div>
+      <div class="tsg-summary-card__value">{{ countOrdersByStatus(orderStatus.REJECTED) }}</div>
+      <div class="tsg-summary-card__meta">Needs attention</div>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <div class="tsg-empty" *ngIf="orders?.length === 0">
+    <div class="tsg-empty__icon">
+      <fa-icon icon="shopping-cart"></fa-icon>
+    </div>
+    <div class="tsg-empty__title" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.home.notFound">No orders found</div>
+    <div class="tsg-empty__text">Create an order to start tracking approvals and fulfillment.</div>
+  </div>
+
+  <div class="tsg-table-wrapper" *ngIf="orders && orders.length > 0">
+    <table class="tsg-table" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+          <th scope="col" jhiSortBy="orderNumber">
+            <div class="d-flex align-items-center">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.orderNumber">Order Number</span>
+              <fa-icon class="sort-icon p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="client.name">
+            <div class="d-flex align-items-center">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.client">Client</span>
+              <fa-icon class="sort-icon p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="status">
+            <div class="d-flex align-items-center">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.status">Status</span>
+              <fa-icon class="sort-icon p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="totalAmount">
+            <div class="d-flex align-items-center">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.totalAmount">Total Amount</span>
+              <fa-icon class="sort-icon p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="dueDate">
+            <div class="d-flex align-items-center">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.dueDate">Due Date</span>
+              <fa-icon class="sort-icon p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="submittedAt">
+            <div class="d-flex align-items-center">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.submittedAt">Submitted At</span>
+              <fa-icon class="sort-icon p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="validatedAt">
+            <div class="d-flex align-items-center">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.validatedAt">Validated At</span>
+              <fa-icon class="sort-icon p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" style="width: 120px;"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let order of orders; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <div class="d-flex align-items-center gap-3">
+              <div class="tsg-order-avatar">{{ getOrderAvatar(order) }}</div>
+              <div>
+                <a [routerLink]="['/order', order.id, 'view']" class="fw-medium">{{ order.orderNumber || order.id }}</a>
+                <div class="tsg-order-meta">Tenant {{ order.tenantId || '—' }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="order.client; else noClient">
+              <a [routerLink]="['/client', order.client.id, 'view']" class="fw-medium">{{ order.client.name }}</a>
+            </div>
+            <ng-template #noClient>
+              <span class="tsg-order-meta">Unassigned</span>
+            </ng-template>
+          </td>
+          <td>
+            <span class="tsg-badge" [ngClass]="getStatusBadgeClass(order.status)">
+              <span jhiTranslate="{{ 'tuniSalesGatewayApp.OrderStatus.' + order.status }}">{{ order.status }}</span>
+            </span>
+          </td>
+          <td>
+            <div class="tsg-order-amount">{{ getAmount(order.totalAmount) }}</div>
+            <div class="tsg-order-meta">Subtotal: {{ getAmount(order.subtotal) }} | Tax: {{ getAmount(order.taxAmount) }}</div>
+          </td>
+          <td>{{ order.dueDate | formatMediumDatetime }}</td>
+          <td>{{ order.submittedAt | formatMediumDatetime }}</td>
+          <td>{{ order.validatedAt | formatMediumDatetime }}</td>
+          <td>
+            <div class="d-flex gap-1 justify-content-end">
+              <button type="button" [routerLink]="['/order', order.id, 'view']" class="tsg-btn tsg-btn--ghost tsg-btn--icon tsg-btn--sm" title="View">
+                <fa-icon icon="eye"></fa-icon>
+              </button>
+              <button type="button" [routerLink]="['/order', order.id, 'edit']" class="tsg-btn tsg-btn--ghost tsg-btn--icon tsg-btn--sm" title="Edit">
+                <fa-icon icon="pencil-alt"></fa-icon>
+              </button>
+              <button type="button" (click)="delete(order)" class="tsg-btn tsg-btn--danger tsg-btn--icon tsg-btn--sm" title="Delete">
+                <fa-icon icon="trash-alt"></fa-icon>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="orders && orders.length > 0" class="tsg-pagination">
+    <div class="d-flex justify-content-center align-items-center gap-4 mt-4">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

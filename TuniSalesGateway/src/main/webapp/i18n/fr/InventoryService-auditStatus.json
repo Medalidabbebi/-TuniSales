@@ -1,0 +1,10 @@
+{
+  "tuniSalesGatewayApp": {
+    "AuditStatus": {
+      "null": "",
+      "IN_PROGRESS": "IN_PROGRESS",
+      "CLOSED": "CLOSED",
+      "CANCELLED": "CANCELLED"
+    }
+  }
+}

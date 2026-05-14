@@ -1,0 +1,41 @@
+{
+  "tuniSalesGatewayApp": {
+    "businessServiceInvoice": {
+      "home": {
+        "title": "Invoices",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Invoice",
+        "createOrEditLabel": "Create or edit a Invoice",
+        "notFound": "No Invoices found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Invoice {{ id }}?"
+      },
+      "detail": {
+        "title": "Invoice"
+      },
+      "id": "ID",
+      "tenantId": "Tenant Id",
+      "invoiceNumber": "Invoice Number",
+      "amountHt": "Amount Ht",
+      "taxAmount": "Tax Amount",
+      "amountTtc": "Amount Ttc",
+      "status": "Status",
+      "issueDate": "Issue Date",
+      "dueDate": "Due Date",
+      "paidAt": "Paid At",
+      "isDeleted": "Is Deleted",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "client": "Client",
+      "order": "Order"
+    }
+  },
+  "businessServiceApp": {
+    "businessServiceInvoice": {
+      "created": "A new Invoice is created with identifier {{ param }}",
+      "updated": "A Invoice is updated with identifier {{ param }}",
+      "deleted": "A Invoice is deleted with identifier {{ param }}"
+    }
+  }
+}

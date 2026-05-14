@@ -1,0 +1,174 @@
+<div>
+  <h2 id="page-heading" data-cy="VisitHeading">
+    <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.home.title">Visits</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-visit"
+        [routerLink]="['/visit/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.home.createLabel"> Créer un nouveau Visit </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="visits?.length === 0">
+    <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.home.notFound">Aucun Visit trouvé</span>
+  </div>
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="visits && visits.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+          <th scope="col" jhiSortBy="id">
+            <div class="d-flex">
+              <span jhiTranslate="global.field.id">ID</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="visitOrder">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.visitOrder">Visit Order</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="objective">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.objective">Objective</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="status">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.status">Status</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="latitude">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.latitude">Latitude</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="longitude">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.longitude">Longitude</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="checkinAt">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.checkinAt">Checkin At</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="checkoutAt">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.checkoutAt">Checkout At</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="notes">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.notes">Notes</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="createdAt">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.createdAt">Created At</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="client.name">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.client">Client</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="mission.title">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.mission">Mission</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let visit of visits; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/visit', visit.id, 'view']">{{ visit.id }}</a>
+          </td>
+          <td>{{ visit.visitOrder }}</td>
+          <td jhiTranslate="{{ 'tuniSalesGatewayApp.VisitObjective.' + visit.objective }}">{{ visit.objective }}</td>
+          <td jhiTranslate="{{ 'tuniSalesGatewayApp.VisitStatus.' + visit.status }}">{{ visit.status }}</td>
+          <td>{{ visit.latitude }}</td>
+          <td>{{ visit.longitude }}</td>
+          <td>{{ visit.checkinAt | formatMediumDatetime }}</td>
+          <td>{{ visit.checkoutAt | formatMediumDatetime }}</td>
+          <td>{{ visit.notes }}</td>
+          <td>{{ visit.createdAt | formatMediumDatetime }}</td>
+          <td>
+            <div *ngIf="visit.client">
+              <a [routerLink]="['/client', visit.client.id, 'view']">{{ visit.client.name }}</a>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="visit.mission">
+              <a [routerLink]="['/mission', visit.mission.id, 'view']">{{ visit.mission.title }}</a>
+            </div>
+          </td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button type="submit" [routerLink]="['/visit', visit.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Voir</span>
+              </button>
+
+              <button type="submit" [routerLink]="['/visit', visit.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Editer</span>
+              </button>
+
+              <button type="submit" (click)="delete(visit)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Supprimer</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="visits && visits.length > 0">
+    <div class="d-flex justify-content-center">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    </div>
+
+    <div class="d-flex justify-content-center">
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)"
+      ></ngb-pagination>
+    </div>
+  </div>
+</div>

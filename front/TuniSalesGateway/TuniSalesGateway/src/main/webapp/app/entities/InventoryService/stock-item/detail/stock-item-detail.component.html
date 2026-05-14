@@ -1,0 +1,68 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="stockItem">
+      <h2 data-cy="stockItemDetailsHeading">
+        <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.detail.title">Stock Item</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ stockItem.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ stockItem.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.productId">Product Id</span></dt>
+        <dd>
+          <span>{{ stockItem.productId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.productName">Product Name</span></dt>
+        <dd>
+          <span>{{ stockItem.productName }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.imei">Imei</span></dt>
+        <dd>
+          <span>{{ stockItem.imei }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.status">Status</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.StockItemStatus.' + stockItem.status }}">{{ stockItem.status }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.isDeleted">Is Deleted</span></dt>
+        <dd>
+          <span>{{ stockItem.isDeleted }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.acquiredAt">Acquired At</span></dt>
+        <dd>
+          <span>{{ stockItem.acquiredAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.updatedAt">Updated At</span></dt>
+        <dd>
+          <span>{{ stockItem.updatedAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.warehouse">Warehouse</span></dt>
+        <dd>
+          <div *ngIf="stockItem.warehouse">
+            <a [routerLink]="['/warehouse', stockItem.warehouse.id, 'view']">{{ stockItem.warehouse.name }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/stock-item', stockItem.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

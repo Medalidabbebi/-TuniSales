@@ -1,0 +1,113 @@
+<div>
+  <h2 id="page-heading" data-cy="OrderLineItemHeading">
+    <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.home.title">OrderLineItems</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.home.refreshListLabel">Actualiser la liste</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-order-line-item"
+        [routerLink]="['/order-line-item/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.home.createLabel"> Créer un nouveau Order Line Item </span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <div class="alert alert-warning" id="no-result" *ngIf="orderLineItems?.length === 0">
+    <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.home.notFound">Aucun Order Line Item trouvé</span>
+  </div>
+
+  <div class="table-responsive table-entities" id="entities" *ngIf="orderLineItems && orderLineItems.length > 0">
+    <table class="table table-striped" aria-describedby="page-heading">
+      <thead>
+        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+          <th scope="col" jhiSortBy="id">
+            <div class="d-flex">
+              <span jhiTranslate="global.field.id">ID</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="stockItemId">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.stockItemId">Stock Item Id</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="stockItemImei">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.stockItemImei">Stock Item Imei</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="assignedAt">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.assignedAt">Assigned At</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col" jhiSortBy="orderLine.id">
+            <div class="d-flex">
+              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.orderLine">Order Line</span>
+              <fa-icon class="p-1" icon="sort"></fa-icon>
+            </div>
+          </th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let orderLineItem of orderLineItems; trackBy: trackId" data-cy="entityTable">
+          <td>
+            <a [routerLink]="['/order-line-item', orderLineItem.id, 'view']">{{ orderLineItem.id }}</a>
+          </td>
+          <td>{{ orderLineItem.stockItemId }}</td>
+          <td>{{ orderLineItem.stockItemImei }}</td>
+          <td>{{ orderLineItem.assignedAt | formatMediumDatetime }}</td>
+          <td>
+            <div *ngIf="orderLineItem.orderLine">
+              <a [routerLink]="['/order-line', orderLineItem.orderLine.id, 'view']">{{ orderLineItem.orderLine.id }}</a>
+            </div>
+          </td>
+          <td class="text-end">
+            <div class="btn-group">
+              <button
+                type="submit"
+                [routerLink]="['/order-line-item', orderLineItem.id, 'view']"
+                class="btn btn-info btn-sm"
+                data-cy="entityDetailsButton"
+              >
+                <fa-icon icon="eye"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Voir</span>
+              </button>
+
+              <button
+                type="submit"
+                [routerLink]="['/order-line-item', orderLineItem.id, 'edit']"
+                class="btn btn-primary btn-sm"
+                data-cy="entityEditButton"
+              >
+                <fa-icon icon="pencil-alt"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Editer</span>
+              </button>
+
+              <button type="submit" (click)="delete(orderLineItem)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                <fa-icon icon="times"></fa-icon>
+                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Supprimer</span>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

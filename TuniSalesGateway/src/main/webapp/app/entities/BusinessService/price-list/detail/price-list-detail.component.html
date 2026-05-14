@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="priceList">
+      <h2 data-cy="priceListDetailsHeading">
+        <span jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.detail.title">Price List</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ priceList.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.unitPrice">Unit Price</span></dt>
+        <dd>
+          <span>{{ priceList.unitPrice }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.maxDiscountPct">Max Discount Pct</span></dt>
+        <dd>
+          <span>{{ priceList.maxDiscountPct }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.validFrom">Valid From</span></dt>
+        <dd>
+          <span>{{ priceList.validFrom | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.validTo">Valid To</span></dt>
+        <dd>
+          <span>{{ priceList.validTo | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.isActive">Is Active</span></dt>
+        <dd>
+          <span>{{ priceList.isActive }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ priceList.createdAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.product">Product</span></dt>
+        <dd>
+          <div *ngIf="priceList.product">
+            <a [routerLink]="['/product', priceList.product.id, 'view']">{{ priceList.product.name }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.client">Client</span></dt>
+        <dd>
+          <div *ngIf="priceList.client">
+            <a [routerLink]="['/client', priceList.client.id, 'view']">{{ priceList.client.name }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/price-list', priceList.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

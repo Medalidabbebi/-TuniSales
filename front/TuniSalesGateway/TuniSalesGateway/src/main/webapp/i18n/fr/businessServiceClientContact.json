@@ -1,0 +1,34 @@
+{
+  "tuniSalesGatewayApp": {
+    "businessServiceClientContact": {
+      "home": {
+        "title": "ClientContacts",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Client Contact",
+        "createOrEditLabel": "Créer ou éditer un Client Contact",
+        "notFound": "Aucun Client Contact trouvé"
+      },
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Client Contact {{ id }} ?"
+      },
+      "detail": {
+        "title": "Client Contact"
+      },
+      "id": "ID",
+      "fullName": "Full Name",
+      "email": "Email",
+      "phone": "Phone",
+      "role": "Role",
+      "isPrimary": "Is Primary",
+      "createdAt": "Created At",
+      "client": "Client"
+    }
+  },
+  "businessServiceApp": {
+    "businessServiceClientContact": {
+      "created": "Un nouveau Client Contact a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Client Contact avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Client Contact avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

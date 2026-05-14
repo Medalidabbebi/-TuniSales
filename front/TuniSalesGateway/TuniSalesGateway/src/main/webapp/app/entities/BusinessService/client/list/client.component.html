@@ -1,0 +1,121 @@
+<div class="container-fluid py-4">
+
+  <!-- Header -->
+  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+    <div>
+      <h2 class="mb-0 fw-bold">
+        <fa-icon icon="users" class="me-2 text-primary"></fa-icon>
+        Gestion des Clients
+      </h2>
+      <small class="text-muted">Liste des clients — {{ totalItems }} client(s) au total</small>
+    </div>
+    <div class="d-flex gap-2">
+      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+        Actualiser
+      </button>
+      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/client/new']">
+        <fa-icon icon="plus" class="me-1"></fa-icon>
+        Nouveau Client
+      </a>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- Chargement -->
+  <div class="text-center py-5" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
+    <p class="text-muted mt-2">Chargement...</p>
+  </div>
+
+  <!-- Aucun résultat -->
+  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && clients?.length === 0">
+    <fa-icon icon="users" size="3x" class="text-muted mb-3"></fa-icon>
+    <p class="text-muted">Aucun client trouvé. Créez votre premier client.</p>
+    <a class="btn btn-primary mt-2" [routerLink]="['/client/new']">
+      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+    </a>
+  </div>
+
+  <!-- Table -->
+  <div class="card shadow-sm" *ngIf="!isLoading && clients && clients.length > 0">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
+        <thead class="table-light">
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+            <th scope="col" jhiSortBy="id" style="width:60px">
+              <div class="d-flex align-items-center gap-1">ID <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="name">
+              <div class="d-flex align-items-center gap-1">Nom <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="taxId">
+              <div class="d-flex align-items-center gap-1">Matricule fiscal <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="clientType">
+              <div class="d-flex align-items-center gap-1">Type <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="creditLimit">
+              <div class="d-flex align-items-center gap-1">Crédit (TND) <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="status" style="width:110px">
+              <div class="d-flex align-items-center gap-1">Actif <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            </th>
+            <th scope="col" style="width:140px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let client of clients; trackBy: trackId" data-cy="entityTable">
+            <td>
+              <a [routerLink]="['/client', client.id, 'view']" class="fw-semibold text-decoration-none">{{ client.id }}</a>
+            </td>
+            <td class="fw-semibold">{{ client.name }}</td>
+            <td><code class="text-secondary">{{ client.taxId || '—' }}</code></td>
+            <td>{{ client.clientType || '—' }}</td>
+            <td>
+              <span *ngIf="client.creditLimit !== null && client.creditLimit !== undefined">
+                {{ client.creditLimit | number:'1.0-0' }} TND
+              </span>
+              <span *ngIf="client.creditLimit === null || client.creditLimit === undefined" class="text-muted">—</span>
+            </td>
+            <td>
+              <span class="badge rounded-pill" [ngClass]="client.status === 'ACTIVE' ? 'bg-success' : (client.status === 'SUSPENDED' ? 'bg-warning text-dark' : 'bg-danger')">
+                {{ client.status || '—' }}
+              </span>
+            </td>
+            <td>
+              <div class="d-flex gap-1 justify-content-end">
+                <a [routerLink]="['/client', client.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+                  <fa-icon icon="eye"></fa-icon>
+                </a>
+                <a [routerLink]="['/client', client.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                  <fa-icon icon="pencil-alt"></fa-icon>
+                </a>
+                <button (click)="delete(client)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="clients && clients.length > 0">
+    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+    <ngb-pagination
+      [collectionSize]="totalItems"
+      [page]="page"
+      [pageSize]="itemsPerPage"
+      [maxSize]="5"
+      [rotate]="true"
+      [boundaryLinks]="true"
+      (pageChange)="navigateToPage($event)"
+    ></ngb-pagination>
+  </div>
+
+</div>

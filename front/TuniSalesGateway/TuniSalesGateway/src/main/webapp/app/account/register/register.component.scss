@@ -1,0 +1,28 @@
+// Register-specific styles — shared .tsg-login layout is in global.scss
+// Password strength bar override
+@import 'design-system';
+
+jhi-password-strength-bar {
+  margin-top: $space-2;
+
+  ul {
+    display: flex;
+    gap: 4px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      flex: 1;
+      height: 4px;
+      border-radius: $radius-full;
+      background: $tsg-border-light;
+      transition: background $transition-fast;
+    }
+  }
+
+  small {
+    font-size: $font-size-xs;
+    color: $tsg-text-muted;
+  }
+}

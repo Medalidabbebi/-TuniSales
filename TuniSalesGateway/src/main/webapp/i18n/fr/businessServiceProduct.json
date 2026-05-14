@@ -1,0 +1,38 @@
+{
+  "tuniSalesGatewayApp": {
+    "businessServiceProduct": {
+      "home": {
+        "title": "Products",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Product",
+        "createOrEditLabel": "Créer ou éditer un Product",
+        "notFound": "Aucun Product trouvé"
+      },
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Product {{ id }} ?"
+      },
+      "detail": {
+        "title": "Product"
+      },
+      "id": "ID",
+      "tenantId": "Tenant Id",
+      "sku": "Sku",
+      "name": "Name",
+      "brand": "Brand",
+      "category": "Category",
+      "price": "Price",
+      "taxRate": "Tax Rate",
+      "isActive": "Is Active",
+      "isDeleted": "Is Deleted",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    }
+  },
+  "businessServiceApp": {
+    "businessServiceProduct": {
+      "created": "Un nouveau Product a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Product avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Product avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

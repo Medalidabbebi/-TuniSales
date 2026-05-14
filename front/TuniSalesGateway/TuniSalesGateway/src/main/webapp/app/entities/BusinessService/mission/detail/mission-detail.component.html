@@ -1,0 +1,106 @@
+<div class="tsg-detail-page" *ngIf="mission">
+  <div class="tsg-page-header">
+    <div>
+      <h1 class="tsg-page-header__title" data-cy="missionDetailsHeading" jhiTranslate="tuniSalesGatewayApp.businessServiceMission.detail.title">Mission</h1>
+      <p class="tsg-page-header__subtitle">{{ mission.title || 'Mission details' }}</p>
+    </div>
+    <div class="tsg-page-header__actions">
+      <button type="button" (click)="previousState()" class="tsg-btn tsg-btn--secondary" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Back</span>
+      </button>
+      <button type="button" [routerLink]="['/mission', mission.id, 'edit']" class="tsg-btn tsg-btn--primary">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="tsg-summary-grid">
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Title</div>
+      <div class="tsg-summary-card__value">{{ mission.title || '—' }}</div>
+      <div class="tsg-summary-card__meta">Mission ID #{{ mission.id }}</div>
+    </div>
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Assigned to</div>
+      <div class="tsg-summary-card__value">{{ mission.assignedToLogin || '—' }}</div>
+      <div class="tsg-summary-card__meta">Tenant {{ mission.tenantId || '—' }}</div>
+    </div>
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Status</div>
+      <div class="tsg-summary-card__value"><span class="tsg-badge" [ngClass]="getStatusBadgeClass()">{{ getStatusLabel() }}</span></div>
+      <div class="tsg-summary-card__meta">Execution state</div>
+    </div>
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Mission date</div>
+      <div class="tsg-summary-card__value">{{ mission.missionDate | formatMediumDatetime }}</div>
+      <div class="tsg-summary-card__meta">Scheduled timestamp</div>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <div class="tsg-detail-grid">
+    <section class="tsg-detail-card">
+      <div class="tsg-detail-card__header">
+        <h2>Mission details</h2>
+      </div>
+      <dl class="tsg-detail-list">
+        <div>
+          <dt jhiTranslate="global.field.id">ID</dt>
+          <dd>{{ mission.id }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.tenantId">Tenant Id</dt>
+          <dd>{{ mission.tenantId || '—' }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.assignedToLogin">Assigned To Login</dt>
+          <dd>{{ mission.assignedToLogin || '—' }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.title">Title</dt>
+          <dd>{{ mission.title || '—' }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="tsg-detail-card">
+      <div class="tsg-detail-card__header">
+        <h2>Status and timeline</h2>
+      </div>
+      <dl class="tsg-detail-list">
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.status">Status</dt>
+          <dd>{{ getStatusLabel() }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.missionDate">Mission Date</dt>
+          <dd>{{ mission.missionDate | formatMediumDatetime }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.createdAt">Created At</dt>
+          <dd>{{ mission.createdAt | formatMediumDatetime }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.updatedAt">Updated At</dt>
+          <dd>{{ mission.updatedAt | formatMediumDatetime }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="tsg-detail-card tsg-detail-card--wide">
+      <div class="tsg-detail-card__header">
+        <h2>Description</h2>
+      </div>
+      <dl class="tsg-detail-list tsg-detail-list--split">
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.description">Description</dt>
+          <dd>{{ mission.description || 'No description provided.' }}</dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+</div>

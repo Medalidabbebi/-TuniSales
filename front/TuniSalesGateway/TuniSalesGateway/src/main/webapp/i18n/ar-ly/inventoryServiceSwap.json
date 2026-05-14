@@ -1,0 +1,37 @@
+{
+  "tuniSalesGatewayApp": {
+    "inventoryServiceSwap": {
+      "home": {
+        "title": "Swaps",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Swap",
+        "createOrEditLabel": "Create or edit a Swap",
+        "notFound": "No Swaps found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Swap {{ id }}?"
+      },
+      "detail": {
+        "title": "Swap"
+      },
+      "id": "ID",
+      "tenantId": "Tenant Id",
+      "clientId": "Client Id",
+      "clientName": "Client Name",
+      "status": "Status",
+      "reason": "Reason",
+      "createdAt": "Created At",
+      "resolvedAt": "Resolved At",
+      "updatedAt": "Updated At",
+      "outgoingItem": "Outgoing Item",
+      "incomingItem": "Incoming Item"
+    }
+  },
+  "inventoryServiceApp": {
+    "inventoryServiceSwap": {
+      "created": "A new Swap is created with identifier {{ param }}",
+      "updated": "A Swap is updated with identifier {{ param }}",
+      "deleted": "A Swap is deleted with identifier {{ param }}"
+    }
+  }
+}

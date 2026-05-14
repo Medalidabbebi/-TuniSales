@@ -1,0 +1,64 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="performanceScore">
+      <h2 data-cy="performanceScoreDetailsHeading">
+        <span jhiTranslate="tuniSalesGatewayApp.platformServicePerformanceScore.detail.title">Performance Score</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ performanceScore.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServicePerformanceScore.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ performanceScore.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServicePerformanceScore.userLogin">User Login</span></dt>
+        <dd>
+          <span>{{ performanceScore.userLogin }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServicePerformanceScore.period">Period</span></dt>
+        <dd>
+          <span>{{ performanceScore.period }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServicePerformanceScore.score">Score</span></dt>
+        <dd>
+          <span>{{ performanceScore.score }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServicePerformanceScore.classification">Classification</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.ScoreClassification.' + performanceScore.classification }}">{{
+            performanceScore.classification
+          }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServicePerformanceScore.breakdownJson">Breakdown Json</span></dt>
+        <dd>
+          <span>{{ performanceScore.breakdownJson }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServicePerformanceScore.deltaVsPrevious">Delta Vs Previous</span></dt>
+        <dd>
+          <span>{{ performanceScore.deltaVsPrevious }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServicePerformanceScore.calculatedAt">Calculated At</span></dt>
+        <dd>
+          <span>{{ performanceScore.calculatedAt | formatMediumDatetime }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/performance-score', performanceScore.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

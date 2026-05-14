@@ -1,0 +1,259 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-objective-heading"
+        data-cy="ObjectiveCreateUpdateHeading"
+        jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.home.createOrEditLabel"
+      >
+        Créer ou éditer un Objective
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
+          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.tenantId" for="field_tenantId"
+            >Tenant Id</label
+          >
+          <input type="number" class="form-control" name="tenantId" id="field_tenantId" data-cy="tenantId" formControlName="tenantId" />
+          <div *ngIf="editForm.get('tenantId')!.invalid && (editForm.get('tenantId')!.dirty || editForm.get('tenantId')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('tenantId')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('tenantId')?.errors?.number"
+              jhiTranslate="entity.validation.number"
+            >
+              Ce champ doit être un nombre.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.assignedToLogin" for="field_assignedToLogin"
+            >Assigned To Login</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="assignedToLogin"
+            id="field_assignedToLogin"
+            data-cy="assignedToLogin"
+            formControlName="assignedToLogin"
+          />
+          <div
+            *ngIf="
+              editForm.get('assignedToLogin')!.invalid &&
+              (editForm.get('assignedToLogin')!.dirty || editForm.get('assignedToLogin')!.touched)
+            "
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('assignedToLogin')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('assignedToLogin')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 100 }"
+            >
+              Ce champ doit faire moins de 100 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.period" for="field_period">Period</label>
+          <input type="text" class="form-control" name="period" id="field_period" data-cy="period" formControlName="period" />
+          <div *ngIf="editForm.get('period')!.invalid && (editForm.get('period')!.dirty || editForm.get('period')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('period')?.errors?.required" jhiTranslate="entity.validation.required">
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('period')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 7 }"
+            >
+              Ce champ doit faire moins de 7 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.metricType" for="field_metricType"
+            >Metric Type</label
+          >
+          <select class="form-control" name="metricType" formControlName="metricType" id="field_metricType" data-cy="metricType">
+            <option [ngValue]="null">{{ 'tuniSalesGatewayApp.MetricType.null' | translate }}</option>
+            <option *ngFor="let metricType of metricTypeValues" [value]="metricType">
+              {{ 'tuniSalesGatewayApp.MetricType.' + metricType | translate }}
+            </option>
+          </select>
+          <div *ngIf="editForm.get('metricType')!.invalid && (editForm.get('metricType')!.dirty || editForm.get('metricType')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('metricType')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.targetValue" for="field_targetValue"
+            >Target Value</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="targetValue"
+            id="field_targetValue"
+            data-cy="targetValue"
+            formControlName="targetValue"
+          />
+          <div *ngIf="editForm.get('targetValue')!.invalid && (editForm.get('targetValue')!.dirty || editForm.get('targetValue')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('targetValue')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('targetValue')?.errors?.min"
+              jhiTranslate="entity.validation.min"
+              [translateValues]="{ min: 0 }"
+            >
+              Ce champ doit être supérieur à 0.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('targetValue')?.errors?.number"
+              jhiTranslate="entity.validation.number"
+            >
+              Ce champ doit être un nombre.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.achievedValue" for="field_achievedValue"
+            >Achieved Value</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="achievedValue"
+            id="field_achievedValue"
+            data-cy="achievedValue"
+            formControlName="achievedValue"
+          />
+          <div
+            *ngIf="
+              editForm.get('achievedValue')!.invalid && (editForm.get('achievedValue')!.dirty || editForm.get('achievedValue')!.touched)
+            "
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('achievedValue')?.errors?.min"
+              jhiTranslate="entity.validation.min"
+              [translateValues]="{ min: 0 }"
+            >
+              Ce champ doit être supérieur à 0.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('achievedValue')?.errors?.number"
+              jhiTranslate="entity.validation.number"
+            >
+              Ce champ doit être un nombre.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.createdAt" for="field_createdAt"
+            >Created At</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_createdAt"
+              data-cy="createdAt"
+              type="datetime-local"
+              class="form-control"
+              name="createdAt"
+              formControlName="createdAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('createdAt')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal"
+              jhiTranslate="entity.validation.datetimelocal"
+            >
+              Ce champ doit être une date et une heure.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.updatedAt" for="field_updatedAt"
+            >Updated At</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_updatedAt"
+              data-cy="updatedAt"
+              type="datetime-local"
+              class="form-control"
+              name="updatedAt"
+              formControlName="updatedAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

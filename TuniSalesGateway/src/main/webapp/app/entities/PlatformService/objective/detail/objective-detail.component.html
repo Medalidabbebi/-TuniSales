@@ -1,0 +1,62 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="objective">
+      <h2 data-cy="objectiveDetailsHeading">
+        <span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.detail.title">Objective</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ objective.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ objective.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.assignedToLogin">Assigned To Login</span></dt>
+        <dd>
+          <span>{{ objective.assignedToLogin }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.period">Period</span></dt>
+        <dd>
+          <span>{{ objective.period }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.metricType">Metric Type</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.MetricType.' + objective.metricType }}">{{ objective.metricType }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.targetValue">Target Value</span></dt>
+        <dd>
+          <span>{{ objective.targetValue }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.achievedValue">Achieved Value</span></dt>
+        <dd>
+          <span>{{ objective.achievedValue }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ objective.createdAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.updatedAt">Updated At</span></dt>
+        <dd>
+          <span>{{ objective.updatedAt | formatMediumDatetime }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/objective', objective.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

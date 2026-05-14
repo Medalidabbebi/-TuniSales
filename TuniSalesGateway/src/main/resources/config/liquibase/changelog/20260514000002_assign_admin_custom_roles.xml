@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260514000002" author="tunisales">
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" value="1"/>
+            <column name="authority_name" value="ROLE_ADMIN_SYSTEME"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" value="1"/>
+            <column name="authority_name" value="ROLE_ADMIN_COMMERCIAL"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" value="1"/>
+            <column name="authority_name" value="ROLE_COMMERCIAL"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" value="1"/>
+            <column name="authority_name" value="ROLE_MAGASINIER"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" value="1"/>
+            <column name="authority_name" value="ROLE_CHEF_PARC"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" value="1"/>
+            <column name="authority_name" value="ROLE_RESPONSABLE_PV"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" value="1"/>
+            <column name="authority_name" value="ROLE_VENDEUR"/>
+        </insert>
+        <insert tableName="jhi_user_authority">
+            <column name="user_id" value="1"/>
+            <column name="authority_name" value="ROLE_ADMIN_CLIENT"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

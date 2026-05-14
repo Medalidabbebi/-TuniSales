@@ -1,0 +1,48 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="orderLineItem">
+      <h2 data-cy="orderLineItemDetailsHeading">
+        <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.detail.title">Order Line Item</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ orderLineItem.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.stockItemId">Stock Item Id</span></dt>
+        <dd>
+          <span>{{ orderLineItem.stockItemId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.stockItemImei">Stock Item Imei</span></dt>
+        <dd>
+          <span>{{ orderLineItem.stockItemImei }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.assignedAt">Assigned At</span></dt>
+        <dd>
+          <span>{{ orderLineItem.assignedAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLineItem.orderLine">Order Line</span></dt>
+        <dd>
+          <div *ngIf="orderLineItem.orderLine">
+            <a [routerLink]="['/order-line', orderLineItem.orderLine.id, 'view']">{{ orderLineItem.orderLine.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/order-line-item', orderLineItem.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

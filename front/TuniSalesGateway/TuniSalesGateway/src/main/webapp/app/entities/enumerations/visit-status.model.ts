@@ -1,0 +1,11 @@
+export enum VisitStatus {
+  PLANNED = 'PLANNED',
+
+  IN_PROGRESS = 'IN_PROGRESS',
+
+  COMPLETED = 'COMPLETED',
+
+  MISSED = 'MISSED',
+
+  CANCELLED = 'CANCELLED',
+}

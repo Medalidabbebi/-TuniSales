@@ -1,0 +1,37 @@
+{
+  "tuniSalesGatewayApp": {
+    "inventoryServiceStockItem": {
+      "home": {
+        "title": "StockItems",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Stock Item",
+        "createOrEditLabel": "Créer ou éditer un Stock Item",
+        "notFound": "Aucun Stock Item trouvé"
+      },
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Stock Item {{ id }} ?"
+      },
+      "detail": {
+        "title": "Stock Item"
+      },
+      "id": "ID",
+      "tenantId": "Tenant Id",
+      "productId": "Product Id",
+      "productName": "Product Name",
+      "imei": "Imei",
+      "status": "Status",
+      "isDeleted": "Is Deleted",
+      "acquiredAt": "Acquired At",
+      "updatedAt": "Updated At",
+      "stockMovements": "Stock Movements",
+      "warehouse": "Warehouse"
+    }
+  },
+  "inventoryServiceApp": {
+    "inventoryServiceStockItem": {
+      "created": "Un nouveau Stock Item a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Stock Item avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Stock Item avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

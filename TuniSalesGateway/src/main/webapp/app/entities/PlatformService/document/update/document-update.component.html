@@ -1,0 +1,284 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-document-heading"
+        data-cy="DocumentCreateUpdateHeading"
+        jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.home.createOrEditLabel"
+      >
+        Créer ou éditer un Document
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
+          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.tenantId" for="field_tenantId"
+            >Tenant Id</label
+          >
+          <input type="number" class="form-control" name="tenantId" id="field_tenantId" data-cy="tenantId" formControlName="tenantId" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.entityType" for="field_entityType"
+            >Entity Type</label
+          >
+          <select class="form-control" name="entityType" formControlName="entityType" id="field_entityType" data-cy="entityType">
+            <option [ngValue]="null">{{ 'tuniSalesGatewayApp.DocumentEntityType.null' | translate }}</option>
+            <option *ngFor="let documentEntityType of documentEntityTypeValues" [value]="documentEntityType">
+              {{ 'tuniSalesGatewayApp.DocumentEntityType.' + documentEntityType | translate }}
+            </option>
+          </select>
+          <div *ngIf="editForm.get('entityType')!.invalid && (editForm.get('entityType')!.dirty || editForm.get('entityType')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('entityType')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.entityId" for="field_entityId"
+            >Entity Id</label
+          >
+          <input type="text" class="form-control" name="entityId" id="field_entityId" data-cy="entityId" formControlName="entityId" />
+          <div *ngIf="editForm.get('entityId')!.invalid && (editForm.get('entityId')!.dirty || editForm.get('entityId')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('entityId')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('entityId')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 36 }"
+            >
+              Ce champ doit faire moins de 36 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.docType" for="field_docType">Doc Type</label>
+          <select class="form-control" name="docType" formControlName="docType" id="field_docType" data-cy="docType">
+            <option [ngValue]="null">{{ 'tuniSalesGatewayApp.DocumentType.null' | translate }}</option>
+            <option *ngFor="let documentType of documentTypeValues" [value]="documentType">
+              {{ 'tuniSalesGatewayApp.DocumentType.' + documentType | translate }}
+            </option>
+          </select>
+          <div *ngIf="editForm.get('docType')!.invalid && (editForm.get('docType')!.dirty || editForm.get('docType')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('docType')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.filename" for="field_filename"
+            >Filename</label
+          >
+          <input type="text" class="form-control" name="filename" id="field_filename" data-cy="filename" formControlName="filename" />
+          <div *ngIf="editForm.get('filename')!.invalid && (editForm.get('filename')!.dirty || editForm.get('filename')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('filename')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('filename')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 255 }"
+            >
+              Ce champ doit faire moins de 255 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.storageUrl" for="field_storageUrl"
+            >Storage Url</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="storageUrl"
+            id="field_storageUrl"
+            data-cy="storageUrl"
+            formControlName="storageUrl"
+          />
+          <div *ngIf="editForm.get('storageUrl')!.invalid && (editForm.get('storageUrl')!.dirty || editForm.get('storageUrl')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('storageUrl')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('storageUrl')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 1000 }"
+            >
+              Ce champ doit faire moins de 1000 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.mimeType" for="field_mimeType"
+            >Mime Type</label
+          >
+          <input type="text" class="form-control" name="mimeType" id="field_mimeType" data-cy="mimeType" formControlName="mimeType" />
+          <div *ngIf="editForm.get('mimeType')!.invalid && (editForm.get('mimeType')!.dirty || editForm.get('mimeType')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('mimeType')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 100 }"
+            >
+              Ce champ doit faire moins de 100 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.sizeBytes" for="field_sizeBytes"
+            >Size Bytes</label
+          >
+          <input type="number" class="form-control" name="sizeBytes" id="field_sizeBytes" data-cy="sizeBytes" formControlName="sizeBytes" />
+          <div *ngIf="editForm.get('sizeBytes')!.invalid && (editForm.get('sizeBytes')!.dirty || editForm.get('sizeBytes')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('sizeBytes')?.errors?.min"
+              jhiTranslate="entity.validation.min"
+              [translateValues]="{ min: 0 }"
+            >
+              Ce champ doit être supérieur à 0.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('sizeBytes')?.errors?.number"
+              jhiTranslate="entity.validation.number"
+            >
+              Ce champ doit être un nombre.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.uploadedByLogin" for="field_uploadedByLogin"
+            >Uploaded By Login</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="uploadedByLogin"
+            id="field_uploadedByLogin"
+            data-cy="uploadedByLogin"
+            formControlName="uploadedByLogin"
+          />
+          <div
+            *ngIf="
+              editForm.get('uploadedByLogin')!.invalid &&
+              (editForm.get('uploadedByLogin')!.dirty || editForm.get('uploadedByLogin')!.touched)
+            "
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('uploadedByLogin')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 100 }"
+            >
+              Ce champ doit faire moins de 100 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.createdAt" for="field_createdAt"
+            >Created At</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_createdAt"
+              data-cy="createdAt"
+              type="datetime-local"
+              class="form-control"
+              name="createdAt"
+              formControlName="createdAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('createdAt')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal"
+              jhiTranslate="entity.validation.datetimelocal"
+            >
+              Ce champ doit être une date et une heure.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.updatedAt" for="field_updatedAt"
+            >Updated At</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_updatedAt"
+              data-cy="updatedAt"
+              type="datetime-local"
+              class="form-control"
+              name="updatedAt"
+              formControlName="updatedAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

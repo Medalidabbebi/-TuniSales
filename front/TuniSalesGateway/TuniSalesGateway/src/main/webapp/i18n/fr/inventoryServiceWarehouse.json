@@ -1,0 +1,37 @@
+{
+  "tuniSalesGatewayApp": {
+    "inventoryServiceWarehouse": {
+      "home": {
+        "title": "Warehouses",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Warehouse",
+        "createOrEditLabel": "Créer ou éditer un Warehouse",
+        "notFound": "Aucun Warehouse trouvé"
+      },
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Warehouse {{ id }} ?"
+      },
+      "detail": {
+        "title": "Warehouse"
+      },
+      "id": "ID",
+      "tenantId": "Tenant Id",
+      "name": "Name",
+      "type": "Type",
+      "address": "Address",
+      "city": "City",
+      "minThreshold": "Min Threshold",
+      "isActive": "Is Active",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "stockItems": "Stock Items"
+    }
+  },
+  "inventoryServiceApp": {
+    "inventoryServiceWarehouse": {
+      "created": "Un nouveau Warehouse a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Warehouse avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Warehouse avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

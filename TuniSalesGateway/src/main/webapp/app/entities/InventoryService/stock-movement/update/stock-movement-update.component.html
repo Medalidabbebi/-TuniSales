@@ -1,0 +1,257 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-stock-movement-heading"
+        data-cy="StockMovementCreateUpdateHeading"
+        jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.home.createOrEditLabel"
+      >
+        Créer ou éditer un Stock Movement
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
+          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.movementType" for="field_movementType"
+            >Movement Type</label
+          >
+          <select class="form-control" name="movementType" formControlName="movementType" id="field_movementType" data-cy="movementType">
+            <option [ngValue]="null">{{ 'tuniSalesGatewayApp.MovementType.null' | translate }}</option>
+            <option *ngFor="let movementType of movementTypeValues" [value]="movementType">
+              {{ 'tuniSalesGatewayApp.MovementType.' + movementType | translate }}
+            </option>
+          </select>
+          <div
+            *ngIf="editForm.get('movementType')!.invalid && (editForm.get('movementType')!.dirty || editForm.get('movementType')!.touched)"
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('movementType')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.reason" for="field_reason"
+            >Reason</label
+          >
+          <input type="text" class="form-control" name="reason" id="field_reason" data-cy="reason" formControlName="reason" />
+          <div *ngIf="editForm.get('reason')!.invalid && (editForm.get('reason')!.dirty || editForm.get('reason')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('reason')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 500 }"
+            >
+              Ce champ doit faire moins de 500 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.reference" for="field_reference"
+            >Reference</label
+          >
+          <input type="text" class="form-control" name="reference" id="field_reference" data-cy="reference" formControlName="reference" />
+          <div *ngIf="editForm.get('reference')!.invalid && (editForm.get('reference')!.dirty || editForm.get('reference')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('reference')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 100 }"
+            >
+              Ce champ doit faire moins de 100 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.quantity" for="field_quantity"
+            >Quantity</label
+          >
+          <input type="number" class="form-control" name="quantity" id="field_quantity" data-cy="quantity" formControlName="quantity" />
+          <div *ngIf="editForm.get('quantity')!.invalid && (editForm.get('quantity')!.dirty || editForm.get('quantity')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('quantity')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('quantity')?.errors?.min"
+              jhiTranslate="entity.validation.min"
+              [translateValues]="{ min: 1 }"
+            >
+              Ce champ doit être supérieur à 1.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('quantity')?.errors?.number"
+              jhiTranslate="entity.validation.number"
+            >
+              Ce champ doit être un nombre.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label
+            class="form-label"
+            jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.performedByLogin"
+            for="field_performedByLogin"
+            >Performed By Login</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="performedByLogin"
+            id="field_performedByLogin"
+            data-cy="performedByLogin"
+            formControlName="performedByLogin"
+          />
+          <div
+            *ngIf="
+              editForm.get('performedByLogin')!.invalid &&
+              (editForm.get('performedByLogin')!.dirty || editForm.get('performedByLogin')!.touched)
+            "
+          >
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('performedByLogin')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 100 }"
+            >
+              Ce champ doit faire moins de 100 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.createdAt" for="field_createdAt"
+            >Created At</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_createdAt"
+              data-cy="createdAt"
+              type="datetime-local"
+              class="form-control"
+              name="createdAt"
+              formControlName="createdAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('createdAt')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal"
+              jhiTranslate="entity.validation.datetimelocal"
+            >
+              Ce champ doit être une date et une heure.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.fromWarehouse" for="field_fromWarehouse"
+            >From Warehouse</label
+          >
+          <select
+            class="form-control"
+            id="field_fromWarehouse"
+            data-cy="fromWarehouse"
+            name="fromWarehouse"
+            formControlName="fromWarehouse"
+            [compareWith]="compareWarehouse"
+          >
+            <option [ngValue]="null"></option>
+            <option [ngValue]="warehouseOption" *ngFor="let warehouseOption of warehousesSharedCollection">
+              {{ warehouseOption.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.toWarehouse" for="field_toWarehouse"
+            >To Warehouse</label
+          >
+          <select
+            class="form-control"
+            id="field_toWarehouse"
+            data-cy="toWarehouse"
+            name="toWarehouse"
+            formControlName="toWarehouse"
+            [compareWith]="compareWarehouse"
+          >
+            <option [ngValue]="null"></option>
+            <option [ngValue]="warehouseOption" *ngFor="let warehouseOption of warehousesSharedCollection">
+              {{ warehouseOption.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.stockItem" for="field_stockItem"
+            >Stock Item</label
+          >
+          <select
+            class="form-control"
+            id="field_stockItem"
+            data-cy="stockItem"
+            name="stockItem"
+            formControlName="stockItem"
+            [compareWith]="compareStockItem"
+          >
+            <option *ngIf="editForm.get(['stockItem'])!.value == null" [ngValue]="null" selected></option>
+            <option [ngValue]="stockItemOption" *ngFor="let stockItemOption of stockItemsSharedCollection">
+              {{ stockItemOption.imei }}
+            </option>
+          </select>
+        </div>
+        <div *ngIf="editForm.get(['stockItem'])!.invalid && (editForm.get(['stockItem'])!.dirty || editForm.get(['stockItem'])!.touched)">
+          <small
+            class="form-text text-danger"
+            *ngIf="editForm.get(['stockItem'])?.errors?.required"
+            jhiTranslate="entity.validation.required"
+          >
+            Ce champ est obligatoire.
+          </small>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

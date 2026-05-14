@@ -1,0 +1,33 @@
+{
+  "tuniSalesGatewayApp": {
+    "inventoryServiceStockAuditLine": {
+      "home": {
+        "title": "Stock Audit Lines",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Stock Audit Line",
+        "createOrEditLabel": "Create or edit a Stock Audit Line",
+        "notFound": "No Stock Audit Lines found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Stock Audit Line {{ id }}?"
+      },
+      "detail": {
+        "title": "Stock Audit Line"
+      },
+      "id": "ID",
+      "foundPhysically": "Found Physically",
+      "resolution": "Resolution",
+      "resolutionNote": "Resolution Note",
+      "createdAt": "Created At",
+      "stockItem": "Stock Item",
+      "audit": "Audit"
+    }
+  },
+  "inventoryServiceApp": {
+    "inventoryServiceStockAuditLine": {
+      "created": "A new Stock Audit Line is created with identifier {{ param }}",
+      "updated": "A Stock Audit Line is updated with identifier {{ param }}",
+      "deleted": "A Stock Audit Line is deleted with identifier {{ param }}"
+    }
+  }
+}

@@ -1,0 +1,141 @@
+@import 'design-system';
+
+.tsg-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.tsg-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+
+  @media (max-width: 991px) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 575px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tsg-summary-card {
+  padding: 22px;
+  border-radius: $radius-lg;
+  background: $tsg-surface;
+  border: 1px solid $tsg-border;
+  box-shadow: $shadow-sm;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  &__icon {
+    @include flex-center;
+    width: 44px;
+    height: 44px;
+    border-radius: $radius-md;
+    font-size: 18px;
+
+    &--info {
+      color: #0284c7;
+      background: #e0f2fe;
+    }
+
+    &--success {
+      color: $tsg-success;
+      background: $tsg-success-bg;
+    }
+
+    &--warning {
+      color: #d97706;
+      background: #fffbeb;
+    }
+
+    &--danger {
+      color: $tsg-danger;
+      background: $tsg-danger-bg;
+    }
+  }
+
+  &__label {
+    color: #5b728f;
+    font-size: $font-size-xs;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-weight: $font-weight-semibold;
+    line-height: 1.1;
+  }
+
+  &__value {
+    font-size: 2rem;
+    font-weight: $font-weight-bold;
+    line-height: 1.15;
+    color: $tsg-text;
+  }
+
+  &__meta {
+    margin-top: 8px;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+
+    &--neutral {
+      color: #5b728f;
+    }
+
+    &--positive {
+      color: $tsg-success;
+    }
+
+    &--warning {
+      color: #d97706;
+    }
+
+    &--negative {
+      color: $tsg-danger;
+    }
+  }
+
+  @media (max-width: 575px) {
+    padding: 18px;
+
+    &__value {
+      font-size: 1.65rem;
+    }
+  }
+}
+
+.tsg-mission-avatar {
+  @include flex-center;
+  width: 38px;
+  height: 38px;
+  border-radius: $radius-sm;
+  background: linear-gradient(135deg, $tsg-primary, $tsg-accent);
+  color: #fff;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.tsg-mission-meta {
+  color: $tsg-text-muted;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.fw-medium {
+  font-weight: 500;
+}
+
+.gap-3 {
+  gap: 12px;
+}
+
+.gap-1 {
+  gap: 4px;
+}

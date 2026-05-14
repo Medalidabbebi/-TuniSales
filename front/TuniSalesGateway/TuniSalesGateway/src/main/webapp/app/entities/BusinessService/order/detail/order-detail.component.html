@@ -1,0 +1,134 @@
+<div *ngIf="order">
+  <!-- Page Header -->
+  <div class="tsg-page-header">
+    <div>
+      <div class="d-flex align-items-center gap-3">
+        <button class="tsg-btn tsg-btn--ghost tsg-btn--icon" (click)="previousState()" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>
+        </button>
+        <div>
+          <h1 class="tsg-page-header__title" data-cy="orderDetailsHeading">
+            Order {{ order.orderNumber || '#' + order.id }}
+          </h1>
+          <p class="tsg-page-header__subtitle">
+            <span *ngIf="order.client">
+              <fa-icon icon="user" style="margin-right: 4px; opacity: 0.5;"></fa-icon>
+              <a [routerLink]="['/client', order.client.id, 'view']">{{ order.client.name }}</a>
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="tsg-page-header__actions">
+      <span class="tsg-badge" [ngClass]="getStatusBadgeClass()" style="font-size: 13px; padding: 4px 14px;">
+        <span jhiTranslate="{{ 'tuniSalesGatewayApp.OrderStatus.' + order.status }}">{{ order.status }}</span>
+      </span>
+      <button type="button" [routerLink]="['/order', order.id, 'edit']" class="tsg-btn tsg-btn--primary">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- Status Pipeline -->
+  <div class="tsg-detail-section" *ngIf="!isTerminalStatus()">
+    <div class="tsg-detail-section__title">Order Progress</div>
+    <div class="tsg-pipeline">
+      <div
+        *ngFor="let step of pipelineSteps; let i = index"
+        class="tsg-pipeline__step"
+        [ngClass]="'tsg-pipeline__step--' + getStepState(step.key)"
+      >
+        <div class="tsg-pipeline__dot">
+          <fa-icon *ngIf="getStepState(step.key) === 'completed'" icon="check"></fa-icon>
+          <span *ngIf="getStepState(step.key) !== 'completed'">{{ i + 1 }}</span>
+        </div>
+        <span class="tsg-pipeline__label">{{ step.label }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rejected/Cancelled banner -->
+  <div *ngIf="isTerminalStatus()" class="tsg-terminal-banner" [ngClass]="order.status === 'REJECTED' ? 'tsg-terminal-banner--danger' : 'tsg-terminal-banner--warning'">
+    <fa-icon [icon]="order.status === 'REJECTED' ? 'times' : 'ban'"></fa-icon>
+    <div>
+      <strong>Order {{ order.status }}</strong>
+      <p *ngIf="order.rejectionReason" style="margin: 4px 0 0;">Reason: {{ order.rejectionReason }}</p>
+    </div>
+  </div>
+
+  <!-- Order Details Grid -->
+  <div class="tsg-order-grid">
+    <!-- Financial Overview -->
+    <div class="tsg-detail-section">
+      <div class="tsg-detail-section__title">Financial Summary</div>
+      <div class="tsg-detail-section__grid">
+        <div class="tsg-detail-section__field">
+          <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.subtotal">Subtotal</div>
+          <div class="tsg-detail-section__field-value">{{ order.subtotal | number:'1.2-2' }} TND</div>
+        </div>
+        <div class="tsg-detail-section__field">
+          <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.discountAmount">Discount</div>
+          <div class="tsg-detail-section__field-value" style="color: #16a34a;">-{{ order.discountAmount | number:'1.2-2' }} TND</div>
+        </div>
+        <div class="tsg-detail-section__field">
+          <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.taxAmount">Tax</div>
+          <div class="tsg-detail-section__field-value">{{ order.taxAmount | number:'1.2-2' }} TND</div>
+        </div>
+        <div class="tsg-detail-section__field">
+          <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.totalAmount">Total</div>
+          <div class="tsg-detail-section__field-value" style="font-size: 20px; color: #00355f;">{{ order.totalAmount | number:'1.2-2' }} TND</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Information -->
+    <div class="tsg-detail-section">
+      <div class="tsg-detail-section__title">Order Information</div>
+      <div class="tsg-detail-section__grid">
+        <div class="tsg-detail-section__field">
+          <div class="tsg-detail-section__field-label" jhiTranslate="global.field.id">ID</div>
+          <div class="tsg-detail-section__field-value">{{ order.id }}</div>
+        </div>
+        <div class="tsg-detail-section__field">
+          <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.orderNumber">Order Number</div>
+          <div class="tsg-detail-section__field-value">{{ order.orderNumber || '—' }}</div>
+        </div>
+        <div class="tsg-detail-section__field">
+          <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.paymentTermsDays">Payment Terms</div>
+          <div class="tsg-detail-section__field-value">{{ order.paymentTermsDays }} days</div>
+        </div>
+        <div class="tsg-detail-section__field">
+          <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.dueDate">Due Date</div>
+          <div class="tsg-detail-section__field-value">{{ order.dueDate | formatMediumDatetime }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timeline -->
+  <div class="tsg-detail-section">
+    <div class="tsg-detail-section__title">Timeline</div>
+    <div class="tsg-detail-section__grid">
+      <div class="tsg-detail-section__field" *ngIf="order.createdAt">
+        <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.createdAt">Created</div>
+        <div class="tsg-detail-section__field-value">{{ order.createdAt | formatMediumDatetime }}</div>
+      </div>
+      <div class="tsg-detail-section__field" *ngIf="order.submittedAt">
+        <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.submittedAt">Submitted</div>
+        <div class="tsg-detail-section__field-value">{{ order.submittedAt | formatMediumDatetime }}</div>
+      </div>
+      <div class="tsg-detail-section__field" *ngIf="order.validatedAt">
+        <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.validatedAt">Validated</div>
+        <div class="tsg-detail-section__field-value">{{ order.validatedAt | formatMediumDatetime }}</div>
+      </div>
+      <div class="tsg-detail-section__field" *ngIf="order.updatedAt">
+        <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.updatedAt">Updated</div>
+        <div class="tsg-detail-section__field-value">{{ order.updatedAt | formatMediumDatetime }}</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,11 @@
+export enum ContactRole {
+  BUYER = 'BUYER',
+
+  ACCOUNTING = 'ACCOUNTING',
+
+  MANAGEMENT = 'MANAGEMENT',
+
+  TECHNICAL = 'TECHNICAL',
+
+  OTHER = 'OTHER',
+}

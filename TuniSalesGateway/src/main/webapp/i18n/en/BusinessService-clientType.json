@@ -1,0 +1,11 @@
+{
+  "tuniSalesGatewayApp": {
+    "ClientType": {
+      "null": "",
+      "NATIONAL_DISTRIBUTOR": "NATIONAL_DISTRIBUTOR",
+      "REGIONAL_WHOLESALER": "REGIONAL_WHOLESALER",
+      "INDEPENDENT_POS": "INDEPENDENT_POS",
+      "TELECOM_OPERATOR": "TELECOM_OPERATOR"
+    }
+  }
+}

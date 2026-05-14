@@ -1,0 +1,110 @@
+<div class="tsg-detail-page" *ngIf="priceList">
+  <div class="tsg-page-header">
+    <div>
+      <h1 class="tsg-page-header__title" data-cy="priceListDetailsHeading" jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.detail.title">Price List</h1>
+      <p class="tsg-page-header__subtitle">Product {{ priceList.product?.name || '—' }} with client {{ priceList.client?.name || '—' }}</p>
+    </div>
+    <div class="tsg-page-header__actions">
+      <button type="button" (click)="previousState()" class="tsg-btn tsg-btn--secondary" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        <span jhiTranslate="entity.action.back">Back</span>
+      </button>
+      <button type="button" [routerLink]="['/price-list', priceList.id, 'edit']" class="tsg-btn tsg-btn--primary">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        <span jhiTranslate="entity.action.edit">Edit</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="tsg-summary-grid">
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Unit price</div>
+      <div class="tsg-summary-card__value">{{ getAmount(priceList.unitPrice) }}</div>
+      <div class="tsg-summary-card__meta">List ID #{{ priceList.id }}</div>
+    </div>
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Max discount</div>
+      <div class="tsg-summary-card__value">{{ priceList.maxDiscountPct ?? '—' }}%</div>
+      <div class="tsg-summary-card__meta">Commercial threshold</div>
+    </div>
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Status</div>
+      <div class="tsg-summary-card__value">
+        <span class="tsg-badge" [ngClass]="getStatusBadgeClass()">{{ priceList.isActive ? 'Active' : 'Inactive' }}</span>
+      </div>
+      <div class="tsg-summary-card__meta">Availability in pricing engine</div>
+    </div>
+    <div class="tsg-summary-card">
+      <div class="tsg-summary-card__label">Created</div>
+      <div class="tsg-summary-card__value">{{ priceList.createdAt | formatMediumDatetime }}</div>
+      <div class="tsg-summary-card__meta">Creation timestamp</div>
+    </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <div class="tsg-detail-grid">
+    <section class="tsg-detail-card">
+      <div class="tsg-detail-card__header">
+        <h2>Price configuration</h2>
+      </div>
+      <dl class="tsg-detail-list">
+        <div>
+          <dt jhiTranslate="global.field.id">ID</dt>
+          <dd>{{ priceList.id }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.unitPrice">Unit Price</dt>
+          <dd>{{ getAmount(priceList.unitPrice) }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.maxDiscountPct">Max Discount Pct</dt>
+          <dd>{{ priceList.maxDiscountPct ?? '—' }}%</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.isActive">Is Active</dt>
+          <dd>{{ priceList.isActive }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="tsg-detail-card">
+      <div class="tsg-detail-card__header">
+        <h2>Related entities</h2>
+      </div>
+      <dl class="tsg-detail-list">
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.product">Product</dt>
+          <dd>
+            <a *ngIf="priceList.product" [routerLink]="['/product', priceList.product.id, 'view']">{{ priceList.product.name }}</a>
+            <span *ngIf="!priceList.product">—</span>
+          </dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.client">Client</dt>
+          <dd>
+            <a *ngIf="priceList.client" [routerLink]="['/client', priceList.client.id, 'view']">{{ priceList.client.name }}</a>
+            <span *ngIf="!priceList.client">—</span>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="tsg-detail-card tsg-detail-card--wide">
+      <div class="tsg-detail-card__header">
+        <h2>Validity</h2>
+      </div>
+      <dl class="tsg-detail-list tsg-detail-list--split">
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.validFrom">Valid From</dt>
+          <dd>{{ priceList.validFrom | formatMediumDatetime }}</dd>
+        </div>
+        <div>
+          <dt jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.validTo">Valid To</dt>
+          <dd>{{ priceList.validTo | formatMediumDatetime }}</dd>
+        </div>
+      </dl>
+    </section>
+  </div>
+</div>

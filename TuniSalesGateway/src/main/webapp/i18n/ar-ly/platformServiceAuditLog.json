@@ -1,0 +1,37 @@
+{
+  "tuniSalesGatewayApp": {
+    "platformServiceAuditLog": {
+      "home": {
+        "title": "Audit Logs",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Audit Log",
+        "createOrEditLabel": "Create or edit a Audit Log",
+        "notFound": "No Audit Logs found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Audit Log {{ id }}?"
+      },
+      "detail": {
+        "title": "Audit Log"
+      },
+      "id": "ID",
+      "tenantId": "Tenant Id",
+      "entityType": "Entity Type",
+      "entityId": "Entity Id",
+      "action": "Action",
+      "beforeJson": "Before Json",
+      "afterJson": "After Json",
+      "ipAddress": "Ip Address",
+      "userAgent": "User Agent",
+      "performedByLogin": "Performed By Login",
+      "createdAt": "Created At"
+    }
+  },
+  "platformServiceApp": {
+    "platformServiceAuditLog": {
+      "created": "A new Audit Log is created with identifier {{ param }}",
+      "updated": "A Audit Log is updated with identifier {{ param }}",
+      "deleted": "A Audit Log is deleted with identifier {{ param }}"
+    }
+  }
+}

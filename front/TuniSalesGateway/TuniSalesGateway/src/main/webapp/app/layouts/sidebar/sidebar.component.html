@@ -1,0 +1,74 @@
+<aside class="tsg-sidebar" [class.tsg-sidebar--collapsed]="collapsed" data-cy="sidebar">
+  <!-- Logo -->
+  <div class="tsg-sidebar__logo" (click)="navigateToDashboard()">
+    <div class="tsg-sidebar__logo-icon">
+      <span>T</span>
+    </div>
+    <span class="tsg-sidebar__logo-text" *ngIf="!collapsed">TuniSales</span>
+  </div>
+
+  <!-- Toggle Button -->
+  <button class="tsg-sidebar__toggle" (click)="toggleCollapse()" [attr.aria-label]="collapsed ? 'Expand sidebar' : 'Collapse sidebar'">
+    <fa-icon [icon]="collapsed ? 'chevron-right' : 'chevron-left'"></fa-icon>
+  </button>
+
+  <!-- Navigation -->
+  <nav class="tsg-sidebar__nav" *ngIf="account">
+    <ng-container *ngFor="let section of navSections">
+      <ng-container *ngIf="hasAuthority(section)">
+        <!-- Dashboard (no children) -->
+        <a
+          *ngIf="isDashboard(section)"
+          class="tsg-sidebar__item"
+          [class.tsg-sidebar__item--active]="currentUrl === '/' || currentUrl === ''"
+          routerLink="/"
+        >
+          <fa-icon [icon]="section.icon" [fixedWidth]="true" class="tsg-sidebar__item-icon"></fa-icon>
+          <span class="tsg-sidebar__item-text" *ngIf="!collapsed" jhiTranslate="global.menu.home">Dashboard</span>
+        </a>
+
+        <!-- Sections with children -->
+        <div *ngIf="!isDashboard(section)" class="tsg-sidebar__section">
+          <button
+            class="tsg-sidebar__section-header"
+            [class.tsg-sidebar__section-header--expanded]="isSectionExpanded(section.label)"
+            (click)="toggleSection(section.label)"
+          >
+            <fa-icon [icon]="section.icon" [fixedWidth]="true" class="tsg-sidebar__item-icon"></fa-icon>
+            <span class="tsg-sidebar__item-text" *ngIf="!collapsed">{{ section.label }}</span>
+            <fa-icon
+              *ngIf="!collapsed"
+              [icon]="isSectionExpanded(section.label) ? 'chevron-down' : 'chevron-right'"
+              class="tsg-sidebar__chevron"
+            ></fa-icon>
+          </button>
+
+          <div class="tsg-sidebar__children" *ngIf="isSectionExpanded(section.label)">
+            <a
+              *ngFor="let item of section.children"
+              class="tsg-sidebar__item tsg-sidebar__item--child"
+              [class.tsg-sidebar__item--active]="isActive(item.route)"
+              [routerLink]="item.route"
+            >
+              <fa-icon [icon]="item.icon" [fixedWidth]="true" class="tsg-sidebar__item-icon"></fa-icon>
+              <span class="tsg-sidebar__item-text" *ngIf="!collapsed">{{ item.label }}</span>
+            </a>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+  </nav>
+
+  <!-- User info at bottom -->
+  <div class="tsg-sidebar__footer" *ngIf="account">
+    <div class="tsg-sidebar__user">
+      <div class="tsg-sidebar__user-avatar">
+        {{ account.firstName?.charAt(0) || account.login.charAt(0) || 'U' }}
+      </div>
+      <div class="tsg-sidebar__user-info" *ngIf="!collapsed">
+        <span class="tsg-sidebar__user-name">{{ account.firstName }} {{ account.lastName }}</span>
+        <span class="tsg-sidebar__user-role">{{ account.authorities.includes('ROLE_ADMIN') ? 'Admin' : 'User' }}</span>
+      </div>
+    </div>
+  </div>
+</aside>

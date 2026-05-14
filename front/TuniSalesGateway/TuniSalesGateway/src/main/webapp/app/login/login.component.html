@@ -1,0 +1,86 @@
+<div class="tsg-login">
+  <div class="tsg-login__left">
+    <div class="tsg-login__brand">
+      <div class="tsg-login__logo">T</div>
+      <h1>TuniSalesGateway</h1>
+      <p>Enterprise Sales Management Platform</p>
+    </div>
+    <div class="tsg-login__features">
+      <div class="tsg-login__feature">
+        <fa-icon icon="chart-line"></fa-icon>
+        <span>Real-time sales analytics</span>
+      </div>
+      <div class="tsg-login__feature">
+        <fa-icon icon="truck"></fa-icon>
+        <span>End-to-end delivery tracking</span>
+      </div>
+      <div class="tsg-login__feature">
+        <fa-icon icon="warehouse"></fa-icon>
+        <span>Smart inventory management</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tsg-login__right">
+    <div class="tsg-login__form-wrapper">
+      <h2 data-cy="loginTitle" jhiTranslate="login.title">Sign In</h2>
+      <p class="tsg-login__subtitle">Enter your credentials to access your account</p>
+
+      <div class="tsg-login__error" *ngIf="authenticationError" data-cy="loginError">
+        <fa-icon icon="exclamation-triangle"></fa-icon>
+        <span jhiTranslate="login.messages.error.authentication">Authentication failed. Check your credentials.</span>
+      </div>
+
+      <form class="tsg-login__form" role="form" (ngSubmit)="login()" [formGroup]="loginForm">
+        <div class="tsg-form-group">
+          <label for="username" jhiTranslate="global.form.username.label">Username</label>
+          <input
+            type="text"
+            class="form-control"
+            name="username"
+            id="username"
+            placeholder="{{ 'global.form.username.placeholder' | translate }}"
+            formControlName="username"
+            #username
+            data-cy="username"
+            autocomplete="username"
+          />
+        </div>
+
+        <div class="tsg-form-group">
+          <div class="tsg-login__password-header">
+            <label for="password" jhiTranslate="login.form.password">Password</label>
+            <a routerLink="/account/reset/request" class="tsg-login__forgot" data-cy="forgetYourPasswordSelector"
+               jhiTranslate="login.password.forgot">Forgot password?</a>
+          </div>
+          <input
+            type="password"
+            class="form-control"
+            name="password"
+            id="password"
+            placeholder="{{ 'login.form.password.placeholder' | translate }}"
+            formControlName="password"
+            data-cy="password"
+            autocomplete="current-password"
+          />
+        </div>
+
+        <div class="tsg-login__remember">
+          <input class="form-check-input" type="checkbox" name="rememberMe" id="rememberMe" formControlName="rememberMe" />
+          <label class="form-check-label" for="rememberMe">
+            <span jhiTranslate="login.form.rememberme">Remember me</span>
+          </label>
+        </div>
+
+        <button type="submit" class="tsg-btn tsg-btn--primary tsg-login__submit" data-cy="submit" jhiTranslate="login.form.button">
+          Sign In
+        </button>
+      </form>
+
+      <div class="tsg-login__register">
+        <span jhiTranslate="global.messages.info.register.noaccount">Don't have an account?</span>
+        <a routerLink="/account/register" jhiTranslate="global.messages.info.register.link">Create one</a>
+      </div>
+    </div>
+  </div>
+</div>

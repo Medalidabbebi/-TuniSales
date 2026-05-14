@@ -1,0 +1,1046 @@
+@import 'design-system';
+
+// ============================================================
+// Google Fonts - Inter
+// ============================================================
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+// ============================================================
+// Base Reset & Global
+// ============================================================
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: $font-family-base;
+  font-size: $font-size-base;
+  color: $tsg-text;
+  background-color: $tsg-bg;
+  line-height: $line-height-normal;
+  margin: 0;
+  padding: 0;
+}
+
+a {
+  color: $tsg-accent;
+  text-decoration: none;
+  transition: color $transition-fast;
+  cursor: pointer;
+  &:hover { color: darken($tsg-accent, 10%); }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: $font-weight-semibold;
+  color: $tsg-text;
+  margin-bottom: $space-4;
+  line-height: $line-height-tight;
+}
+
+h1 { font-size: $font-size-3xl; }
+h2 { font-size: $font-size-2xl; }
+h3 { font-size: $font-size-xl; }
+h4 { font-size: $font-size-lg; }
+
+// ============================================================
+// Layout Shell
+// ============================================================
+.tsg-app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: $tsg-bg;
+}
+
+.tsg-main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  margin-inline-start: $tsg-sidebar-width;
+  transition: margin-inline-start $transition-slow;
+
+  &.sidebar-collapsed {
+    margin-inline-start: $tsg-sidebar-collapsed-width;
+  }
+}
+
+.tsg-content {
+  flex: 1;
+  padding: $space-6;
+  margin-top: $tsg-header-height;
+  animation: fadeIn 0.3s ease-out;
+}
+
+// ============================================================
+// Cards
+// ============================================================
+.tsg-card {
+  @include card-base;
+  padding: $space-6;
+
+  &--hover {
+    @include card-hover;
+  }
+
+  &__header {
+    @include flex-between;
+    margin-bottom: $space-5;
+    padding-bottom: $space-4;
+    border-bottom: 1px solid $tsg-border-light;
+  }
+
+  &__title {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $tsg-text;
+    margin: 0;
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: $tsg-text-secondary;
+    margin: 0;
+  }
+}
+
+// ============================================================
+// KPI Cards
+// ============================================================
+.tsg-kpi {
+  @include card-base;
+  padding: $space-5 $space-6;
+  display: flex;
+  align-items: flex-start;
+  gap: $space-4;
+  @include card-hover;
+
+  &__icon {
+    @include flex-center;
+    width: 48px;
+    height: 48px;
+    border-radius: $radius-md;
+    flex-shrink: 0;
+
+    &--blue   { background: $tsg-info-bg; color: $tsg-accent; }
+    &--green  { background: $tsg-success-bg; color: $tsg-success; }
+    &--orange { background: $tsg-warning-bg; color: $tsg-warning; }
+    &--red    { background: $tsg-danger-bg; color: $tsg-danger; }
+  }
+
+  &__content { flex: 1; }
+
+  &__label {
+    font-size: $font-size-sm;
+    color: $tsg-text-secondary;
+    font-weight: $font-weight-medium;
+    margin-bottom: $space-1;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  &__value {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $tsg-text;
+    line-height: 1.2;
+  }
+
+  &__trend {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    margin-top: $space-1;
+
+    &--up   { color: $tsg-success; }
+    &--down { color: $tsg-danger; }
+  }
+}
+
+// ============================================================
+// Badges
+// ============================================================
+.tsg-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  border-radius: $radius-full;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+
+  &--active, &--success, &--paid, &--delivered, &--completed {
+    background: $tsg-success-bg;
+    color: $tsg-success;
+  }
+  &--pending, &--draft, &--scheduled {
+    background: $tsg-info-bg;
+    color: $tsg-info;
+  }
+  &--warning, &--in-transit, &--in-progress, &--submitted, &--under-review {
+    background: $tsg-warning-bg;
+    color: $tsg-warning;
+  }
+  &--danger, &--failed, &--cancelled, &--rejected, &--blacklisted, &--suspended {
+    background: $tsg-danger-bg;
+    color: $tsg-danger;
+  }
+  &--neutral, &--inactive {
+    background: $tsg-border-light;
+    color: $tsg-text-secondary;
+  }
+  &--approved, &--invoiced, &--shipped, &--issued {
+    background: lighten($tsg-secondary, 55%);
+    color: $tsg-secondary;
+  }
+}
+
+// ============================================================
+// Modern Tables
+// ============================================================
+.tsg-table-wrapper {
+  @include card-base;
+  overflow: hidden;
+}
+
+.tsg-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead {
+    background: $tsg-bg;
+    border-bottom: 2px solid $tsg-border;
+
+    th {
+      padding: $space-3 $space-4;
+      font-size: $font-size-xs;
+      font-weight: $font-weight-semibold;
+      color: $tsg-text-secondary;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: left;
+      white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
+      transition: color $transition-fast;
+
+      &:hover { color: $tsg-text; }
+
+      .sort-icon {
+        margin-inline-start: $space-1;
+        opacity: 0.4;
+      }
+    }
+  }
+
+  tbody {
+    tr {
+      border-bottom: 1px solid $tsg-border-light;
+      transition: background-color $transition-fast;
+
+      &:hover { background-color: rgba($tsg-accent, 0.03); }
+      &:last-child { border-bottom: none; }
+    }
+
+    td {
+      padding: $space-3 $space-4;
+      font-size: $font-size-base;
+      color: $tsg-text;
+      vertical-align: middle;
+
+      &.text-secondary { color: $tsg-text-secondary; }
+    }
+  }
+}
+
+// ============================================================
+// Action Buttons
+// ============================================================
+.tsg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-2 $space-4;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  border: 1px solid transparent;
+  border-radius: $radius-sm;
+  cursor: pointer;
+  transition: all $transition-fast;
+  line-height: 1.5;
+
+  fa-icon { font-size: $font-size-sm; }
+
+  &--primary {
+    background: $tsg-accent;
+    color: #fff;
+    &:hover { background: darken($tsg-accent, 8%); color: #fff; box-shadow: $shadow-sm; }
+  }
+  &--secondary {
+    background: $tsg-surface;
+    color: $tsg-text;
+    border-color: $tsg-border;
+    &:hover { background: $tsg-bg; border-color: darken($tsg-border, 8%); }
+  }
+  &--danger {
+    background: $tsg-surface;
+    color: $tsg-danger;
+    border-color: $tsg-border;
+    &:hover { background: $tsg-danger-bg; border-color: $tsg-danger; }
+  }
+  &--ghost {
+    background: transparent;
+    color: $tsg-text-secondary;
+    &:hover { background: $tsg-bg; color: $tsg-text; }
+  }
+  &--icon {
+    @include flex-center;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    border-radius: $radius-sm;
+  }
+  &--sm {
+    padding: $space-1 $space-3;
+    font-size: $font-size-sm;
+    gap: $space-1;
+  }
+}
+
+// ============================================================
+// Search Input
+// ============================================================
+.tsg-search {
+  position: relative;
+
+  &__icon {
+    position: absolute;
+    inset-inline-start: $space-3;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $tsg-text-muted;
+    font-size: $font-size-base;
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    padding: $space-2 $space-4 $space-2 $space-10;
+    font-size: $font-size-base;
+    border: 1px solid $tsg-border;
+    border-radius: $radius-sm;
+    background: $tsg-surface;
+    color: $tsg-text;
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+
+    &::placeholder { color: $tsg-text-muted; }
+    &:focus {
+      outline: none;
+      border-color: $tsg-accent;
+      box-shadow: 0 0 0 3px rgba($tsg-accent, 0.12);
+    }
+  }
+}
+
+// ============================================================
+// Status Pipeline
+// ============================================================
+.tsg-pipeline {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: $space-4 0;
+  overflow-x: auto;
+
+  &__step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    flex: 1;
+    min-width: 80px;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 14px;
+      inset-inline-start: calc(50% + 16px);
+      width: calc(100% - 32px);
+      height: 2px;
+      background: $tsg-border;
+    }
+
+    &:last-child::after { display: none; }
+
+    &--completed::after { background: $tsg-success; }
+    &--active::after { background: $tsg-accent; }
+  }
+
+  &__dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    @include flex-center;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    z-index: 1;
+    border: 2px solid $tsg-border;
+    background: $tsg-surface;
+    color: $tsg-text-muted;
+
+    .tsg-pipeline__step--completed & {
+      background: $tsg-success;
+      border-color: $tsg-success;
+      color: #fff;
+    }
+    .tsg-pipeline__step--active & {
+      background: $tsg-accent;
+      border-color: $tsg-accent;
+      color: #fff;
+      box-shadow: 0 0 0 4px rgba($tsg-accent, 0.2);
+    }
+  }
+
+  &__label {
+    margin-top: $space-2;
+    font-size: $font-size-xs;
+    color: $tsg-text-muted;
+    text-align: center;
+    font-weight: $font-weight-medium;
+
+    .tsg-pipeline__step--completed & { color: $tsg-success; }
+    .tsg-pipeline__step--active & { color: $tsg-accent; font-weight: $font-weight-semibold; }
+  }
+}
+
+// ============================================================
+// Skeleton Loading
+// ============================================================
+.tsg-skeleton {
+  @include skeleton-pulse;
+  border-radius: $radius-sm;
+
+  &--text { height: 14px; width: 60%; margin-bottom: $space-2; }
+  &--title { height: 24px; width: 40%; margin-bottom: $space-3; }
+  &--avatar { width: 40px; height: 40px; border-radius: 50%; }
+  &--card { height: 120px; width: 100%; border-radius: $radius-md; }
+  &--row { height: 48px; width: 100%; margin-bottom: $space-2; }
+}
+
+// ============================================================
+// Empty State
+// ============================================================
+.tsg-empty {
+  @include flex-center;
+  flex-direction: column;
+  padding: $space-16 $space-8;
+  text-align: center;
+
+  &__icon {
+    @include flex-center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: $tsg-bg;
+    color: $tsg-text-muted;
+    font-size: $font-size-2xl;
+    margin-bottom: $space-4;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $tsg-text;
+    margin-bottom: $space-2;
+  }
+
+  &__text {
+    font-size: $font-size-base;
+    color: $tsg-text-secondary;
+    max-width: 360px;
+  }
+}
+
+// ============================================================
+// Page Header
+// ============================================================
+.tsg-page-header {
+  @include flex-between;
+  margin-bottom: $space-6;
+  flex-wrap: wrap;
+  gap: $space-4;
+
+  &__title {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $tsg-text;
+    margin: 0;
+  }
+
+  &__subtitle {
+    font-size: $font-size-base;
+    color: $tsg-text-secondary;
+    margin-top: $space-1;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+  }
+}
+
+// ============================================================
+// Filters Bar
+// ============================================================
+.tsg-filters {
+  @include flex-between;
+  gap: $space-4;
+  margin-bottom: $space-5;
+  flex-wrap: wrap;
+
+  &__group {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-1;
+    padding: $space-1 $space-3;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    border: 1px solid $tsg-border;
+    border-radius: $radius-full;
+    background: $tsg-surface;
+    color: $tsg-text-secondary;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    &:hover, &--active {
+      background: rgba($tsg-accent, 0.08);
+      border-color: $tsg-accent;
+      color: $tsg-accent;
+    }
+  }
+}
+
+// ============================================================
+// Form Styles
+// ============================================================
+.tsg-form-group {
+  margin-bottom: $space-5;
+
+  label, .tsg-label {
+    display: block;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $tsg-text;
+    margin-bottom: $space-2;
+  }
+
+  .tsg-help-text {
+    font-size: $font-size-xs;
+    color: $tsg-text-muted;
+    margin-top: $space-1;
+  }
+
+  .form-control {
+    border: 1px solid $tsg-border;
+    border-radius: $radius-sm;
+    padding: $space-2 $space-3;
+    font-size: $font-size-base;
+    color: $tsg-text;
+    background: $tsg-surface;
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+
+    &:focus {
+      border-color: $tsg-accent;
+      box-shadow: 0 0 0 3px rgba($tsg-accent, 0.12);
+    }
+
+    &.is-invalid {
+      border-color: $tsg-danger;
+      &:focus { box-shadow: 0 0 0 3px rgba($tsg-danger, 0.12); }
+    }
+  }
+}
+
+// ============================================================
+// Pagination
+// ============================================================
+.tsg-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-1;
+  margin-top: $space-5;
+
+  .page-item {
+    .page-link {
+      @include flex-center;
+      min-width: 36px;
+      height: 36px;
+      border-radius: $radius-sm;
+      font-size: $font-size-sm;
+      font-weight: $font-weight-medium;
+      border: 1px solid transparent;
+      color: $tsg-text-secondary;
+      transition: all $transition-fast;
+
+      &:hover {
+        background: $tsg-bg;
+        color: $tsg-text;
+      }
+    }
+
+    &.active .page-link {
+      background: $tsg-accent;
+      color: #fff;
+      border-color: $tsg-accent;
+    }
+  }
+}
+
+// ============================================================
+// Alerts override
+// ============================================================
+.alerts {
+  position: fixed;
+  top: $tsg-header-height + 8px;
+  inset-inline-end: $space-6;
+  z-index: $z-toast;
+  width: 400px;
+  max-width: calc(100vw - 48px);
+
+  .alert {
+    border-radius: $radius-md;
+    box-shadow: $shadow-lg;
+    border: none;
+    animation: slideInLeft 0.3s ease-out;
+  }
+}
+
+// ============================================================
+// Existing JHipster compat
+// ============================================================
+.jh-card {
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+}
+
+.hand, [jhisortby] { cursor: pointer; }
+
+.table-entities thead th .d-flex > * { margin: auto 0; }
+
+.row-md.jh-entity-details {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: $space-4;
+  line-height: $line-height-normal;
+}
+
+// ============================================================
+// Chart placeholder
+// ============================================================
+.tsg-chart {
+  @include card-base;
+  padding: $space-6;
+
+  &__header {
+    @include flex-between;
+    margin-bottom: $space-5;
+  }
+
+  &__title {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $tsg-text;
+  }
+
+  &__body {
+    min-height: 200px;
+    @include flex-center;
+    color: $tsg-text-muted;
+    border: 2px dashed $tsg-border;
+    border-radius: $radius-sm;
+    font-size: $font-size-sm;
+  }
+}
+
+// ============================================================
+// Activity Feed
+// ============================================================
+.tsg-activity {
+  &__item {
+    display: flex;
+    gap: $space-3;
+    padding: $space-3 0;
+    border-bottom: 1px solid $tsg-border-light;
+
+    &:last-child { border-bottom: none; }
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 6px;
+    flex-shrink: 0;
+    background: $tsg-accent;
+
+    &--success { background: $tsg-success; }
+    &--warning { background: $tsg-warning; }
+    &--danger  { background: $tsg-danger; }
+  }
+
+  &__text {
+    font-size: $font-size-sm;
+    color: $tsg-text;
+    line-height: $line-height-normal;
+  }
+
+  &__time {
+    font-size: $font-size-xs;
+    color: $tsg-text-muted;
+    margin-top: $space-1;
+  }
+}
+
+// ============================================================
+// Section detail
+// ============================================================
+.tsg-detail-section {
+  @include card-base;
+  padding: $space-6;
+  margin-bottom: $space-5;
+
+  &__title {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $tsg-text;
+    margin-bottom: $space-5;
+    padding-bottom: $space-3;
+    border-bottom: 1px solid $tsg-border-light;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: $space-5;
+  }
+
+  &__field {
+    &-label {
+      font-size: $font-size-xs;
+      font-weight: $font-weight-medium;
+      color: $tsg-text-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: $space-1;
+    }
+    &-value {
+      font-size: $font-size-base;
+      font-weight: $font-weight-medium;
+      color: $tsg-text;
+    }
+  }
+}
+
+// ============================================================
+// Dark Mode
+// ============================================================
+[data-theme='dark'] {
+  body { background: $tsg-dark-bg; color: $tsg-dark-text; }
+
+  .tsg-card, .tsg-table-wrapper, .tsg-detail-section, .tsg-chart, .tsg-kpi {
+    background: $tsg-dark-surface;
+    border-color: $tsg-dark-border;
+  }
+
+  .tsg-table thead { background: $tsg-dark-bg; }
+  .tsg-table thead th { color: $tsg-dark-text-secondary; }
+  .tsg-table tbody td { color: $tsg-dark-text; }
+  .tsg-table tbody tr { border-color: $tsg-dark-border; }
+  .tsg-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+  .tsg-page-header__title, .tsg-card__title, .tsg-kpi__value,
+  .tsg-detail-section__title, h1, h2, h3, h4 { color: $tsg-dark-text; }
+
+  .tsg-search input {
+    background: $tsg-dark-surface;
+    border-color: $tsg-dark-border;
+    color: $tsg-dark-text;
+  }
+
+  .form-control {
+    background: $tsg-dark-surface;
+    border-color: $tsg-dark-border;
+    color: $tsg-dark-text;
+  }
+
+  .tsg-content { background: $tsg-dark-bg; }
+  .tsg-filters__chip { background: $tsg-dark-surface; border-color: $tsg-dark-border; }
+  .tsg-btn--secondary { background: $tsg-dark-surface; color: $tsg-dark-text; border-color: $tsg-dark-border; }
+}
+
+// ============================================================
+// RTL overrides
+// ============================================================
+[dir='rtl'] {
+  .tsg-pipeline {
+    direction: rtl;
+  }
+}
+
+// ============================================================
+// Responsive
+// ============================================================
+@media (max-width: 768px) {
+  .tsg-main-wrapper {
+    margin-inline-start: 0 !important;
+  }
+
+  .tsg-content {
+    padding: $space-4;
+  }
+
+  .tsg-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .tsg-kpi__value { font-size: $font-size-xl; }
+}
+
+// ============================================================
+// Auth Pages (Login / Register) — shared layout
+// ============================================================
+.tsg-login {
+  display: flex;
+  min-height: 100vh;
+
+  &__left {
+    flex: 1;
+    background: linear-gradient(135deg, $tsg-primary 0%, $tsg-secondary 50%, darken($tsg-accent, 15%) 100%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: $space-12;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.03);
+      top: -200px;
+      right: -200px;
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.03);
+      bottom: -100px;
+      left: -100px;
+    }
+  }
+
+  &__brand {
+    text-align: center;
+    z-index: 1;
+
+    h1 {
+      font-size: $font-size-3xl;
+      font-weight: $font-weight-bold;
+      color: #fff;
+      margin-bottom: $space-2;
+    }
+
+    p {
+      font-size: $font-size-lg;
+      opacity: 0.8;
+      font-weight: $font-weight-regular;
+    }
+  }
+
+  &__logo {
+    @include flex-center;
+    width: 72px;
+    height: 72px;
+    border-radius: $radius-lg;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    margin: 0 auto $space-5;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  &__features {
+    margin-top: $space-12;
+    z-index: 1;
+  }
+
+  &__feature {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+    padding: $space-3 0;
+    font-size: $font-size-base;
+    opacity: 0.9;
+
+    fa-icon { width: 24px; text-align: center; }
+  }
+
+  &__right {
+    flex: 1;
+    @include flex-center;
+    padding: $space-8;
+    background: $tsg-surface;
+  }
+
+  &__form-wrapper {
+    width: 100%;
+    max-width: 400px;
+
+    h2 {
+      font-size: $font-size-2xl;
+      font-weight: $font-weight-bold;
+      margin-bottom: $space-1;
+    }
+  }
+
+  &__subtitle {
+    color: $tsg-text-secondary;
+    margin-bottom: $space-6;
+    font-size: $font-size-base;
+  }
+
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    padding: $space-3 $space-4;
+    background: $tsg-danger-bg;
+    color: $tsg-danger;
+    border-radius: $radius-sm;
+    font-size: $font-size-sm;
+    margin-bottom: $space-5;
+    animation: fadeIn 0.3s ease-out;
+  }
+
+  &__form {
+    margin-bottom: $space-6;
+  }
+
+  &__password-header {
+    @include flex-between;
+    margin-bottom: $space-2;
+
+    label { margin-bottom: 0; }
+  }
+
+  &__forgot {
+    font-size: $font-size-sm;
+    color: $tsg-accent;
+    font-weight: $font-weight-medium;
+  }
+
+  &__remember {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    margin-bottom: $space-6;
+    font-size: $font-size-sm;
+  }
+
+  &__submit {
+    width: 100%;
+    padding: $space-3;
+    font-size: $font-size-md;
+    justify-content: center;
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  &__register {
+    text-align: center;
+    font-size: $font-size-sm;
+    color: $tsg-text-secondary;
+
+    a {
+      color: $tsg-accent;
+      font-weight: $font-weight-medium;
+      margin-inline-start: $space-1;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .tsg-login {
+    flex-direction: column;
+
+    &__left {
+      padding: $space-8 $space-6;
+      min-height: auto;
+    }
+
+    &__features { display: none; }
+
+    &__right {
+      padding: $space-6;
+    }
+  }
+}
+
+// ============================================================
+// Auth alert & field error styles
+// ============================================================
+.tsg-register__alert {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-3 $space-4;
+  border-radius: $radius-sm;
+  font-size: $font-size-sm;
+  margin-bottom: $space-4;
+  animation: fadeIn 0.3s ease-out;
+
+  &--success { background: $tsg-success-bg; color: $tsg-success; }
+  &--danger  { background: $tsg-danger-bg; color: $tsg-danger; }
+}
+
+.tsg-field-error {
+  display: block;
+  font-size: $font-size-xs;
+  color: $tsg-danger;
+  margin-top: $space-1;
+}
+
+/* jhipster-needle-scss-add-main JHipster will add new css style */

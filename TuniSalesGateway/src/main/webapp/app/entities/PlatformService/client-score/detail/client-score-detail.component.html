@@ -1,0 +1,64 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="clientScore">
+      <h2 data-cy="clientScoreDetailsHeading">
+        <span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.detail.title">Client Score</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ clientScore.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ clientScore.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.clientId">Client Id</span></dt>
+        <dd>
+          <span>{{ clientScore.clientId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.clientName">Client Name</span></dt>
+        <dd>
+          <span>{{ clientScore.clientName }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.period">Period</span></dt>
+        <dd>
+          <span>{{ clientScore.period }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.score">Score</span></dt>
+        <dd>
+          <span>{{ clientScore.score }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.classification">Classification</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.ScoreClassification.' + clientScore.classification }}">{{
+            clientScore.classification
+          }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.breakdownJson">Breakdown Json</span></dt>
+        <dd>
+          <span>{{ clientScore.breakdownJson }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.calculatedAt">Calculated At</span></dt>
+        <dd>
+          <span>{{ clientScore.calculatedAt | formatMediumDatetime }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/client-score', clientScore.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

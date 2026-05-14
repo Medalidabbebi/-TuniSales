@@ -1,0 +1,250 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2
+        id="jhi-visit-heading"
+        data-cy="VisitCreateUpdateHeading"
+        jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.home.createOrEditLabel"
+      >
+        Créer ou éditer un Visit
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
+          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
+          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.visitOrder" for="field_visitOrder"
+            >Visit Order</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="visitOrder"
+            id="field_visitOrder"
+            data-cy="visitOrder"
+            formControlName="visitOrder"
+          />
+          <div *ngIf="editForm.get('visitOrder')!.invalid && (editForm.get('visitOrder')!.dirty || editForm.get('visitOrder')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('visitOrder')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('visitOrder')?.errors?.min"
+              jhiTranslate="entity.validation.min"
+              [translateValues]="{ min: 1 }"
+            >
+              Ce champ doit être supérieur à 1.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('visitOrder')?.errors?.number"
+              jhiTranslate="entity.validation.number"
+            >
+              Ce champ doit être un nombre.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.objective" for="field_objective"
+            >Objective</label
+          >
+          <select class="form-control" name="objective" formControlName="objective" id="field_objective" data-cy="objective">
+            <option [ngValue]="null">{{ 'tuniSalesGatewayApp.VisitObjective.null' | translate }}</option>
+            <option *ngFor="let visitObjective of visitObjectiveValues" [value]="visitObjective">
+              {{ 'tuniSalesGatewayApp.VisitObjective.' + visitObjective | translate }}
+            </option>
+          </select>
+          <div *ngIf="editForm.get('objective')!.invalid && (editForm.get('objective')!.dirty || editForm.get('objective')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('objective')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.status" for="field_status">Status</label>
+          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
+            <option [ngValue]="null">{{ 'tuniSalesGatewayApp.VisitStatus.null' | translate }}</option>
+            <option *ngFor="let visitStatus of visitStatusValues" [value]="visitStatus">
+              {{ 'tuniSalesGatewayApp.VisitStatus.' + visitStatus | translate }}
+            </option>
+          </select>
+          <div *ngIf="editForm.get('status')!.invalid && (editForm.get('status')!.dirty || editForm.get('status')!.touched)">
+            <small class="form-text text-danger" *ngIf="editForm.get('status')?.errors?.required" jhiTranslate="entity.validation.required">
+              Ce champ est obligatoire.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.latitude" for="field_latitude">Latitude</label>
+          <input type="number" class="form-control" name="latitude" id="field_latitude" data-cy="latitude" formControlName="latitude" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.longitude" for="field_longitude"
+            >Longitude</label
+          >
+          <input type="number" class="form-control" name="longitude" id="field_longitude" data-cy="longitude" formControlName="longitude" />
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.checkinAt" for="field_checkinAt"
+            >Checkin At</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_checkinAt"
+              data-cy="checkinAt"
+              type="datetime-local"
+              class="form-control"
+              name="checkinAt"
+              formControlName="checkinAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.checkoutAt" for="field_checkoutAt"
+            >Checkout At</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_checkoutAt"
+              data-cy="checkoutAt"
+              type="datetime-local"
+              class="form-control"
+              name="checkoutAt"
+              formControlName="checkoutAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.notes" for="field_notes">Notes</label>
+          <input type="text" class="form-control" name="notes" id="field_notes" data-cy="notes" formControlName="notes" />
+          <div *ngIf="editForm.get('notes')!.invalid && (editForm.get('notes')!.dirty || editForm.get('notes')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('notes')?.errors?.maxlength"
+              jhiTranslate="entity.validation.maxlength"
+              [translateValues]="{ max: 2000 }"
+            >
+              Ce champ doit faire moins de 2000 caractères.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.createdAt" for="field_createdAt"
+            >Created At</label
+          >
+          <div class="d-flex">
+            <input
+              id="field_createdAt"
+              data-cy="createdAt"
+              type="datetime-local"
+              class="form-control"
+              name="createdAt"
+              formControlName="createdAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
+            <small
+              class="form-text text-danger"
+              *ngIf="editForm.get('createdAt')?.errors?.required"
+              jhiTranslate="entity.validation.required"
+            >
+              Ce champ est obligatoire.
+            </small>
+            <small
+              class="form-text text-danger"
+              [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal"
+              jhiTranslate="entity.validation.datetimelocal"
+            >
+              Ce champ doit être une date et une heure.
+            </small>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.client" for="field_client">Client</label>
+          <select
+            class="form-control"
+            id="field_client"
+            data-cy="client"
+            name="client"
+            formControlName="client"
+            [compareWith]="compareClient"
+          >
+            <option *ngIf="!editForm.get('client')!.value" [ngValue]="null" selected></option>
+            <option [ngValue]="clientOption" *ngFor="let clientOption of clientsSharedCollection">{{ clientOption.name }}</option>
+          </select>
+        </div>
+        <div *ngIf="editForm.get(['client'])!.invalid && (editForm.get(['client'])!.dirty || editForm.get(['client'])!.touched)">
+          <small class="form-text text-danger" *ngIf="editForm.get(['client'])?.errors?.required" jhiTranslate="entity.validation.required">
+            Ce champ est obligatoire.
+          </small>
+        </div>
+
+        <div class="row mb-3">
+          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.mission" for="field_mission">Mission</label>
+          <select
+            class="form-control"
+            id="field_mission"
+            data-cy="mission"
+            name="mission"
+            formControlName="mission"
+            [compareWith]="compareMission"
+          >
+            <option *ngIf="editForm.get(['mission'])!.value == null" [ngValue]="null" selected></option>
+            <option [ngValue]="missionOption" *ngFor="let missionOption of missionsSharedCollection">{{ missionOption.title }}</option>
+          </select>
+        </div>
+        <div *ngIf="editForm.get(['mission'])!.invalid && (editForm.get(['mission'])!.dirty || editForm.get(['mission'])!.touched)">
+          <small
+            class="form-text text-danger"
+            *ngIf="editForm.get(['mission'])?.errors?.required"
+            jhiTranslate="entity.validation.required"
+          >
+            Ce champ est obligatoire.
+          </small>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

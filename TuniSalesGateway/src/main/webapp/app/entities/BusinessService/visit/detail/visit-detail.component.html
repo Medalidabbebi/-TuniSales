@@ -1,0 +1,76 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="visit">
+      <h2 data-cy="visitDetailsHeading"><span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.detail.title">Visit</span></h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ visit.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.visitOrder">Visit Order</span></dt>
+        <dd>
+          <span>{{ visit.visitOrder }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.objective">Objective</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.VisitObjective.' + visit.objective }}">{{ visit.objective }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.status">Status</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.VisitStatus.' + visit.status }}">{{ visit.status }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.latitude">Latitude</span></dt>
+        <dd>
+          <span>{{ visit.latitude }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.longitude">Longitude</span></dt>
+        <dd>
+          <span>{{ visit.longitude }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.checkinAt">Checkin At</span></dt>
+        <dd>
+          <span>{{ visit.checkinAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.checkoutAt">Checkout At</span></dt>
+        <dd>
+          <span>{{ visit.checkoutAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.notes">Notes</span></dt>
+        <dd>
+          <span>{{ visit.notes }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ visit.createdAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.client">Client</span></dt>
+        <dd>
+          <div *ngIf="visit.client">
+            <a [routerLink]="['/client', visit.client.id, 'view']">{{ visit.client.name }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.mission">Mission</span></dt>
+        <dd>
+          <div *ngIf="visit.mission">
+            <a [routerLink]="['/mission', visit.mission.id, 'view']">{{ visit.mission.title }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/visit', visit.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

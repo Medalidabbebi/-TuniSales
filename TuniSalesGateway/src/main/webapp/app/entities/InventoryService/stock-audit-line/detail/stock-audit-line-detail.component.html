@@ -1,0 +1,60 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="stockAuditLine">
+      <h2 data-cy="stockAuditLineDetailsHeading">
+        <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.detail.title">Stock Audit Line</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ stockAuditLine.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.foundPhysically">Found Physically</span></dt>
+        <dd>
+          <span>{{ stockAuditLine.foundPhysically }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.resolution">Resolution</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.AuditResolution.' + stockAuditLine.resolution }}">{{
+            stockAuditLine.resolution
+          }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.resolutionNote">Resolution Note</span></dt>
+        <dd>
+          <span>{{ stockAuditLine.resolutionNote }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ stockAuditLine.createdAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.stockItem">Stock Item</span></dt>
+        <dd>
+          <div *ngIf="stockAuditLine.stockItem">
+            <a [routerLink]="['/stock-item', stockAuditLine.stockItem.id, 'view']">{{ stockAuditLine.stockItem.imei }}</a>
+          </div>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAuditLine.audit">Audit</span></dt>
+        <dd>
+          <div *ngIf="stockAuditLine.audit">
+            <a [routerLink]="['/stock-audit', stockAuditLine.audit.id, 'view']">{{ stockAuditLine.audit.id }}</a>
+          </div>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/stock-audit-line', stockAuditLine.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

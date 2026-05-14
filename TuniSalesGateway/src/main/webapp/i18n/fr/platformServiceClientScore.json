@@ -1,0 +1,35 @@
+{
+  "tuniSalesGatewayApp": {
+    "platformServiceClientScore": {
+      "home": {
+        "title": "ClientScores",
+        "refreshListLabel": "Actualiser la liste",
+        "createLabel": "Créer un nouveau Client Score",
+        "createOrEditLabel": "Créer ou éditer un Client Score",
+        "notFound": "Aucun Client Score trouvé"
+      },
+      "delete": {
+        "question": "Êtes-vous certain de vouloir supprimer le Client Score {{ id }} ?"
+      },
+      "detail": {
+        "title": "Client Score"
+      },
+      "id": "ID",
+      "tenantId": "Tenant Id",
+      "clientId": "Client Id",
+      "clientName": "Client Name",
+      "period": "Period",
+      "score": "Score",
+      "classification": "Classification",
+      "breakdownJson": "Breakdown Json",
+      "calculatedAt": "Calculated At"
+    }
+  },
+  "platformServiceApp": {
+    "platformServiceClientScore": {
+      "created": "Un nouveau Client Score a été créé avec l'identifiant {{ param }}",
+      "updated": "Le Client Score avec l'identifiant {{ param }} a été mis à jour",
+      "deleted": "Le Client Score avec l'identifiant {{ param }} a été supprimé"
+    }
+  }
+}

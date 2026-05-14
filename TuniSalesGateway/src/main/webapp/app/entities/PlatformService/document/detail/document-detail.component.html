@@ -1,0 +1,74 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <div *ngIf="document">
+      <h2 data-cy="documentDetailsHeading">
+        <span jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.detail.title">Document</span>
+      </h2>
+
+      <hr />
+
+      <jhi-alert-error></jhi-alert-error>
+
+      <jhi-alert></jhi-alert>
+
+      <dl class="row-md jh-entity-details">
+        <dt><span jhiTranslate="global.field.id">ID</span></dt>
+        <dd>
+          <span>{{ document.id }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.tenantId">Tenant Id</span></dt>
+        <dd>
+          <span>{{ document.tenantId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.entityType">Entity Type</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.DocumentEntityType.' + document.entityType }}">{{ document.entityType }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.entityId">Entity Id</span></dt>
+        <dd>
+          <span>{{ document.entityId }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.docType">Doc Type</span></dt>
+        <dd>
+          <span jhiTranslate="{{ 'tuniSalesGatewayApp.DocumentType.' + document.docType }}">{{ document.docType }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.filename">Filename</span></dt>
+        <dd>
+          <span>{{ document.filename }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.storageUrl">Storage Url</span></dt>
+        <dd>
+          <span>{{ document.storageUrl }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.mimeType">Mime Type</span></dt>
+        <dd>
+          <span>{{ document.mimeType }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.sizeBytes">Size Bytes</span></dt>
+        <dd>
+          <span>{{ document.sizeBytes }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.uploadedByLogin">Uploaded By Login</span></dt>
+        <dd>
+          <span>{{ document.uploadedByLogin }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.createdAt">Created At</span></dt>
+        <dd>
+          <span>{{ document.createdAt | formatMediumDatetime }}</span>
+        </dd>
+        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceDocument.updatedAt">Updated At</span></dt>
+        <dd>
+          <span>{{ document.updatedAt | formatMediumDatetime }}</span>
+        </dd>
+      </dl>
+
+      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+      </button>
+
+      <button type="button" [routerLink]="['/document', document.id, 'edit']" class="btn btn-primary">
+        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      </button>
+    </div>
+  </div>
+</div>

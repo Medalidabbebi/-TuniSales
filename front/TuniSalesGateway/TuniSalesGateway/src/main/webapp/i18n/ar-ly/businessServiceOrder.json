@@ -1,0 +1,46 @@
+{
+  "tuniSalesGatewayApp": {
+    "businessServiceOrder": {
+      "home": {
+        "title": "Orders",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Order",
+        "createOrEditLabel": "Create or edit a Order",
+        "notFound": "No Orders found"
+      },
+      "delete": {
+        "question": "Are you sure you want to delete Order {{ id }}?"
+      },
+      "detail": {
+        "title": "Order"
+      },
+      "id": "ID",
+      "tenantId": "Tenant Id",
+      "orderNumber": "Order Number",
+      "status": "Status",
+      "subtotal": "Subtotal",
+      "discountAmount": "Discount Amount",
+      "taxAmount": "Tax Amount",
+      "totalAmount": "Total Amount",
+      "paymentTermsDays": "Payment Terms Days",
+      "dueDate": "Due Date",
+      "rejectionReason": "Rejection Reason",
+      "submittedAt": "Submitted At",
+      "validatedAt": "Validated At",
+      "isDeleted": "Is Deleted",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At",
+      "orderLines": "Order Lines",
+      "deliveries": "Deliveries",
+      "invoices": "Invoices",
+      "client": "Client"
+    }
+  },
+  "businessServiceApp": {
+    "businessServiceOrder": {
+      "created": "A new Order is created with identifier {{ param }}",
+      "updated": "A Order is updated with identifier {{ param }}",
+      "deleted": "A Order is deleted with identifier {{ param }}"
+    }
+  }
+}
