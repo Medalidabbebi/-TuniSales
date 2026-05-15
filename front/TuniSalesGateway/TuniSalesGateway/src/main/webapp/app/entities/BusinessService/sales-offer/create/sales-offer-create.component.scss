@@ -333,8 +333,8 @@ $oc-radius:    12px;
 
 // ── Payment cards ────────────────────────────────────────────────
 .oc-payment-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: .75rem;
 }
 .oc-payment-card {
@@ -346,6 +346,8 @@ $oc-radius:    12px;
   display: flex; flex-direction: column; gap: .4rem;
   transition: all .15s;
   position: relative;
+  min-width: 160px;
+  flex: 1;
 
   &:hover { border-color: $oc-primary; }
   &--active {
@@ -368,8 +370,8 @@ $oc-radius:    12px;
 
 // ── Review / Validation ──────────────────────────────────────────
 .oc-review-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: .75rem;
   margin-bottom: 1.5rem;
 }
@@ -379,6 +381,8 @@ $oc-radius:    12px;
   padding: .9rem 1rem;
   background: $oc-white;
   display: flex; flex-direction: column; gap: .25rem;
+  min-width: 150px;
+  flex: 1;
 
   &__icon { color: $oc-muted; font-size: 1rem; }
   &__label { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: $oc-muted; font-weight: 600; }

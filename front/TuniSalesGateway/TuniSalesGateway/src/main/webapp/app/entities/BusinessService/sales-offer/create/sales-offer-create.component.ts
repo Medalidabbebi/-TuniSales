@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { HttpResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { forkJoin, merge, Observable, of, Subscription } from 'rxjs';
 import { catchError, finalize, map, switchMap } from 'rxjs/operators';
 import dayjs from 'dayjs/esm';
@@ -76,7 +77,8 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
     private productService: ProductService,
     private orderService: OrderService,
     private orderLineService: OrderLineService,
-    private stockItemService: StockItemService
+    private stockItemService: StockItemService,
+    private router: Router
   ) {}
 
   /**
@@ -404,8 +406,7 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
       )
       .subscribe(result => {
         if (result === null && !this.submitErrorMessage) {
-          this.submitSuccessMessage = 'Offre creee avec succes.';
-          this.resetForm();
+          void this.router.navigate(['/order']);
         }
       });
   }
