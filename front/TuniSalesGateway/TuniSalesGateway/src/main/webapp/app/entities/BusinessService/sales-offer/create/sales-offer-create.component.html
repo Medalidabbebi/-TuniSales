@@ -113,112 +113,112 @@
         <fa-icon icon="exclamation-triangle"></fa-icon> {{ stockWarning }}
       </div>
 
-      <!-- Lines table header -->
-      <div class="oc-lines-header">
-        <span class="oc-lines-header__product">Produit <span class="oc-required">*</span></span>
-        <span class="oc-lines-header__qty">Qté</span>
-        <span class="oc-lines-header__disc">Remise %</span>
-        <span class="oc-lines-header__info">Prix / Stock</span>
-        <span class="oc-lines-header__total">Total ligne</span>
-        <span class="oc-lines-header__action"></span>
-      </div>
-
       <div formArrayName="lines" class="oc-lines">
-        <div class="oc-line" *ngFor="let line of lines.controls; let i = index" [formGroupName]="i">
+        <div class="oc-line-card" *ngFor="let line of lines.controls; let i = index" [formGroupName]="i">
+          <div class="row g-2 align-items-start">
 
-          <!-- Produit -->
-          <div class="oc-line__product">
-            <div class="oc-input-wrap oc-input-wrap--sm" [class.oc-input-wrap--invalid]="line.controls.productId.touched && line.controls.productId.invalid">
-              <fa-icon icon="search" class="oc-input-wrap__icon"></fa-icon>
+            <!-- Produit -->
+            <div class="col-12 col-lg-5">
+              <label class="oc-label">Produit <span class="oc-required">*</span></label>
+              <div class="oc-product-search" style="position:relative;">
+                <div class="oc-input-wrap" [class.oc-input-wrap--invalid]="line.controls.productId.touched && line.controls.productId.invalid">
+                  <fa-icon icon="search" class="oc-input-wrap__icon"></fa-icon>
+                  <input
+                    type="text"
+                    class="oc-input"
+                    placeholder="Nom ou SKU…"
+                    [(ngModel)]="productSearchTerms[i]"
+                    [ngModelOptions]="{ standalone: true }"
+                    (focus)="showProductDropdowns[i] = true"
+                    (blur)="hideProductDropdown(i)"
+                    (input)="onProductInput(i)"
+                    autocomplete="off"
+                  />
+                  <button type="button" class="oc-input-wrap__clear" *ngIf="productSearchTerms[i]" (click)="clearProduct(i)">
+                    <fa-icon icon="times"></fa-icon>
+                  </button>
+                </div>
+                <!-- Dropdown résultats -->
+                <ul class="oc-dropdown" style="width:100%;" *ngIf="showProductDropdowns[i]">
+                  <li *ngIf="getFilteredProducts(i).length === 0" class="oc-dropdown__empty">Aucun produit trouvé.</li>
+                  <li
+                    class="oc-dropdown__item oc-dropdown__item--product"
+                    *ngFor="let product of getFilteredProducts(i)"
+                    (mousedown)="selectProduct(i, product)"
+                    [class.oc-dropdown__item--active]="line.controls.productId.value === product.id"
+                  >
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <strong>{{ product.name }}</strong>
+                        <span class="oc-sku ms-2" *ngIf="product.sku">{{ product.sku }}</span>
+                      </div>
+                      <div class="d-flex gap-1">
+                        <span class="oc-badge oc-badge--blue">{{ product.price | number:'1.2-2' }} TND</span>
+                        <span class="oc-badge" [class.oc-badge--green]="(getAvailableStock(product.id) ?? 0) > 0" [class.oc-badge--red]="(getAvailableStock(product.id) ?? 0) === 0">
+                          Stock : {{ getAvailableStock(product.id) ?? 0 }}
+                        </span>
+                      </div>
+                    </div>
+                  </li>
+                </ul>
+                <p class="oc-error" *ngIf="line.controls.productId.touched && line.controls.productId.invalid">Produit requis.</p>
+              </div>
+            </div>
+
+            <!-- Quantité -->
+            <div class="col-4 col-lg-2">
+              <label class="oc-label">Quantité</label>
               <input
-                type="text"
-                class="oc-input"
-                placeholder="Nom ou SKU…"
-                [(ngModel)]="productSearchTerms[i]"
-                [ngModelOptions]="{ standalone: true }"
-                (focus)="showProductDropdowns[i] = true"
-                (blur)="hideProductDropdown(i)"
-                (input)="onProductInput(i)"
-                autocomplete="off"
+                type="number" min="1"
+                class="form-control"
+                [class.is-invalid]="line.controls.quantity.touched && line.controls.quantity.invalid"
+                formControlName="quantity"
+                [attr.max]="getAvailableStock(line.controls.productId.value) ?? null"
               />
-              <button type="button" class="oc-input-wrap__clear" *ngIf="productSearchTerms[i]" (click)="clearProduct(i)">
-                <fa-icon icon="times"></fa-icon>
+              <div class="invalid-feedback" *ngIf="line.controls.quantity.errors?.['exceedsStock']">
+                Max {{ getAvailableStock(line.controls.productId.value) ?? 0 }}
+              </div>
+            </div>
+
+            <!-- Remise % -->
+            <div class="col-4 col-lg-2">
+              <label class="oc-label">Remise %</label>
+              <div class="input-group">
+                <input type="number" min="0" max="100" class="form-control" formControlName="discountPct" />
+                <span class="input-group-text">%</span>
+              </div>
+            </div>
+
+            <!-- Info prix / stock -->
+            <div class="col-4 col-lg-2">
+              <label class="oc-label">Prix / Stock</label>
+              <div class="oc-line-info">
+                <span class="oc-line-info__pu">{{ getProductPrice(line.controls.productId.value) | number:'1.2-2' }} TND</span>
+                <span class="oc-badge mt-1"
+                  [class.oc-badge--green]="(getAvailableStock(line.controls.productId.value) ?? 0) > 0"
+                  [class.oc-badge--red]="(getAvailableStock(line.controls.productId.value) ?? 0) === 0">
+                  Stock : {{ getAvailableStock(line.controls.productId.value) ?? 0 }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Total ligne + supprimer -->
+            <div class="col-12 col-lg-1 d-flex flex-column align-items-end gap-1">
+              <label class="oc-label d-none d-lg-block">&nbsp;</label>
+              <div class="oc-line-total">{{ getLineTotal(i) | number:'1.2-2' }} TND</div>
+              <button type="button" class="oc-icon-btn oc-icon-btn--danger" (click)="removeLine(i)" [disabled]="lines.length === 1" title="Supprimer">
+                <fa-icon icon="trash"></fa-icon>
               </button>
             </div>
-            <!-- Product dropdown -->
-            <ul class="oc-dropdown oc-dropdown--product" *ngIf="showProductDropdowns[i]">
-              <li *ngIf="getFilteredProducts(i).length === 0" class="oc-dropdown__empty">Aucun produit trouvé.</li>
-              <li
-                class="oc-dropdown__item oc-dropdown__item--product"
-                *ngFor="let product of getFilteredProducts(i)"
-                (mousedown)="selectProduct(i, product)"
-                [class.oc-dropdown__item--active]="line.controls.productId.value === product.id"
-              >
-                <div class="oc-prod-row">
-                  <div>
-                    <strong>{{ product.name }}</strong>
-                    <span class="oc-sku" *ngIf="product.sku"> · {{ product.sku }}</span>
-                  </div>
-                  <div class="oc-prod-row__badges">
-                    <span class="oc-badge oc-badge--blue">{{ product.price | number:'1.2-2' }} TND</span>
-                    <span class="oc-badge" [class.oc-badge--green]="(getAvailableStock(product.id) ?? 0) > 0" [class.oc-badge--red]="(getAvailableStock(product.id) ?? 0) === 0">
-                      Stock : {{ getAvailableStock(product.id) ?? 0 }}
-                    </span>
-                  </div>
-                </div>
-              </li>
-            </ul>
-            <p class="oc-error" *ngIf="line.controls.productId.touched && line.controls.productId.invalid">Requis.</p>
-          </div>
 
-          <!-- Quantité -->
-          <div class="oc-line__qty">
-            <input
-              type="number" min="1"
-              class="oc-input oc-input--center"
-              [class.oc-input--invalid]="line.controls.quantity.touched && line.controls.quantity.invalid"
-              formControlName="quantity"
-              [attr.max]="getAvailableStock(line.controls.productId.value) ?? null"
-            />
-            <p class="oc-error" *ngIf="line.controls.quantity.touched && line.controls.quantity.errors?.exceedsStock">
-              Max {{ getAvailableStock(line.controls.productId.value) ?? 0 }}
-            </p>
           </div>
-
-          <!-- Remise % -->
-          <div class="oc-line__disc">
-            <input type="number" min="0" max="100" class="oc-input oc-input--center" formControlName="discountPct" />
-          </div>
-
-          <!-- Prix / Stock info -->
-          <div class="oc-line__info">
-            <span class="oc-line__pu">{{ getProductPrice(line.controls.productId.value) | number:'1.2-2' }} TND</span>
-            <span class="oc-line__stock" [class.oc-line__stock--ok]="(getAvailableStock(line.controls.productId.value) ?? 0) > 0" [class.oc-line__stock--ko]="(getAvailableStock(line.controls.productId.value) ?? 0) === 0">
-              Stock : {{ getAvailableStock(line.controls.productId.value) ?? 0 }}
-            </span>
-          </div>
-
-          <!-- Total ligne -->
-          <div class="oc-line__total">
-            {{ getLineTotal(i) | number:'1.2-2' }} TND
-          </div>
-
-          <!-- Supprimer -->
-          <div class="oc-line__del">
-            <button type="button" class="oc-icon-btn oc-icon-btn--danger" (click)="removeLine(i)" [disabled]="lines.length === 1" title="Supprimer">
-              <fa-icon icon="trash"></fa-icon>
-            </button>
-          </div>
-
         </div>
       </div>
 
-      <!-- Sous-total de l'étape produits -->
+      <!-- Sous-total -->
       <div class="oc-subtotal-bar">
-        <span>{{ lines.length }} ligne(s)</span>
-        <div>
-          Sous-total : <strong>{{ subtotal | number:'1.2-2' }} TND</strong>
-        </div>
+        <span class="text-muted">{{ lines.length }} ligne(s)</span>
+        <div>Sous-total : <strong>{{ subtotal | number:'1.2-2' }} TND</strong></div>
       </div>
 
       <p class="oc-error" *ngIf="lines.length === 0">Ajoutez au moins une ligne produit.</p>

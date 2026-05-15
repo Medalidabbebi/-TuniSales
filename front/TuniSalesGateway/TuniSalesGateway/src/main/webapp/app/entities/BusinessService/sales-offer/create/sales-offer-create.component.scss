@@ -247,50 +247,28 @@ $oc-radius:    12px;
 }
 
 // ── Lines (step 2) ───────────────────────────────────────────────
-.oc-lines-header {
-  display: grid;
-  grid-template-columns: 1fr 80px 80px 110px 110px 44px;
-  gap: .75rem;
-  padding: .4rem .75rem;
-  font-size: .75rem; font-weight: 700;
-  color: $oc-muted; text-transform: uppercase; letter-spacing: .05em;
-  border-bottom: 2px solid $oc-border;
-  margin-bottom: .5rem;
+.oc-lines { display: flex; flex-direction: column; gap: .75rem; }
 
-  &__qty, &__disc, &__info, &__total, &__action { text-align: center; }
-}
-
-.oc-lines { display: flex; flex-direction: column; gap: .6rem; }
-
-.oc-line {
-  display: grid;
-  grid-template-columns: 1fr 80px 80px 110px 110px 44px;
-  gap: .75rem;
-  align-items: start;
+.oc-line-card {
   background: $oc-bg;
   border: 1px solid $oc-border;
   border-radius: 10px;
-  padding: .75rem;
-  transition: border-color .15s;
+  padding: 1rem;
+  transition: border-color .15s, box-shadow .15s;
 
-  &:hover { border-color: darken($oc-border, 6%); }
+  &:hover { border-color: darken($oc-border,8%); box-shadow: 0 2px 8px rgba(15,23,42,.06); }
+}
 
-  &__product { position: relative; }
-  &__qty, &__disc { display: flex; flex-direction: column; align-items: center; }
-  &__info {
-    display: flex; flex-direction: column; align-items: center; gap: .2rem; padding-top: .45rem;
-  }
-  &__pu { font-size: .82rem; color: $oc-muted; }
-  &__stock {
-    font-size: .78rem; font-weight: 600; border-radius: 999px; padding: .1rem .5rem;
-    &--ok { background: $oc-green-l; color: $oc-green; }
-    &--ko { background: $oc-danger-l; color: $oc-danger; }
-  }
-  &__total {
-    text-align: center; padding-top: .45rem;
-    font-weight: 700; color: $oc-text; font-size: .92rem;
-  }
-  &__del { display: flex; align-items: flex-start; padding-top: .35rem; justify-content: center; }
+.oc-product-search { position: relative; }
+
+.oc-line-info {
+  display: flex; flex-direction: column; gap: .2rem; padding-top: .1rem;
+  &__pu { font-size: .88rem; font-weight: 600; color: $oc-text; }
+}
+
+.oc-line-total {
+  font-weight: 700; font-size: .95rem; color: $oc-primary;
+  white-space: nowrap; padding-top: .25rem;
 }
 
 .oc-subtotal-bar {
