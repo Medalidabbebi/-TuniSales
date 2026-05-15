@@ -228,10 +228,18 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
   }
 
   getProductPrice(productId: number | null): number {
-    if (!productId) {
-      return 0;
-    }
-    return this.products.find(product => product.id === productId)?.price ?? 0;
+    if (!productId) return 0;
+    return this.products.find(p => p.id === productId)?.price ?? 0;
+  }
+
+  getProductName(productId: number | null): string {
+    if (!productId) return '—';
+    return this.products.find(p => p.id === productId)?.name ?? '—';
+  }
+
+  getProductSku(productId: number | null): string {
+    if (!productId) return '';
+    return this.products.find(p => p.id === productId)?.sku ?? '';
   }
 
   getLineTotal(index: number): number {

@@ -246,16 +246,13 @@
     <div class="card tsg-offer-card" *ngIf="currentStep === 4">
       <div class="card-body">
         <h3 class="tsg-offer-card__title">Etape 5: Validation</h3>
-        <p class="tsg-offer-card__hint">Verifiez le recapitulatif puis creez l'offre.</p>
+        <p class="tsg-offer-card__hint">Verifiez le recapitulatif puis creez l'ordre.</p>
 
-        <div class="tsg-review-grid">
+        <!-- Summary header -->
+        <div class="tsg-review-grid" style="margin-bottom: 1.5rem;">
           <div class="tsg-review-item">
             <span>Client</span>
             <strong>{{ selectedClient?.name || 'Non selectionne' }}</strong>
-          </div>
-          <div class="tsg-review-item">
-            <span>Nb lignes</span>
-            <strong>{{ lines.length }}</strong>
           </div>
           <div class="tsg-review-item">
             <span>Mode paiement</span>
@@ -266,14 +263,49 @@
             <strong>{{ subtotal | number : '1.2-2' }} TND</strong>
           </div>
           <div class="tsg-review-item">
-            <span>Remise</span>
-            <strong>{{ discountAmount | number : '1.2-2' }} TND</strong>
+            <span>Remise globale</span>
+            <strong>-{{ discountAmount | number : '1.2-2' }} TND</strong>
           </div>
           <div class="tsg-review-item tsg-review-item--total">
-            <span>Total offre</span>
+            <span>Total ordre</span>
             <strong>{{ totalAmount | number : '1.2-2' }} TND</strong>
           </div>
         </div>
+
+        <!-- Lines detail table -->
+        <div style="font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.04em;">
+          Lignes de commande ({{ lines.length }})
+        </div>
+        <table class="table table-bordered table-sm" style="background:#fff;">
+          <thead style="background:#f8fafc;">
+            <tr>
+              <th>#</th>
+              <th>Produit</th>
+              <th>Référence</th>
+              <th class="text-end">Qté</th>
+              <th class="text-end">Prix unit. TND</th>
+              <th class="text-end">Remise %</th>
+              <th class="text-end">Total TND</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let lineGroup of lines.controls; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td><strong>{{ getProductName(lineGroup.controls['productId'].value) }}</strong></td>
+              <td><span style="color:#64748b; font-size:12px;">{{ getProductSku(lineGroup.controls['productId'].value) }}</span></td>
+              <td class="text-end">{{ lineGroup.controls['quantity'].value }}</td>
+              <td class="text-end">{{ getProductPrice(lineGroup.controls['productId'].value) | number:'1.2-2' }}</td>
+              <td class="text-end">{{ lineGroup.controls['discountPct'].value || 0 }} %</td>
+              <td class="text-end"><strong>{{ getLineTotal(i) | number:'1.2-2' }}</strong></td>
+            </tr>
+          </tbody>
+          <tfoot style="background:#f8fafc;">
+            <tr>
+              <td colspan="6" class="text-end"><strong>Total</strong></td>
+              <td class="text-end" style="color:#00355f; font-weight:700;">{{ totalAmount | number:'1.2-2' }} TND</td>
+            </tr>
+          </tfoot>
+        </table>
       </div>
     </div>
 
