@@ -140,7 +140,7 @@ public class OrderService {
             // Actual credit-limit check delegated to a future ClientScoreFeignClient call.
             // Throwing if exceeded is handled in the client layer or via a dedicated service call.
         }
-        orderDTO.setStatus(OrderStatus.PENDING);
+        orderDTO.setStatus(OrderStatus.SUBMITTED);
         orderDTO.setSubmittedAt(ZonedDateTime.now());
         return save(orderDTO);
     }

@@ -23,7 +23,18 @@
       <span class="tsg-badge" [ngClass]="getStatusBadgeClass()" style="font-size: 13px; padding: 4px 14px;">
         <span jhiTranslate="{{ 'tuniSalesGatewayApp.OrderStatus.' + order.status }}">{{ order.status }}</span>
       </span>
-      <button type="button" [routerLink]="['/order', order.id, 'edit']" class="tsg-btn tsg-btn--primary">
+      <!-- Admin review actions: visible only when status is SUBMITTED and user is admin -->
+      <ng-container *ngIf="canAdminReview()">
+        <button type="button" class="tsg-btn tsg-btn--primary" (click)="moveToUnderReview()" [disabled]="isActionLoading">
+          <fa-icon icon="search"></fa-icon>
+          En révision
+        </button>
+        <button type="button" class="tsg-btn tsg-btn--danger" (click)="cancelOrder()" [disabled]="isActionLoading">
+          <fa-icon icon="ban"></fa-icon>
+          Annuler
+        </button>
+      </ng-container>
+      <button type="button" [routerLink]="['/order', order.id, 'edit']" class="tsg-btn tsg-btn--secondary">
         <fa-icon icon="pencil-alt"></fa-icon>
         <span jhiTranslate="entity.action.edit">Edit</span>
       </button>

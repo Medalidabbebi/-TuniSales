@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 
 import { IOrder } from '../order.model';
 import { OrderStatus } from 'app/entities/enumerations/order-status.model';
+import { OrderService } from '../service/order.service';
+import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
   selector: 'jhi-order-detail',
@@ -11,6 +13,7 @@ import { OrderStatus } from 'app/entities/enumerations/order-status.model';
 })
 export class OrderDetailComponent implements OnInit {
   order: IOrder | null = null;
+  isActionLoading = false;
 
   pipelineSteps = [
     { key: OrderStatus.DRAFT, label: 'Draft' },
@@ -24,7 +27,11 @@ export class OrderDetailComponent implements OnInit {
     { key: OrderStatus.PAID, label: 'Paid' },
   ];
 
-  constructor(protected activatedRoute: ActivatedRoute) {}
+  constructor(
+    protected activatedRoute: ActivatedRoute,
+    protected orderService: OrderService,
+    protected accountService: AccountService
+  ) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ order }) => {
@@ -55,6 +62,7 @@ export class OrderDetailComponent implements OnInit {
   getStatusBadgeClass(): string {
     const map: Record<string, string> = {
       DRAFT: 'tsg-badge--draft',
+      PENDING: 'tsg-badge--submitted',
       SUBMITTED: 'tsg-badge--submitted',
       UNDER_REVIEW: 'tsg-badge--under-review',
       APPROVED: 'tsg-badge--approved',
@@ -71,5 +79,36 @@ export class OrderDetailComponent implements OnInit {
 
   isTerminalStatus(): boolean {
     return this.order?.status === OrderStatus.REJECTED || this.order?.status === OrderStatus.CANCELLED;
+  }
+
+  canAdminReview(): boolean {
+    return (
+      (this.order?.status === OrderStatus.SUBMITTED || this.order?.status === OrderStatus.PENDING) &&
+      (this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_ADMIN_COMMERCIAL']))
+    );
+  }
+
+  moveToUnderReview(): void {
+    if (!this.order?.id) return;
+    this.isActionLoading = true;
+    this.orderService.validate(this.order.id, 'UNDER_REVIEW').subscribe({
+      next: res => {
+        this.order = res.body;
+        this.isActionLoading = false;
+      },
+      error: () => { this.isActionLoading = false; }
+    });
+  }
+
+  cancelOrder(): void {
+    if (!this.order?.id) return;
+    this.isActionLoading = true;
+    this.orderService.validate(this.order.id, 'CANCELLED').subscribe({
+      next: res => {
+        this.order = res.body;
+        this.isActionLoading = false;
+      },
+      error: () => { this.isActionLoading = false; }
+    });
   }
 }

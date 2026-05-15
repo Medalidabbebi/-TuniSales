@@ -2,17 +2,23 @@
   "tuniSalesGatewayApp": {
     "OrderStatus": {
       "null": "",
-      "DRAFT": "DRAFT",
-      "SUBMITTED": "SUBMITTED",
-      "UNDER_REVIEW": "UNDER_REVIEW",
-      "APPROVED": "APPROVED",
-      "IN_PREPARATION": "IN_PREPARATION",
-      "SHIPPED": "SHIPPED",
-      "DELIVERED": "DELIVERED",
-      "INVOICED": "INVOICED",
-      "PAID": "PAID",
-      "REJECTED": "REJECTED",
-      "CANCELLED": "CANCELLED"
+      "DRAFT": "Draft",
+      "PENDING": "Pending",
+      "SUBMITTED": "Submitted",
+      "UNDER_REVIEW": "Under Review",
+      "APPROVED": "Approved",
+      "ACCEPTED": "Accepted",
+      "NEGOTIATED": "Negotiated",
+      "REFUSED": "Refused",
+      "CONFIRMED": "Confirmed",
+      "IN_PREPARATION": "In Preparation",
+      "SHIPPED": "Shipped",
+      "DELIVERED": "Delivered",
+      "INVOICED": "Invoiced",
+      "PAID": "Paid",
+      "REJECTED": "Rejected",
+      "CANCELLED": "Cancelled",
+      "RETURNED": "Returned"
     }
   }
 }

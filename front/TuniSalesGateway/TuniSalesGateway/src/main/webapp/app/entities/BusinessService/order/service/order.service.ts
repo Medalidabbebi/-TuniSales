@@ -70,6 +70,12 @@ export class OrderService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  validate(id: number, decision: string): Observable<EntityResponseType> {
+    return this.http
+      .put<RestOrder>(`${this.resourceUrl}/${id}/validate`, null, { params: { decision }, observe: 'response' })
+      .pipe(map(res => this.convertResponseFromServer(res)));
+  }
+
   getOrderIdentifier(order: Pick<IOrder, 'id'>): number {
     return order.id;
   }

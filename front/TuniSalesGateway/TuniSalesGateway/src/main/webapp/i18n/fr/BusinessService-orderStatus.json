@@ -2,17 +2,23 @@
   "tuniSalesGatewayApp": {
     "OrderStatus": {
       "null": "",
-      "DRAFT": "DRAFT",
-      "SUBMITTED": "SUBMITTED",
-      "UNDER_REVIEW": "UNDER_REVIEW",
-      "APPROVED": "APPROVED",
-      "IN_PREPARATION": "IN_PREPARATION",
-      "SHIPPED": "SHIPPED",
-      "DELIVERED": "DELIVERED",
-      "INVOICED": "INVOICED",
-      "PAID": "PAID",
-      "REJECTED": "REJECTED",
-      "CANCELLED": "CANCELLED"
+      "DRAFT": "Brouillon",
+      "PENDING": "En attente",
+      "SUBMITTED": "Soumis",
+      "UNDER_REVIEW": "En révision",
+      "APPROVED": "Approuvé",
+      "ACCEPTED": "Accepté",
+      "NEGOTIATED": "Négocié",
+      "REFUSED": "Refusé",
+      "CONFIRMED": "Confirmé",
+      "IN_PREPARATION": "En préparation",
+      "SHIPPED": "Expédié",
+      "DELIVERED": "Livré",
+      "INVOICED": "Facturé",
+      "PAID": "Payé",
+      "REJECTED": "Rejeté",
+      "CANCELLED": "Annulé",
+      "RETURNED": "Retourné"
     }
   }
 }
