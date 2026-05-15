@@ -154,7 +154,7 @@ $oc-radius:    12px;
 }
 
 // ── Field / Input ────────────────────────────────────────────────
-.oc-field { display: flex; flex-direction: column; gap: .4rem; }
+.oc-field { display: flex; flex-direction: column; gap: .4rem; position: relative; }
 
 .oc-label {
   font-size: .82rem; font-weight: 600; color: $oc-text;
