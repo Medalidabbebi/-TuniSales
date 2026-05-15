@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IOrder } from '../order.model';
+import { IOrderLine } from 'app/entities/BusinessService/order-line/order-line.model';
 import { OrderStatus } from 'app/entities/enumerations/order-status.model';
 import { OrderService } from '../service/order.service';
+import { OrderLineService } from 'app/entities/BusinessService/order-line/service/order-line.service';
 import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
@@ -13,21 +15,22 @@ import { AccountService } from 'app/core/auth/account.service';
 })
 export class OrderDetailComponent implements OnInit {
   order: IOrder | null = null;
+  orderLines: IOrderLine[] = [];
   isActionLoading = false;
+  isLoadingLines = false;
 
   pipelineSteps = [
-    { key: OrderStatus.DRAFT,          label: 'Draft' },
-    { key: OrderStatus.SUBMITTED,      label: 'Submitted' },
-    { key: OrderStatus.UNDER_REVIEW,   label: 'Under Review' },
-    { key: OrderStatus.APPROVED,       label: 'Approved' },
-    { key: OrderStatus.IN_PREPARATION, label: 'Preparation' },
-    { key: OrderStatus.SHIPPED,        label: 'Shipped' },
-    { key: OrderStatus.DELIVERED,      label: 'Delivered' },
-    { key: OrderStatus.INVOICED,       label: 'Invoiced' },
-    { key: OrderStatus.PAID,           label: 'Paid' },
+    { key: OrderStatus.DRAFT,          label: 'Brouillon' },
+    { key: OrderStatus.SUBMITTED,      label: 'Soumis' },
+    { key: OrderStatus.UNDER_REVIEW,   label: 'En révision' },
+    { key: OrderStatus.APPROVED,       label: 'Approuvé' },
+    { key: OrderStatus.IN_PREPARATION, label: 'Préparation' },
+    { key: OrderStatus.SHIPPED,        label: 'Expédié' },
+    { key: OrderStatus.DELIVERED,      label: 'Livré' },
+    { key: OrderStatus.INVOICED,       label: 'Facturé' },
+    { key: OrderStatus.PAID,           label: 'Payé' },
   ];
 
-  // next status for each step
   private nextStatus: Record<string, string> = {
     [OrderStatus.SUBMITTED]:      OrderStatus.UNDER_REVIEW,
     [OrderStatus.UNDER_REVIEW]:   OrderStatus.APPROVED,
@@ -38,7 +41,6 @@ export class OrderDetailComponent implements OnInit {
     [OrderStatus.INVOICED]:       OrderStatus.PAID,
   };
 
-  // label for the advance button at each step
   private advanceLabel: Record<string, string> = {
     [OrderStatus.SUBMITTED]:      'Mettre en révision',
     [OrderStatus.UNDER_REVIEW]:   'Approuver',
@@ -52,12 +54,24 @@ export class OrderDetailComponent implements OnInit {
   constructor(
     protected activatedRoute: ActivatedRoute,
     protected orderService: OrderService,
+    protected orderLineService: OrderLineService,
     protected accountService: AccountService
   ) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ order }) => {
       this.order = order;
+      if (order?.id) {
+        this.loadOrderLines(order.id);
+      }
+    });
+  }
+
+  private loadOrderLines(orderId: number): void {
+    this.isLoadingLines = true;
+    this.orderLineService.query({ 'orderId.equals': orderId, size: 200 }).subscribe({
+      next: res => { this.orderLines = res.body ?? []; this.isLoadingLines = false; },
+      error: () => { this.isLoadingLines = false; },
     });
   }
 
@@ -134,5 +148,12 @@ export class OrderDetailComponent implements OnInit {
   isTerminalStatus(): boolean {
     return this.order?.status === OrderStatus.REJECTED
         || this.order?.status === OrderStatus.CANCELLED;
+  }
+
+  getLineSubtotal(line: IOrderLine): number {
+    const qty = line.quantity ?? 0;
+    const price = line.unitPrice ?? 0;
+    const disc = line.discountPct ?? 0;
+    return qty * price * (1 - disc / 100);
   }
 }

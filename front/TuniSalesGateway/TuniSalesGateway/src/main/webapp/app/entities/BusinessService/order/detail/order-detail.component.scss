@@ -1,5 +1,6 @@
 @import 'design-system';
 
+// ── Layout ────────────────────────────────────────────────────────
 .tsg-order-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -13,6 +14,7 @@
 
 .gap-3 { gap: 12px; }
 
+// ── Terminal Banner ───────────────────────────────────────────────
 .tsg-terminal-banner {
   display: flex;
   align-items: flex-start;
@@ -29,10 +31,243 @@
     color: $tsg-danger;
     border: 1px solid rgba($tsg-danger, 0.2);
   }
-
   &--warning {
     background: $tsg-warning-bg;
     color: darken($tsg-warning, 20%);
     border: 1px solid rgba($tsg-warning, 0.2);
   }
+}
+
+// ── Financial Grid ────────────────────────────────────────────────
+.tsg-finance-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.tsg-finance-item {
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+
+  &:nth-child(even) { border-right: none; }
+  &:nth-last-child(-n+2) { border-bottom: none; }
+
+  &__label {
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #64748b;
+  }
+  &__value {
+    font-size: .95rem;
+    font-weight: 600;
+    color: #0f172a;
+
+    &--discount { color: #16a34a; }
+    &--total    { color: #00355f; font-size: 1.2rem; font-weight: 800; }
+  }
+
+  &--total { grid-column: 1 / -1; background: #f8fafc; }
+}
+
+// ── Info List ─────────────────────────────────────────────────────
+.tsg-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.tsg-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: .9rem;
+
+  &:last-child { border-bottom: none; }
+
+  &__label {
+    color: #64748b;
+    font-size: .8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    flex-shrink: 0;
+    margin-right: 1rem;
+  }
+  &__value {
+    color: #0f172a;
+    font-weight: 500;
+    text-align: right;
+
+    &--mono { font-family: monospace; font-size: .88rem; }
+    &--link { color: #2563eb; text-decoration: none;
+      &:hover { text-decoration: underline; }
+    }
+  }
+}
+
+// ── Order Lines Section ───────────────────────────────────────────
+.tsg-lines-section {
+  margin-bottom: $space-5;
+}
+
+.tsg-lines-count {
+  background: #e0e7ff;
+  color: #4f46e5;
+  font-size: .75rem;
+  font-weight: 700;
+  padding: .2rem .6rem;
+  border-radius: 999px;
+}
+
+.tsg-lines-loading,
+.tsg-lines-empty {
+  padding: 1.5rem;
+  color: #94a3b8;
+  font-size: .9rem;
+  text-align: center;
+}
+
+.tsg-lines-table-wrap {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+}
+
+.tsg-lines-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .88rem;
+
+  thead tr {
+    background: #f8fafc;
+    th {
+      padding: .65rem .85rem;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: #64748b;
+      border-bottom: 2px solid #e2e8f0;
+      white-space: nowrap;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background .1s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: #f8fafc; }
+
+    td {
+      padding: .7rem .85rem;
+      color: #0f172a;
+      vertical-align: middle;
+    }
+  }
+
+  tfoot tr {
+    td {
+      padding: .55rem .85rem;
+      font-size: .88rem;
+      border-top: 1px solid #e2e8f0;
+      color: #334155;
+    }
+  }
+
+  &__num    { color: #94a3b8; width: 36px; }
+  &__amount { font-weight: 600; }
+
+  &__discount-label { color: #16a34a; }
+  &__discount       { color: #16a34a; font-weight: 600; }
+
+  &__total {
+    font-weight: 700;
+    color: #0f172a;
+    border-top: 2px solid #e2e8f0 !important;
+  }
+
+  &__grand-row td {
+    background: #f0fdf4;
+    border-top: 2px solid #86efac !important;
+  }
+  &__grand {
+    color: #16a34a;
+    font-size: 1rem;
+    font-weight: 800;
+  }
+}
+
+.tsg-discount-badge {
+  background: #dcfce7;
+  color: #16a34a;
+  font-size: .75rem;
+  font-weight: 700;
+  padding: .15rem .5rem;
+  border-radius: 999px;
+}
+
+// ── Timeline ──────────────────────────────────────────────────────
+.tsg-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.tsg-timeline__item {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+  padding: .75rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+
+  &:last-child { border-bottom: none; }
+}
+
+.tsg-timeline__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  &--created   { background: #94a3b8; }
+  &--submitted { background: #2563eb; }
+  &--validated { background: #16a34a; }
+  &--updated   { background: #d97706; }
+}
+
+.tsg-timeline__content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex: 1;
+  gap: 1rem;
+}
+
+.tsg-timeline__label {
+  font-size: .85rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.tsg-timeline__date {
+  font-size: .82rem;
+  color: #64748b;
 }

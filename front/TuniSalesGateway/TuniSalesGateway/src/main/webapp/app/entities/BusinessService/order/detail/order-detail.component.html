@@ -1,5 +1,6 @@
 <div *ngIf="order">
-  <!-- Page Header -->
+
+  <!-- ── Page Header ─────────────────────────────────────────────── -->
   <div class="tsg-page-header">
     <div>
       <div class="d-flex align-items-center gap-3">
@@ -8,11 +9,11 @@
         </button>
         <div>
           <h1 class="tsg-page-header__title" data-cy="orderDetailsHeading">
-            Order {{ order.orderNumber || '#' + order.id }}
+            {{ order.orderNumber || 'Ordre #' + order.id }}
           </h1>
           <p class="tsg-page-header__subtitle">
             <span *ngIf="order.client">
-              <fa-icon icon="user" style="margin-right: 4px; opacity: 0.5;"></fa-icon>
+              <fa-icon icon="user" style="margin-right:4px;opacity:.5;"></fa-icon>
               <a [routerLink]="['/client', order.client.id, 'view']">{{ order.client.name }}</a>
             </span>
           </p>
@@ -20,10 +21,9 @@
       </div>
     </div>
     <div class="tsg-page-header__actions">
-      <span class="tsg-badge" [ngClass]="getStatusBadgeClass()" style="font-size: 13px; padding: 4px 14px;">
+      <span class="tsg-badge" [ngClass]="getStatusBadgeClass()" style="font-size:13px;padding:4px 14px;">
         <span jhiTranslate="{{ 'tuniSalesGatewayApp.OrderStatus.' + order.status }}">{{ order.status }}</span>
       </span>
-      <!-- Admin workflow actions — visible at every actionable step -->
       <button *ngIf="canAdvance()" type="button" class="tsg-btn tsg-btn--primary" (click)="advance()" [disabled]="isActionLoading">
         <fa-icon icon="arrow-right"></fa-icon>
         {{ getAdvanceLabel() }}
@@ -42,9 +42,9 @@
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
-  <!-- Status Pipeline -->
+  <!-- ── Status Pipeline ─────────────────────────────────────────── -->
   <div class="tsg-detail-section" *ngIf="!isTerminalStatus()">
-    <div class="tsg-detail-section__title">Order Progress</div>
+    <div class="tsg-detail-section__title">Progression de l'ordre</div>
     <div class="tsg-pipeline">
       <div
         *ngFor="let step of pipelineSteps; let i = index"
@@ -60,84 +60,174 @@
     </div>
   </div>
 
-  <!-- Rejected/Cancelled banner -->
-  <div *ngIf="isTerminalStatus()" class="tsg-terminal-banner" [ngClass]="order.status === 'REJECTED' ? 'tsg-terminal-banner--danger' : 'tsg-terminal-banner--warning'">
+  <!-- ── Rejected / Cancelled Banner ────────────────────────────── -->
+  <div *ngIf="isTerminalStatus()" class="tsg-terminal-banner"
+       [ngClass]="order.status === 'REJECTED' ? 'tsg-terminal-banner--danger' : 'tsg-terminal-banner--warning'">
     <fa-icon [icon]="order.status === 'REJECTED' ? 'times' : 'ban'"></fa-icon>
     <div>
-      <strong>Order {{ order.status }}</strong>
-      <p *ngIf="order.rejectionReason" style="margin: 4px 0 0;">Reason: {{ order.rejectionReason }}</p>
+      <strong>Ordre {{ order.status }}</strong>
+      <p *ngIf="order.rejectionReason" style="margin:4px 0 0;">Raison : {{ order.rejectionReason }}</p>
     </div>
   </div>
 
-  <!-- Order Details Grid -->
+  <!-- ── Top Grid: Financial + Order Info ───────────────────────── -->
   <div class="tsg-order-grid">
-    <!-- Financial Overview -->
+
+    <!-- Financial Summary -->
     <div class="tsg-detail-section">
-      <div class="tsg-detail-section__title">Financial Summary</div>
-      <div class="tsg-detail-section__grid">
-        <div class="tsg-detail-section__field">
-          <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.subtotal">Subtotal</div>
-          <div class="tsg-detail-section__field-value">{{ order.subtotal | number:'1.2-2' }} TND</div>
+      <div class="tsg-detail-section__title">
+        <fa-icon icon="chart-bar" class="me-1"></fa-icon> Résumé financier
+      </div>
+      <div class="tsg-finance-grid">
+        <div class="tsg-finance-item">
+          <span class="tsg-finance-item__label">Sous-total</span>
+          <span class="tsg-finance-item__value">{{ order.subtotal | number:'1.2-2' }} TND</span>
         </div>
-        <div class="tsg-detail-section__field">
-          <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.discountAmount">Discount</div>
-          <div class="tsg-detail-section__field-value" style="color: #16a34a;">-{{ order.discountAmount | number:'1.2-2' }} TND</div>
+        <div class="tsg-finance-item">
+          <span class="tsg-finance-item__label">Remise</span>
+          <span class="tsg-finance-item__value tsg-finance-item__value--discount">
+            -{{ order.discountAmount | number:'1.2-2' }} TND
+          </span>
         </div>
-        <div class="tsg-detail-section__field">
-          <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.taxAmount">Tax</div>
-          <div class="tsg-detail-section__field-value">{{ order.taxAmount | number:'1.2-2' }} TND</div>
+        <div class="tsg-finance-item">
+          <span class="tsg-finance-item__label">Taxes</span>
+          <span class="tsg-finance-item__value">{{ order.taxAmount | number:'1.2-2' }} TND</span>
         </div>
-        <div class="tsg-detail-section__field">
-          <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.totalAmount">Total</div>
-          <div class="tsg-detail-section__field-value" style="font-size: 20px; color: #00355f;">{{ order.totalAmount | number:'1.2-2' }} TND</div>
+        <div class="tsg-finance-item tsg-finance-item--total">
+          <span class="tsg-finance-item__label">Total</span>
+          <span class="tsg-finance-item__value tsg-finance-item__value--total">
+            {{ order.totalAmount | number:'1.2-2' }} TND
+          </span>
         </div>
       </div>
     </div>
 
     <!-- Order Information -->
     <div class="tsg-detail-section">
-      <div class="tsg-detail-section__title">Order Information</div>
-      <div class="tsg-detail-section__grid">
-        <div class="tsg-detail-section__field">
-          <div class="tsg-detail-section__field-label" jhiTranslate="global.field.id">ID</div>
-          <div class="tsg-detail-section__field-value">{{ order.id }}</div>
+      <div class="tsg-detail-section__title">
+        <fa-icon icon="file-invoice" class="me-1"></fa-icon> Informations de l'ordre
+      </div>
+      <div class="tsg-info-list">
+        <div class="tsg-info-row" *ngIf="order.orderNumber">
+          <span class="tsg-info-row__label">N° Ordre</span>
+          <span class="tsg-info-row__value tsg-info-row__value--mono">{{ order.orderNumber }}</span>
         </div>
-        <div class="tsg-detail-section__field">
-          <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.orderNumber">Order Number</div>
-          <div class="tsg-detail-section__field-value">{{ order.orderNumber || '—' }}</div>
+        <div class="tsg-info-row" *ngIf="order.client">
+          <span class="tsg-info-row__label">Client</span>
+          <a class="tsg-info-row__value tsg-info-row__value--link"
+             [routerLink]="['/client', order.client.id, 'view']">{{ order.client.name }}</a>
         </div>
-        <div class="tsg-detail-section__field">
-          <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.paymentTermsDays">Payment Terms</div>
-          <div class="tsg-detail-section__field-value">{{ order.paymentTermsDays }} days</div>
+        <div class="tsg-info-row">
+          <span class="tsg-info-row__label">Conditions paiement</span>
+          <span class="tsg-info-row__value">{{ order.paymentTermsDays }} jours</span>
         </div>
-        <div class="tsg-detail-section__field">
-          <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.dueDate">Due Date</div>
-          <div class="tsg-detail-section__field-value">{{ order.dueDate | formatMediumDatetime }}</div>
+        <div class="tsg-info-row" *ngIf="order.dueDate">
+          <span class="tsg-info-row__label">Date d'échéance</span>
+          <span class="tsg-info-row__value">{{ order.dueDate | formatMediumDatetime }}</span>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Timeline -->
+  <!-- ── Order Lines ─────────────────────────────────────────────── -->
+  <div class="tsg-detail-section tsg-lines-section">
+    <div class="tsg-detail-section__title d-flex justify-content-between align-items-center">
+      <span><fa-icon icon="list" class="me-1"></fa-icon> Lignes de commande</span>
+      <span class="tsg-lines-count" *ngIf="!isLoadingLines">{{ orderLines.length }} ligne(s)</span>
+    </div>
+
+    <div *ngIf="isLoadingLines" class="tsg-lines-loading">
+      <fa-icon icon="spinner" [spin]="true"></fa-icon> Chargement des lignes…
+    </div>
+
+    <div *ngIf="!isLoadingLines && orderLines.length === 0" class="tsg-lines-empty">
+      Aucune ligne de commande enregistrée.
+    </div>
+
+    <div *ngIf="!isLoadingLines && orderLines.length > 0" class="tsg-lines-table-wrap">
+      <table class="tsg-lines-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Produit</th>
+            <th class="text-end">Qté</th>
+            <th class="text-end">Prix unit.</th>
+            <th class="text-end">Remise</th>
+            <th class="text-end">Total ligne</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let line of orderLines; let i = index">
+            <td class="tsg-lines-table__num">{{ i + 1 }}</td>
+            <td>
+              <strong>{{ line.product?.name || '—' }}</strong>
+            </td>
+            <td class="text-end">{{ line.quantity }}</td>
+            <td class="text-end">{{ line.unitPrice | number:'1.2-2' }} TND</td>
+            <td class="text-end">
+              <span *ngIf="line.discountPct" class="tsg-discount-badge">{{ line.discountPct }} %</span>
+              <span *ngIf="!line.discountPct" class="text-muted">—</span>
+            </td>
+            <td class="text-end tsg-lines-table__amount">{{ getLineSubtotal(line) | number:'1.2-2' }} TND</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="5" class="text-end">Total HT</td>
+            <td class="text-end tsg-lines-table__total">{{ order.subtotal | number:'1.2-2' }} TND</td>
+          </tr>
+          <tr *ngIf="(order.discountAmount ?? 0) > 0">
+            <td colspan="5" class="text-end tsg-lines-table__discount-label">Remise globale</td>
+            <td class="text-end tsg-lines-table__discount">-{{ order.discountAmount | number:'1.2-2' }} TND</td>
+          </tr>
+          <tr *ngIf="(order.taxAmount ?? 0) > 0">
+            <td colspan="5" class="text-end">Taxes</td>
+            <td class="text-end">{{ order.taxAmount | number:'1.2-2' }} TND</td>
+          </tr>
+          <tr class="tsg-lines-table__grand-row">
+            <td colspan="5" class="text-end">Total TTC</td>
+            <td class="text-end tsg-lines-table__grand">{{ order.totalAmount | number:'1.2-2' }} TND</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Timeline ────────────────────────────────────────────────── -->
   <div class="tsg-detail-section">
-    <div class="tsg-detail-section__title">Timeline</div>
-    <div class="tsg-detail-section__grid">
-      <div class="tsg-detail-section__field" *ngIf="order.createdAt">
-        <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.createdAt">Created</div>
-        <div class="tsg-detail-section__field-value">{{ order.createdAt | formatMediumDatetime }}</div>
+    <div class="tsg-detail-section__title">
+      <fa-icon icon="history" class="me-1"></fa-icon> Historique
+    </div>
+    <div class="tsg-timeline">
+      <div class="tsg-timeline__item" *ngIf="order.createdAt">
+        <div class="tsg-timeline__dot tsg-timeline__dot--created"></div>
+        <div class="tsg-timeline__content">
+          <span class="tsg-timeline__label">Créé</span>
+          <span class="tsg-timeline__date">{{ order.createdAt | formatMediumDatetime }}</span>
+        </div>
       </div>
-      <div class="tsg-detail-section__field" *ngIf="order.submittedAt">
-        <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.submittedAt">Submitted</div>
-        <div class="tsg-detail-section__field-value">{{ order.submittedAt | formatMediumDatetime }}</div>
+      <div class="tsg-timeline__item" *ngIf="order.submittedAt">
+        <div class="tsg-timeline__dot tsg-timeline__dot--submitted"></div>
+        <div class="tsg-timeline__content">
+          <span class="tsg-timeline__label">Soumis</span>
+          <span class="tsg-timeline__date">{{ order.submittedAt | formatMediumDatetime }}</span>
+        </div>
       </div>
-      <div class="tsg-detail-section__field" *ngIf="order.validatedAt">
-        <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.validatedAt">Validated</div>
-        <div class="tsg-detail-section__field-value">{{ order.validatedAt | formatMediumDatetime }}</div>
+      <div class="tsg-timeline__item" *ngIf="order.validatedAt">
+        <div class="tsg-timeline__dot tsg-timeline__dot--validated"></div>
+        <div class="tsg-timeline__content">
+          <span class="tsg-timeline__label">Validé</span>
+          <span class="tsg-timeline__date">{{ order.validatedAt | formatMediumDatetime }}</span>
+        </div>
       </div>
-      <div class="tsg-detail-section__field" *ngIf="order.updatedAt">
-        <div class="tsg-detail-section__field-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.updatedAt">Updated</div>
-        <div class="tsg-detail-section__field-value">{{ order.updatedAt | formatMediumDatetime }}</div>
+      <div class="tsg-timeline__item" *ngIf="order.updatedAt">
+        <div class="tsg-timeline__dot tsg-timeline__dot--updated"></div>
+        <div class="tsg-timeline__content">
+          <span class="tsg-timeline__label">Dernière mise à jour</span>
+          <span class="tsg-timeline__date">{{ order.updatedAt | formatMediumDatetime }}</span>
+        </div>
       </div>
     </div>
   </div>
+
 </div>
