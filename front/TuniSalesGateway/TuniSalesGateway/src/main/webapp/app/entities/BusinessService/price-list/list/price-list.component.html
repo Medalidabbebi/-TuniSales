@@ -45,9 +45,6 @@
       <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
         <thead class="table-light">
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-            <th scope="col" jhiSortBy="id" style="width:60px">
-              <div class="d-flex align-items-center gap-1">ID <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
             <th scope="col" jhiSortBy="product.name">
               <div class="d-flex align-items-center gap-1">Nom <fa-icon icon="sort" class="text-muted"></fa-icon></div>
             </th>
@@ -65,9 +62,6 @@
         </thead>
         <tbody>
           <tr *ngFor="let priceList of priceLists; trackBy: trackId" data-cy="entityTable">
-            <td>
-              <a [routerLink]="['/price-list', priceList.id, 'view']" class="fw-semibold text-decoration-none">{{ priceList.id }}</a>
-            </td>
             <td class="fw-semibold">{{ priceList.product?.name || ('Tarif #' + priceList.id) }}</td>
             <td>
               <span class="badge rounded-pill" [ngClass]="priceList.isActive ? 'bg-success' : 'bg-secondary'">

@@ -45,9 +45,6 @@
       <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
         <thead class="table-light">
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-            <th scope="col" jhiSortBy="id" style="width:60px">
-              <div class="d-flex align-items-center gap-1">ID <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
             <th scope="col" jhiSortBy="outgoingItem.imei">
               <div class="d-flex align-items-center gap-1">Item sortant <fa-icon icon="sort" class="text-muted"></fa-icon></div>
             </th>
@@ -65,9 +62,6 @@
         </thead>
         <tbody>
           <tr *ngFor="let swap of swaps; trackBy: trackId" data-cy="entityTable">
-            <td>
-              <a [routerLink]="['/swap', swap.id, 'view']" class="fw-semibold text-decoration-none">{{ swap.id }}</a>
-            </td>
             <td>
               <a *ngIf="swap.outgoingItem" [routerLink]="['/stock-item', swap.outgoingItem.id, 'view']" class="text-decoration-none">
                 <code class="text-secondary">{{ swap.outgoingItem.imei }}</code>

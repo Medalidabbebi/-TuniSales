@@ -42,9 +42,6 @@
       <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
         <thead class="table-light">
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-            <th scope="col" jhiSortBy="id" style="width:60px">
-              <div class="d-flex align-items-center gap-1">ID <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
             <th scope="col" jhiSortBy="title">
               <div class="d-flex align-items-center gap-1">Titre <fa-icon icon="sort" class="text-muted"></fa-icon></div>
             </th>
@@ -65,9 +62,6 @@
         </thead>
         <tbody>
           <tr *ngFor="let notification of notifications; trackBy: trackId" data-cy="entityTable">
-            <td>
-              <a [routerLink]="['/notification', notification.id, 'view']" class="fw-semibold text-decoration-none">{{ notification.id }}</a>
-            </td>
             <td class="fw-semibold">{{ notification.title || '—' }}</td>
             <td>
               <span class="badge rounded-pill bg-info">{{ notification.type || '—' }}</span>

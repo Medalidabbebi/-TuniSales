@@ -55,9 +55,6 @@
       <table class="table table-hover align-middle mb-0">
         <thead class="table-light">
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-            <th scope="col" jhiSortBy="id" style="width:60px">
-              <div class="d-flex align-items-center gap-1">ID <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
             <th scope="col" jhiSortBy="productName">
               <div class="d-flex align-items-center gap-1">Produit <fa-icon icon="sort" class="text-muted"></fa-icon></div>
             </th>
@@ -78,11 +75,6 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of stockItems; trackBy: trackId" [class.table-danger]="item.isDeleted">
-            <td>
-              <a [routerLink]="['/stock-item', item.id, 'view']" class="fw-semibold text-decoration-none">
-                {{ item.id }}
-              </a>
-            </td>
             <td>
               <div class="fw-semibold">{{ item.productName || '—' }}</div>
               <small class="text-muted">ID Produit : {{ item.productId }}</small>

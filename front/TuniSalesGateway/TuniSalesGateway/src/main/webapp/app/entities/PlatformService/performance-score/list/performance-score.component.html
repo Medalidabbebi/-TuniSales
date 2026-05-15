@@ -45,9 +45,6 @@
       <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
         <thead class="table-light">
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-            <th scope="col" jhiSortBy="id" style="width:60px">
-              <div class="d-flex align-items-center gap-1">ID <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
             <th scope="col" jhiSortBy="userLogin">
               <div class="d-flex align-items-center gap-1">Commercial <fa-icon icon="sort" class="text-muted"></fa-icon></div>
             </th>
@@ -62,9 +59,6 @@
         </thead>
         <tbody>
           <tr *ngFor="let performanceScore of performanceScores; trackBy: trackId" data-cy="entityTable">
-            <td>
-              <a [routerLink]="['/performance-score', performanceScore.id, 'view']" class="fw-semibold text-decoration-none">{{ performanceScore.id }}</a>
-            </td>
             <td class="fw-semibold">{{ performanceScore.userLogin || '—' }}</td>
             <td>
               <span class="badge rounded-pill"

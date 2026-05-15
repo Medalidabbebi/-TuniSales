@@ -45,9 +45,6 @@
       <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
         <thead class="table-light">
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-            <th scope="col" jhiSortBy="id" style="width:60px">
-              <div class="d-flex align-items-center gap-1">ID <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
             <th scope="col" jhiSortBy="movementType">
               <div class="d-flex align-items-center gap-1">Type mouvement <fa-icon icon="sort" class="text-muted"></fa-icon></div>
             </th>
@@ -71,9 +68,6 @@
         </thead>
         <tbody>
           <tr *ngFor="let stockMovement of stockMovements; trackBy: trackId" data-cy="entityTable">
-            <td>
-              <a [routerLink]="['/stock-movement', stockMovement.id, 'view']" class="fw-semibold text-decoration-none">{{ stockMovement.id }}</a>
-            </td>
             <td>
               <span class="badge rounded-pill"
                 [ngClass]="{
