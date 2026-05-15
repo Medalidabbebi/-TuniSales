@@ -10,7 +10,7 @@
         <div>
           <h2 class="mb-0">
             <fa-icon icon="file-invoice" class="me-2 text-primary"></fa-icon>
-            {{ isNewOrder ? 'Nouvelle offre de vente' : 'Modifier l\'offre #' + order?.orderNumber }}
+            {{ isNewOrder ? 'Créer un ordre' : 'Modifier l\'ordre #' + order?.orderNumber }}
           </h2>
           <small class="text-muted" *ngIf="isNewOrder">Statut : <span class="badge bg-warning text-dark">EN ATTENTE</span></small>
         </div>
@@ -285,7 +285,7 @@
         >
           <fa-icon *ngIf="!isSaving" icon="save"></fa-icon>
           <fa-icon *ngIf="isSaving" icon="spinner" [spin]="true"></fa-icon>
-          {{ isSaving ? 'Enregistrement...' : (isNewOrder ? 'Soumettre l\'offre' : 'Mettre à jour') }}
+          {{ isSaving ? 'Enregistrement...' : (isNewOrder ? 'Soumettre l\'ordre' : 'Mettre à jour') }}
         </button>
       </div>
 

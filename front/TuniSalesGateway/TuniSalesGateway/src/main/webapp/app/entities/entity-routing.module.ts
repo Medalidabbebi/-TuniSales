@@ -89,7 +89,7 @@ import { RouterModule } from '@angular/router';
       },
       {
         path: 'sales-offer',
-        data: { pageTitle: 'Creation Offre Vente' },
+        data: { pageTitle: 'Création Ordre' },
         loadChildren: () => import('./BusinessService/sales-offer/sales-offer.module').then(m => m.BusinessServiceSalesOfferModule),
       },
       {
