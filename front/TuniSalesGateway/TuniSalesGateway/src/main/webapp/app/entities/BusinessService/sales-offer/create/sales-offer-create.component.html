@@ -1,324 +1,372 @@
-<section class="tsg-page tsg-offer-create">
-  <div class="tsg-page-header">
+<section class="oc-page">
+
+  <!-- ── Page header ───────────────────────────────────────────── -->
+  <div class="oc-header">
+    <div class="oc-header__icon"><fa-icon icon="file-invoice"></fa-icon></div>
     <div>
-      <h1 class="tsg-page-header__title">Creation d'une offre de vente</h1>
-      <p class="tsg-page-header__subtitle">Chaque etape est presentee dans une carte. Completez puis cliquez sur Suivant.</p>
+      <h1 class="oc-header__title">Créer un ordre de vente</h1>
+      <p class="oc-header__sub">Complétez chaque étape puis validez l'ordre.</p>
     </div>
   </div>
 
-  <div class="alert alert-danger" role="alert" *ngIf="submitErrorMessage">
-    {{ submitErrorMessage }}
+  <!-- ── Alerts ─────────────────────────────────────────────────── -->
+  <div class="oc-alert oc-alert--danger" *ngIf="submitErrorMessage">
+    <fa-icon icon="times-circle"></fa-icon> {{ submitErrorMessage }}
+  </div>
+  <div class="oc-alert oc-alert--success" *ngIf="submitSuccessMessage">
+    <fa-icon icon="check-circle"></fa-icon> {{ submitSuccessMessage }}
   </div>
 
-  <div class="alert alert-success" role="alert" *ngIf="submitSuccessMessage">
-    {{ submitSuccessMessage }}
-  </div>
-
-  <div class="tsg-steps">
-    <button
-      type="button"
-      class="tsg-step-chip"
-      *ngFor="let step of steps; let i = index"
-      [class.tsg-step-chip--active]="i === currentStep"
-      [class.tsg-step-chip--done]="i < currentStep"
-      [disabled]="i > maxReachableStep()"
-      (click)="goToStep(i)"
-    >
-      <span class="tsg-step-chip__index">{{ i + 1 }}</span>
-      <span class="tsg-step-chip__text">{{ step.title }}</span>
-    </button>
+  <!-- ── Step bar ───────────────────────────────────────────────── -->
+  <div class="oc-stepper">
+    <ng-container *ngFor="let step of steps; let i = index; let last = last">
+      <button
+        type="button"
+        class="oc-step"
+        [class.oc-step--done]="i < currentStep"
+        [class.oc-step--active]="i === currentStep"
+        [disabled]="i > maxReachableStep()"
+        (click)="goToStep(i)"
+      >
+        <div class="oc-step__dot">
+          <fa-icon *ngIf="i < currentStep" icon="check"></fa-icon>
+          <span *ngIf="i >= currentStep">{{ i + 1 }}</span>
+        </div>
+        <span class="oc-step__label">{{ step.title }}</span>
+      </button>
+      <div class="oc-step__line" *ngIf="!last" [class.oc-step__line--done]="i < currentStep"></div>
+    </ng-container>
   </div>
 
   <form [formGroup]="offerForm" (ngSubmit)="submitOffer()">
-    <div class="card tsg-offer-card" *ngIf="currentStep === 0">
-      <div class="card-body">
-        <h3 class="tsg-offer-card__title">Etape 1: Choisir un client</h3>
-        <p class="tsg-offer-card__hint">Selectionnez le client auquel vous souhaitez envoyer l'offre.</p>
 
-        <div *ngIf="isLoadingOptions" class="text-muted">Chargement des clients...</div>
+    <!-- ══ ÉTAPE 1 — Client ══════════════════════════════════════ -->
+    <div class="oc-card" *ngIf="currentStep === 0">
+      <div class="oc-card__head">
+        <div class="oc-card__head-icon oc-card__head-icon--blue"><fa-icon icon="user"></fa-icon></div>
+        <div>
+          <h2 class="oc-card__title">Choisir un client</h2>
+          <p class="oc-card__sub">Sélectionnez le client destinataire de cet ordre.</p>
+        </div>
+      </div>
 
-        <div class="mb-3 position-relative">
-          <label class="form-label fw-semibold">Client <span class="text-danger">*</span></label>
-          <div class="input-group">
-            <span class="input-group-text"><fa-icon icon="search"></fa-icon></span>
+      <div *ngIf="isLoadingOptions" class="oc-loading">
+        <span class="oc-spinner"></span> Chargement des clients…
+      </div>
+
+      <div class="oc-field">
+        <label class="oc-label">Client <span class="oc-required">*</span></label>
+        <div class="oc-input-wrap" [class.oc-input-wrap--invalid]="offerForm.controls.clientId.touched && offerForm.controls.clientId.invalid">
+          <fa-icon icon="search" class="oc-input-wrap__icon"></fa-icon>
+          <input
+            type="text"
+            class="oc-input"
+            placeholder="Rechercher par nom…"
+            [(ngModel)]="clientSearchTerm"
+            [ngModelOptions]="{ standalone: true }"
+            (focus)="showClientDropdown = true"
+            (blur)="hideClientDropdown()"
+            (input)="onClientInput()"
+            autocomplete="off"
+          />
+          <button type="button" class="oc-input-wrap__clear" *ngIf="clientSearchTerm" (click)="clearClient()">
+            <fa-icon icon="times"></fa-icon>
+          </button>
+        </div>
+
+        <ul class="oc-dropdown" *ngIf="showClientDropdown">
+          <li *ngIf="filteredClients.length === 0" class="oc-dropdown__empty">Aucun client trouvé.</li>
+          <li
+            class="oc-dropdown__item"
+            *ngFor="let client of filteredClients"
+            (mousedown)="selectClient(client)"
+            [class.oc-dropdown__item--active]="offerForm.controls.clientId.value === client.id"
+          >
+            <fa-icon icon="building" class="oc-dropdown__item-icon"></fa-icon>
+            {{ client.name }}
+          </li>
+        </ul>
+        <p class="oc-error" *ngIf="offerForm.controls.clientId.touched && offerForm.controls.clientId.invalid">
+          Le client est obligatoire.
+        </p>
+      </div>
+    </div>
+
+    <!-- ══ ÉTAPE 2 — Produits ════════════════════════════════════ -->
+    <div class="oc-card" *ngIf="currentStep === 1">
+      <div class="oc-card__head">
+        <div class="oc-card__head-icon oc-card__head-icon--indigo"><fa-icon icon="boxes"></fa-icon></div>
+        <div style="flex:1">
+          <h2 class="oc-card__title">Ajouter des produits</h2>
+          <p class="oc-card__sub">Choisissez les produits, la quantité et la remise par ligne.</p>
+        </div>
+        <button type="button" class="oc-btn oc-btn--outline" (click)="addLine()">
+          <fa-icon icon="plus"></fa-icon> Ajouter une ligne
+        </button>
+      </div>
+
+      <div *ngIf="isLoadingOptions" class="oc-loading">
+        <span class="oc-spinner"></span> Chargement des produits…
+      </div>
+
+      <div class="oc-warn" *ngIf="stockWarning">
+        <fa-icon icon="exclamation-triangle"></fa-icon> {{ stockWarning }}
+      </div>
+
+      <!-- Lines table header -->
+      <div class="oc-lines-header">
+        <span class="oc-lines-header__product">Produit <span class="oc-required">*</span></span>
+        <span class="oc-lines-header__qty">Qté</span>
+        <span class="oc-lines-header__disc">Remise %</span>
+        <span class="oc-lines-header__info">Prix / Stock</span>
+        <span class="oc-lines-header__total">Total ligne</span>
+        <span class="oc-lines-header__action"></span>
+      </div>
+
+      <div formArrayName="lines" class="oc-lines">
+        <div class="oc-line" *ngFor="let line of lines.controls; let i = index" [formGroupName]="i">
+
+          <!-- Produit -->
+          <div class="oc-line__product">
+            <div class="oc-input-wrap oc-input-wrap--sm" [class.oc-input-wrap--invalid]="line.controls.productId.touched && line.controls.productId.invalid">
+              <fa-icon icon="search" class="oc-input-wrap__icon"></fa-icon>
+              <input
+                type="text"
+                class="oc-input"
+                placeholder="Nom ou SKU…"
+                [(ngModel)]="productSearchTerms[i]"
+                [ngModelOptions]="{ standalone: true }"
+                (focus)="showProductDropdowns[i] = true"
+                (blur)="hideProductDropdown(i)"
+                (input)="onProductInput(i)"
+                autocomplete="off"
+              />
+              <button type="button" class="oc-input-wrap__clear" *ngIf="productSearchTerms[i]" (click)="clearProduct(i)">
+                <fa-icon icon="times"></fa-icon>
+              </button>
+            </div>
+            <!-- Product dropdown -->
+            <ul class="oc-dropdown oc-dropdown--product" *ngIf="showProductDropdowns[i]">
+              <li *ngIf="getFilteredProducts(i).length === 0" class="oc-dropdown__empty">Aucun produit trouvé.</li>
+              <li
+                class="oc-dropdown__item oc-dropdown__item--product"
+                *ngFor="let product of getFilteredProducts(i)"
+                (mousedown)="selectProduct(i, product)"
+                [class.oc-dropdown__item--active]="line.controls.productId.value === product.id"
+              >
+                <div class="oc-prod-row">
+                  <div>
+                    <strong>{{ product.name }}</strong>
+                    <span class="oc-sku" *ngIf="product.sku"> · {{ product.sku }}</span>
+                  </div>
+                  <div class="oc-prod-row__badges">
+                    <span class="oc-badge oc-badge--blue">{{ product.price | number:'1.2-2' }} TND</span>
+                    <span class="oc-badge" [class.oc-badge--green]="(getAvailableStock(product.id) ?? 0) > 0" [class.oc-badge--red]="(getAvailableStock(product.id) ?? 0) === 0">
+                      Stock : {{ getAvailableStock(product.id) ?? 0 }}
+                    </span>
+                  </div>
+                </div>
+              </li>
+            </ul>
+            <p class="oc-error" *ngIf="line.controls.productId.touched && line.controls.productId.invalid">Requis.</p>
+          </div>
+
+          <!-- Quantité -->
+          <div class="oc-line__qty">
             <input
-              type="text"
-              class="form-control"
-              [class.is-invalid]="offerForm.controls.clientId.touched && offerForm.controls.clientId.invalid"
-              placeholder="Rechercher un client par nom..."
-              [(ngModel)]="clientSearchTerm"
-              [ngModelOptions]="{ standalone: true }"
-              (focus)="showClientDropdown = true"
-              (blur)="hideClientDropdown()"
-              (input)="onClientInput()"
-              autocomplete="off"
+              type="number" min="1"
+              class="oc-input oc-input--center"
+              [class.oc-input--invalid]="line.controls.quantity.touched && line.controls.quantity.invalid"
+              formControlName="quantity"
+              [attr.max]="getAvailableStock(line.controls.productId.value) ?? null"
             />
-            <button type="button" class="btn btn-outline-secondary" *ngIf="clientSearchTerm" (click)="clearClient()" tabindex="-1">
-              <fa-icon icon="times"></fa-icon>
+            <p class="oc-error" *ngIf="line.controls.quantity.touched && line.controls.quantity.errors?.exceedsStock">
+              Max {{ getAvailableStock(line.controls.productId.value) ?? 0 }}
+            </p>
+          </div>
+
+          <!-- Remise % -->
+          <div class="oc-line__disc">
+            <input type="number" min="0" max="100" class="oc-input oc-input--center" formControlName="discountPct" />
+          </div>
+
+          <!-- Prix / Stock info -->
+          <div class="oc-line__info">
+            <span class="oc-line__pu">{{ getProductPrice(line.controls.productId.value) | number:'1.2-2' }} TND</span>
+            <span class="oc-line__stock" [class.oc-line__stock--ok]="(getAvailableStock(line.controls.productId.value) ?? 0) > 0" [class.oc-line__stock--ko]="(getAvailableStock(line.controls.productId.value) ?? 0) === 0">
+              Stock : {{ getAvailableStock(line.controls.productId.value) ?? 0 }}
+            </span>
+          </div>
+
+          <!-- Total ligne -->
+          <div class="oc-line__total">
+            {{ getLineTotal(i) | number:'1.2-2' }} TND
+          </div>
+
+          <!-- Supprimer -->
+          <div class="oc-line__del">
+            <button type="button" class="oc-icon-btn oc-icon-btn--danger" (click)="removeLine(i)" [disabled]="lines.length === 1" title="Supprimer">
+              <fa-icon icon="trash"></fa-icon>
             </button>
           </div>
 
-          <ul
-            class="list-group position-absolute w-100 mt-1 shadow"
-            style="z-index: 1050; max-height: 220px; overflow-y: auto;"
-            *ngIf="showClientDropdown"
-          >
-            <li *ngIf="filteredClients.length === 0" class="list-group-item text-muted fst-italic">
-              Aucun client trouve pour « {{ clientSearchTerm }} ».
-            </li>
-            <li
-              class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-              *ngFor="let client of filteredClients"
-              (mousedown)="selectClient(client)"
-              style="cursor: pointer;"
-              [class.active]="offerForm.controls.clientId.value === client.id"
-            >
-              <span><fa-icon icon="user" class="me-2 text-muted"></fa-icon>{{ client.name }}</span>
-            </li>
-          </ul>
+        </div>
+      </div>
 
-          <div class="invalid-feedback d-block" *ngIf="offerForm.controls.clientId.touched && offerForm.controls.clientId.invalid">
-            Le client est obligatoire.
-          </div>
+      <!-- Sous-total de l'étape produits -->
+      <div class="oc-subtotal-bar">
+        <span>{{ lines.length }} ligne(s)</span>
+        <div>
+          Sous-total : <strong>{{ subtotal | number:'1.2-2' }} TND</strong>
+        </div>
+      </div>
+
+      <p class="oc-error" *ngIf="lines.length === 0">Ajoutez au moins une ligne produit.</p>
+      <div class="oc-alert oc-alert--danger mt-2" *ngIf="stockInsufficient">{{ submitErrorMessage }}</div>
+    </div>
+
+    <!-- ══ ÉTAPE 3 — Remise ══════════════════════════════════════ -->
+    <div class="oc-card" *ngIf="currentStep === 2">
+      <div class="oc-card__head">
+        <div class="oc-card__head-icon oc-card__head-icon--amber"><fa-icon icon="percent"></fa-icon></div>
+        <div>
+          <h2 class="oc-card__title">Remise globale</h2>
+          <p class="oc-card__sub">Appliquez une remise sur le sous-total de l'ordre.</p>
+        </div>
+      </div>
+
+      <div class="oc-discount-layout">
+        <div class="oc-field" style="max-width:220px;">
+          <label class="oc-label" for="globalDiscountPct">Remise globale (%)</label>
+          <input id="globalDiscountPct" type="number" min="0" max="100" class="oc-input" formControlName="globalDiscountPct" />
+          <p class="oc-error" *ngIf="offerForm.controls.globalDiscountPct.touched && offerForm.controls.globalDiscountPct.invalid">
+            Valeur entre 0 et 100.
+          </p>
+        </div>
+        <div class="oc-summary-box">
+          <div class="oc-summary-row"><span>Sous-total</span><strong>{{ subtotal | number:'1.2-2' }} TND</strong></div>
+          <div class="oc-summary-row oc-summary-row--discount"><span>Remise</span><strong>- {{ discountAmount | number:'1.2-2' }} TND</strong></div>
+          <div class="oc-summary-row oc-summary-row--total"><span>Total provisoire</span><strong>{{ totalAmount | number:'1.2-2' }} TND</strong></div>
         </div>
       </div>
     </div>
 
-    <div class="card tsg-offer-card" *ngIf="currentStep === 1">
-      <div class="card-body">
-        <div class="tsg-offer-card__header-row">
-          <div>
-            <h3 class="tsg-offer-card__title">Etape 2: Ajouter des produits</h3>
-            <p class="tsg-offer-card__hint">Choisissez les produits, la quantite, puis la remise par ligne si besoin.</p>
-          </div>
-          <button type="button" class="btn btn-outline-primary" (click)="addLine()">+ Ajouter une ligne</button>
-        </div>
-
-        <div *ngIf="isLoadingOptions" class="text-muted">Chargement des produits...</div>
-        <div class="alert alert-warning py-2 mb-3" *ngIf="stockWarning">
-          <fa-icon icon="exclamation-triangle" class="me-2"></fa-icon>{{ stockWarning }}
-        </div>
-
-        <div formArrayName="lines" class="tsg-line-list">
-          <div class="tsg-line-card" *ngFor="let line of lines.controls; let i = index" [formGroupName]="i">
-            <div class="row g-3">
-              <div class="col-12 col-lg-5 position-relative">
-                <label class="form-label" [for]="'productSearch_' + i">Produit <span class="text-danger">*</span></label>
-                <div class="input-group input-group-sm">
-                  <span class="input-group-text"><fa-icon icon="search"></fa-icon></span>
-                  <input
-                    type="text"
-                    class="form-control"
-                    [class.is-invalid]="line.controls.productId.touched && line.controls.productId.invalid"
-                    [id]="'productSearch_' + i"
-                    placeholder="Nom ou SKU..."
-                    [(ngModel)]="productSearchTerms[i]"
-                    [ngModelOptions]="{ standalone: true }"
-                    (focus)="showProductDropdowns[i] = true"
-                    (blur)="hideProductDropdown(i)"
-                    (input)="onProductInput(i)"
-                    autocomplete="off"
-                  />
-                  <button type="button" class="btn btn-outline-secondary" *ngIf="productSearchTerms[i]" (click)="clearProduct(i)" tabindex="-1">
-                    <fa-icon icon="times"></fa-icon>
-                  </button>
-                </div>
-
-                <ul
-                  class="list-group position-absolute mt-1 shadow"
-                  style="z-index: 1050; max-height: 200px; overflow-y: auto; width: calc(100% - 1rem);"
-                  *ngIf="showProductDropdowns[i]"
-                >
-                  <li *ngIf="getFilteredProducts(i).length === 0" class="list-group-item text-muted fst-italic">
-                    Aucun produit trouve pour « {{ productSearchTerms[i] }} ».
-                  </li>
-                  <li
-                    class="list-group-item list-group-item-action py-2"
-                    *ngFor="let product of getFilteredProducts(i)"
-                    (mousedown)="selectProduct(i, product)"
-                    style="cursor: pointer;"
-                    [class.active]="line.controls.productId.value === product.id"
-                  >
-                    <div class="d-flex justify-content-between align-items-center">
-                      <div>
-                        <strong>{{ product.name }}</strong>
-                        <small class="text-muted ms-2" *ngIf="product.sku">{{ product.sku }}</small>
-                      </div>
-                      <div class="text-end">
-                        <span class="badge bg-primary ms-2">{{ product.price | number:'1.2-2' }} TND</span>
-                        <span class="badge ms-1" [class.bg-success]="(getAvailableStock(product.id) ?? 0) > 0" [class.bg-danger]="(getAvailableStock(product.id) ?? 0) === 0">
-                          Stock: {{ getAvailableStock(product.id) ?? 0 }}
-                        </span>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-
-                <div class="invalid-feedback d-block" *ngIf="line.controls.productId.touched && line.controls.productId.invalid">
-                  Produit obligatoire.
-                </div>
-              </div>
-
-              <div class="col-6 col-lg-2">
-                <label class="form-label" [for]="'qty_' + i">Quantite</label>
-                <input type="number" min="1" class="form-control" [id]="'qty_' + i" formControlName="quantity" [attr.max]="getAvailableStock(line.controls.productId.value) ?? null" />
-                <div class="invalid-feedback d-block" *ngIf="line.controls.quantity.touched && line.controls.quantity.invalid">
-                  <div *ngIf="line.controls.quantity.errors?.min">Quantite invalide.</div>
-                  <div *ngIf="line.controls.quantity.errors?.exceedsStock">Quantite demandee depasse le stock disponible ({{ getAvailableStock(line.controls.productId.value) ?? 0 }}).</div>
-                </div>
-              </div>
-
-              <div class="col-6 col-lg-2">
-                <label class="form-label" [for]="'lineDiscount_' + i">Remise %</label>
-                <input type="number" min="0" max="100" class="form-control" [id]="'lineDiscount_' + i" formControlName="discountPct" />
-              </div>
-
-              <div class="col-12 col-lg-3 tsg-line-card__totals">
-                <div class="tsg-line-price">PU: {{ getProductPrice(line.controls.productId.value) | number : '1.2-2' }} TND</div>
-                <div class="tsg-line-total">Total ligne: {{ getLineTotal(i) | number : '1.2-2' }} TND</div>
-                <div class="tsg-line-stock text-muted">Stock disponible: {{ getAvailableStock(line.controls.productId.value) ?? 0 }}</div>
-                <button type="button" class="btn btn-link btn-sm text-danger p-0" (click)="removeLine(i)" [disabled]="lines.length === 1">
-                  Supprimer
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="alert alert-danger mt-3" *ngIf="stockInsufficient">
-          {{ submitErrorMessage }}
-        </div>
-
-        <div class="invalid-feedback d-block" *ngIf="lines.length === 0">
-          Ajoutez au moins une ligne produit.
+    <!-- ══ ÉTAPE 4 — Paiement ════════════════════════════════════ -->
+    <div class="oc-card" *ngIf="currentStep === 3">
+      <div class="oc-card__head">
+        <div class="oc-card__head-icon oc-card__head-icon--green"><fa-icon icon="credit-card"></fa-icon></div>
+        <div>
+          <h2 class="oc-card__title">Mode de paiement</h2>
+          <p class="oc-card__sub">Sélectionnez les conditions de paiement.</p>
         </div>
       </div>
+
+      <div class="oc-payment-grid">
+        <label
+          class="oc-payment-card"
+          *ngFor="let payment of paymentModes"
+          [class.oc-payment-card--active]="offerForm.controls.paymentMode.value === payment.value"
+        >
+          <input type="radio" [value]="payment.value" formControlName="paymentMode" style="display:none" />
+          <div class="oc-payment-card__check"><fa-icon icon="check"></fa-icon></div>
+          <div class="oc-payment-card__title">{{ payment.label }}</div>
+          <div class="oc-payment-card__hint">{{ payment.terms }}</div>
+        </label>
+      </div>
+
+      <p class="oc-error mt-2" *ngIf="offerForm.controls.paymentMode.touched && offerForm.controls.paymentMode.invalid">
+        Le mode de paiement est obligatoire.
+      </p>
     </div>
 
-    <div class="card tsg-offer-card" *ngIf="currentStep === 2">
-      <div class="card-body">
-        <h3 class="tsg-offer-card__title">Etape 3: Appliquer une remise</h3>
-        <p class="tsg-offer-card__hint">Definissez la remise globale appliquee au sous-total de l'offre.</p>
-
-        <div class="row g-3 align-items-end">
-          <div class="col-12 col-md-4">
-            <label for="globalDiscountPct" class="form-label">Remise globale (%)</label>
-            <input id="globalDiscountPct" type="number" min="0" max="100" class="form-control" formControlName="globalDiscountPct" />
-            <div
-              class="invalid-feedback d-block"
-              *ngIf="offerForm.controls.globalDiscountPct.touched && offerForm.controls.globalDiscountPct.invalid"
-            >
-              La remise doit etre entre 0 et 100.
-            </div>
-          </div>
-          <div class="col-12 col-md-8">
-            <div class="tsg-summary-box">
-              <div>Sous-total: <strong>{{ subtotal | number : '1.2-2' }} TND</strong></div>
-              <div>Remise: <strong>- {{ discountAmount | number : '1.2-2' }} TND</strong></div>
-              <div>Total provisoire: <strong>{{ totalAmount | number : '1.2-2' }} TND</strong></div>
-            </div>
-          </div>
+    <!-- ══ ÉTAPE 5 — Validation ══════════════════════════════════ -->
+    <div class="oc-card" *ngIf="currentStep === 4">
+      <div class="oc-card__head">
+        <div class="oc-card__head-icon oc-card__head-icon--teal"><fa-icon icon="clipboard-check"></fa-icon></div>
+        <div>
+          <h2 class="oc-card__title">Récapitulatif &amp; Validation</h2>
+          <p class="oc-card__sub">Vérifiez les informations avant de soumettre l'ordre.</p>
         </div>
       </div>
-    </div>
 
-    <div class="card tsg-offer-card" *ngIf="currentStep === 3">
-      <div class="card-body">
-        <h3 class="tsg-offer-card__title">Etape 4: Choisir le mode de paiement</h3>
-        <p class="tsg-offer-card__hint">Selectionnez les conditions de paiement de l'offre.</p>
-
-        <div class="tsg-payment-grid">
-          <label class="tsg-payment-card" *ngFor="let payment of paymentModes" [class.tsg-payment-card--active]="offerForm.controls.paymentMode.value === payment.value">
-            <input type="radio" [value]="payment.value" formControlName="paymentMode" />
-            <div class="tsg-payment-card__content">
-              <div class="tsg-payment-card__title">{{ payment.label }}</div>
-              <div class="tsg-payment-card__hint">{{ payment.terms }}</div>
-            </div>
-          </label>
+      <!-- Summary cards -->
+      <div class="oc-review-grid">
+        <div class="oc-review-card">
+          <fa-icon icon="user" class="oc-review-card__icon"></fa-icon>
+          <span class="oc-review-card__label">Client</span>
+          <strong class="oc-review-card__value">{{ selectedClient?.name || '—' }}</strong>
         </div>
-
-        <div class="invalid-feedback d-block" *ngIf="offerForm.controls.paymentMode.touched && offerForm.controls.paymentMode.invalid">
-          Le mode de paiement est obligatoire.
+        <div class="oc-review-card">
+          <fa-icon icon="credit-card" class="oc-review-card__icon"></fa-icon>
+          <span class="oc-review-card__label">Mode paiement</span>
+          <strong class="oc-review-card__value">{{ offerForm.controls.paymentMode.value || '—' }}</strong>
+        </div>
+        <div class="oc-review-card">
+          <fa-icon icon="list" class="oc-review-card__icon"></fa-icon>
+          <span class="oc-review-card__label">Nb lignes</span>
+          <strong class="oc-review-card__value">{{ lines.length }}</strong>
+        </div>
+        <div class="oc-review-card">
+          <fa-icon icon="tag" class="oc-review-card__icon"></fa-icon>
+          <span class="oc-review-card__label">Remise</span>
+          <strong class="oc-review-card__value">- {{ discountAmount | number:'1.2-2' }} TND</strong>
+        </div>
+        <div class="oc-review-card oc-review-card--total">
+          <fa-icon icon="money-bill-wave" class="oc-review-card__icon"></fa-icon>
+          <span class="oc-review-card__label">Total ordre</span>
+          <strong class="oc-review-card__value">{{ totalAmount | number:'1.2-2' }} TND</strong>
         </div>
       </div>
-    </div>
 
-    <div class="card tsg-offer-card" *ngIf="currentStep === 4">
-      <div class="card-body">
-        <h3 class="tsg-offer-card__title">Etape 5: Validation</h3>
-        <p class="tsg-offer-card__hint">Verifiez le recapitulatif puis creez l'ordre.</p>
-
-        <!-- Summary header -->
-        <div class="tsg-review-grid" style="margin-bottom: 1.5rem;">
-          <div class="tsg-review-item">
-            <span>Client</span>
-            <strong>{{ selectedClient?.name || 'Non selectionne' }}</strong>
-          </div>
-          <div class="tsg-review-item">
-            <span>Mode paiement</span>
-            <strong>{{ offerForm.controls.paymentMode.value || 'Non selectionne' }}</strong>
-          </div>
-          <div class="tsg-review-item">
-            <span>Sous-total</span>
-            <strong>{{ subtotal | number : '1.2-2' }} TND</strong>
-          </div>
-          <div class="tsg-review-item">
-            <span>Remise globale</span>
-            <strong>-{{ discountAmount | number : '1.2-2' }} TND</strong>
-          </div>
-          <div class="tsg-review-item tsg-review-item--total">
-            <span>Total ordre</span>
-            <strong>{{ totalAmount | number : '1.2-2' }} TND</strong>
-          </div>
-        </div>
-
-        <!-- Lines detail table -->
-        <div style="font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.04em;">
-          Lignes de commande ({{ lines.length }})
-        </div>
-        <table class="table table-bordered table-sm" style="background:#fff;">
-          <thead style="background:#f8fafc;">
+      <!-- Lines table -->
+      <div class="oc-lines-section">
+        <div class="oc-lines-section__title">Détail des lignes</div>
+        <table class="oc-table">
+          <thead>
             <tr>
               <th>#</th>
               <th>Produit</th>
               <th>Référence</th>
               <th class="text-end">Qté</th>
-              <th class="text-end">Prix unit. TND</th>
-              <th class="text-end">Remise %</th>
-              <th class="text-end">Total TND</th>
+              <th class="text-end">Prix unit.</th>
+              <th class="text-end">Remise</th>
+              <th class="text-end">Total</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let lineGroup of lines.controls; let i = index">
-              <td>{{ i + 1 }}</td>
+              <td class="oc-table__num">{{ i + 1 }}</td>
               <td><strong>{{ getProductName(lineGroup.controls['productId'].value) }}</strong></td>
-              <td><span style="color:#64748b; font-size:12px;">{{ getProductSku(lineGroup.controls['productId'].value) }}</span></td>
+              <td><span class="oc-sku">{{ getProductSku(lineGroup.controls['productId'].value) }}</span></td>
               <td class="text-end">{{ lineGroup.controls['quantity'].value }}</td>
-              <td class="text-end">{{ getProductPrice(lineGroup.controls['productId'].value) | number:'1.2-2' }}</td>
+              <td class="text-end">{{ getProductPrice(lineGroup.controls['productId'].value) | number:'1.2-2' }} TND</td>
               <td class="text-end">{{ lineGroup.controls['discountPct'].value || 0 }} %</td>
-              <td class="text-end"><strong>{{ getLineTotal(i) | number:'1.2-2' }}</strong></td>
+              <td class="text-end oc-table__amount">{{ getLineTotal(i) | number:'1.2-2' }} TND</td>
             </tr>
           </tbody>
-          <tfoot style="background:#f8fafc;">
+          <tfoot>
             <tr>
-              <td colspan="6" class="text-end"><strong>Total</strong></td>
-              <td class="text-end" style="color:#00355f; font-weight:700;">{{ totalAmount | number:'1.2-2' }} TND</td>
+              <td colspan="6" class="text-end">Total</td>
+              <td class="text-end oc-table__grand-total">{{ totalAmount | number:'1.2-2' }} TND</td>
             </tr>
           </tfoot>
         </table>
       </div>
     </div>
 
-    <div class="tsg-offer-actions">
-      <button type="button" class="btn btn-light" (click)="previousStep()" [disabled]="currentStep === 0 || isSubmitting">Precedent</button>
-
-      <button type="button" class="btn btn-primary" *ngIf="currentStep < steps.length - 1" (click)="nextStep()" [disabled]="isSubmitting">
-        Suivant
+    <!-- ── Navigation buttons ─────────────────────────────────── -->
+    <div class="oc-actions">
+      <button type="button" class="oc-btn oc-btn--ghost" (click)="previousStep()" [disabled]="currentStep === 0 || isSubmitting">
+        <fa-icon icon="arrow-left"></fa-icon> Précédent
       </button>
-
-      <button type="submit" class="btn btn-success" *ngIf="currentStep === steps.length - 1" [disabled]="isSubmitting || stockInsufficient || hasExceedsStock()">
-        {{ isSubmitting ? 'Creation en cours...' : 'Creer l\'offre' }}
+      <button type="button" class="oc-btn oc-btn--primary" *ngIf="currentStep < steps.length - 1" (click)="nextStep()" [disabled]="isSubmitting">
+        Suivant <fa-icon icon="arrow-right"></fa-icon>
+      </button>
+      <button type="submit" class="oc-btn oc-btn--success" *ngIf="currentStep === steps.length - 1" [disabled]="isSubmitting || stockInsufficient || hasExceedsStock()">
+        <fa-icon [icon]="isSubmitting ? 'spinner' : 'check'"></fa-icon>
+        {{ isSubmitting ? 'Création en cours…' : 'Créer l\'ordre' }}
       </button>
     </div>
+
   </form>
 </section>
