@@ -236,17 +236,29 @@
       </div>
 
       <div class="oc-discount-layout">
-        <div class="oc-field" style="max-width:220px;">
+        <div style="max-width:220px;">
           <label class="oc-label" for="globalDiscountPct">Remise globale (%)</label>
-          <input id="globalDiscountPct" type="number" min="0" max="100" class="oc-input" formControlName="globalDiscountPct" />
+          <div class="input-group">
+            <input id="globalDiscountPct" type="number" min="0" max="100" class="form-control" formControlName="globalDiscountPct" />
+            <span class="input-group-text">%</span>
+          </div>
           <p class="oc-error" *ngIf="offerForm.controls.globalDiscountPct.touched && offerForm.controls.globalDiscountPct.invalid">
             Valeur entre 0 et 100.
           </p>
         </div>
-        <div class="oc-summary-box">
-          <div class="oc-summary-row"><span>Sous-total</span><strong>{{ subtotal | number:'1.2-2' }} TND</strong></div>
-          <div class="oc-summary-row oc-summary-row--discount"><span>Remise</span><strong>- {{ discountAmount | number:'1.2-2' }} TND</strong></div>
-          <div class="oc-summary-row oc-summary-row--total"><span>Total provisoire</span><strong>{{ totalAmount | number:'1.2-2' }} TND</strong></div>
+        <div class="oc-summary-box" style="flex:1; min-width:240px;">
+          <div class="oc-summary-row">
+            <span>Sous-total</span>
+            <strong>{{ subtotal | number:'1.2-2' }} TND</strong>
+          </div>
+          <div class="oc-summary-row oc-summary-row--discount">
+            <span>Remise</span>
+            <strong>- {{ discountAmount | number:'1.2-2' }} TND</strong>
+          </div>
+          <div class="oc-summary-row oc-summary-row--total">
+            <span>Total provisoire</span>
+            <strong>{{ totalAmount | number:'1.2-2' }} TND</strong>
+          </div>
         </div>
       </div>
     </div>
