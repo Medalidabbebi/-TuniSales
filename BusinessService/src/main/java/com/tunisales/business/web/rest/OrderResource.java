@@ -101,8 +101,9 @@ public class OrderResource {
         @RequestParam String decision
     ) {
         log.debug("REST request to validate Order {} with decision {}", id, decision);
-        if (!List.of("ACCEPTED", "NEGOTIATED", "REFUSED", "UNDER_REVIEW", "CANCELLED").contains(decision)) {
-            throw new BadRequestAlertException("Invalid decision. Must be ACCEPTED, NEGOTIATED, REFUSED, UNDER_REVIEW or CANCELLED", ENTITY_NAME, "invaliddecision");
+        if (!List.of("ACCEPTED", "NEGOTIATED", "REFUSED", "UNDER_REVIEW", "APPROVED",
+                "IN_PREPARATION", "SHIPPED", "DELIVERED", "INVOICED", "PAID", "CANCELLED").contains(decision)) {
+            throw new BadRequestAlertException("Invalid decision", ENTITY_NAME, "invaliddecision");
         }
         OrderDTO result = orderService.validateOrder(id, decision);
         return ResponseEntity.ok()

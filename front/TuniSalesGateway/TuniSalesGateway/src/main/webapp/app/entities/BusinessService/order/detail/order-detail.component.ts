@@ -16,16 +16,38 @@ export class OrderDetailComponent implements OnInit {
   isActionLoading = false;
 
   pipelineSteps = [
-    { key: OrderStatus.DRAFT, label: 'Draft' },
-    { key: OrderStatus.SUBMITTED, label: 'Submitted' },
-    { key: OrderStatus.UNDER_REVIEW, label: 'Under Review' },
-    { key: OrderStatus.APPROVED, label: 'Approved' },
+    { key: OrderStatus.DRAFT,          label: 'Draft' },
+    { key: OrderStatus.SUBMITTED,      label: 'Submitted' },
+    { key: OrderStatus.UNDER_REVIEW,   label: 'Under Review' },
+    { key: OrderStatus.APPROVED,       label: 'Approved' },
     { key: OrderStatus.IN_PREPARATION, label: 'Preparation' },
-    { key: OrderStatus.SHIPPED, label: 'Shipped' },
-    { key: OrderStatus.DELIVERED, label: 'Delivered' },
-    { key: OrderStatus.INVOICED, label: 'Invoiced' },
-    { key: OrderStatus.PAID, label: 'Paid' },
+    { key: OrderStatus.SHIPPED,        label: 'Shipped' },
+    { key: OrderStatus.DELIVERED,      label: 'Delivered' },
+    { key: OrderStatus.INVOICED,       label: 'Invoiced' },
+    { key: OrderStatus.PAID,           label: 'Paid' },
   ];
+
+  // next status for each step
+  private nextStatus: Record<string, string> = {
+    [OrderStatus.SUBMITTED]:      OrderStatus.UNDER_REVIEW,
+    [OrderStatus.UNDER_REVIEW]:   OrderStatus.APPROVED,
+    [OrderStatus.APPROVED]:       OrderStatus.IN_PREPARATION,
+    [OrderStatus.IN_PREPARATION]: OrderStatus.SHIPPED,
+    [OrderStatus.SHIPPED]:        OrderStatus.DELIVERED,
+    [OrderStatus.DELIVERED]:      OrderStatus.INVOICED,
+    [OrderStatus.INVOICED]:       OrderStatus.PAID,
+  };
+
+  // label for the advance button at each step
+  private advanceLabel: Record<string, string> = {
+    [OrderStatus.SUBMITTED]:      'Mettre en révision',
+    [OrderStatus.UNDER_REVIEW]:   'Approuver',
+    [OrderStatus.APPROVED]:       'Lancer préparation',
+    [OrderStatus.IN_PREPARATION]: 'Expédier',
+    [OrderStatus.SHIPPED]:        'Marquer livré',
+    [OrderStatus.DELIVERED]:      'Facturer',
+    [OrderStatus.INVOICED]:       'Marquer payé',
+  };
 
   constructor(
     protected activatedRoute: ActivatedRoute,
@@ -43,59 +65,32 @@ export class OrderDetailComponent implements OnInit {
     window.history.back();
   }
 
-  getStepState(stepKey: string): string {
-    if (!this.order?.status) {
-      return 'pending';
-    }
-    const currentIndex = this.pipelineSteps.findIndex(s => s.key === this.order!.status);
-    const stepIndex = this.pipelineSteps.findIndex(s => s.key === stepKey);
-
-    if (stepIndex < currentIndex) {
-      return 'completed';
-    }
-    if (stepIndex === currentIndex) {
-      return 'active';
-    }
-    return 'pending';
+  isAdmin(): boolean {
+    return this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_ADMIN_COMMERCIAL']);
   }
 
-  getStatusBadgeClass(): string {
-    const map: Record<string, string> = {
-      DRAFT: 'tsg-badge--draft',
-      PENDING: 'tsg-badge--submitted',
-      SUBMITTED: 'tsg-badge--submitted',
-      UNDER_REVIEW: 'tsg-badge--under-review',
-      APPROVED: 'tsg-badge--approved',
-      IN_PREPARATION: 'tsg-badge--in-progress',
-      SHIPPED: 'tsg-badge--shipped',
-      DELIVERED: 'tsg-badge--delivered',
-      INVOICED: 'tsg-badge--invoiced',
-      PAID: 'tsg-badge--paid',
-      REJECTED: 'tsg-badge--rejected',
-      CANCELLED: 'tsg-badge--cancelled',
-    };
-    return map[this.order?.status || ''] || 'tsg-badge--neutral';
+  getNextStatus(): string | null {
+    return this.nextStatus[this.order?.status || ''] ?? null;
   }
 
-  isTerminalStatus(): boolean {
-    return this.order?.status === OrderStatus.REJECTED || this.order?.status === OrderStatus.CANCELLED;
+  getAdvanceLabel(): string {
+    return this.advanceLabel[this.order?.status || ''] ?? 'Avancer';
   }
 
-  canAdminReview(): boolean {
-    return (
-      (this.order?.status === OrderStatus.SUBMITTED || this.order?.status === OrderStatus.PENDING) &&
-      (this.accountService.hasAnyAuthority(['ROLE_ADMIN', 'ROLE_ADMIN_COMMERCIAL']))
-    );
+  canAdvance(): boolean {
+    return this.isAdmin() && !!this.getNextStatus() && !this.isTerminalStatus();
   }
 
-  moveToUnderReview(): void {
-    if (!this.order?.id) return;
+  canCancel(): boolean {
+    return this.isAdmin() && !this.isTerminalStatus() && this.order?.status !== OrderStatus.PAID;
+  }
+
+  advance(): void {
+    const next = this.getNextStatus();
+    if (!this.order?.id || !next) return;
     this.isActionLoading = true;
-    this.orderService.validate(this.order.id, 'UNDER_REVIEW').subscribe({
-      next: res => {
-        this.order = res.body;
-        this.isActionLoading = false;
-      },
+    this.orderService.validate(this.order.id, next).subscribe({
+      next: res => { this.order = res.body; this.isActionLoading = false; },
       error: () => { this.isActionLoading = false; }
     });
   }
@@ -104,11 +99,40 @@ export class OrderDetailComponent implements OnInit {
     if (!this.order?.id) return;
     this.isActionLoading = true;
     this.orderService.validate(this.order.id, 'CANCELLED').subscribe({
-      next: res => {
-        this.order = res.body;
-        this.isActionLoading = false;
-      },
+      next: res => { this.order = res.body; this.isActionLoading = false; },
       error: () => { this.isActionLoading = false; }
     });
+  }
+
+  getStepState(stepKey: string): string {
+    if (!this.order?.status) return 'pending';
+    const currentIndex = this.pipelineSteps.findIndex(s => s.key === this.order!.status);
+    const stepIndex    = this.pipelineSteps.findIndex(s => s.key === stepKey);
+    if (stepIndex < currentIndex)  return 'completed';
+    if (stepIndex === currentIndex) return 'active';
+    return 'pending';
+  }
+
+  getStatusBadgeClass(): string {
+    const map: Record<string, string> = {
+      DRAFT:          'tsg-badge--draft',
+      PENDING:        'tsg-badge--submitted',
+      SUBMITTED:      'tsg-badge--submitted',
+      UNDER_REVIEW:   'tsg-badge--under-review',
+      APPROVED:       'tsg-badge--approved',
+      IN_PREPARATION: 'tsg-badge--in-progress',
+      SHIPPED:        'tsg-badge--shipped',
+      DELIVERED:      'tsg-badge--delivered',
+      INVOICED:       'tsg-badge--invoiced',
+      PAID:           'tsg-badge--paid',
+      REJECTED:       'tsg-badge--rejected',
+      CANCELLED:      'tsg-badge--cancelled',
+    };
+    return map[this.order?.status || ''] || 'tsg-badge--neutral';
+  }
+
+  isTerminalStatus(): boolean {
+    return this.order?.status === OrderStatus.REJECTED
+        || this.order?.status === OrderStatus.CANCELLED;
   }
 }
