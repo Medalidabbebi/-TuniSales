@@ -1,6 +1,6 @@
 <div class="dd-page" *ngIf="delivery">
 
-  <!-- ── Header ──────────────────────────────────────────────────────────── -->
+  <!-- ── Header ──────────────────────────────────────────────────── -->
   <div class="dd-header">
     <div class="dd-header__left">
       <button class="dd-back-btn" (click)="previousState()" data-cy="entityDetailsBackButton">
@@ -11,10 +11,10 @@
       </div>
       <div>
         <h1 class="dd-header__title" data-cy="deliveryDetailsHeading">
-          {{ delivery.deliveryNumber || 'Livraison #' + delivery.id }}
+          {{ delivery.deliveryNumber || ('Livraison #' + delivery.id) }}
         </h1>
         <p class="dd-header__sub" *ngIf="delivery.order">
-          <fa-icon icon="shopping-cart" style="opacity:.5" class="me-1"></fa-icon>
+          <fa-icon icon="shopping-cart" class="me-1" style="opacity:.5"></fa-icon>
           <a [routerLink]="['/order', delivery.order.id, 'view']" class="dd-header__link">{{ delivery.order.orderNumber }}</a>
         </p>
       </div>
@@ -34,7 +34,7 @@
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
-  <!-- ── KPI Row ──────────────────────────────────────────────────────────── -->
+  <!-- ── KPI Row ─────────────────────────────────────────────────── -->
   <div class="dd-kpi-row">
     <div class="dd-kpi dd-kpi--teal">
       <div class="dd-kpi__icon"><fa-icon icon="truck"></fa-icon></div>
@@ -51,7 +51,7 @@
     <div class="dd-kpi dd-kpi--gray" *ngIf="delivery.trackingNumber">
       <div class="dd-kpi__icon"><fa-icon icon="truck"></fa-icon></div>
       <div>
-        <div class="dd-kpi__value dd-kpi__value--mono">{{ delivery.trackingNumber }}</div>
+        <div class="dd-kpi__value">{{ delivery.trackingNumber }}</div>
         <div class="dd-kpi__label">N° Suivi</div>
       </div>
     </div>
@@ -71,56 +71,42 @@
     </div>
   </div>
 
-  <!-- ── Main Grid ────────────────────────────────────────────────────────── -->
+  <!-- ── Main Grid ───────────────────────────────────────────────── -->
   <div class="dd-grid">
 
-    <!-- Livraison card -->
+    <!-- Livraison -->
     <div class="dd-card">
       <div class="dd-card__head">
-        <div class="dd-card__head-icon dd-card__head-icon--teal">
-          <fa-icon icon="truck"></fa-icon>
-        </div>
+        <div class="dd-card__head-icon dd-card__head-icon--teal"><fa-icon icon="truck"></fa-icon></div>
         <div>
           <div class="dd-card__title">Livraison</div>
           <div class="dd-card__sub">Informations de la livraison</div>
         </div>
       </div>
       <div class="dd-info-list">
-        <div class="dd-info-item">
-          <span class="dd-info-item__label">
-            <fa-icon icon="truck" class="me-1"></fa-icon>N° Livraison
-          </span>
-          <span class="dd-info-item__value">{{ delivery.deliveryNumber || '—' }}</span>
+        <div class="dd-info-row">
+          <span class="dd-info-row__label">N° Livraison</span>
+          <span class="dd-info-row__value">{{ delivery.deliveryNumber || '—' }}</span>
         </div>
-        <div class="dd-info-item" *ngIf="delivery.trackingNumber">
-          <span class="dd-info-item__label">
-            <fa-icon icon="truck" class="me-1"></fa-icon>N° Suivi
-          </span>
-          <span class="dd-info-item__value dd-info-item__value--mono">{{ delivery.trackingNumber }}</span>
+        <div class="dd-info-row" *ngIf="delivery.trackingNumber">
+          <span class="dd-info-row__label">N° Suivi</span>
+          <span class="dd-info-row__value dd-info-row__value--mono">{{ delivery.trackingNumber }}</span>
         </div>
-        <div class="dd-info-item" *ngIf="delivery.order">
-          <span class="dd-info-item__label">
-            <fa-icon icon="shopping-cart" class="me-1"></fa-icon>Commande liée
-          </span>
-          <a [routerLink]="['/order', delivery.order.id, 'view']" class="dd-info-item__link">
-            {{ delivery.order.orderNumber }}
-          </a>
+        <div class="dd-info-row" *ngIf="delivery.order">
+          <span class="dd-info-row__label">Commande liée</span>
+          <a [routerLink]="['/order', delivery.order.id, 'view']" class="dd-info-row__link">{{ delivery.order.orderNumber }}</a>
         </div>
-        <div class="dd-info-item" *ngIf="delivery.notes">
-          <span class="dd-info-item__label">
-            <fa-icon icon="sticky-note" class="me-1"></fa-icon>Notes
-          </span>
-          <span class="dd-info-item__value dd-info-item__value--notes">{{ delivery.notes }}</span>
+        <div class="dd-info-row" *ngIf="delivery.notes">
+          <span class="dd-info-row__label">Notes</span>
+          <span class="dd-info-row__value">{{ delivery.notes }}</span>
         </div>
       </div>
     </div>
 
-    <!-- Chronologie card -->
+    <!-- Chronologie -->
     <div class="dd-card">
       <div class="dd-card__head">
-        <div class="dd-card__head-icon dd-card__head-icon--teal">
-          <fa-icon icon="calendar-alt"></fa-icon>
-        </div>
+        <div class="dd-card__head-icon dd-card__head-icon--teal"><fa-icon icon="history"></fa-icon></div>
         <div>
           <div class="dd-card__title">Chronologie</div>
           <div class="dd-card__sub">Dates clés du cycle de vie</div>
@@ -150,7 +136,7 @@
             <span class="dd-tl-date">{{ delivery.confirmedAt | formatMediumDatetime }}</span>
           </div>
         </div>
-        <div class="dd-tl-line" *ngIf="delivery.confirmedAt && delivery.createdAt"></div>
+        <div class="dd-tl-line" *ngIf="delivery.createdAt"></div>
         <div class="dd-tl-item" *ngIf="delivery.createdAt">
           <div class="dd-tl-dot dd-tl-dot--gray"></div>
           <div class="dd-tl-body">
@@ -158,10 +144,8 @@
             <span class="dd-tl-date">{{ delivery.createdAt | formatMediumDatetime }}</span>
           </div>
         </div>
-        <div class="dd-tl-line" *ngIf="!delivery.confirmedAt && (delivery.deliveredAt || delivery.shippedAt) && delivery.createdAt"></div>
       </div>
     </div>
 
   </div>
-
 </div>
