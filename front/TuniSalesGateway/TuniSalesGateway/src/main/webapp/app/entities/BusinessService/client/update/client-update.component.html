@@ -55,6 +55,23 @@
         </div>
         <div class="cu-card__body">
 
+          <!-- Tenant ID -->
+          <div class="cu-field">
+            <label class="cu-field__label cu-field__label--required" for="field_tenantId">ID Entreprise</label>
+            <input
+              type="number"
+              class="cu-field__input"
+              name="tenantId"
+              id="field_tenantId"
+              data-cy="tenantId"
+              formControlName="tenantId"
+              placeholder="Ex: 84062"
+            />
+            <div *ngIf="editForm.get('tenantId')!.invalid && (editForm.get('tenantId')!.dirty || editForm.get('tenantId')!.touched)">
+              <span class="cu-field__error" *ngIf="editForm.get('tenantId')?.errors?.required">Ce champ est obligatoire.</span>
+            </div>
+          </div>
+
           <!-- Nom -->
           <div class="cu-field">
             <label class="cu-field__label cu-field__label--required" for="field_name">Nom</label>
@@ -110,12 +127,8 @@
             </div>
           </div>
 
-          <!-- Tenant ID (hidden field kept for backend) -->
-          <div class="cu-field" style="display:none;">
-            <input type="number" class="cu-field__input" name="tenantId" id="field_tenantId" data-cy="tenantId" formControlName="tenantId" />
-          </div>
 
-        </div>
+</div>
       </div>
 
       <!-- Card 2: Paramètres commerciaux -->
