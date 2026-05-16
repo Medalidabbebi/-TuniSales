@@ -1,0 +1,278 @@
+// ── Variables ──────────────────────────────────────────────────────
+$lu-blue:    #2563eb;
+$lu-green:   #16a34a;
+$lu-teal:    #0e7490;
+$lu-orange:  #d97706;
+$lu-red:     #dc2626;
+$lu-slate:   #475569;
+$lu-gray:    #64748b;
+$lu-border:  #e2e8f0;
+$lu-bg:      #f8fafc;
+$lu-white:   #ffffff;
+$lu-text:    #0f172a;
+$lu-muted:   #64748b;
+$lu-shadow:  0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$lu-radius:  12px;
+
+// ── Page ──────────────────────────────────────────────────────────
+.lu-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 900px;
+}
+
+// ── Header ────────────────────────────────────────────────────────
+.lu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, $lu-blue, #1d4ed8);
+    color: #fff;
+    border-radius: $lu-radius;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(37,99,235,.3);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: $lu-text;
+    line-height: 1.2;
+  }
+
+  &__sub {
+    margin: .2rem 0 0;
+    color: $lu-muted;
+    font-size: .88rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────
+.lu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .55rem 1.25rem;
+  border-radius: 8px;
+  border: 1.5px solid transparent;
+  font-size: .9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  line-height: 1.5;
+
+  &--primary {
+    background: $lu-blue;
+    color: #fff;
+    border-color: $lu-blue;
+    &:hover:not([disabled]) { background: #1d4ed8; box-shadow: 0 3px 10px rgba(37,99,235,.3); }
+  }
+  &--ghost {
+    background: $lu-white;
+    color: $lu-text;
+    border-color: $lu-border;
+    &:hover:not([disabled]) { background: $lu-bg; }
+  }
+  &[disabled] { opacity: .45; cursor: not-allowed; }
+}
+
+// ── Two-column grid ───────────────────────────────────────────────
+.lu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+
+  @media (max-width: 700px) { grid-template-columns: 1fr; }
+}
+
+// ── Card ──────────────────────────────────────────────────────────
+.lu-card {
+  background: $lu-white;
+  border: 1px solid $lu-border;
+  border-radius: $lu-radius;
+  box-shadow: $lu-shadow;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .85rem 1.1rem;
+    background: $lu-bg;
+    border-bottom: 1px solid $lu-border;
+    font-size: .88rem;
+    font-weight: 700;
+    color: $lu-text;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  &__header-icon {
+    color: $lu-blue;
+    font-size: .9rem;
+  }
+
+  &__body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+  }
+}
+
+// ── Field ─────────────────────────────────────────────────────────
+.lu-field {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+}
+
+.lu-label {
+  font-size: .82rem;
+  font-weight: 700;
+  color: $lu-slate;
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+
+  &__icon {
+    color: $lu-blue;
+    font-size: .78rem;
+  }
+}
+
+.lu-required {
+  color: $lu-red;
+  font-size: .85rem;
+}
+
+// ── Input ─────────────────────────────────────────────────────────
+.lu-input {
+  width: 100%;
+  padding: .55rem .85rem;
+  border: 1.5px solid $lu-border;
+  border-radius: 8px;
+  font-size: .92rem;
+  color: $lu-text;
+  background: $lu-white;
+  transition: border-color .15s, box-shadow .15s;
+  outline: none;
+
+  &:focus {
+    border-color: $lu-blue;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+  }
+
+  &--invalid {
+    border-color: $lu-red !important;
+    &:focus { box-shadow: 0 0 0 3px rgba(220,38,38,.12); }
+  }
+
+  &--readonly {
+    background: $lu-bg;
+    color: $lu-muted;
+    cursor: not-allowed;
+    border-color: #f1f5f9;
+  }
+
+  &--addon {
+    border-right: none;
+    border-radius: 8px 0 0 8px;
+  }
+}
+
+// ── Select ────────────────────────────────────────────────────────
+.lu-select {
+  width: 100%;
+  padding: .55rem .85rem;
+  border: 1.5px solid $lu-border;
+  border-radius: 8px;
+  font-size: .92rem;
+  color: $lu-text;
+  background: $lu-white;
+  transition: border-color .15s, box-shadow .15s;
+  outline: none;
+  appearance: auto;
+
+  &:focus {
+    border-color: $lu-blue;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+  }
+
+  &--invalid {
+    border-color: $lu-red !important;
+    &:focus { box-shadow: 0 0 0 3px rgba(220,38,38,.12); }
+  }
+}
+
+// ── Input with addon ──────────────────────────────────────────────
+.lu-input-addon {
+  display: flex;
+  align-items: stretch;
+
+  &__suffix {
+    display: flex;
+    align-items: center;
+    padding: .55rem .75rem;
+    background: $lu-bg;
+    border: 1.5px solid $lu-border;
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    font-size: .85rem;
+    font-weight: 700;
+    color: $lu-muted;
+  }
+}
+
+// ── Error messages ────────────────────────────────────────────────
+.lu-error {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+
+  small {
+    color: $lu-red;
+    font-size: .78rem;
+    font-weight: 500;
+  }
+}
+
+// ── Field hint ────────────────────────────────────────────────────
+.lu-field__hint {
+  font-size: .77rem;
+  color: $lu-muted;
+  margin: 0;
+  font-style: italic;
+}
+
+// ── Footer actions ────────────────────────────────────────────────
+.lu-footer {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding-top: .25rem;
+}

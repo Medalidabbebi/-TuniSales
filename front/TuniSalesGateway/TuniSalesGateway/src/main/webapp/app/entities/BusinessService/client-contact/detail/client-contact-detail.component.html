@@ -1,60 +1,146 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <div *ngIf="clientContact">
-      <h2 data-cy="clientContactDetailsHeading">
-        <span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.detail.title">Client Contact</span>
-      </h2>
+<div class="ccd-page" *ngIf="clientContact">
 
-      <hr />
-
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ clientContact.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.fullName">Full Name</span></dt>
-        <dd>
-          <span>{{ clientContact.fullName }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.email">Email</span></dt>
-        <dd>
-          <span>{{ clientContact.email }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.phone">Phone</span></dt>
-        <dd>
-          <span>{{ clientContact.phone }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.role">Role</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'tuniSalesGatewayApp.ContactRole.' + clientContact.role }}">{{ clientContact.role }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.isPrimary">Is Primary</span></dt>
-        <dd>
-          <span>{{ clientContact.isPrimary }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.createdAt">Created At</span></dt>
-        <dd>
-          <span>{{ clientContact.createdAt | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.client">Client</span></dt>
-        <dd>
-          <div *ngIf="clientContact.client">
-            <a [routerLink]="['/client', clientContact.client.id, 'view']">{{ clientContact.client.name }}</a>
-          </div>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+  <!-- Header -->
+  <div class="ccd-header">
+    <div class="ccd-header__left">
+      <div class="ccd-header__icon">
+        <fa-icon icon="user-plus"></fa-icon>
+      </div>
+      <div>
+        <h1 class="ccd-header__title" data-cy="clientContactDetailsHeading">{{ clientContact.fullName }}</h1>
+        <p class="ccd-header__subtitle">
+          <span class="ccd-role-badge" [ngClass]="getRoleBadgeClass(clientContact.role)">{{ getRoleLabel(clientContact.role) }}</span>
+        </p>
+      </div>
+    </div>
+    <div class="ccd-header__actions">
+      <span *ngIf="clientContact.isPrimary" class="ccd-primary-badge">
+        <fa-icon icon="star"></fa-icon>
+        Contact primaire
+      </span>
+      <button type="button" (click)="previousState()" class="ccd-btn ccd-btn--secondary" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        Retour
       </button>
-
-      <button type="button" [routerLink]="['/client-contact', clientContact.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
-      </button>
+      <a [routerLink]="['/client-contact', clientContact.id, 'edit']" class="ccd-btn ccd-btn--primary">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        Modifier
+      </a>
     </div>
   </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- KPI Row -->
+  <div class="ccd-kpi-row">
+    <div class="ccd-kpi-card ccd-kpi-card--cyan">
+      <div class="ccd-kpi-card__icon">
+        <fa-icon icon="user-plus"></fa-icon>
+      </div>
+      <div class="ccd-kpi-card__label">Rôle</div>
+      <div class="ccd-kpi-card__value">
+        <span class="ccd-role-badge ccd-role-badge--inline" [ngClass]="getRoleBadgeClass(clientContact.role)">{{ getRoleLabel(clientContact.role) }}</span>
+      </div>
+    </div>
+    <div class="ccd-kpi-card ccd-kpi-card--blue">
+      <div class="ccd-kpi-card__icon">
+        <fa-icon icon="building"></fa-icon>
+      </div>
+      <div class="ccd-kpi-card__label">Client</div>
+      <div class="ccd-kpi-card__value">
+        <a *ngIf="clientContact.client" [routerLink]="['/client', clientContact.client.id, 'view']" class="ccd-link">{{ clientContact.client.name }}</a>
+        <span *ngIf="!clientContact.client" class="text-muted">—</span>
+      </div>
+    </div>
+    <div class="ccd-kpi-card ccd-kpi-card--teal">
+      <div class="ccd-kpi-card__icon">
+        <fa-icon icon="user-plus"></fa-icon>
+      </div>
+      <div class="ccd-kpi-card__label">Email</div>
+      <div class="ccd-kpi-card__value ccd-kpi-card__value--sm">
+        <a *ngIf="clientContact.email" href="mailto:{{ clientContact.email }}" class="ccd-link">{{ clientContact.email }}</a>
+        <span *ngIf="!clientContact.email">—</span>
+      </div>
+    </div>
+    <div class="ccd-kpi-card ccd-kpi-card--gray">
+      <div class="ccd-kpi-card__icon">
+        <fa-icon icon="user-plus"></fa-icon>
+      </div>
+      <div class="ccd-kpi-card__label">Téléphone</div>
+      <div class="ccd-kpi-card__value ccd-kpi-card__value--sm">{{ clientContact.phone || '—' }}</div>
+    </div>
+  </div>
+
+  <!-- Detail Grid -->
+  <div class="ccd-grid">
+
+    <!-- Contact -->
+    <section class="ccd-card">
+      <div class="ccd-card__header">
+        <div class="ccd-card__header-icon">
+          <fa-icon icon="user-plus"></fa-icon>
+        </div>
+        <h2>Contact</h2>
+      </div>
+      <dl class="ccd-list">
+        <div class="ccd-list__item">
+          <dt>Nom complet</dt>
+          <dd>{{ clientContact.fullName }}</dd>
+        </div>
+        <div class="ccd-list__item">
+          <dt>Email</dt>
+          <dd>
+            <a *ngIf="clientContact.email" href="mailto:{{ clientContact.email }}" class="ccd-link">{{ clientContact.email }}</a>
+            <span *ngIf="!clientContact.email">—</span>
+          </dd>
+        </div>
+        <div class="ccd-list__item">
+          <dt>Téléphone</dt>
+          <dd>{{ clientContact.phone || '—' }}</dd>
+        </div>
+        <div class="ccd-list__item">
+          <dt>Rôle</dt>
+          <dd>
+            <span class="ccd-role-badge" [ngClass]="getRoleBadgeClass(clientContact.role)">{{ getRoleLabel(clientContact.role) }}</span>
+          </dd>
+        </div>
+        <div class="ccd-list__item">
+          <dt>Contact primaire</dt>
+          <dd>
+            <fa-icon *ngIf="clientContact.isPrimary" icon="star" class="ccd-star-icon"></fa-icon>
+            <span *ngIf="!clientContact.isPrimary" class="ccd-dash">—</span>
+            <span class="ms-1">{{ clientContact.isPrimary ? 'Oui' : 'Non' }}</span>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- Associations -->
+    <section class="ccd-card">
+      <div class="ccd-card__header">
+        <div class="ccd-card__header-icon">
+          <fa-icon icon="building"></fa-icon>
+        </div>
+        <h2>Associations</h2>
+      </div>
+      <dl class="ccd-list">
+        <div class="ccd-list__item">
+          <dt>Client</dt>
+          <dd>
+            <a *ngIf="clientContact.client" [routerLink]="['/client', clientContact.client.id, 'view']" class="ccd-client-link">
+              <fa-icon icon="building" class="me-1"></fa-icon>{{ clientContact.client.name }}
+            </a>
+            <span *ngIf="!clientContact.client" class="text-muted">—</span>
+          </dd>
+        </div>
+        <div class="ccd-list__item">
+          <dt>Créé le</dt>
+          <dd>{{ clientContact.createdAt | formatMediumDatetime }}</dd>
+        </div>
+      </dl>
+    </section>
+
+  </div>
+
 </div>

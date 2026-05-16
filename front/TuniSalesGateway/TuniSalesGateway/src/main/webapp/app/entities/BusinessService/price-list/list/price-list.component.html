@@ -1,21 +1,23 @@
-<div class="container-fluid py-4">
+<div class="pl-page">
 
   <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-    <div>
-      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="PriceListHeading">
-        <fa-icon icon="tags" class="me-2 text-primary"></fa-icon>
-        Gestion des Tarifs
-      </h2>
-      <small class="text-muted">Liste des tarifs — {{ totalItems }} tarif(s) au total</small>
+  <div class="pl-header">
+    <div class="pl-header__left">
+      <div class="pl-header__icon">
+        <fa-icon icon="tags"></fa-icon>
+      </div>
+      <div>
+        <h1 class="pl-header__title" id="page-heading" data-cy="PriceListHeading">Tarifs &amp; Remises</h1>
+        <p class="pl-header__subtitle">{{ totalItems }} tarif(s) au total</p>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+    <div class="pl-header__actions">
+      <button class="pl-btn pl-btn--secondary" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
-      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/price-list/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
+      <a class="pl-btn pl-btn--primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/price-list/new']">
+        <fa-icon icon="plus"></fa-icon>
         Nouveau Tarif
       </a>
     </div>
@@ -24,62 +26,115 @@
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
+  <!-- KPI Cards -->
+  <div class="pl-kpi-row">
+    <div class="pl-kpi-card">
+      <div class="pl-kpi-card__icon pl-kpi-card__icon--green">
+        <fa-icon icon="tags"></fa-icon>
+      </div>
+      <div class="pl-kpi-card__body">
+        <div class="pl-kpi-card__value">{{ totalItems }}</div>
+        <div class="pl-kpi-card__label">Total tarifs</div>
+      </div>
+    </div>
+    <div class="pl-kpi-card">
+      <div class="pl-kpi-card__icon pl-kpi-card__icon--green">
+        <fa-icon icon="check-circle"></fa-icon>
+      </div>
+      <div class="pl-kpi-card__body">
+        <div class="pl-kpi-card__value pl-kpi-card__value--green">{{ countPriceListsByActive(true) }}</div>
+        <div class="pl-kpi-card__label">Actifs</div>
+      </div>
+    </div>
+    <div class="pl-kpi-card">
+      <div class="pl-kpi-card__icon pl-kpi-card__icon--gray">
+        <fa-icon icon="ban"></fa-icon>
+      </div>
+      <div class="pl-kpi-card__body">
+        <div class="pl-kpi-card__value pl-kpi-card__value--gray">{{ countPriceListsByActive(false) }}</div>
+        <div class="pl-kpi-card__label">Inactifs</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+  <div class="pl-loading" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true" size="2x"></fa-icon>
+    <p>Chargement...</p>
   </div>
 
   <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && priceLists?.length === 0">
-    <fa-icon icon="tags" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucun tarif trouvé. Créez votre premier tarif.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/price-list/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <div class="pl-empty" *ngIf="!isLoading && priceLists?.length === 0">
+    <fa-icon icon="tags" size="3x"></fa-icon>
+    <p>Aucun tarif trouvé. Créez votre premier tarif.</p>
+    <a class="pl-btn pl-btn--primary" [routerLink]="['/price-list/new']">
+      <fa-icon icon="plus"></fa-icon> Ajouter
     </a>
   </div>
 
   <!-- Table -->
-  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && priceLists && priceLists.length > 0">
+  <div class="pl-table-card" id="entities" *ngIf="!isLoading && priceLists && priceLists.length > 0">
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
-        <thead class="table-light">
+        <thead>
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
             <th scope="col" jhiSortBy="product.name">
-              <div class="d-flex align-items-center gap-1">Nom <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              <div class="d-flex align-items-center gap-1">Produit <fa-icon icon="sort" class="pl-sort-icon"></fa-icon></div>
             </th>
-            <th scope="col" jhiSortBy="isActive" style="width:110px">
-              <div class="d-flex align-items-center gap-1">Actif <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th scope="col" jhiSortBy="client.name">
+              <div class="d-flex align-items-center gap-1">Client <fa-icon icon="sort" class="pl-sort-icon"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="unitPrice" class="text-end">
+              <div class="d-flex align-items-center justify-content-end gap-1">Prix unitaire <fa-icon icon="sort" class="pl-sort-icon"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="maxDiscountPct">
+              <div class="d-flex align-items-center gap-1">Remise max% <fa-icon icon="sort" class="pl-sort-icon"></fa-icon></div>
             </th>
             <th scope="col" jhiSortBy="validFrom">
-              <div class="d-flex align-items-center gap-1">Date début <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              <div class="d-flex align-items-center gap-1">Valide du <fa-icon icon="sort" class="pl-sort-icon"></fa-icon></div>
             </th>
             <th scope="col" jhiSortBy="validTo">
-              <div class="d-flex align-items-center gap-1">Date fin <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              <div class="d-flex align-items-center gap-1">Valide au <fa-icon icon="sort" class="pl-sort-icon"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="isActive" class="text-center">
+              <div class="d-flex align-items-center justify-content-center gap-1">Actif <fa-icon icon="sort" class="pl-sort-icon"></fa-icon></div>
             </th>
             <th scope="col" style="width:140px"></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let priceList of priceLists; trackBy: trackId" data-cy="entityTable">
-            <td class="fw-semibold">{{ priceList.product?.name || ('Tarif #' + priceList.id) }}</td>
             <td>
-              <span class="badge rounded-pill" [ngClass]="priceList.isActive ? 'bg-success' : 'bg-secondary'">
-                {{ priceList.isActive ? 'Actif' : 'Inactif' }}
+              <div class="pl-avatar-cell">
+                <div class="pl-avatar">{{ getPriceListAvatar(priceList) }}</div>
+                <span class="pl-avatar-cell__name">{{ priceList.product?.name || '—' }}</span>
+              </div>
+            </td>
+            <td class="text-muted">{{ priceList.client?.name || '—' }}</td>
+            <td class="text-end">
+              <span class="pl-price">{{ getAmount(priceList.unitPrice) }}</span>
+            </td>
+            <td>
+              <span class="pl-discount-badge">
+                <fa-icon icon="percent" class="me-1"></fa-icon>{{ priceList.maxDiscountPct ?? '—' }}
               </span>
             </td>
-            <td><span class="text-muted small">{{ priceList.validFrom | formatMediumDatetime }}</span></td>
-            <td><span class="text-muted small">{{ priceList.validTo | formatMediumDatetime }}</span></td>
+            <td><span class="pl-date">{{ priceList.validFrom | formatMediumDatetime }}</span></td>
+            <td><span class="pl-date">{{ priceList.validTo | formatMediumDatetime }}</span></td>
+            <td class="text-center">
+              <fa-icon *ngIf="priceList.isActive" icon="check-circle" class="pl-status-active"></fa-icon>
+              <span *ngIf="!priceList.isActive" class="pl-status-inactive">—</span>
+            </td>
             <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/price-list', priceList.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+              <div class="pl-actions">
+                <a [routerLink]="['/price-list', priceList.id, 'view']" class="pl-action-btn pl-action-btn--view" data-cy="entityDetailsButton" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/price-list', priceList.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                <a [routerLink]="['/price-list', priceList.id, 'edit']" class="pl-action-btn pl-action-btn--edit" data-cy="entityEditButton" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(priceList)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
-                  <fa-icon icon="times"></fa-icon>
+                <button (click)="delete(priceList)" class="pl-action-btn pl-action-btn--delete" data-cy="entityDeleteButton" title="Supprimer">
+                  <fa-icon icon="trash"></fa-icon>
                 </button>
               </div>
             </td>
@@ -90,7 +145,7 @@
   </div>
 
   <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="priceLists && priceLists.length > 0">
+  <div class="pl-pagination" *ngIf="priceLists && priceLists.length > 0">
     <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
     <ngb-pagination
       [collectionSize]="totalItems"

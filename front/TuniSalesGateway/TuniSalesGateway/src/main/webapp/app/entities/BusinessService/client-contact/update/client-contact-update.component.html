@@ -1,171 +1,126 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="jhi-client-contact-heading"
-        data-cy="ClientContactCreateUpdateHeading"
-        jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.home.createOrEditLabel"
-      >
-        Créer ou éditer un Client Contact
-      </h2>
+<div class="ccu-page">
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm" class="ccu-form">
 
-      <div>
-        <jhi-alert-error></jhi-alert-error>
+    <!-- Header -->
+    <div class="ccu-header">
+      <div class="ccu-header__left">
+        <div class="ccu-header__icon">
+          <fa-icon icon="user-plus"></fa-icon>
+        </div>
+        <div>
+          <h1 class="ccu-header__title" id="jhi-client-contact-heading" data-cy="ClientContactCreateUpdateHeading">
+            {{ getPageTitle() }}
+          </h1>
+          <p class="ccu-header__subtitle">Renseignez les informations du contact client</p>
+        </div>
+      </div>
+      <div class="ccu-header__actions">
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="ccu-btn ccu-btn--secondary" (click)="previousState()">
+          <fa-icon icon="arrow-left"></fa-icon>
+          Annuler
+        </button>
+        <button type="submit" id="save-entity" data-cy="entityCreateSaveButton" [disabled]="editForm.invalid || isSaving" class="ccu-btn ccu-btn--primary">
+          <fa-icon [icon]="isSaving ? 'spinner' : 'save'" [spin]="isSaving"></fa-icon>
+          Enregistrer
+        </button>
+      </div>
+    </div>
 
-        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
-          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+    <jhi-alert-error></jhi-alert-error>
+
+    <!-- 2-card Grid -->
+    <div class="ccu-grid">
+
+      <!-- Identité -->
+      <section class="ccu-card">
+        <div class="ccu-card__header">
+          <div class="ccu-card__header-icon">
+            <fa-icon icon="user-plus"></fa-icon>
+          </div>
+          <h2>Identité</h2>
         </div>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.fullName" for="field_fullName"
-            >Full Name</label
-          >
-          <input type="text" class="form-control" name="fullName" id="field_fullName" data-cy="fullName" formControlName="fullName" />
+        <div class="ccu-form-group" *ngIf="editForm.controls.id.value !== null">
+          <label class="ccu-label" for="field_id">ID</label>
+          <input type="number" class="ccu-input" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+        </div>
+
+        <div class="ccu-form-group">
+          <label class="ccu-label" for="field_fullName">Nom complet</label>
+          <input type="text" class="ccu-input" name="fullName" id="field_fullName" data-cy="fullName" formControlName="fullName" placeholder="Prénom Nom" />
           <div *ngIf="editForm.get('fullName')!.invalid && (editForm.get('fullName')!.dirty || editForm.get('fullName')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('fullName')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('fullName')?.errors?.maxlength"
-              jhiTranslate="entity.validation.maxlength"
-              [translateValues]="{ max: 255 }"
-            >
-              Ce champ doit faire moins de 255 caractères.
-            </small>
+            <small class="ccu-error" *ngIf="editForm.get('fullName')?.errors?.required">Ce champ est obligatoire.</small>
+            <small class="ccu-error" *ngIf="editForm.get('fullName')?.errors?.maxlength">Ce champ doit faire moins de 255 caractères.</small>
           </div>
         </div>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.email" for="field_email">Email</label>
-          <input type="text" class="form-control" name="email" id="field_email" data-cy="email" formControlName="email" />
+        <div class="ccu-form-group">
+          <label class="ccu-label" for="field_email">Email</label>
+          <input type="text" class="ccu-input" name="email" id="field_email" data-cy="email" formControlName="email" placeholder="contact@exemple.com" />
           <div *ngIf="editForm.get('email')!.invalid && (editForm.get('email')!.dirty || editForm.get('email')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('email')?.errors?.maxlength"
-              jhiTranslate="entity.validation.maxlength"
-              [translateValues]="{ max: 255 }"
-            >
-              Ce champ doit faire moins de 255 caractères.
-            </small>
+            <small class="ccu-error" *ngIf="editForm.get('email')?.errors?.maxlength">Ce champ doit faire moins de 255 caractères.</small>
           </div>
         </div>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.phone" for="field_phone">Phone</label>
-          <input type="text" class="form-control" name="phone" id="field_phone" data-cy="phone" formControlName="phone" />
+        <div class="ccu-form-group">
+          <label class="ccu-label" for="field_phone">Téléphone</label>
+          <input type="text" class="ccu-input" name="phone" id="field_phone" data-cy="phone" formControlName="phone" placeholder="+216 xx xxx xxx" />
           <div *ngIf="editForm.get('phone')!.invalid && (editForm.get('phone')!.dirty || editForm.get('phone')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('phone')?.errors?.maxlength"
-              jhiTranslate="entity.validation.maxlength"
-              [translateValues]="{ max: 30 }"
-            >
-              Ce champ doit faire moins de 30 caractères.
-            </small>
+            <small class="ccu-error" *ngIf="editForm.get('phone')?.errors?.maxlength">Ce champ doit faire moins de 30 caractères.</small>
           </div>
         </div>
+      </section>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.role" for="field_role">Role</label>
-          <select class="form-control" name="role" formControlName="role" id="field_role" data-cy="role">
-            <option [ngValue]="null">{{ 'tuniSalesGatewayApp.ContactRole.null' | translate }}</option>
+      <!-- Classification -->
+      <section class="ccu-card">
+        <div class="ccu-card__header">
+          <div class="ccu-card__header-icon">
+            <fa-icon icon="building"></fa-icon>
+          </div>
+          <h2>Classification</h2>
+        </div>
+
+        <div class="ccu-form-group">
+          <label class="ccu-label" for="field_role">Rôle</label>
+          <select class="ccu-input" name="role" formControlName="role" id="field_role" data-cy="role">
+            <option [ngValue]="null">-- Sélectionner un rôle --</option>
             <option *ngFor="let contactRole of contactRoleValues" [value]="contactRole">
-              {{ 'tuniSalesGatewayApp.ContactRole.' + contactRole | translate }}
+              {{ getRoleLabel(contactRole) }}
             </option>
           </select>
         </div>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.isPrimary" for="field_isPrimary"
-            >Is Primary</label
-          >
-          <input type="checkbox" class="form-check" name="isPrimary" id="field_isPrimary" data-cy="isPrimary" formControlName="isPrimary" />
+        <div class="ccu-form-group">
+          <label class="ccu-checkbox-label" for="field_isPrimary">
+            <input type="checkbox" class="ccu-checkbox" name="isPrimary" id="field_isPrimary" data-cy="isPrimary" formControlName="isPrimary" />
+            <span>Contact primaire</span>
+          </label>
           <div *ngIf="editForm.get('isPrimary')!.invalid && (editForm.get('isPrimary')!.dirty || editForm.get('isPrimary')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('isPrimary')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
+            <small class="ccu-error" *ngIf="editForm.get('isPrimary')?.errors?.required">Ce champ est obligatoire.</small>
           </div>
         </div>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.createdAt" for="field_createdAt"
-            >Created At</label
-          >
-          <div class="d-flex">
-            <input
-              id="field_createdAt"
-              data-cy="createdAt"
-              type="datetime-local"
-              class="form-control"
-              name="createdAt"
-              formControlName="createdAt"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-          <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('createdAt')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal"
-              jhiTranslate="entity.validation.datetimelocal"
-            >
-              Ce champ doit être une date et une heure.
-            </small>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceClientContact.client" for="field_client">Client</label>
-          <select
-            class="form-control"
-            id="field_client"
-            data-cy="client"
-            name="client"
-            formControlName="client"
-            [compareWith]="compareClient"
-          >
-            <option *ngIf="editForm.get(['client'])!.value == null" [ngValue]="null" selected></option>
+        <div class="ccu-form-group">
+          <label class="ccu-label" for="field_client">Client</label>
+          <select class="ccu-input" id="field_client" data-cy="client" name="client" formControlName="client" [compareWith]="compareClient">
+            <option *ngIf="editForm.get(['client'])!.value == null" [ngValue]="null" selected>-- Sélectionner un client --</option>
             <option [ngValue]="clientOption" *ngFor="let clientOption of clientsSharedCollection">{{ clientOption.name }}</option>
           </select>
+          <div *ngIf="editForm.get(['client'])!.invalid && (editForm.get(['client'])!.dirty || editForm.get(['client'])!.touched)">
+            <small class="ccu-error" *ngIf="editForm.get(['client'])?.errors?.required">Ce champ est obligatoire.</small>
+          </div>
         </div>
-        <div *ngIf="editForm.get(['client'])!.invalid && (editForm.get(['client'])!.dirty || editForm.get(['client'])!.touched)">
-          <small class="form-text text-danger" *ngIf="editForm.get(['client'])?.errors?.required" jhiTranslate="entity.validation.required">
-            Ce champ est obligatoire.
-          </small>
+
+        <div class="ccu-form-group">
+          <label class="ccu-label" for="field_createdAt">Créé le</label>
+          <input id="field_createdAt" data-cy="createdAt" type="datetime-local" class="ccu-input" name="createdAt" formControlName="createdAt" placeholder="YYYY-MM-DD HH:mm" />
+          <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
+            <small class="ccu-error" *ngIf="editForm.get('createdAt')?.errors?.required">Ce champ est obligatoire.</small>
+            <small class="ccu-error" [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal">Ce champ doit être une date et une heure.</small>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
-        </button>
-      </div>
-    </form>
-  </div>
+    </div>
+  </form>
 </div>

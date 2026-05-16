@@ -14,6 +14,7 @@ import { ClientContactDeleteDialogComponent } from '../delete/client-contact-del
 @Component({
   selector: 'jhi-client-contact',
   templateUrl: './client-contact.component.html',
+  styleUrls: ['./client-contact.component.scss'],
 })
 export class ClientContactComponent implements OnInit {
   clientContacts?: IClientContact[];
@@ -69,6 +70,37 @@ export class ClientContactComponent implements OnInit {
 
   navigateToPage(page = this.page): void {
     this.handleNavigation(page, this.predicate, this.ascending);
+  }
+
+  // Helper methods
+  countPrimary(): number {
+    return this.clientContacts?.filter(c => !!c.isPrimary).length ?? 0;
+  }
+
+  getContactAvatar(contact: IClientContact): string {
+    const src = contact.fullName || contact.email || '?';
+    return src.charAt(0).toUpperCase();
+  }
+
+  getRoleBadgeClass(role: string | null | undefined): string {
+    switch (role) {
+      case 'BUYER':       return 'cc-role-badge--blue';
+      case 'ACCOUNTING':  return 'cc-role-badge--green';
+      case 'MANAGEMENT':  return 'cc-role-badge--indigo';
+      case 'TECHNICAL':   return 'cc-role-badge--teal';
+      default:            return 'cc-role-badge--gray';
+    }
+  }
+
+  getRoleLabel(role: string | null | undefined): string {
+    switch (role) {
+      case 'BUYER':       return 'Acheteur';
+      case 'ACCOUNTING':  return 'Comptabilité';
+      case 'MANAGEMENT':  return 'Direction';
+      case 'TECHNICAL':   return 'Technique';
+      case 'OTHER':       return 'Autre';
+      default:            return role ?? '—';
+    }
   }
 
   protected loadFromBackendWithRouteInformations(): Observable<EntityArrayResponseType> {

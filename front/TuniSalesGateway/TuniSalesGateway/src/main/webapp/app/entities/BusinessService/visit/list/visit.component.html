@@ -1,22 +1,24 @@
-<div class="container-fluid py-4">
+<div class="vl-page">
 
-  <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-    <div>
-      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="VisitHeading">
-        <fa-icon icon="calendar-check" class="me-2 text-primary"></fa-icon>
-        Gestion des Visites
-      </h2>
-      <small class="text-muted">Liste des visites — {{ totalItems }} visite(s) au total</small>
+  <!-- ===== HEADER ===== -->
+  <div class="vl-header">
+    <div class="vl-header__left">
+      <div class="vl-header__icon-wrap">
+        <fa-icon icon="map-marker-alt" class="vl-header__icon"></fa-icon>
+      </div>
+      <div>
+        <h1 class="vl-header__title" id="page-heading" data-cy="VisitHeading">Gestion des Visites</h1>
+        <p class="vl-header__subtitle">{{ totalItems }} visite(s) au total</p>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
-        Actualiser
+    <div class="vl-header__actions">
+      <button class="vl-btn vl-btn--ghost" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
+        <span>Actualiser</span>
       </button>
-      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/visit/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
-        Nouvelle Visite
+      <a class="vl-btn vl-btn--primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/visit/new']">
+        <fa-icon icon="plus"></fa-icon>
+        <span>Nouvelle Visite</span>
       </a>
     </div>
   </div>
@@ -24,80 +26,148 @@
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
-  <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+  <!-- ===== KPI CARDS ===== -->
+  <div class="vl-kpi-grid">
+    <div class="vl-kpi-card vl-kpi-card--teal">
+      <div class="vl-kpi-card__body">
+        <span class="vl-kpi-card__value">{{ totalItems }}</span>
+        <span class="vl-kpi-card__label">Total</span>
+      </div>
+      <fa-icon icon="map-marker-alt" class="vl-kpi-card__bg-icon"></fa-icon>
+    </div>
+    <div class="vl-kpi-card vl-kpi-card--amber">
+      <div class="vl-kpi-card__body">
+        <span class="vl-kpi-card__value">{{ countByStatuses(['PLANNED']) }}</span>
+        <span class="vl-kpi-card__label">Planifiées</span>
+      </div>
+      <fa-icon icon="calendar-alt" class="vl-kpi-card__bg-icon"></fa-icon>
+    </div>
+    <div class="vl-kpi-card vl-kpi-card--blue">
+      <div class="vl-kpi-card__body">
+        <span class="vl-kpi-card__value">{{ countByStatuses(['IN_PROGRESS']) }}</span>
+        <span class="vl-kpi-card__label">En cours</span>
+      </div>
+      <fa-icon icon="spinner" class="vl-kpi-card__bg-icon"></fa-icon>
+    </div>
+    <div class="vl-kpi-card vl-kpi-card--green">
+      <div class="vl-kpi-card__body">
+        <span class="vl-kpi-card__value">{{ countByStatuses(['COMPLETED']) }}</span>
+        <span class="vl-kpi-card__label">Terminées</span>
+      </div>
+      <fa-icon icon="check-circle" class="vl-kpi-card__bg-icon"></fa-icon>
+    </div>
   </div>
 
-  <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && visits?.length === 0">
-    <fa-icon icon="calendar-check" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucune visite trouvée. Créez votre première visite.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/visit/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <!-- ===== LOADING ===== -->
+  <div class="vl-loading" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true" class="vl-loading__icon"></fa-icon>
+    <p class="vl-loading__text">Chargement...</p>
+  </div>
+
+  <!-- ===== EMPTY STATE ===== -->
+  <div class="vl-empty" *ngIf="!isLoading && visits?.length === 0">
+    <fa-icon icon="map-marker-alt" class="vl-empty__icon"></fa-icon>
+    <p class="vl-empty__text">Aucune visite trouvée. Créez votre première visite.</p>
+    <a class="vl-btn vl-btn--primary" [routerLink]="['/visit/new']">
+      <fa-icon icon="plus"></fa-icon> Ajouter
     </a>
   </div>
 
-  <!-- Table -->
-  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && visits && visits.length > 0">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
-        <thead class="table-light">
+  <!-- ===== TABLE ===== -->
+  <div class="vl-card" id="entities" *ngIf="!isLoading && visits && visits.length > 0">
+    <div class="vl-table-wrap">
+      <table class="vl-table" aria-describedby="page-heading">
+        <thead>
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-            <th scope="col" jhiSortBy="visitOrder">
-              <div class="d-flex align-items-center gap-1">Client <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="objective">
-              <div class="d-flex align-items-center gap-1">Commercial <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="status" style="width:130px">
-              <div class="d-flex align-items-center gap-1">Statut <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="checkinAt">
-              <div class="d-flex align-items-center gap-1">Date visite <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" style="width:140px"></th>
+            <th scope="col" jhiSortBy="visitOrder">Ordre #</th>
+            <th scope="col" jhiSortBy="objective">Objectif</th>
+            <th scope="col" jhiSortBy="client.name">Client</th>
+            <th scope="col" jhiSortBy="mission.title">Mission</th>
+            <th scope="col" jhiSortBy="status">Statut</th>
+            <th scope="col" jhiSortBy="checkinAt">Check-in</th>
+            <th scope="col" class="vl-table__actions-col"></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let visit of visits; trackBy: trackId" data-cy="entityTable">
-            <td class="fw-semibold">{{ visit.client?.name || ('Visite #' + visit.visitOrder) }}</td>
-            <td>{{ visit.mission?.title || '—' }}</td>
+
+            <!-- Ordre # (avatar) -->
             <td>
-              <span class="badge rounded-pill"
-                [ngClass]="{
-                  'bg-success': visit.status === 'COMPLETED',
-                  'bg-info': visit.status === 'IN_PROGRESS',
-                  'bg-warning text-dark': visit.status === 'PLANNED',
-                  'bg-danger': visit.status === 'CANCELLED',
-                  'bg-secondary': !visit.status
-                }">
-                {{ visit.status }}
+              <div class="vl-avatar-cell">
+                <div class="vl-avatar">{{ getVisitAvatar(visit) }}</div>
+                <span class="vl-order-num">#{{ visit.visitOrder }}</span>
+              </div>
+            </td>
+
+            <!-- Objectif (badge) -->
+            <td>
+              <span class="vl-obj-badge" [ngClass]="getObjectiveClass(visit.objective)">
+                {{ getObjectiveLabelFr(visit.objective) }}
               </span>
             </td>
-            <td><span class="text-muted small">{{ visit.checkinAt | formatMediumDatetime }}</span></td>
+
+            <!-- Client (link) -->
             <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/visit', visit.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+              <a *ngIf="visit.client" [routerLink]="['/client', visit.client.id, 'view']" class="vl-link">
+                {{ visit.client.name }}
+              </a>
+              <span *ngIf="!visit.client" class="vl-muted">—</span>
+            </td>
+
+            <!-- Mission (link) -->
+            <td>
+              <a *ngIf="visit.mission" [routerLink]="['/mission', visit.mission.id, 'view']" class="vl-link">
+                {{ visit.mission.title }}
+              </a>
+              <span *ngIf="!visit.mission" class="vl-muted">—</span>
+            </td>
+
+            <!-- Statut (badge + dot) -->
+            <td>
+              <span class="vl-status-badge" [ngClass]="getStatusClass(visit.status)">
+                <span class="vl-status-badge__dot"></span>
+                {{ getStatusLabelFr(visit.status) }}
+              </span>
+            </td>
+
+            <!-- Check-in -->
+            <td>
+              <span class="vl-datetime" *ngIf="visit.checkinAt">
+                <fa-icon icon="calendar-alt" class="vl-datetime__icon"></fa-icon>
+                {{ visit.checkinAt | formatMediumDatetime }}
+              </span>
+              <span *ngIf="!visit.checkinAt" class="vl-muted">—</span>
+            </td>
+
+            <!-- Actions -->
+            <td>
+              <div class="vl-actions">
+                <a [routerLink]="['/visit', visit.id, 'view']"
+                   class="vl-action-btn vl-action-btn--view"
+                   data-cy="entityDetailsButton" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/visit', visit.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                <a [routerLink]="['/visit', visit.id, 'edit']"
+                   class="vl-action-btn vl-action-btn--edit"
+                   data-cy="entityEditButton" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(visit)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
-                  <fa-icon icon="times"></fa-icon>
+                <button (click)="delete(visit)"
+                        class="vl-action-btn vl-action-btn--delete"
+                        data-cy="entityDeleteButton" title="Supprimer">
+                  <fa-icon icon="trash"></fa-icon>
                 </button>
               </div>
             </td>
+
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="visits && visits.length > 0">
+  <!-- ===== PAGINATION ===== -->
+  <div class="vl-pagination" *ngIf="visits && visits.length > 0">
     <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
     <ngb-pagination
       [collectionSize]="totalItems"

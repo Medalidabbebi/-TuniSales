@@ -1,21 +1,23 @@
-<div class="container-fluid py-4">
+<div class="cc-page">
 
   <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-    <div>
-      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="ClientContactHeading">
-        <fa-icon icon="address-book" class="me-2 text-primary"></fa-icon>
-        Contacts Clients
-      </h2>
-      <small class="text-muted">Liste des contacts — {{ totalItems }} contact(s) au total</small>
+  <div class="cc-header">
+    <div class="cc-header__left">
+      <div class="cc-header__icon">
+        <fa-icon icon="user-plus"></fa-icon>
+      </div>
+      <div>
+        <h1 class="cc-header__title" id="page-heading" data-cy="ClientContactHeading">Contacts Clients</h1>
+        <p class="cc-header__subtitle">{{ totalItems }} contact(s) au total</p>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+    <div class="cc-header__actions">
+      <button class="cc-btn cc-btn--secondary" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
-      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/client-contact/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
+      <a class="cc-btn cc-btn--primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/client-contact/new']">
+        <fa-icon icon="plus"></fa-icon>
         Nouveau Contact
       </a>
     </div>
@@ -24,67 +26,106 @@
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
+  <!-- KPI Cards -->
+  <div class="cc-kpi-row">
+    <div class="cc-kpi-card">
+      <div class="cc-kpi-card__icon cc-kpi-card__icon--cyan">
+        <fa-icon icon="user-plus"></fa-icon>
+      </div>
+      <div class="cc-kpi-card__body">
+        <div class="cc-kpi-card__value">{{ totalItems }}</div>
+        <div class="cc-kpi-card__label">Total contacts</div>
+      </div>
+    </div>
+    <div class="cc-kpi-card">
+      <div class="cc-kpi-card__icon cc-kpi-card__icon--cyan">
+        <fa-icon icon="star"></fa-icon>
+      </div>
+      <div class="cc-kpi-card__body">
+        <div class="cc-kpi-card__value cc-kpi-card__value--cyan">{{ countPrimary() }}</div>
+        <div class="cc-kpi-card__label">Contacts primaires</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+  <div class="cc-loading" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true" size="2x"></fa-icon>
+    <p>Chargement...</p>
   </div>
 
   <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && clientContacts?.length === 0">
-    <fa-icon icon="address-book" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucun contact client trouvé.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/client-contact/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <div class="cc-empty" *ngIf="!isLoading && clientContacts?.length === 0">
+    <fa-icon icon="user-plus" size="3x"></fa-icon>
+    <p>Aucun contact client trouvé.</p>
+    <a class="cc-btn cc-btn--primary" [routerLink]="['/client-contact/new']">
+      <fa-icon icon="plus"></fa-icon> Ajouter
     </a>
   </div>
 
   <!-- Table -->
-  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && clientContacts && clientContacts.length > 0">
+  <div class="cc-table-card" id="entities" *ngIf="!isLoading && clientContacts && clientContacts.length > 0">
     <div class="table-responsive">
       <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
-        <thead class="table-light">
+        <thead>
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
             <th scope="col" jhiSortBy="fullName">
-              <div class="d-flex align-items-center gap-1">Nom <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              <div class="d-flex align-items-center gap-1">Nom complet <fa-icon icon="sort" class="cc-sort-icon"></fa-icon></div>
             </th>
             <th scope="col" jhiSortBy="email">
-              <div class="d-flex align-items-center gap-1">Email <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              <div class="d-flex align-items-center gap-1">Email <fa-icon icon="sort" class="cc-sort-icon"></fa-icon></div>
             </th>
             <th scope="col" jhiSortBy="phone">
-              <div class="d-flex align-items-center gap-1">Téléphone <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="client.name">
-              <div class="d-flex align-items-center gap-1">Client <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              <div class="d-flex align-items-center gap-1">Téléphone <fa-icon icon="sort" class="cc-sort-icon"></fa-icon></div>
             </th>
             <th scope="col" jhiSortBy="role">
-              <div class="d-flex align-items-center gap-1">Rôle <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              <div class="d-flex align-items-center gap-1">Rôle <fa-icon icon="sort" class="cc-sort-icon"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="client.name">
+              <div class="d-flex align-items-center gap-1">Client <fa-icon icon="sort" class="cc-sort-icon"></fa-icon></div>
+            </th>
+            <th scope="col" class="text-center" style="width:80px">
+              <div class="d-flex align-items-center justify-content-center gap-1">Primaire</div>
             </th>
             <th scope="col" style="width:140px"></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let clientContact of clientContacts; trackBy: trackId" data-cy="entityTable">
-            <td class="fw-semibold">{{ clientContact.fullName }}</td>
-            <td>{{ clientContact.email || '—' }}</td>
-            <td>{{ clientContact.phone || '—' }}</td>
             <td>
-              <a *ngIf="clientContact.client" [routerLink]="['/client', clientContact.client.id, 'view']" class="text-decoration-none">{{ clientContact.client.name }}</a>
-              <span *ngIf="!clientContact.client" class="text-muted fst-italic">—</span>
+              <div class="cc-avatar-cell">
+                <div class="cc-avatar">{{ getContactAvatar(clientContact) }}</div>
+                <span class="cc-avatar-cell__name">{{ clientContact.fullName }}</span>
+              </div>
             </td>
             <td>
-              <span class="badge bg-secondary rounded-pill">{{ clientContact.role || '—' }}</span>
+              <a *ngIf="clientContact.email" href="mailto:{{ clientContact.email }}" class="cc-email-link">{{ clientContact.email }}</a>
+              <span *ngIf="!clientContact.email" class="text-muted">—</span>
+            </td>
+            <td class="text-muted">{{ clientContact.phone || '—' }}</td>
+            <td>
+              <span class="cc-role-badge" [ngClass]="getRoleBadgeClass(clientContact.role)">{{ getRoleLabel(clientContact.role) }}</span>
             </td>
             <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/client-contact', clientContact.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+              <a *ngIf="clientContact.client" [routerLink]="['/client', clientContact.client.id, 'view']" class="cc-client-link">
+                <fa-icon icon="building" class="me-1"></fa-icon>{{ clientContact.client.name }}
+              </a>
+              <span *ngIf="!clientContact.client" class="text-muted">—</span>
+            </td>
+            <td class="text-center">
+              <fa-icon *ngIf="clientContact.isPrimary" icon="star" class="cc-star-icon"></fa-icon>
+              <span *ngIf="!clientContact.isPrimary" class="cc-no-star">—</span>
+            </td>
+            <td>
+              <div class="cc-actions">
+                <a [routerLink]="['/client-contact', clientContact.id, 'view']" class="cc-action-btn cc-action-btn--view" data-cy="entityDetailsButton" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/client-contact', clientContact.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                <a [routerLink]="['/client-contact', clientContact.id, 'edit']" class="cc-action-btn cc-action-btn--edit" data-cy="entityEditButton" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(clientContact)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
-                  <fa-icon icon="times"></fa-icon>
+                <button (click)="delete(clientContact)" class="cc-action-btn cc-action-btn--delete" data-cy="entityDeleteButton" title="Supprimer">
+                  <fa-icon icon="trash"></fa-icon>
                 </button>
               </div>
             </td>
@@ -95,7 +136,7 @@
   </div>
 
   <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="clientContacts && clientContacts.length > 0">
+  <div class="cc-pagination" *ngIf="clientContacts && clientContacts.length > 0">
     <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
     <ngb-pagination
       [collectionSize]="totalItems"

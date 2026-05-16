@@ -1,240 +1,215 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="jhi-order-line-heading"
-        data-cy="OrderLineCreateUpdateHeading"
-        jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.home.createOrEditLabel"
-      >
-        Créer ou éditer un Order Line
-      </h2>
+<div class="lu-page container-fluid py-4">
 
-      <div>
-        <jhi-alert-error></jhi-alert-error>
+  <jhi-alert-error></jhi-alert-error>
 
-        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
-          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.quantity" for="field_quantity"
-            >Quantity</label
-          >
-          <input type="number" class="form-control" name="quantity" id="field_quantity" data-cy="quantity" formControlName="quantity" />
-          <div *ngIf="editForm.get('quantity')!.invalid && (editForm.get('quantity')!.dirty || editForm.get('quantity')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('quantity')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('quantity')?.errors?.min"
-              jhiTranslate="entity.validation.min"
-              [translateValues]="{ min: 1 }"
-            >
-              Ce champ doit être supérieur à 1.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('quantity')?.errors?.number"
-              jhiTranslate="entity.validation.number"
-            >
-              Ce champ doit être un nombre.
-            </small>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.unitPrice" for="field_unitPrice"
-            >Unit Price</label
-          >
-          <input type="number" class="form-control" name="unitPrice" id="field_unitPrice" data-cy="unitPrice" formControlName="unitPrice" />
-          <div *ngIf="editForm.get('unitPrice')!.invalid && (editForm.get('unitPrice')!.dirty || editForm.get('unitPrice')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('unitPrice')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('unitPrice')?.errors?.min"
-              jhiTranslate="entity.validation.min"
-              [translateValues]="{ min: 0 }"
-            >
-              Ce champ doit être supérieur à 0.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('unitPrice')?.errors?.number"
-              jhiTranslate="entity.validation.number"
-            >
-              Ce champ doit être un nombre.
-            </small>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.discountPct" for="field_discountPct"
-            >Discount Pct</label
-          >
-          <input
-            type="number"
-            class="form-control"
-            name="discountPct"
-            id="field_discountPct"
-            data-cy="discountPct"
-            formControlName="discountPct"
-          />
-          <div *ngIf="editForm.get('discountPct')!.invalid && (editForm.get('discountPct')!.dirty || editForm.get('discountPct')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('discountPct')?.errors?.min"
-              jhiTranslate="entity.validation.min"
-              [translateValues]="{ min: 0 }"
-            >
-              Ce champ doit être supérieur à 0.
-            </small>
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('discountPct')?.errors?.max"
-              jhiTranslate="entity.validation.max"
-              [translateValues]="{ max: 100 }"
-            >
-              Ce champ doit être inférieur à 100.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('discountPct')?.errors?.number"
-              jhiTranslate="entity.validation.number"
-            >
-              Ce champ doit être un nombre.
-            </small>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.lineTotal" for="field_lineTotal"
-            >Line Total</label
-          >
-          <input type="number" class="form-control" name="lineTotal" id="field_lineTotal" data-cy="lineTotal" formControlName="lineTotal" />
-          <div *ngIf="editForm.get('lineTotal')!.invalid && (editForm.get('lineTotal')!.dirty || editForm.get('lineTotal')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('lineTotal')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('lineTotal')?.errors?.min"
-              jhiTranslate="entity.validation.min"
-              [translateValues]="{ min: 0 }"
-            >
-              Ce champ doit être supérieur à 0.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('lineTotal')?.errors?.number"
-              jhiTranslate="entity.validation.number"
-            >
-              Ce champ doit être un nombre.
-            </small>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.createdAt" for="field_createdAt"
-            >Created At</label
-          >
-          <div class="d-flex">
-            <input
-              id="field_createdAt"
-              data-cy="createdAt"
-              type="datetime-local"
-              class="form-control"
-              name="createdAt"
-              formControlName="createdAt"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-          <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('createdAt')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal"
-              jhiTranslate="entity.validation.datetimelocal"
-            >
-              Ce champ doit être une date et une heure.
-            </small>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.product" for="field_product">Product</label>
-          <select
-            class="form-control"
-            id="field_product"
-            data-cy="product"
-            name="product"
-            formControlName="product"
-            [compareWith]="compareProduct"
-          >
-            <option *ngIf="!editForm.get('product')!.value" [ngValue]="null" selected></option>
-            <option [ngValue]="productOption" *ngFor="let productOption of productsSharedCollection">{{ productOption.name }}</option>
-          </select>
-        </div>
-        <div *ngIf="editForm.get(['product'])!.invalid && (editForm.get(['product'])!.dirty || editForm.get(['product'])!.touched)">
-          <small
-            class="form-text text-danger"
-            *ngIf="editForm.get(['product'])?.errors?.required"
-            jhiTranslate="entity.validation.required"
-          >
-            Ce champ est obligatoire.
-          </small>
-        </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.order" for="field_order">Order</label>
-          <select class="form-control" id="field_order" data-cy="order" name="order" formControlName="order" [compareWith]="compareOrder">
-            <option *ngIf="editForm.get(['order'])!.value == null" [ngValue]="null" selected></option>
-            <option [ngValue]="orderOption" *ngFor="let orderOption of ordersSharedCollection">{{ orderOption.orderNumber }}</option>
-          </select>
-        </div>
-        <div *ngIf="editForm.get(['order'])!.invalid && (editForm.get(['order'])!.dirty || editForm.get(['order'])!.touched)">
-          <small class="form-text text-danger" *ngIf="editForm.get(['order'])?.errors?.required" jhiTranslate="entity.validation.required">
-            Ce champ est obligatoire.
-          </small>
-        </div>
+  <!-- Header -->
+  <div class="lu-header">
+    <div class="lu-header__left">
+      <div class="lu-header__icon">
+        <fa-icon icon="list-ol"></fa-icon>
       </div>
-
       <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
-        </button>
-
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
-        </button>
+        <h2 class="lu-header__title" id="jhi-order-line-heading" data-cy="OrderLineCreateUpdateHeading">
+          {{ orderLine?.id ? 'Modifier la ligne' : 'Nouvelle ligne de commande' }}
+        </h2>
+        <p class="lu-header__sub" *ngIf="orderLine?.id">
+          Ligne #{{ orderLine!.id }}
+        </p>
       </div>
-    </form>
+    </div>
+    <div class="lu-header__actions">
+      <button type="button" class="lu-btn lu-btn--ghost" (click)="previousState()" data-cy="entityCreateCancelButton">
+        <fa-icon icon="ban"></fa-icon>
+        Annuler
+      </button>
+    </div>
   </div>
+
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+
+    <div class="lu-grid">
+
+      <!-- Card: Références -->
+      <div class="lu-card">
+        <div class="lu-card__header">
+          <fa-icon icon="shopping-cart" class="lu-card__header-icon"></fa-icon>
+          Références
+        </div>
+        <div class="lu-card__body">
+
+          <!-- Produit -->
+          <div class="lu-field">
+            <label class="lu-label" for="field_product">
+              <fa-icon icon="box" class="lu-label__icon"></fa-icon>
+              Produit <span class="lu-required">*</span>
+            </label>
+            <select
+              class="lu-select"
+              id="field_product"
+              data-cy="product"
+              name="product"
+              formControlName="product"
+              [compareWith]="compareProduct"
+              [class.lu-select--invalid]="editForm.get('product')!.invalid && (editForm.get('product')!.dirty || editForm.get('product')!.touched)"
+            >
+              <option *ngIf="!editForm.get('product')!.value" [ngValue]="null" selected>-- Sélectionner un produit --</option>
+              <option [ngValue]="productOption" *ngFor="let productOption of productsSharedCollection">{{ productOption.name }}</option>
+            </select>
+            <div class="lu-error" *ngIf="editForm.get(['product'])!.invalid && (editForm.get(['product'])!.dirty || editForm.get(['product'])!.touched)">
+              <small *ngIf="editForm.get(['product'])?.errors?.required">Ce champ est obligatoire.</small>
+            </div>
+          </div>
+
+          <!-- Commande -->
+          <div class="lu-field">
+            <label class="lu-label" for="field_order">
+              <fa-icon icon="shopping-cart" class="lu-label__icon"></fa-icon>
+              Commande <span class="lu-required">*</span>
+            </label>
+            <select
+              class="lu-select"
+              id="field_order"
+              data-cy="order"
+              name="order"
+              formControlName="order"
+              [compareWith]="compareOrder"
+              [class.lu-select--invalid]="editForm.get('order')!.invalid && (editForm.get('order')!.dirty || editForm.get('order')!.touched)"
+            >
+              <option *ngIf="editForm.get(['order'])!.value == null" [ngValue]="null" selected>-- Sélectionner une commande --</option>
+              <option [ngValue]="orderOption" *ngFor="let orderOption of ordersSharedCollection">{{ orderOption.orderNumber }}</option>
+            </select>
+            <div class="lu-error" *ngIf="editForm.get(['order'])!.invalid && (editForm.get(['order'])!.dirty || editForm.get(['order'])!.touched)">
+              <small *ngIf="editForm.get(['order'])?.errors?.required">Ce champ est obligatoire.</small>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Card: Prix -->
+      <div class="lu-card">
+        <div class="lu-card__header">
+          <fa-icon icon="money-bill-wave" class="lu-card__header-icon"></fa-icon>
+          Prix &amp; Quantité
+        </div>
+        <div class="lu-card__body">
+
+          <!-- Quantité -->
+          <div class="lu-field">
+            <label class="lu-label" for="field_quantity">
+              <fa-icon icon="box" class="lu-label__icon"></fa-icon>
+              Quantité <span class="lu-required">*</span>
+            </label>
+            <input
+              type="number"
+              class="lu-input"
+              id="field_quantity"
+              data-cy="quantity"
+              name="quantity"
+              formControlName="quantity"
+              min="1"
+              placeholder="1"
+              [class.lu-input--invalid]="editForm.get('quantity')!.invalid && (editForm.get('quantity')!.dirty || editForm.get('quantity')!.touched)"
+            />
+            <div class="lu-error" *ngIf="editForm.get('quantity')!.invalid && (editForm.get('quantity')!.dirty || editForm.get('quantity')!.touched)">
+              <small *ngIf="editForm.get('quantity')?.errors?.required">Ce champ est obligatoire.</small>
+              <small *ngIf="editForm.get('quantity')?.errors?.min">La quantité doit être supérieure ou égale à 1.</small>
+            </div>
+          </div>
+
+          <!-- Prix unitaire -->
+          <div class="lu-field">
+            <label class="lu-label" for="field_unitPrice">
+              <fa-icon icon="money-bill-wave" class="lu-label__icon"></fa-icon>
+              Prix unitaire (TND) <span class="lu-required">*</span>
+            </label>
+            <input
+              type="number"
+              class="lu-input"
+              id="field_unitPrice"
+              data-cy="unitPrice"
+              name="unitPrice"
+              formControlName="unitPrice"
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              [class.lu-input--invalid]="editForm.get('unitPrice')!.invalid && (editForm.get('unitPrice')!.dirty || editForm.get('unitPrice')!.touched)"
+            />
+            <div class="lu-error" *ngIf="editForm.get('unitPrice')!.invalid && (editForm.get('unitPrice')!.dirty || editForm.get('unitPrice')!.touched)">
+              <small *ngIf="editForm.get('unitPrice')?.errors?.required">Ce champ est obligatoire.</small>
+              <small *ngIf="editForm.get('unitPrice')?.errors?.min">Le prix doit être supérieur ou égal à 0.</small>
+            </div>
+          </div>
+
+          <!-- Remise % -->
+          <div class="lu-field">
+            <label class="lu-label" for="field_discountPct">
+              <fa-icon icon="percent" class="lu-label__icon"></fa-icon>
+              Remise (%)
+            </label>
+            <div class="lu-input-addon">
+              <input
+                type="number"
+                class="lu-input lu-input--addon"
+                id="field_discountPct"
+                data-cy="discountPct"
+                name="discountPct"
+                formControlName="discountPct"
+                min="0"
+                max="100"
+                step="0.1"
+                placeholder="0"
+                [class.lu-input--invalid]="editForm.get('discountPct')!.invalid && (editForm.get('discountPct')!.dirty || editForm.get('discountPct')!.touched)"
+              />
+              <span class="lu-input-addon__suffix">%</span>
+            </div>
+            <div class="lu-error" *ngIf="editForm.get('discountPct')!.invalid && (editForm.get('discountPct')!.dirty || editForm.get('discountPct')!.touched)">
+              <small *ngIf="editForm.get('discountPct')?.errors?.min">La remise doit être entre 0 et 100.</small>
+              <small *ngIf="editForm.get('discountPct')?.errors?.max">La remise ne peut pas dépasser 100%.</small>
+            </div>
+          </div>
+
+          <!-- Total ligne (readonly) -->
+          <div class="lu-field">
+            <label class="lu-label" for="field_lineTotal">
+              <fa-icon icon="money-bill-wave" class="lu-label__icon"></fa-icon>
+              Total ligne (TND)
+            </label>
+            <input
+              type="number"
+              class="lu-input lu-input--readonly"
+              id="field_lineTotal"
+              data-cy="lineTotal"
+              name="lineTotal"
+              formControlName="lineTotal"
+              [readonly]="true"
+            />
+            <p class="lu-field__hint">Calculé automatiquement : Qté × Prix − Remise</p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Actions -->
+    <div class="lu-footer">
+      <button type="button" class="lu-btn lu-btn--ghost" (click)="previousState()" data-cy="entityCreateCancelButton">
+        <fa-icon icon="ban"></fa-icon>
+        Annuler
+      </button>
+      <button
+        type="submit"
+        id="save-entity"
+        data-cy="entityCreateSaveButton"
+        class="lu-btn lu-btn--primary"
+        [disabled]="editForm.invalid || isSaving"
+      >
+        <fa-icon [icon]="isSaving ? 'spinner' : 'save'" [spin]="isSaving"></fa-icon>
+        {{ isSaving ? 'Enregistrement…' : 'Enregistrer' }}
+      </button>
+    </div>
+
+  </form>
+
 </div>

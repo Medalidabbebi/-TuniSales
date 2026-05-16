@@ -14,6 +14,7 @@ import { OrderLineDeleteDialogComponent } from '../delete/order-line-delete-dial
 @Component({
   selector: 'jhi-order-line',
   templateUrl: './order-line.component.html',
+  styleUrls: ['./order-line.component.scss'],
 })
 export class OrderLineComponent implements OnInit {
   orderLines?: IOrderLine[];
@@ -69,6 +70,18 @@ export class OrderLineComponent implements OnInit {
 
   navigateToPage(page = this.page): void {
     this.handleNavigation(page, this.predicate, this.ascending);
+  }
+
+  getTotalValue(): number {
+    return (this.orderLines ?? []).reduce((sum, ol) => sum + (ol.lineTotal ?? 0), 0);
+  }
+
+  getTotalDiscount(): number {
+    return (this.orderLines ?? []).reduce((sum, ol) => {
+      const gross = (ol.quantity ?? 0) * (ol.unitPrice ?? 0);
+      const discountAmt = gross * ((ol.discountPct ?? 0) / 100);
+      return sum + discountAmt;
+    }, 0);
   }
 
   protected loadFromBackendWithRouteInformations(): Observable<EntityArrayResponseType> {

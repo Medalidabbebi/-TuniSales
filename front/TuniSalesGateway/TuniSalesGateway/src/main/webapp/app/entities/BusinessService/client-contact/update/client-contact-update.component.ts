@@ -14,6 +14,7 @@ import { ContactRole } from 'app/entities/enumerations/contact-role.model';
 @Component({
   selector: 'jhi-client-contact-update',
   templateUrl: './client-contact-update.component.html',
+  styleUrls: ['./client-contact-update.component.scss'],
 })
 export class ClientContactUpdateComponent implements OnInit {
   isSaving = false;
@@ -46,6 +47,26 @@ export class ClientContactUpdateComponent implements OnInit {
 
   previousState(): void {
     window.history.back();
+  }
+
+  // Helper methods
+  getRoleLabel(role: string | null | undefined): string {
+    switch (role) {
+      case 'BUYER':       return 'Acheteur';
+      case 'ACCOUNTING':  return 'Comptabilité';
+      case 'MANAGEMENT':  return 'Direction';
+      case 'TECHNICAL':   return 'Technique';
+      case 'OTHER':       return 'Autre';
+      default:            return role ?? '—';
+    }
+  }
+
+  getPageTitle(): string {
+    const fullName = this.editForm.get('fullName')?.value;
+    if (this.editForm.controls.id.value) {
+      return fullName ? `Modifier — ${fullName}` : 'Modifier le contact';
+    }
+    return 'Nouveau Contact';
   }
 
   save(): void {

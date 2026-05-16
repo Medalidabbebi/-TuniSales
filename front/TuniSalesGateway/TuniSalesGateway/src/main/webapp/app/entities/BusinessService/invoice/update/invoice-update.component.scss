@@ -1,123 +1,368 @@
-@import 'design-system';
+/* ===================================================
+   INVOICE UPDATE — self-contained SCSS (prefix: iu-)
+   Color theme: Purple #7c3aed / light #ede9fe
+   =================================================== */
 
-.tsg-form-page {
+/* ---------- Page shell ---------- */
+.iu-page {
+  padding: 1.75rem 1.5rem;
+  min-height: 100vh;
+  background: #faf9ff;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+.iu-shell {
+  max-width: 1100px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 1.5rem;
 }
 
-.tsg-form-shell {
+/* ---------- Header ---------- */
+.iu-header {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, #7c3aed 0%, #9333ea 100%);
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.28);
 }
 
-.tsg-form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-
-  @media (max-width: 991px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.tsg-form-grid--two {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-
-  @media (max-width: 575px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.tsg-form-card {
-  padding: 24px;
-  border-radius: $radius-lg;
-  background: $tsg-surface;
-  border: 1px solid $tsg-border-light;
-  box-shadow: $shadow-sm;
-  position: relative;
-
-  &--wide {
-    grid-column: 1 / -1;
-  }
-
-  &__header {
-    margin-bottom: 18px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid $tsg-border-light;
-
-    h2 {
-      margin: 0;
-      font-size: 18px;
-      color: $tsg-text;
-    }
-  }
-}
-
-.tsg-form-group {
+.iu-header__left {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 18px;
+  align-items: center;
+  gap: 1rem;
 }
 
-.tsg-input {
-  width: 100%;
-  min-height: 44px;
-  border-radius: $radius-md;
-  border: 1px solid $tsg-border;
-  background: $tsg-surface;
-  color: $tsg-text;
-  padding: 10px 14px;
-
-  &:focus {
-    outline: none;
-    border-color: $tsg-accent;
-    box-shadow: 0 0 0 3px rgba($tsg-accent, 0.14);
-  }
+.iu-header__icon-wrap {
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
 }
 
-.tsg-checkbox {
+.iu-header__icon {
+  color: #fff;
+}
+
+.iu-header__title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.iu-header__subtitle {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0;
+}
+
+.iu-header__actions {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+/* ---------- Buttons ---------- */
+.iu-btn {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
-  color: $tsg-text;
-  font-weight: $font-weight-medium;
+  gap: 0.45rem;
+  padding: 0.5rem 1.15rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.18s ease;
+  border: 1.5px solid transparent;
+  white-space: nowrap;
 }
 
-.tsg-field-error {
-  color: $tsg-danger;
-  font-size: $font-size-sm;
+.iu-btn--primary {
+  background: #fff;
+  color: #7c3aed;
+  border-color: #fff;
 }
 
-.tsg-page-header__subtitle {
-  margin: 6px 0 0;
+.iu-btn--primary:hover:not(:disabled) {
+  background: #ede9fe;
 }
 
-.tsg-summary-grid {
-  margin-top: -4px;
+.iu-btn--primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
-.tsg-summary-card {
-  position: relative;
+.iu-btn--ghost {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.iu-btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* ---------- Status strip ---------- */
+.iu-strip {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.4rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(124, 58, 237, 0.08);
+  border-left: 4px solid #7c3aed;
+}
+
+.iu-strip__item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.iu-strip__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+}
+
+.iu-strip__value {
+  font-size: 0.9rem;
+  color: #334155;
+  font-weight: 500;
+}
+
+.iu-strip__value--bold {
+  font-weight: 700;
+  font-size: 1rem;
+  color: #7c3aed;
+}
+
+.iu-strip__divider {
+  width: 1px;
+  height: 28px;
+  background: #e2e8f0;
+  flex-shrink: 0;
+}
+
+/* ---------- Status badge ---------- */
+.iu-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.22rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.iu-status--draft         { background: #f1f5f9; color: #64748b; }
+.iu-status--issued        { background: #e0e7ff; color: #4338ca; }
+.iu-status--partially-paid{ background: #fef3c7; color: #b45309; }
+.iu-status--paid          { background: #dcfce7; color: #15803d; }
+.iu-status--overdue       { background: #fee2e2; color: #b91c1c; }
+.iu-status--cancelled     { background: #f1f5f9; color: #94a3b8; }
+
+/* ---------- Card grid ---------- */
+.iu-card-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 860px) {
+  .iu-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Cards ---------- */
+.iu-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid #ede9fe;
+}
+
+.iu-card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.9rem;
+  border-bottom: 2px solid #ede9fe;
+}
+
+.iu-card__header-icon {
+  color: #7c3aed;
+  font-size: 1rem;
+}
+
+.iu-card__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  margin: 0;
+}
+
+/* ---------- Form groups ---------- */
+.iu-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 1rem;
+}
+
+.iu-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.iu-label__icon {
+  color: #7c3aed;
+  font-size: 0.75rem;
+}
+
+.iu-required {
+  color: #dc2626;
+}
+
+/* ---------- Inputs ---------- */
+.iu-input {
+  width: 100%;
+  min-height: 42px;
+  border-radius: 8px;
+  border: 1.5px solid #ddd6fe;
+  background: #faf9ff;
+  color: #1e293b;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.875rem;
+  transition: border-color 0.18s, box-shadow 0.18s;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.iu-input:focus {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.14);
+  background: #fff;
+}
+
+.iu-input[readonly] {
+  background: #f1f5f9;
+  color: #94a3b8;
+  cursor: default;
+}
+
+.iu-input--highlight {
+  font-weight: 700;
+  color: #7c3aed;
+  font-size: 1rem;
+}
+
+.iu-select {
+  cursor: pointer;
+  appearance: auto;
+}
+
+/* ---------- Input group (with addon) ---------- */
+.iu-input-group {
+  display: flex;
+  align-items: stretch;
+  border-radius: 8px;
   overflow: hidden;
+  border: 1.5px solid #ddd6fe;
+  background: #faf9ff;
+  transition: border-color 0.18s, box-shadow 0.18s;
+}
 
-  &::after {
-    content: '';
-    position: absolute;
-    inset-inline-end: -24px;
-    top: -24px;
-    width: 88px;
-    height: 88px;
-    border-radius: 50%;
-    background: rgba($tsg-accent, 0.06);
-  }
+.iu-input-group:focus-within {
+  border-color: #7c3aed;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.14);
+}
 
-  &__value {
-    position: relative;
-    z-index: 1;
+.iu-input-group .iu-input {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  flex: 1;
+  min-width: 0;
+}
+
+.iu-input-group .iu-input:focus {
+  box-shadow: none;
+  border: none;
+}
+
+.iu-input-addon {
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #7c3aed;
+  background: #ede9fe;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ---------- Two-col grid ---------- */
+.iu-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem;
+}
+
+@media (max-width: 520px) {
+  .iu-two-col {
+    grid-template-columns: 1fr;
   }
+}
+
+/* ---------- Checkbox ---------- */
+.iu-checkbox-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.iu-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: #7c3aed;
+  cursor: pointer;
+}
+
+.iu-checkbox-label {
+  font-size: 0.875rem;
+  color: #334155;
+  font-weight: 500;
+}
+
+/* ---------- Validation errors ---------- */
+.iu-field-error {
+  color: #dc2626;
+  font-size: 0.78rem;
+  margin-top: 2px;
 }

@@ -1,11 +1,11 @@
 // ============================================================
-// Price-List LIST — prefix: pl-
-// Theme: Green #16a34a / #dcfce7
+// Client-Contact LIST — prefix: cc-
+// Theme: Cyan #0891b2 / #e0f2fe
 // ============================================================
 
-$green: #16a34a;
-$green-light: #dcfce7;
-$green-mid: #4ade80;
+$cyan: #0891b2;
+$cyan-light: #e0f2fe;
+$cyan-mid: #67e8f9;
 $gray: #6b7280;
 $gray-light: #f3f4f6;
 $border: #e5e7eb;
@@ -15,14 +15,14 @@ $white: #ffffff;
 $radius: 12px;
 $shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 
-.pl-page {
+.cc-page {
   padding: 2rem 1.5rem;
   max-width: 1400px;
   margin: 0 auto;
 }
 
 // Header
-.pl-header {
+.cc-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -40,14 +40,14 @@ $shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
     width: 52px;
     height: 52px;
     border-radius: $radius;
-    background: linear-gradient(135deg, $green 0%, #15803d 100%);
+    background: linear-gradient(135deg, $cyan 0%, #0e7490 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     color: $white;
     font-size: 1.4rem;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.35);
+    box-shadow: 0 4px 12px rgba(8, 145, 178, 0.35);
   }
 
   &__title {
@@ -72,7 +72,7 @@ $shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 // Buttons
-.pl-btn {
+.cc-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -86,9 +86,9 @@ $shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   transition: all 0.15s;
 
   &--primary {
-    background: $green;
+    background: $cyan;
     color: $white;
-    &:hover { background: #15803d; color: $white; }
+    &:hover { background: #0e7490; color: $white; }
   }
 
   &--secondary {
@@ -101,16 +101,16 @@ $shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 // KPI Row
-.pl-kpi-row {
+.cc-kpi-row {
   display: flex;
   gap: 1rem;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
 }
 
-.pl-kpi-card {
-  flex: 1;
-  min-width: 160px;
+.cc-kpi-card {
+  flex: 0 0 auto;
+  min-width: 180px;
   background: $white;
   border: 1px solid $border;
   border-radius: $radius;
@@ -130,8 +130,7 @@ $shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
     font-size: 1.1rem;
     flex-shrink: 0;
 
-    &--green { background: $green-light; color: $green; }
-    &--gray  { background: $gray-light;  color: $gray; }
+    &--cyan { background: $cyan-light; color: $cyan; }
   }
 
   &__value {
@@ -140,8 +139,7 @@ $shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
     color: $text;
     line-height: 1;
 
-    &--green { color: $green; }
-    &--gray  { color: $gray; }
+    &--cyan { color: $cyan; }
   }
 
   &__label {
@@ -152,14 +150,14 @@ $shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 // Loading / Empty
-.pl-loading {
+.cc-loading {
   text-align: center;
   padding: 3rem 1rem;
   color: $text-muted;
   p { margin-top: 0.75rem; font-size: 0.9rem; }
 }
 
-.pl-empty {
+.cc-empty {
   background: $white;
   border: 1px solid $border;
   border-radius: $radius;
@@ -172,7 +170,7 @@ $shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 // Table
-.pl-table-card {
+.cc-table-card {
   background: $white;
   border: 1px solid $border;
   border-radius: $radius;
@@ -199,13 +197,13 @@ $shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   }
 
   tbody tr:last-child td { border-bottom: none; }
-  tbody tr:hover { background: #f0fdf4; }
+  tbody tr:hover { background: #ecfeff; }
 }
 
-.pl-sort-icon { color: #d1d5db; font-size: 0.75rem; }
+.cc-sort-icon { color: #d1d5db; font-size: 0.75rem; }
 
 // Avatar cell
-.pl-avatar-cell {
+.cc-avatar-cell {
   display: flex;
   align-items: center;
   gap: 0.65rem;
@@ -216,12 +214,12 @@ $shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   }
 }
 
-.pl-avatar {
+.cc-avatar {
   width: 34px;
   height: 34px;
-  border-radius: 8px;
-  background: $green-light;
-  color: $green;
+  border-radius: 50%;
+  background: $cyan-light;
+  color: $cyan;
   font-weight: 700;
   font-size: 0.85rem;
   display: flex;
@@ -230,50 +228,55 @@ $shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
 }
 
-// Price
-.pl-price {
-  font-weight: 700;
-  color: $green;
-  font-size: 0.9rem;
+// Email link
+.cc-email-link {
+  color: $cyan;
+  text-decoration: none;
+  font-size: 0.875rem;
+  &:hover { text-decoration: underline; }
 }
 
-// Discount badge
-.pl-discount-badge {
-  display: inline-flex;
-  align-items: center;
-  background: #fff7ed;
-  color: #ea580c;
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 0.2rem 0.55rem;
-  border-radius: 6px;
-}
-
-// Date
-.pl-date {
-  font-size: 0.82rem;
+// Client link
+.cc-client-link {
   color: $text-muted;
+  text-decoration: none;
+  font-size: 0.875rem;
+  &:hover { color: $cyan; }
 }
 
-// Status icons
-.pl-status-active {
-  color: $green;
-  font-size: 1.1rem;
+// Role badges
+.cc-role-badge {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &--blue   { background: #dbeafe; color: #1d4ed8; }
+  &--green  { background: #dcfce7; color: #15803d; }
+  &--indigo { background: #e0e7ff; color: #4338ca; }
+  &--teal   { background: #ccfbf1; color: #0f766e; }
+  &--gray   { background: #f3f4f6; color: #6b7280; }
 }
 
-.pl-status-inactive {
+// Star / primary
+.cc-star-icon {
+  color: #f59e0b;
+  font-size: 1rem;
+}
+
+.cc-no-star {
   color: #d1d5db;
-  font-size: 1.1rem;
 }
 
 // Actions
-.pl-actions {
+.cc-actions {
   display: flex;
   gap: 0.3rem;
   justify-content: flex-end;
 }
 
-.pl-action-btn {
+.cc-action-btn {
   width: 32px;
   height: 32px;
   border-radius: 7px;
@@ -288,12 +291,12 @@ $shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   transition: all 0.15s;
 
   &--view  { color: #0284c7; &:hover { background: #e0f2fe; border-color: #bae6fd; } }
-  &--edit  { color: $green;  &:hover { background: $green-light; border-color: $green-mid; } }
+  &--edit  { color: $cyan;   &:hover { background: $cyan-light; border-color: $cyan-mid; } }
   &--delete { color: #dc2626; &:hover { background: #fee2e2; border-color: #fca5a5; } }
 }
 
 // Pagination
-.pl-pagination {
+.cc-pagination {
   display: flex;
   justify-content: space-between;
   align-items: center;

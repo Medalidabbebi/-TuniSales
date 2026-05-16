@@ -1,150 +1,140 @@
-<div class="tsg-form-page">
-  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm" class="tsg-form-shell">
-    <div class="tsg-page-header">
-      <div>
-        <h1 class="tsg-page-header__title" id="jhi-price-list-heading" data-cy="PriceListCreateUpdateHeading" jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.home.createOrEditLabel">
-          Create or edit price list
-        </h1>
-        <p class="tsg-page-header__subtitle">Configure unit price, discount limits, validity window, and ownership.</p>
-      </div>
-      <div class="tsg-page-header__actions">
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="tsg-btn tsg-btn--secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>
-          <span jhiTranslate="entity.action.cancel">Cancel</span>
-        </button>
+<div class="pu-page">
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm" class="pu-form">
 
-        <button type="submit" id="save-entity" data-cy="entityCreateSaveButton" [disabled]="editForm.invalid || isSaving" class="tsg-btn tsg-btn--primary">
-          <fa-icon icon="save"></fa-icon>
-          <span jhiTranslate="entity.action.save">Save</span>
+    <!-- Header -->
+    <div class="pu-header">
+      <div class="pu-header__left">
+        <div class="pu-header__icon">
+          <fa-icon icon="tags"></fa-icon>
+        </div>
+        <div>
+          <h1 class="pu-header__title" id="jhi-price-list-heading" data-cy="PriceListCreateUpdateHeading">
+            {{ editForm.controls.id.value ? 'Modifier le Tarif' : 'Nouveau Tarif' }}
+          </h1>
+          <p class="pu-header__subtitle">{{ getPriceListSnapshotName() }}</p>
+        </div>
+      </div>
+      <div class="pu-header__actions">
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="pu-btn pu-btn--secondary" (click)="previousState()">
+          <fa-icon icon="arrow-left"></fa-icon>
+          Annuler
+        </button>
+        <button type="submit" id="save-entity" data-cy="entityCreateSaveButton" [disabled]="editForm.invalid || isSaving" class="pu-btn pu-btn--primary">
+          <fa-icon [icon]="isSaving ? 'spinner' : 'save'" [spin]="isSaving"></fa-icon>
+          Enregistrer
         </button>
       </div>
     </div>
 
     <jhi-alert-error></jhi-alert-error>
 
-    <div class="tsg-summary-grid">
-      <div class="tsg-summary-card">
-        <div class="tsg-summary-card__label">Assignment</div>
-        <div class="tsg-summary-card__value">{{ getPriceListSnapshotName() }}</div>
-        <div class="tsg-summary-card__meta">List ID {{ editForm.controls.id.value ?? 'New' }}</div>
-      </div>
-      <div class="tsg-summary-card">
-        <div class="tsg-summary-card__label">Unit price</div>
-        <div class="tsg-summary-card__value">{{ getAmount(editForm.get('unitPrice')?.value) }}</div>
-        <div class="tsg-summary-card__meta">Max discount {{ editForm.get('maxDiscountPct')?.value ?? '—' }}%</div>
-      </div>
-      <div class="tsg-summary-card">
-        <div class="tsg-summary-card__label">Status</div>
-        <div class="tsg-summary-card__value">
-          <span class="tsg-badge" [ngClass]="getStatusClass()">{{ editForm.get('isActive')?.value ? 'Active' : 'Inactive' }}</span>
-        </div>
-        <div class="tsg-summary-card__meta">Applied in pricing flow</div>
-      </div>
-      <div class="tsg-summary-card">
-        <div class="tsg-summary-card__label">Period</div>
-        <div class="tsg-summary-card__value">{{ editForm.get('validFrom')?.value ? 'Scheduled' : 'Draft' }}</div>
-        <div class="tsg-summary-card__meta">From {{ editForm.get('validFrom')?.value || '—' }}</div>
-      </div>
-    </div>
+    <!-- 2-card Grid -->
+    <div class="pu-grid">
 
-    <div class="tsg-form-grid">
-      <section class="tsg-form-card">
-        <div class="tsg-form-card__header">
-          <h2>Pricing</h2>
-        </div>
-
-        <div class="tsg-form-group" *ngIf="editForm.controls.id.value !== null">
-          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="tsg-input" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
-
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.unitPrice" for="field_unitPrice">Unit Price</label>
-          <input type="number" class="tsg-input" name="unitPrice" id="field_unitPrice" data-cy="unitPrice" formControlName="unitPrice" />
-          <div *ngIf="editForm.get('unitPrice')!.invalid && (editForm.get('unitPrice')!.dirty || editForm.get('unitPrice')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('unitPrice')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
-            <small class="tsg-field-error" *ngIf="editForm.get('unitPrice')?.errors?.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">This field must be greater than or equal to 0.</small>
-            <small class="tsg-field-error" [hidden]="!editForm.get('unitPrice')?.errors?.number" jhiTranslate="entity.validation.number">This field must be a number.</small>
+      <!-- Tarification -->
+      <section class="pu-card">
+        <div class="pu-card__header">
+          <div class="pu-card__header-icon">
+            <fa-icon icon="tags"></fa-icon>
           </div>
+          <h2>Tarification</h2>
         </div>
 
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.maxDiscountPct" for="field_maxDiscountPct">Max Discount Pct</label>
-          <input type="number" class="tsg-input" name="maxDiscountPct" id="field_maxDiscountPct" data-cy="maxDiscountPct" formControlName="maxDiscountPct" />
-          <div *ngIf="editForm.get('maxDiscountPct')!.invalid && (editForm.get('maxDiscountPct')!.dirty || editForm.get('maxDiscountPct')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('maxDiscountPct')?.errors?.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 0 }">This field must be greater than or equal to 0.</small>
-            <small class="tsg-field-error" *ngIf="editForm.get('maxDiscountPct')?.errors?.max" jhiTranslate="entity.validation.max" [translateValues]="{ max: 100 }">This field must be less than or equal to 100.</small>
-            <small class="tsg-field-error" [hidden]="!editForm.get('maxDiscountPct')?.errors?.number" jhiTranslate="entity.validation.number">This field must be a number.</small>
-          </div>
+        <div class="pu-form-group" *ngIf="editForm.controls.id.value !== null">
+          <label class="pu-label" for="field_id">ID</label>
+          <input type="number" class="pu-input" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
         </div>
 
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.createdAt" for="field_createdAt">Created At</label>
-          <input id="field_createdAt" data-cy="createdAt" type="datetime-local" class="tsg-input" name="createdAt" formControlName="createdAt" placeholder="YYYY-MM-DD HH:mm" />
-          <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('createdAt')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
-            <small class="tsg-field-error" [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal" jhiTranslate="entity.validation.datetimelocal">This field must be a date and time.</small>
-          </div>
-        </div>
-      </section>
-
-      <section class="tsg-form-card">
-        <div class="tsg-form-card__header">
-          <h2>Validity and ownership</h2>
-        </div>
-
-        <div class="tsg-form-grid--two">
-          <div class="tsg-form-group">
-            <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.validFrom" for="field_validFrom">Valid From</label>
-            <input id="field_validFrom" data-cy="validFrom" type="datetime-local" class="tsg-input" name="validFrom" formControlName="validFrom" placeholder="YYYY-MM-DD HH:mm" />
-            <div *ngIf="editForm.get('validFrom')!.invalid && (editForm.get('validFrom')!.dirty || editForm.get('validFrom')!.touched)">
-              <small class="tsg-field-error" *ngIf="editForm.get('validFrom')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
-              <small class="tsg-field-error" [hidden]="!editForm.get('validFrom')?.errors?.datetimelocal" jhiTranslate="entity.validation.datetimelocal">This field must be a date and time.</small>
-            </div>
-          </div>
-
-          <div class="tsg-form-group">
-            <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.validTo" for="field_validTo">Valid To</label>
-            <input id="field_validTo" data-cy="validTo" type="datetime-local" class="tsg-input" name="validTo" formControlName="validTo" placeholder="YYYY-MM-DD HH:mm" />
-            <div *ngIf="editForm.get('validTo')!.invalid && (editForm.get('validTo')!.dirty || editForm.get('validTo')!.touched)">
-              <small class="tsg-field-error" *ngIf="editForm.get('validTo')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
-              <small class="tsg-field-error" [hidden]="!editForm.get('validTo')?.errors?.datetimelocal" jhiTranslate="entity.validation.datetimelocal">This field must be a date and time.</small>
-            </div>
-          </div>
-        </div>
-
-        <div class="tsg-form-group">
-          <label class="tsg-checkbox" for="field_isActive">
-            <input type="checkbox" name="isActive" id="field_isActive" data-cy="isActive" formControlName="isActive" />
-            <span jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.isActive">Is Active</span>
-          </label>
-          <div *ngIf="editForm.get('isActive')!.invalid && (editForm.get('isActive')!.dirty || editForm.get('isActive')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('isActive')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
-          </div>
-        </div>
-
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.product" for="field_product">Product</label>
-          <select class="tsg-input" id="field_product" data-cy="product" name="product" formControlName="product" [compareWith]="compareProduct">
-            <option *ngIf="!editForm.get('product')!.value" [ngValue]="null" selected></option>
+        <div class="pu-form-group">
+          <label class="pu-label" for="field_product">Produit</label>
+          <select class="pu-input" id="field_product" data-cy="product" name="product" formControlName="product" [compareWith]="compareProduct">
+            <option *ngIf="!editForm.get('product')!.value" [ngValue]="null" selected>-- Sélectionner un produit --</option>
             <option [ngValue]="productOption" *ngFor="let productOption of productsSharedCollection">{{ productOption.name }}</option>
           </select>
           <div *ngIf="editForm.get(['product'])!.invalid && (editForm.get(['product'])!.dirty || editForm.get(['product'])!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get(['product'])?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
+            <small class="pu-error" *ngIf="editForm.get(['product'])?.errors?.required">Ce champ est obligatoire.</small>
           </div>
         </div>
 
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServicePriceList.client" for="field_client">Client</label>
-          <select class="tsg-input" id="field_client" data-cy="client" name="client" formControlName="client" [compareWith]="compareClient">
-            <option *ngIf="editForm.get(['client'])!.value == null" [ngValue]="null" selected></option>
+        <div class="pu-form-group">
+          <label class="pu-label" for="field_client">Client</label>
+          <select class="pu-input" id="field_client" data-cy="client" name="client" formControlName="client" [compareWith]="compareClient">
+            <option *ngIf="editForm.get(['client'])!.value == null" [ngValue]="null" selected>-- Sélectionner un client --</option>
             <option [ngValue]="clientOption" *ngFor="let clientOption of clientsSharedCollection">{{ clientOption.name }}</option>
           </select>
           <div *ngIf="editForm.get(['client'])!.invalid && (editForm.get(['client'])!.dirty || editForm.get(['client'])!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get(['client'])?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
+            <small class="pu-error" *ngIf="editForm.get(['client'])?.errors?.required">Ce champ est obligatoire.</small>
+          </div>
+        </div>
+
+        <div class="pu-form-group">
+          <label class="pu-label" for="field_unitPrice">Prix unitaire</label>
+          <input type="number" class="pu-input" name="unitPrice" id="field_unitPrice" data-cy="unitPrice" formControlName="unitPrice" />
+          <div *ngIf="editForm.get('unitPrice')!.invalid && (editForm.get('unitPrice')!.dirty || editForm.get('unitPrice')!.touched)">
+            <small class="pu-error" *ngIf="editForm.get('unitPrice')?.errors?.required">Ce champ est obligatoire.</small>
+            <small class="pu-error" *ngIf="editForm.get('unitPrice')?.errors?.min">La valeur doit être supérieure ou égale à 0.</small>
+            <small class="pu-error" [hidden]="!editForm.get('unitPrice')?.errors?.number">Ce champ doit être un nombre.</small>
+          </div>
+        </div>
+
+        <div class="pu-form-group">
+          <label class="pu-label" for="field_maxDiscountPct">Remise max (%)</label>
+          <input type="number" class="pu-input" name="maxDiscountPct" id="field_maxDiscountPct" data-cy="maxDiscountPct" formControlName="maxDiscountPct" />
+          <div *ngIf="editForm.get('maxDiscountPct')!.invalid && (editForm.get('maxDiscountPct')!.dirty || editForm.get('maxDiscountPct')!.touched)">
+            <small class="pu-error" *ngIf="editForm.get('maxDiscountPct')?.errors?.min">La valeur doit être supérieure ou égale à 0.</small>
+            <small class="pu-error" *ngIf="editForm.get('maxDiscountPct')?.errors?.max">La valeur doit être inférieure ou égale à 100.</small>
+            <small class="pu-error" [hidden]="!editForm.get('maxDiscountPct')?.errors?.number">Ce champ doit être un nombre.</small>
+          </div>
+        </div>
+
+        <div class="pu-form-group">
+          <label class="pu-checkbox-label" for="field_isActive">
+            <input type="checkbox" class="pu-checkbox" name="isActive" id="field_isActive" data-cy="isActive" formControlName="isActive" />
+            <span>Actif</span>
+          </label>
+          <div *ngIf="editForm.get('isActive')!.invalid && (editForm.get('isActive')!.dirty || editForm.get('isActive')!.touched)">
+            <small class="pu-error" *ngIf="editForm.get('isActive')?.errors?.required">Ce champ est obligatoire.</small>
           </div>
         </div>
       </section>
+
+      <!-- Validité -->
+      <section class="pu-card">
+        <div class="pu-card__header">
+          <div class="pu-card__header-icon">
+            <fa-icon icon="calendar-alt"></fa-icon>
+          </div>
+          <h2>Validité</h2>
+        </div>
+
+        <div class="pu-form-group">
+          <label class="pu-label" for="field_validFrom">Valide du</label>
+          <input id="field_validFrom" data-cy="validFrom" type="datetime-local" class="pu-input" name="validFrom" formControlName="validFrom" placeholder="YYYY-MM-DD HH:mm" />
+          <div *ngIf="editForm.get('validFrom')!.invalid && (editForm.get('validFrom')!.dirty || editForm.get('validFrom')!.touched)">
+            <small class="pu-error" *ngIf="editForm.get('validFrom')?.errors?.required">Ce champ est obligatoire.</small>
+            <small class="pu-error" [hidden]="!editForm.get('validFrom')?.errors?.datetimelocal">Ce champ doit être une date et une heure.</small>
+          </div>
+        </div>
+
+        <div class="pu-form-group">
+          <label class="pu-label" for="field_validTo">Valide au</label>
+          <input id="field_validTo" data-cy="validTo" type="datetime-local" class="pu-input" name="validTo" formControlName="validTo" placeholder="YYYY-MM-DD HH:mm" />
+          <div *ngIf="editForm.get('validTo')!.invalid && (editForm.get('validTo')!.dirty || editForm.get('validTo')!.touched)">
+            <small class="pu-error" *ngIf="editForm.get('validTo')?.errors?.required">Ce champ est obligatoire.</small>
+            <small class="pu-error" [hidden]="!editForm.get('validTo')?.errors?.datetimelocal">Ce champ doit être une date et une heure.</small>
+          </div>
+        </div>
+
+        <div class="pu-form-group">
+          <label class="pu-label" for="field_createdAt">Créé le</label>
+          <input id="field_createdAt" data-cy="createdAt" type="datetime-local" class="pu-input" name="createdAt" formControlName="createdAt" placeholder="YYYY-MM-DD HH:mm" />
+          <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
+            <small class="pu-error" *ngIf="editForm.get('createdAt')?.errors?.required">Ce champ est obligatoire.</small>
+            <small class="pu-error" [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal">Ce champ doit être une date et une heure.</small>
+          </div>
+        </div>
+      </section>
+
     </div>
   </form>
 </div>

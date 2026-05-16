@@ -1,21 +1,23 @@
-<div class="container-fluid py-4">
+<div class="dv-page">
 
-  <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-    <div>
-      <h2 class="mb-0 fw-bold">
-        <fa-icon icon="truck" class="me-2 text-primary"></fa-icon>
-        Gestion des Livraisons
-      </h2>
-      <small class="text-muted">Liste des livraisons — {{ totalItems }} livraison(s) au total</small>
+  <!-- ── Header ──────────────────────────────────────────────────────── -->
+  <div class="dv-header">
+    <div class="dv-header__left">
+      <div class="dv-header__icon">
+        <fa-icon icon="truck"></fa-icon>
+      </div>
+      <div>
+        <h1 class="dv-header__title">Gestion des Livraisons</h1>
+        <p class="dv-header__sub">{{ totalItems }} livraison(s) au total</p>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+    <div class="dv-header__actions">
+      <button class="dv-btn dv-btn--outline" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
-      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/delivery/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
+      <a class="dv-btn dv-btn--primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/delivery/new']">
+        <fa-icon icon="plus"></fa-icon>
         Nouvelle Livraison
       </a>
     </div>
@@ -24,71 +26,129 @@
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
-  <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+  <!-- ── KPI Cards ────────────────────────────────────────────────────── -->
+  <div class="dv-kpi-grid">
+    <div class="dv-kpi dv-kpi--teal">
+      <div class="dv-kpi__icon"><fa-icon icon="truck"></fa-icon></div>
+      <div>
+        <div class="dv-kpi__value">{{ totalItems }}</div>
+        <div class="dv-kpi__label">Total</div>
+      </div>
+    </div>
+    <div class="dv-kpi dv-kpi--amber">
+      <div class="dv-kpi__icon"><fa-icon icon="clock"></fa-icon></div>
+      <div>
+        <div class="dv-kpi__value">{{ countByStatus('PENDING') }}</div>
+        <div class="dv-kpi__label">En attente</div>
+      </div>
+    </div>
+    <div class="dv-kpi dv-kpi--blue">
+      <div class="dv-kpi__icon"><fa-icon icon="truck"></fa-icon></div>
+      <div>
+        <div class="dv-kpi__value">{{ countByStatus('SHIPPED') }}</div>
+        <div class="dv-kpi__label">Expédiées</div>
+      </div>
+    </div>
+    <div class="dv-kpi dv-kpi--green">
+      <div class="dv-kpi__icon"><fa-icon icon="check-circle"></fa-icon></div>
+      <div>
+        <div class="dv-kpi__value">{{ countByStatus('DELIVERED') }}</div>
+        <div class="dv-kpi__label">Livrées</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && deliveries?.length === 0">
-    <fa-icon icon="truck" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucune livraison trouvée. Créez votre première livraison.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/delivery/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <!-- ── Loading ──────────────────────────────────────────────────────── -->
+  <div class="dv-empty-state" *ngIf="isLoading">
+    <fa-icon icon="sync" [spin]="true" class="dv-empty-state__icon"></fa-icon>
+    <p class="dv-empty-state__text">Chargement en cours...</p>
+  </div>
+
+  <!-- ── Empty ────────────────────────────────────────────────────────── -->
+  <div class="dv-empty-state" *ngIf="!isLoading && deliveries?.length === 0">
+    <fa-icon icon="truck" class="dv-empty-state__icon"></fa-icon>
+    <p class="dv-empty-state__text">Aucune livraison trouvée.</p>
+    <a class="dv-btn dv-btn--primary" [routerLink]="['/delivery/new']">
+      <fa-icon icon="plus"></fa-icon> Ajouter une livraison
     </a>
   </div>
 
-  <!-- Table -->
-  <div class="card shadow-sm" *ngIf="!isLoading && deliveries && deliveries.length > 0">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
-        <thead class="table-light">
+  <!-- ── Table ────────────────────────────────────────────────────────── -->
+  <div class="dv-card" *ngIf="!isLoading && deliveries && deliveries.length > 0">
+    <div class="dv-table-wrap">
+      <table class="dv-table" aria-describedby="page-heading">
+        <thead>
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
             <th scope="col" jhiSortBy="deliveryNumber">
-              <div class="d-flex align-items-center gap-1">Référence <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              <div class="dv-th-inner">N° Livraison <fa-icon icon="sort" class="dv-sort-icon"></fa-icon></div>
+            </th>
+            <th scope="col">
+              <div class="dv-th-inner">N° Suivi</div>
             </th>
             <th scope="col" jhiSortBy="order.orderNumber">
-              <div class="d-flex align-items-center gap-1">Commande <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              <div class="dv-th-inner">Commande liée <fa-icon icon="sort" class="dv-sort-icon"></fa-icon></div>
             </th>
-            <th scope="col" jhiSortBy="status" style="width:130px">
-              <div class="d-flex align-items-center gap-1">Statut <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th scope="col" jhiSortBy="status">
+              <div class="dv-th-inner">Statut <fa-icon icon="sort" class="dv-sort-icon"></fa-icon></div>
+            </th>
+            <th scope="col" jhiSortBy="shippedAt">
+              <div class="dv-th-inner">Expédiée le <fa-icon icon="sort" class="dv-sort-icon"></fa-icon></div>
             </th>
             <th scope="col" jhiSortBy="deliveredAt">
-              <div class="d-flex align-items-center gap-1">Date livraison <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              <div class="dv-th-inner">Livrée le <fa-icon icon="sort" class="dv-sort-icon"></fa-icon></div>
             </th>
-            <th scope="col" style="width:140px"></th>
+            <th scope="col" class="dv-th-actions"></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let delivery of deliveries; trackBy: trackId" data-cy="entityTable">
-            <td class="fw-semibold">{{ delivery.deliveryNumber || '—' }}</td>
+            <!-- N° Livraison -->
             <td>
-              <a *ngIf="delivery.order" [routerLink]="['/order', delivery.order.id, 'view']" class="text-decoration-none">{{ delivery.order.orderNumber }}</a>
-              <span *ngIf="!delivery.order" class="text-muted fst-italic">—</span>
+              <div class="dv-ref-cell">
+                <div class="dv-avatar">{{ getDeliveryAvatar(delivery) }}</div>
+                <span class="dv-ref-cell__text">{{ delivery.deliveryNumber || '—' }}</span>
+              </div>
             </td>
+            <!-- N° Suivi -->
             <td>
-              <span class="badge rounded-pill"
-                [ngClass]="{
-                  'bg-success': delivery.status === 'DELIVERED',
-                  'bg-info': delivery.status === 'SHIPPED',
-                  'bg-warning text-dark': delivery.status === 'PENDING',
-                  'bg-secondary': delivery.status !== 'DELIVERED' && delivery.status !== 'SHIPPED' && delivery.status !== 'PENDING'
-                }">
-                {{ delivery.status }}
+              <span class="dv-tracking" *ngIf="delivery.trackingNumber">{{ delivery.trackingNumber }}</span>
+              <span class="dv-muted" *ngIf="!delivery.trackingNumber">—</span>
+            </td>
+            <!-- Commande -->
+            <td>
+              <a *ngIf="delivery.order" [routerLink]="['/order', delivery.order.id, 'view']" class="dv-order-link">
+                <fa-icon icon="shopping-cart" class="me-1"></fa-icon>{{ delivery.order.orderNumber }}
+              </a>
+              <span *ngIf="!delivery.order" class="dv-muted">—</span>
+            </td>
+            <!-- Statut -->
+            <td>
+              <span class="dl-badge" [ngClass]="getStatusClass(delivery.status)">
+                <span class="dl-badge__dot"></span>
+                {{ getStatusLabel(delivery.status) }}
               </span>
             </td>
-            <td><span class="text-muted small">{{ delivery.deliveredAt | formatMediumDatetime }}</span></td>
+            <!-- Expédiée le -->
             <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/delivery', delivery.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+              <span class="dv-date" *ngIf="delivery.shippedAt">{{ delivery.shippedAt | formatMediumDatetime }}</span>
+              <span class="dv-muted" *ngIf="!delivery.shippedAt">—</span>
+            </td>
+            <!-- Livrée le -->
+            <td>
+              <span class="dv-date" *ngIf="delivery.deliveredAt">{{ delivery.deliveredAt | formatMediumDatetime }}</span>
+              <span class="dv-muted" *ngIf="!delivery.deliveredAt">—</span>
+            </td>
+            <!-- Actions -->
+            <td>
+              <div class="dv-actions">
+                <a [routerLink]="['/delivery', delivery.id, 'view']" class="dv-action-btn dv-action-btn--view" data-cy="entityDetailsButton" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/delivery', delivery.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                <a [routerLink]="['/delivery', delivery.id, 'edit']" class="dv-action-btn dv-action-btn--edit" data-cy="entityEditButton" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(delivery)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
-                  <fa-icon icon="times"></fa-icon>
+                <button (click)="delete(delivery)" class="dv-action-btn dv-action-btn--delete" data-cy="entityDeleteButton" title="Supprimer">
+                  <fa-icon icon="trash"></fa-icon>
                 </button>
               </div>
             </td>
@@ -98,8 +158,8 @@
     </div>
   </div>
 
-  <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="deliveries && deliveries.length > 0">
+  <!-- ── Pagination ───────────────────────────────────────────────────── -->
+  <div class="dv-pagination" *ngIf="deliveries && deliveries.length > 0">
     <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
     <ngb-pagination
       [collectionSize]="totalItems"

@@ -1,62 +1,178 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <div *ngIf="orderLine">
-      <h2 data-cy="orderLineDetailsHeading">
-        <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.detail.title">Order Line</span>
-      </h2>
+<div class="ld-page container-fluid py-4" *ngIf="orderLine">
 
-      <hr />
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
 
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ orderLine.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.quantity">Quantity</span></dt>
-        <dd>
-          <span>{{ orderLine.quantity }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.unitPrice">Unit Price</span></dt>
-        <dd>
-          <span>{{ orderLine.unitPrice }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.discountPct">Discount Pct</span></dt>
-        <dd>
-          <span>{{ orderLine.discountPct }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.lineTotal">Line Total</span></dt>
-        <dd>
-          <span>{{ orderLine.lineTotal }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.createdAt">Created At</span></dt>
-        <dd>
-          <span>{{ orderLine.createdAt | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.product">Product</span></dt>
-        <dd>
-          <div *ngIf="orderLine.product">
-            <a [routerLink]="['/product', orderLine.product.id, 'view']">{{ orderLine.product.name }}</a>
-          </div>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceOrderLine.order">Order</span></dt>
-        <dd>
-          <div *ngIf="orderLine.order">
-            <a [routerLink]="['/order', orderLine.order.id, 'view']">{{ orderLine.order.orderNumber }}</a>
-          </div>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+  <!-- Header -->
+  <div class="ld-header">
+    <div class="ld-header__left">
+      <div class="ld-header__icon">
+        <fa-icon icon="list-ol"></fa-icon>
+      </div>
+      <div>
+        <h2 class="ld-header__title" data-cy="orderLineDetailsHeading">
+          {{ orderLine.product?.name ?? 'Ligne' }}
+          <span class="ld-header__sep">×</span>
+          {{ orderLine.quantity }}
+        </h2>
+        <p class="ld-header__sub">
+          <fa-icon icon="shopping-cart" class="me-1"></fa-icon>
+          <a *ngIf="orderLine.order"
+             [routerLink]="['/order', orderLine.order.id, 'view']"
+             class="ld-order-link">
+            {{ orderLine.order.orderNumber }}
+          </a>
+          <span *ngIf="!orderLine.order" class="ld-muted">Commande inconnue</span>
+        </p>
+      </div>
+    </div>
+    <div class="ld-header__actions">
+      <button class="ld-btn ld-btn--ghost" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        Retour
       </button>
-
-      <button type="button" [routerLink]="['/order-line', orderLine.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
-      </button>
+      <a class="ld-btn ld-btn--primary" [routerLink]="['/order-line', orderLine.id, 'edit']">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        Modifier
+      </a>
     </div>
   </div>
+
+  <!-- KPI row -->
+  <div class="ld-kpi-row">
+    <div class="ld-kpi ld-kpi--blue">
+      <div class="ld-kpi__icon"><fa-icon icon="box"></fa-icon></div>
+      <div>
+        <div class="ld-kpi__value">{{ orderLine.quantity }}</div>
+        <div class="ld-kpi__label">Quantité</div>
+      </div>
+    </div>
+    <div class="ld-kpi ld-kpi--teal">
+      <div class="ld-kpi__icon"><fa-icon icon="money-bill-wave"></fa-icon></div>
+      <div>
+        <div class="ld-kpi__value">{{ orderLine.unitPrice | number:'1.2-2' }}</div>
+        <div class="ld-kpi__label">Prix unitaire (TND)</div>
+      </div>
+    </div>
+    <div class="ld-kpi ld-kpi--orange">
+      <div class="ld-kpi__icon"><fa-icon icon="percent"></fa-icon></div>
+      <div>
+        <div class="ld-kpi__value">{{ orderLine.discountPct ?? 0 | number:'1.1-1' }}%</div>
+        <div class="ld-kpi__label">Remise</div>
+      </div>
+    </div>
+    <div class="ld-kpi ld-kpi--green">
+      <div class="ld-kpi__icon"><fa-icon icon="money-bill-wave"></fa-icon></div>
+      <div>
+        <div class="ld-kpi__value ld-kpi__value--green">{{ orderLine.lineTotal | number:'1.2-2' }}</div>
+        <div class="ld-kpi__label">Total ligne (TND)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two-column grid -->
+  <div class="ld-grid">
+
+    <!-- Card: Détails -->
+    <div class="ld-card">
+      <div class="ld-card__header">
+        <fa-icon icon="list-ol" class="ld-card__header-icon"></fa-icon>
+        Détails
+      </div>
+      <div class="ld-info-list">
+        <div class="ld-info-row">
+          <span class="ld-info-row__label">Produit</span>
+          <a *ngIf="orderLine.product"
+             [routerLink]="['/product', orderLine.product.id, 'view']"
+             class="ld-info-row__value ld-info-row__value--link">
+            {{ orderLine.product.name }}
+          </a>
+          <span *ngIf="!orderLine.product" class="ld-info-row__value ld-muted">—</span>
+        </div>
+        <div class="ld-info-row">
+          <span class="ld-info-row__label">Commande</span>
+          <a *ngIf="orderLine.order"
+             [routerLink]="['/order', orderLine.order.id, 'view']"
+             class="ld-info-row__value ld-info-row__value--link">
+            {{ orderLine.order.orderNumber }}
+          </a>
+          <span *ngIf="!orderLine.order" class="ld-info-row__value ld-muted">—</span>
+        </div>
+        <div class="ld-info-row">
+          <span class="ld-info-row__label">Quantité</span>
+          <span class="ld-info-row__value">{{ orderLine.quantity }}</span>
+        </div>
+        <div class="ld-info-row">
+          <span class="ld-info-row__label">Prix unitaire</span>
+          <span class="ld-info-row__value">{{ orderLine.unitPrice | number:'1.2-2' }} TND</span>
+        </div>
+        <div class="ld-info-row">
+          <span class="ld-info-row__label">Remise</span>
+          <span class="ld-info-row__value">{{ orderLine.discountPct ?? 0 | number:'1.1-1' }} %</span>
+        </div>
+        <div class="ld-info-row">
+          <span class="ld-info-row__label">Total ligne</span>
+          <span class="ld-info-row__value ld-info-row__value--total">{{ orderLine.lineTotal | number:'1.2-2' }} TND</span>
+        </div>
+        <div class="ld-info-row" *ngIf="orderLine.createdAt">
+          <span class="ld-info-row__label">Créé le</span>
+          <span class="ld-info-row__value">{{ orderLine.createdAt | formatMediumDatetime }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card: Calcul -->
+    <div class="ld-card">
+      <div class="ld-card__header">
+        <fa-icon icon="money-bill-wave" class="ld-card__header-icon"></fa-icon>
+        Calcul du total
+      </div>
+      <div class="ld-calc">
+        <div class="ld-calc__row">
+          <div class="ld-calc__step ld-calc__step--blue">
+            <div class="ld-calc__step-icon"><fa-icon icon="box"></fa-icon></div>
+            <div class="ld-calc__step-label">Quantité</div>
+            <div class="ld-calc__step-value">{{ orderLine.quantity }}</div>
+          </div>
+          <div class="ld-calc__op">×</div>
+          <div class="ld-calc__step ld-calc__step--teal">
+            <div class="ld-calc__step-icon"><fa-icon icon="money-bill-wave"></fa-icon></div>
+            <div class="ld-calc__step-label">Prix unitaire</div>
+            <div class="ld-calc__step-value">{{ orderLine.unitPrice | number:'1.2-2' }}</div>
+          </div>
+        </div>
+        <div class="ld-calc__arrow">↓</div>
+        <div class="ld-calc__row">
+          <div class="ld-calc__gross">
+            <span class="ld-calc__gross-label">Montant brut</span>
+            <span class="ld-calc__gross-value">
+              {{ (orderLine.quantity ?? 0) * (orderLine.unitPrice ?? 0) | number:'1.2-2' }} TND
+            </span>
+          </div>
+        </div>
+        <div class="ld-calc__arrow" *ngIf="orderLine.discountPct">−</div>
+        <div class="ld-calc__row" *ngIf="orderLine.discountPct">
+          <div class="ld-calc__step ld-calc__step--orange">
+            <div class="ld-calc__step-icon"><fa-icon icon="percent"></fa-icon></div>
+            <div class="ld-calc__step-label">Remise</div>
+            <div class="ld-calc__step-value">{{ orderLine.discountPct | number:'1.1-1' }}%</div>
+          </div>
+          <div class="ld-calc__op">=</div>
+          <div class="ld-calc__step ld-calc__step--orange-light">
+            <div class="ld-calc__step-icon"><fa-icon icon="money-bill-wave"></fa-icon></div>
+            <div class="ld-calc__step-label">Remise (TND)</div>
+            <div class="ld-calc__step-value">
+              -{{ ((orderLine.quantity ?? 0) * (orderLine.unitPrice ?? 0) * ((orderLine.discountPct ?? 0) / 100)) | number:'1.2-2' }}
+            </div>
+          </div>
+        </div>
+        <div class="ld-calc__total">
+          <div class="ld-calc__total-label">Total ligne</div>
+          <div class="ld-calc__total-value">{{ orderLine.lineTotal | number:'1.2-2' }} TND</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </div>

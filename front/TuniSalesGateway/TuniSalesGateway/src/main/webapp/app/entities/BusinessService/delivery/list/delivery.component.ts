@@ -108,15 +108,33 @@ export class DeliveryComponent implements OnInit {
     return this.deliveries?.filter(delivery => delivery.status === status).length ?? 0;
   }
 
-  getStatusBadgeClass(status: DeliveryStatus | null | undefined): string {
+  /** Count by string status key (used in template) */
+  countByStatus(status: string): number {
+    return this.deliveries?.filter(d => d.status === status).length ?? 0;
+  }
+
+  /** Returns dl-badge--* modifier class for list status badge */
+  getStatusClass(status: DeliveryStatus | null | undefined): string {
     const map: Record<string, string> = {
-      PENDING: 'tsg-badge--pending',
-      IN_PREPARATION: 'tsg-badge--warning',
-      SHIPPED: 'tsg-badge--issued',
-      DELIVERED: 'tsg-badge--success',
-      FAILED: 'tsg-badge--danger',
+      PENDING:        'dl-badge--pending',
+      IN_PREPARATION: 'dl-badge--preparation',
+      SHIPPED:        'dl-badge--shipped',
+      DELIVERED:      'dl-badge--delivered',
+      FAILED:         'dl-badge--failed',
     };
-    return map[status || ''] || 'tsg-badge--neutral';
+    return map[status || ''] || 'dl-badge--neutral';
+  }
+
+  /** Returns French label for a DeliveryStatus */
+  getStatusLabel(status: DeliveryStatus | null | undefined): string {
+    const map: Record<string, string> = {
+      PENDING:        'En attente',
+      IN_PREPARATION: 'En préparation',
+      SHIPPED:        'Expédiée',
+      DELIVERED:      'Livrée',
+      FAILED:         'Échouée',
+    };
+    return map[status || ''] || (status ?? '—');
   }
 
   getDeliveryAvatar(delivery: IDelivery): string {

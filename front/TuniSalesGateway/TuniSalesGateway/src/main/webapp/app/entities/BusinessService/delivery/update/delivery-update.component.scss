@@ -1,0 +1,202 @@
+// ── Variables ─────────────────────────────────────────────────────────────
+$du-teal:    #0e7490;
+$du-teal-l:  #cffafe;
+$du-teal-d:  #0c4a6e;
+$du-blue:    #2563eb;
+$du-blue-l:  #dbeafe;
+$du-green:   #16a34a;
+$du-grn-l:   #dcfce7;
+$du-amber:   #d97706;
+$du-amb-l:   #fef3c7;
+$du-indigo:  #4f46e5;
+$du-ind-l:   #e0e7ff;
+$du-red:     #dc2626;
+$du-red-l:   #fee2e2;
+$du-gray:    #64748b;
+$du-border:  #e2e8f0;
+$du-bg:      #f8fafc;
+$du-white:   #ffffff;
+$du-text:    #0f172a;
+$du-muted:   #64748b;
+$du-shadow:  0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$du-radius:  12px;
+
+// ── Page ──────────────────────────────────────────────────────────────────
+.du-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────
+.du-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  &__left  { display: flex; align-items: center; gap: .9rem; }
+  &__icon  {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, $du-teal, $du-teal-d);
+    color: #fff; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba($du-teal, .3);
+  }
+  &__title { margin: 0; font-size: 1.45rem; font-weight: 800; color: $du-text; }
+  &__sub   { margin: .2rem 0 0; font-size: .85rem; color: $du-muted; }
+}
+
+.du-back-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1.5px solid $du-border; background: $du-white;
+  color: $du-muted; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: .9rem; transition: all .15s; flex-shrink: 0;
+  &:hover { border-color: $du-teal; color: $du-teal; background: $du-teal-l; }
+}
+
+// ── Status Strip ──────────────────────────────────────────────────────────
+.du-status-strip {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: .75rem;
+  background: $du-white;
+  border: 1px solid $du-border;
+  border-radius: $du-radius;
+  padding: .85rem 1.25rem;
+  box-shadow: $du-shadow;
+
+  &__left  { display: flex; align-items: center; gap: .65rem; }
+  &__right { display: flex; align-items: center; gap: .5rem; }
+  &__track-icon { color: $du-muted; font-size: .85rem; }
+  &__track-num  { font-family: monospace; font-size: .85rem; color: $du-teal;
+    background: $du-teal-l; padding: .2rem .55rem; border-radius: 5px;
+    border: 1px solid rgba($du-teal, .2); }
+}
+
+// ── Status Badge ──────────────────────────────────────────────────────────
+.du-status-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .75rem; border-radius: 999px;
+  font-size: .78rem; font-weight: 700;
+
+  &__dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+}
+.du-status--pending     { background: $du-amb-l; color: darken($du-amber, 10%);
+  .du-status-badge__dot { background: $du-amber; } }
+.du-status--preparation { background: $du-blue-l; color: darken($du-blue, 10%);
+  .du-status-badge__dot { background: $du-blue; } }
+.du-status--shipped     { background: $du-ind-l; color: darken($du-indigo, 10%);
+  .du-status-badge__dot { background: $du-indigo; } }
+.du-status--delivered   { background: $du-grn-l; color: darken($du-green, 10%);
+  .du-status-badge__dot { background: $du-green; } }
+.du-status--failed      { background: $du-red-l; color: darken($du-red, 10%);
+  .du-status-badge__dot { background: $du-red; } }
+.du-status--neutral     { background: #f1f5f9; color: $du-gray;
+  .du-status-badge__dot { background: #94a3b8; } }
+
+// ── Grid ──────────────────────────────────────────────────────────────────
+.du-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+
+  @media (max-width: 991px) { grid-template-columns: 1fr; }
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────
+.du-card {
+  background: $du-white;
+  border: 1px solid $du-border;
+  border-radius: $du-radius;
+  box-shadow: $du-shadow;
+  overflow: hidden;
+
+  &__head {
+    display: flex; align-items: center; gap: .85rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid $du-border;
+    background: $du-bg;
+  }
+  &__head-icon {
+    width: 38px; height: 38px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+    &--teal { background: $du-teal-l; color: $du-teal; }
+  }
+  &__title { font-size: .95rem; font-weight: 700; color: $du-text; }
+  &__sub   { font-size: .78rem; color: $du-muted; margin-top: .1rem; }
+  &__body  { padding: 1.25rem; display: flex; flex-direction: column; gap: 0; }
+}
+
+// ── Field ─────────────────────────────────────────────────────────────────
+.du-field {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  margin-bottom: 1.1rem;
+  &:last-child { margin-bottom: 0; }
+}
+
+.du-label {
+  font-size: .82rem; font-weight: 600; color: $du-muted;
+  text-transform: uppercase; letter-spacing: .04em;
+}
+
+.du-input {
+  width: 100%;
+  padding: .6rem .9rem;
+  border: 1.5px solid $du-border;
+  border-radius: 8px;
+  background: $du-white;
+  color: $du-text;
+  font-size: .9rem;
+  transition: border-color .15s, box-shadow .15s;
+  appearance: none;
+
+  &:focus {
+    outline: none;
+    border-color: $du-teal;
+    box-shadow: 0 0 0 3px rgba($du-teal, .12);
+  }
+
+  &--mono { font-family: monospace; }
+  &--textarea { resize: vertical; min-height: 80px; }
+}
+
+.du-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .75rem center;
+  padding-right: 2rem;
+}
+
+.du-field-errors { margin-top: .25rem; }
+.du-error { font-size: .78rem; color: $du-red; display: block; }
+
+// ── Footer ────────────────────────────────────────────────────────────────
+.du-footer {
+  display: flex; align-items: center; justify-content: flex-end; gap: .75rem;
+  flex-wrap: wrap;
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────
+.du-btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .6rem 1.25rem;
+  border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .15s;
+  text-decoration: none;
+
+  &--save {
+    background: $du-teal; color: #fff; border-color: $du-teal;
+    &:hover:not(:disabled) { background: darken($du-teal, 6%); box-shadow: 0 3px 10px rgba($du-teal, .3); }
+    &:disabled { opacity: .55; cursor: not-allowed; }
+  }
+  &--cancel {
+    background: $du-white; color: $du-gray; border-color: $du-border;
+    &:hover { border-color: $du-teal; color: $du-teal; }
+  }
+}

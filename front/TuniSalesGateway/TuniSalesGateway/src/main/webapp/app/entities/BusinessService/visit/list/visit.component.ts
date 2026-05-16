@@ -114,6 +114,59 @@ export class VisitComponent implements OnInit {
     return source.charAt(0).toUpperCase();
   }
 
+  /** Returns the vl-badge--* CSS class for the status badge dot */
+  getStatusClass(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      PLANNED:     'vl-badge--planned',
+      IN_PROGRESS: 'vl-badge--progress',
+      COMPLETED:   'vl-badge--completed',
+      MISSED:      'vl-badge--missed',
+      CANCELLED:   'vl-badge--cancelled',
+    };
+    return map[status ?? ''] || 'vl-badge--cancelled';
+  }
+
+  /** Returns the French label for a visit status */
+  getStatusLabelFr(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      PLANNED:     'Planifiée',
+      IN_PROGRESS: 'En cours',
+      COMPLETED:   'Terminée',
+      MISSED:      'Manquée',
+      CANCELLED:   'Annulée',
+    };
+    return map[status ?? ''] || 'Inconnu';
+  }
+
+  /** Returns the vl-obj--* CSS class for the objective badge */
+  getObjectiveClass(objective: string | null | undefined): string {
+    const map: Record<string, string> = {
+      SALE:        'vl-obj--sale',
+      PROSPECTING: 'vl-obj--prospecting',
+      AUDIT:       'vl-obj--audit',
+      COLLECTION:  'vl-obj--collection',
+      SUPPORT:     'vl-obj--support',
+    };
+    return map[objective ?? ''] || 'vl-obj--sale';
+  }
+
+  /** Returns the French label for a visit objective */
+  getObjectiveLabelFr(objective: string | null | undefined): string {
+    const map: Record<string, string> = {
+      SALE:        'Vente',
+      PROSPECTING: 'Prospection',
+      AUDIT:       'Audit',
+      COLLECTION:  'Recouvrement',
+      SUPPORT:     'Support',
+    };
+    return map[objective ?? ''] || 'Inconnu';
+  }
+
+  /** Counts visits whose status is in the given array */
+  countByStatuses(statuses: string[]): number {
+    return this.visits?.filter(v => statuses.includes(v.status ?? '')).length ?? 0;
+  }
+
   protected loadFromBackendWithRouteInformations(): Observable<EntityArrayResponseType> {
     return combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data]).pipe(
       tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),

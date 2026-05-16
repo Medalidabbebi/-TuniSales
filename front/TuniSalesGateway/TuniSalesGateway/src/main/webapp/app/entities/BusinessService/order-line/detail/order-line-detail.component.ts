@@ -6,6 +6,7 @@ import { IOrderLine } from '../order-line.model';
 @Component({
   selector: 'jhi-order-line-detail',
   templateUrl: './order-line-detail.component.html',
+  styleUrls: ['./order-line-detail.component.scss'],
 })
 export class OrderLineDetailComponent implements OnInit {
   orderLine: IOrderLine | null = null;

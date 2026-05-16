@@ -1,0 +1,406 @@
+// ── Variables ──────────────────────────────────────────────────────
+$ll-blue:    #2563eb;
+$ll-green:   #16a34a;
+$ll-teal:    #0e7490;
+$ll-orange:  #d97706;
+$ll-red:     #dc2626;
+$ll-slate:   #475569;
+$ll-gray:    #64748b;
+$ll-border:  #e2e8f0;
+$ll-bg:      #f8fafc;
+$ll-white:   #ffffff;
+$ll-text:    #0f172a;
+$ll-muted:   #64748b;
+$ll-shadow:  0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$ll-radius:  12px;
+
+// ── Page ──────────────────────────────────────────────────────────
+.ll-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// ── Header ────────────────────────────────────────────────────────
+.ll-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, $ll-blue, #1d4ed8);
+    color: #fff;
+    border-radius: $ll-radius;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, .3);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: $ll-text;
+    line-height: 1.2;
+  }
+
+  &__sub {
+    margin: .2rem 0 0;
+    color: $ll-muted;
+    font-size: .88rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────
+.ll-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .55rem 1.1rem;
+  border-radius: 8px;
+  border: 1.5px solid transparent;
+  font-size: .9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  line-height: 1.5;
+  text-decoration: none;
+
+  &--primary {
+    background: $ll-blue;
+    color: #fff;
+    border-color: $ll-blue;
+    &:hover:not([disabled]) {
+      background: #1d4ed8;
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(37,99,235,.3);
+    }
+  }
+  &--ghost {
+    background: $ll-white;
+    color: $ll-text;
+    border-color: $ll-border;
+    &:hover:not([disabled]) { background: $ll-bg; }
+  }
+  &[disabled] { opacity: .45; cursor: not-allowed; }
+}
+
+// ── KPI Grid ──────────────────────────────────────────────────────
+.ll-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+
+  @media (max-width: 768px) { grid-template-columns: 1fr 1fr; }
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+}
+
+.ll-kpi {
+  background: $ll-white;
+  border: 1px solid $ll-border;
+  border-radius: $ll-radius;
+  padding: 1.2rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: $ll-shadow;
+  transition: transform .15s, box-shadow .15s;
+
+  &:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(15,23,42,.1); }
+
+  &__icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  &__value {
+    font-size: 1.7rem;
+    font-weight: 800;
+    line-height: 1;
+    color: $ll-text;
+  }
+
+  &__label {
+    font-size: .78rem;
+    color: $ll-muted;
+    margin-top: .25rem;
+    font-weight: 500;
+  }
+
+  &--blue {
+    border-left: 3px solid $ll-blue;
+    .ll-kpi__icon { background: #dbeafe; color: $ll-blue; }
+  }
+  &--orange {
+    border-left: 3px solid $ll-orange;
+    .ll-kpi__icon { background: #fef3c7; color: $ll-orange; }
+  }
+  &--green {
+    border-left: 3px solid $ll-green;
+    .ll-kpi__icon { background: #dcfce7; color: $ll-green; }
+  }
+}
+
+// ── Loading ───────────────────────────────────────────────────────
+.ll-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 2rem;
+  color: $ll-muted;
+  gap: .75rem;
+  font-size: .95rem;
+}
+
+// ── Empty ─────────────────────────────────────────────────────────
+.ll-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4rem 2rem;
+  background: $ll-white;
+  border: 1px solid $ll-border;
+  border-radius: $ll-radius;
+  text-align: center;
+  gap: .5rem;
+
+  &__icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: $ll-bg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $ll-muted;
+    margin-bottom: .5rem;
+  }
+  &__title { font-size: 1.1rem; font-weight: 700; color: $ll-text; }
+  &__sub   { font-size: .88rem; color: $ll-muted; }
+}
+
+// ── Card ──────────────────────────────────────────────────────────
+.ll-card {
+  background: $ll-white;
+  border: 1px solid $ll-border;
+  border-radius: $ll-radius;
+  box-shadow: $ll-shadow;
+  overflow: hidden;
+}
+
+// ── Table ─────────────────────────────────────────────────────────
+.ll-table-wrap { overflow-x: auto; }
+
+.ll-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead tr {
+    background: $ll-bg;
+    border-bottom: 2px solid $ll-border;
+
+    th {
+      padding: .75rem 1rem;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: $ll-muted;
+      white-space: nowrap;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background .1s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: #fafbff; }
+
+    td {
+      padding: .85rem 1rem;
+      vertical-align: middle;
+      color: $ll-text;
+    }
+  }
+}
+
+.ll-th-inner {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+}
+
+.ll-sort-icon {
+  color: #cbd5e1;
+  font-size: .75rem;
+}
+
+.ll-actions-col { width: 110px; }
+
+// ── Product cell ──────────────────────────────────────────────────
+.ll-product-cell {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.ll-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .85rem;
+  font-weight: 700;
+  flex-shrink: 0;
+
+  &--blue { background: #dbeafe; color: $ll-blue; }
+}
+
+.ll-product-name {
+  font-weight: 600;
+  font-size: .9rem;
+  color: $ll-text;
+  text-decoration: none;
+
+  &:hover { color: $ll-blue; text-decoration: underline; }
+}
+
+// ── Order link ────────────────────────────────────────────────────
+.ll-order-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  color: $ll-slate;
+  text-decoration: none;
+  font-size: .88rem;
+  font-weight: 500;
+
+  &__icon { color: $ll-gray; font-size: .8rem; }
+
+  &:hover { color: $ll-blue; text-decoration: underline; }
+}
+
+// ── Quantity badge ────────────────────────────────────────────────
+.ll-qty-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  padding: .2rem .55rem;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: $ll-slate;
+  font-size: .85rem;
+  font-weight: 700;
+}
+
+// ── Amount & currency ─────────────────────────────────────────────
+.ll-amount {
+  font-weight: 600;
+  font-size: .9rem;
+  color: $ll-text;
+}
+.ll-currency {
+  font-size: .75rem;
+  color: $ll-muted;
+  font-weight: 500;
+}
+
+// ── Discount badge ────────────────────────────────────────────────
+.ll-discount-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .25rem .6rem;
+  border-radius: 999px;
+  background: #fef3c7;
+  color: $ll-orange;
+  font-size: .78rem;
+  font-weight: 700;
+
+  &__icon { font-size: .7rem; }
+}
+
+// ── Total ─────────────────────────────────────────────────────────
+.ll-total {
+  font-weight: 700;
+  font-size: .92rem;
+  color: $ll-green;
+}
+
+// ── Muted ─────────────────────────────────────────────────────────
+.ll-muted { color: $ll-muted; font-size: .88rem; font-style: italic; }
+
+// ── Actions ───────────────────────────────────────────────────────
+.ll-actions {
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+  justify-content: flex-end;
+}
+
+.ll-icon-btn {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  font-size: .8rem;
+  cursor: pointer;
+  transition: all .12s;
+  background: transparent;
+  text-decoration: none;
+
+  &--view  { color: #0284c7; border-color: #bae6fd; &:hover { background: #e0f2fe; } }
+  &--edit  { color: #0f766e; border-color: #99f6e4; &:hover { background: #ccfbf1; } }
+  &--delete{ color: $ll-red;  border-color: #fecaca; &:hover { background: #fee2e2; } }
+}
+
+// ── Pagination ────────────────────────────────────────────────────
+.ll-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .9rem 1rem;
+  border-top: 1px solid $ll-border;
+  background: $ll-bg;
+  font-size: .83rem;
+  color: $ll-muted;
+  flex-wrap: wrap;
+  gap: .75rem;
+}
+
+// ── Utilities ─────────────────────────────────────────────────────
+.text-center { text-align: center; }
+.text-end    { text-align: right; }
+.mt-3        { margin-top: 1rem; }

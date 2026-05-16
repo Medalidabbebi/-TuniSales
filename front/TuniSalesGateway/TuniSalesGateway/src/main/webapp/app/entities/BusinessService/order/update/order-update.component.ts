@@ -28,6 +28,7 @@ interface LineFormGroup {
 @Component({
   selector: 'jhi-order-update',
   templateUrl: './order-update.component.html',
+  styleUrls: ['./order-update.component.scss'],
 })
 export class OrderUpdateComponent implements OnInit {
   isSaving = false;
@@ -36,6 +37,7 @@ export class OrderUpdateComponent implements OnInit {
   clientsSharedCollection: IClient[] = [];
   productsSharedCollection: IProduct[] = [];
   paymentMethodValues = Object.values(PaymentMethod);
+  orderStatusValues = Object.values(OrderStatus);
 
   editForm: OrderFormGroup = this.orderFormService.createOrderFormGroup();
 
@@ -176,6 +178,63 @@ export class OrderUpdateComponent implements OnInit {
         .pipe(finalize(() => (this.isSaving = false)))
         .subscribe({ next: () => this.previousState() });
     }
+  }
+
+  /** Returns the ou-status--* CSS class for the given OrderStatus */
+  getStatusClass(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      DRAFT:        'ou-status--draft',
+      PENDING:      'ou-status--pending',
+      SUBMITTED:    'ou-status--submitted',
+      UNDER_REVIEW: 'ou-status--review',
+      APPROVED:     'ou-status--approved',
+      ACCEPTED:     'ou-status--accepted',
+      IN_PREPARATION: 'ou-status--preparation',
+      NEGOTIATED:   'ou-status--negotiated',
+      SHIPPED:      'ou-status--shipped',
+      DELIVERED:    'ou-status--delivered',
+      INVOICED:     'ou-status--invoiced',
+      PAID:         'ou-status--paid',
+      REFUSED:      'ou-status--refused',
+      REJECTED:     'ou-status--rejected',
+      CANCELLED:    'ou-status--cancelled',
+      CONFIRMED:    'ou-status--confirmed',
+      RETURNED:     'ou-status--returned',
+    };
+    return map[status ?? ''] || 'ou-status--draft';
+  }
+
+  /** Returns the French label for an OrderStatus */
+  getStatusLabel(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      DRAFT:          'Brouillon',
+      PENDING:        'En attente',
+      SUBMITTED:      'Soumise',
+      UNDER_REVIEW:   'En examen',
+      APPROVED:       'Approuvée',
+      ACCEPTED:       'Acceptée',
+      IN_PREPARATION: 'En préparation',
+      NEGOTIATED:     'Négociée',
+      SHIPPED:        'Expédiée',
+      DELIVERED:      'Livrée',
+      INVOICED:       'Facturée',
+      PAID:           'Payée',
+      REFUSED:        'Refusée',
+      REJECTED:       'Rejetée',
+      CANCELLED:      'Annulée',
+      CONFIRMED:      'Confirmée',
+      RETURNED:       'Retournée',
+    };
+    return map[status ?? ''] || 'Inconnu';
+  }
+
+  /** Returns the French label for a PaymentMethod */
+  getPaymentMethodLabel(method: string | null | undefined): string {
+    const map: Record<string, string> = {
+      CASH:   'Espèces',
+      CHEQUE: 'Chèque',
+    };
+    return map[method ?? ''] || '—';
   }
 
   protected updateForm(order: IOrder): void {

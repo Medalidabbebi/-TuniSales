@@ -1,0 +1,217 @@
+// ── Variables ─────────────────────────────────────────────────────────────
+$dd-teal:    #0e7490;
+$dd-teal-l:  #cffafe;
+$dd-teal-d:  #0c4a6e;
+$dd-blue:    #2563eb;
+$dd-blue-l:  #dbeafe;
+$dd-green:   #16a34a;
+$dd-grn-l:   #dcfce7;
+$dd-amber:   #d97706;
+$dd-amb-l:   #fef3c7;
+$dd-indigo:  #4f46e5;
+$dd-ind-l:   #e0e7ff;
+$dd-red:     #dc2626;
+$dd-red-l:   #fee2e2;
+$dd-gray:    #64748b;
+$dd-border:  #e2e8f0;
+$dd-bg:      #f8fafc;
+$dd-white:   #ffffff;
+$dd-text:    #0f172a;
+$dd-muted:   #64748b;
+$dd-shadow:  0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$dd-radius:  12px;
+
+// ── Page ──────────────────────────────────────────────────────────────────
+.dd-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────
+.dd-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  &__left  { display: flex; align-items: center; gap: .9rem; }
+  &__icon  {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, $dd-teal, $dd-teal-d);
+    color: #fff; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba($dd-teal, .3);
+  }
+  &__title  { margin: 0; font-size: 1.45rem; font-weight: 800; color: $dd-text; }
+  &__sub    { margin: .25rem 0 0; font-size: .88rem; color: $dd-muted; }
+  &__actions { display: flex; align-items: center; gap: .75rem; }
+  &__link   { color: $dd-teal; font-weight: 600; text-decoration: none;
+    &:hover { text-decoration: underline; } }
+}
+
+.dd-back-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1.5px solid $dd-border; background: $dd-white;
+  color: $dd-muted; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: .9rem; transition: all .15s; flex-shrink: 0;
+  &:hover { border-color: $dd-teal; color: $dd-teal; background: $dd-teal-l; }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────
+.dd-btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .55rem 1.1rem;
+  border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .15s;
+  text-decoration: none;
+
+  &--primary {
+    background: $dd-teal; color: #fff; border-color: $dd-teal;
+    &:hover { background: darken($dd-teal, 6%); box-shadow: 0 3px 10px rgba($dd-teal, .3); color: #fff; }
+  }
+}
+
+// ── Status Badge ──────────────────────────────────────────────────────────
+.dd-status-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .75rem; border-radius: 999px;
+  font-size: .78rem; font-weight: 700;
+
+  &__dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+}
+.dd-status--pending     { background: $dd-amb-l; color: darken($dd-amber, 10%);
+  .dd-status-badge__dot { background: $dd-amber; } }
+.dd-status--preparation { background: $dd-blue-l; color: darken($dd-blue, 10%);
+  .dd-status-badge__dot { background: $dd-blue; } }
+.dd-status--shipped     { background: $dd-ind-l; color: darken($dd-indigo, 10%);
+  .dd-status-badge__dot { background: $dd-indigo; } }
+.dd-status--delivered   { background: $dd-grn-l; color: darken($dd-green, 10%);
+  .dd-status-badge__dot { background: $dd-green; } }
+.dd-status--failed      { background: $dd-red-l; color: darken($dd-red, 10%);
+  .dd-status-badge__dot { background: $dd-red; } }
+.dd-status--neutral     { background: #f1f5f9; color: $dd-gray;
+  .dd-status-badge__dot { background: #94a3b8; } }
+
+// ── KPI Row ───────────────────────────────────────────────────────────────
+.dd-kpi-row {
+  display: flex; flex-wrap: wrap; gap: 1rem;
+}
+
+.dd-kpi {
+  display: flex; align-items: center; gap: .85rem;
+  background: $dd-white;
+  border: 1px solid $dd-border;
+  border-left: 4px solid transparent;
+  border-radius: $dd-radius;
+  padding: 1rem 1.25rem;
+  box-shadow: $dd-shadow;
+  flex: 1; min-width: 200px;
+
+  &__icon {
+    width: 40px; height: 40px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  &__value    { font-size: 1.05rem; font-weight: 700; color: $dd-text; line-height: 1.2; }
+  &__value--mono { font-family: monospace; font-size: .9rem; }
+  &__label    { font-size: .72rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .05em; color: $dd-muted; margin-top: .2rem; }
+
+  &--teal { border-left-color: $dd-teal;
+    .dd-kpi__icon { background: $dd-teal-l; color: $dd-teal; } }
+  &--blue { border-left-color: $dd-blue;
+    .dd-kpi__icon { background: $dd-blue-l; color: $dd-blue; } }
+  &--green { border-left-color: $dd-green;
+    .dd-kpi__icon { background: $dd-grn-l; color: $dd-green; } }
+  &--gray { border-left-color: #94a3b8;
+    .dd-kpi__icon { background: #f1f5f9; color: $dd-gray; } }
+}
+
+// ── Grid ──────────────────────────────────────────────────────────────────
+.dd-grid {
+  display: flex; flex-wrap: wrap; gap: 1.25rem;
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────
+.dd-card {
+  background: $dd-white;
+  border: 1px solid $dd-border;
+  border-radius: $dd-radius;
+  box-shadow: $dd-shadow;
+  overflow: hidden;
+  flex: 1; min-width: 300px;
+
+  &__head {
+    display: flex; align-items: center; gap: .85rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid $dd-border;
+    background: $dd-bg;
+  }
+  &__head-icon {
+    width: 38px; height: 38px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+    &--teal { background: $dd-teal-l; color: $dd-teal; }
+  }
+  &__title { font-size: .95rem; font-weight: 700; color: $dd-text; }
+  &__sub   { font-size: .78rem; color: $dd-muted; margin-top: .1rem; }
+}
+
+// ── Info List ─────────────────────────────────────────────────────────────
+.dd-info-list {
+  display: flex; flex-direction: column;
+  padding: 1.25rem;
+  gap: 0;
+}
+
+.dd-info-item {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: .65rem 0;
+  border-bottom: 1px solid $dd-border;
+  gap: 1rem;
+  &:last-child { border-bottom: none; }
+
+  &__label { font-size: .82rem; color: $dd-muted; font-weight: 500; flex-shrink: 0; }
+  &__value { font-size: .9rem; font-weight: 600; color: $dd-text; text-align: right; }
+  &__value--mono { font-family: monospace; font-size: .85rem; }
+  &__value--notes { white-space: pre-wrap; text-align: right; font-weight: 400; }
+  &__link { font-size: .9rem; font-weight: 600; color: $dd-teal; text-decoration: none;
+    &:hover { text-decoration: underline; } }
+}
+
+// ── Timeline ──────────────────────────────────────────────────────────────
+.dd-timeline {
+  display: flex; flex-direction: column;
+  padding: 1.25rem;
+}
+
+.dd-tl-item {
+  display: flex; align-items: flex-start; gap: .85rem;
+}
+
+.dd-tl-dot {
+  width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0;
+  margin-top: .2rem;
+  &--blue { background: $dd-blue; box-shadow: 0 0 0 3px rgba($dd-blue,.18); }
+  &--green { background: $dd-green; box-shadow: 0 0 0 3px rgba($dd-green,.18); }
+  &--teal { background: $dd-teal; box-shadow: 0 0 0 3px rgba($dd-teal,.18); }
+  &--gray { background: #94a3b8; box-shadow: 0 0 0 3px rgba(148,163,184,.18); }
+}
+
+.dd-tl-line {
+  width: 2px; height: 20px;
+  background: $dd-border;
+  margin-left: 5px;
+}
+
+.dd-tl-body {
+  display: flex; flex-direction: column; gap: .1rem; padding-bottom: .1rem;
+}
+
+.dd-tl-label { font-size: .78rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .04em; color: $dd-muted; }
+.dd-tl-date  { font-size: .88rem; font-weight: 600; color: $dd-text; }

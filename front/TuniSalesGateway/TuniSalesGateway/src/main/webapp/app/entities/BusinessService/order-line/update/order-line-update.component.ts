@@ -15,6 +15,7 @@ import { OrderService } from 'app/entities/BusinessService/order/service/order.s
 @Component({
   selector: 'jhi-order-line-update',
   templateUrl: './order-line-update.component.html',
+  styleUrls: ['./order-line-update.component.scss'],
 })
 export class OrderLineUpdateComponent implements OnInit {
   isSaving = false;

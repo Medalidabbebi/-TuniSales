@@ -14,6 +14,7 @@ import { DeliveryStatus } from 'app/entities/enumerations/delivery-status.model'
 @Component({
   selector: 'jhi-delivery-update',
   templateUrl: './delivery-update.component.html',
+  styleUrls: ['./delivery-update.component.scss'],
 })
 export class DeliveryUpdateComponent implements OnInit {
   isSaving = false;
@@ -90,5 +91,29 @@ export class DeliveryUpdateComponent implements OnInit {
       .pipe(map((res: HttpResponse<IOrder[]>) => res.body ?? []))
       .pipe(map((orders: IOrder[]) => this.orderService.addOrderToCollectionIfMissing<IOrder>(orders, this.delivery?.order)))
       .subscribe((orders: IOrder[]) => (this.ordersSharedCollection = orders));
+  }
+
+  /** Returns du-status--* modifier class for the live status strip */
+  getStatusClass(status: DeliveryStatus | string | null | undefined): string {
+    const map: Record<string, string> = {
+      PENDING:        'du-status--pending',
+      IN_PREPARATION: 'du-status--preparation',
+      SHIPPED:        'du-status--shipped',
+      DELIVERED:      'du-status--delivered',
+      FAILED:         'du-status--failed',
+    };
+    return map[status || ''] || 'du-status--neutral';
+  }
+
+  /** Returns French label for a DeliveryStatus */
+  getStatusLabel(status: DeliveryStatus | string | null | undefined): string {
+    const map: Record<string, string> = {
+      PENDING:        'En attente',
+      IN_PREPARATION: 'En préparation',
+      SHIPPED:        'Expédiée',
+      DELIVERED:      'Livrée',
+      FAILED:         'Échouée',
+    };
+    return map[status || ''] || (status as string ?? '—');
   }
 }
