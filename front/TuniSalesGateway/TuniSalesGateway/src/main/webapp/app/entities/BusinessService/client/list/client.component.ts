@@ -161,4 +161,39 @@ export class ClientComponent implements OnInit {
     }
     return 'tsg-credit-bar__fill--normal';
   }
+
+  getStatusClass(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      ACTIVE:     'cl-status-badge--active',
+      INACTIVE:   'cl-status-badge--inactive',
+      SUSPENDED:  'cl-status-badge--suspended',
+      CHURN_RISK: 'cl-status-badge--churn-risk',
+    };
+    return map[status || ''] || 'cl-status-badge--inactive';
+  }
+
+  getStatusLabel(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      ACTIVE:     'Actif',
+      INACTIVE:   'Inactif',
+      SUSPENDED:  'Suspendu',
+      CHURN_RISK: 'À risque',
+    };
+    return map[status || ''] || (status || '—');
+  }
+
+  getTypeLabel(type: string | null | undefined): string {
+    const map: Record<string, string> = {
+      NATIONAL_DISTRIBUTOR:  'Distributeur national',
+      REGIONAL_WHOLESALER:   'Grossiste régional',
+      INDEPENDENT_POS:       'PDV indépendant',
+      TELECOM_OPERATOR:      'Opérateur télécom',
+    };
+    return map[type || ''] || (type || '—');
+  }
+
+  countByStatus(status: string): number {
+    if (!this.clients) return 0;
+    return this.clients.filter(c => c.status === status).length;
+  }
 }

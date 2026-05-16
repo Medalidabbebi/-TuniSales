@@ -1,37 +1,363 @@
-@import 'design-system';
+// ─── Client List Component Styles ───────────────────────────────────────────
+// prefix: cl-
 
-.tsg-client-avatar {
-  @include flex-center;
+// Variables
+$cl-primary:      #2563eb;
+$cl-primary-light:#dbeafe;
+$cl-teal:         #0d9488;
+$cl-green:        #16a34a;
+$cl-orange:       #ea580c;
+$cl-red:          #dc2626;
+$cl-gray:         #6b7280;
+$cl-border:       #e5e7eb;
+$cl-bg:           #f8fafc;
+$cl-white:        #ffffff;
+$cl-text:         #111827;
+$cl-text-muted:   #6b7280;
+
+// ── Page wrapper
+.cl-page {
+  padding: 2rem 1.5rem;
+  background: $cl-bg;
+  min-height: 100vh;
+}
+
+// ── Header
+.cl-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.cl-header__left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cl-header__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, $cl-primary, #1d4ed8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $cl-white;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(37,99,235,.25);
+}
+
+.cl-header__title {
+  margin: 0 0 2px;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: $cl-text;
+  letter-spacing: -.3px;
+}
+
+.cl-header__subtitle {
+  margin: 0;
+  font-size: .85rem;
+  color: $cl-text-muted;
+}
+
+.cl-header__actions {
+  display: flex;
+  gap: .625rem;
+  flex-shrink: 0;
+}
+
+// ── Buttons
+.cl-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .5rem 1rem;
+  border-radius: 8px;
+  font-size: .875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all .18s ease;
+  text-decoration: none;
+
+  &--outline {
+    background: $cl-white;
+    border-color: $cl-border;
+    color: $cl-text;
+    &:hover { background: $cl-bg; border-color: #d1d5db; color: $cl-text; }
+  }
+
+  &--primary {
+    background: $cl-primary;
+    color: $cl-white;
+    border-color: $cl-primary;
+    &:hover { background: #1d4ed8; border-color: #1d4ed8; color: $cl-white; }
+  }
+
+  &:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+  }
+}
+
+// ── KPI Cards
+.cl-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 900px) { grid-template-columns: repeat(2,1fr); }
+  @media (max-width: 500px) { grid-template-columns: 1fr; }
+}
+
+.cl-kpi-card {
+  background: $cl-white;
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid $cl-border;
+  border-left: 4px solid $cl-primary;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  &--blue   { border-left-color: $cl-primary; }
+  &--green  { border-left-color: $cl-green; }
+  &--gray   { border-left-color: $cl-gray; }
+  &--red    { border-left-color: $cl-red; }
+  &--orange { border-left-color: $cl-orange; }
+}
+
+.cl-kpi-card__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+
+  &--blue   { background: $cl-primary-light; color: $cl-primary; }
+  &--green  { background: #dcfce7; color: $cl-green; }
+  &--gray   { background: #f3f4f6; color: $cl-gray; }
+  &--red    { background: #fee2e2; color: $cl-red; }
+  &--orange { background: #ffedd5; color: $cl-orange; }
+}
+
+.cl-kpi-card__body {}
+
+.cl-kpi-card__value {
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: $cl-text;
+  line-height: 1;
+}
+
+.cl-kpi-card__label {
+  font-size: .78rem;
+  color: $cl-text-muted;
+  margin-top: 3px;
+}
+
+// ── Table card
+.cl-table-card {
+  background: $cl-white;
+  border-radius: 14px;
+  border: 1px solid $cl-border;
+  box-shadow: 0 1px 6px rgba(0,0,0,.06);
+  overflow: hidden;
+  margin-bottom: 1.25rem;
+}
+
+.cl-table-responsive {
+  overflow-x: auto;
+}
+
+table.cl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .875rem;
+
+  thead tr {
+    background: #f9fafb;
+    border-bottom: 2px solid $cl-border;
+  }
+
+  thead th {
+    padding: .85rem 1rem;
+    color: $cl-text-muted;
+    font-weight: 600;
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid $cl-border;
+    transition: background .12s;
+    &:last-child { border-bottom: none; }
+    &:hover { background: #f9fafb; }
+  }
+
+  tbody td {
+    padding: .85rem 1rem;
+    color: $cl-text;
+    vertical-align: middle;
+  }
+}
+
+// ── Avatar circle
+.cl-avatar {
   width: 36px;
   height: 36px;
-  border-radius: $radius-sm;
-  background: linear-gradient(135deg, $tsg-primary, $tsg-accent);
-  color: #fff;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
+  border-radius: 10px;
+  background: linear-gradient(135deg, $cl-primary, #1d4ed8);
+  color: $cl-white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .85rem;
+  font-weight: 700;
   text-transform: uppercase;
   flex-shrink: 0;
 }
 
-.tsg-credit-bar {
-  width: 60px;
-  height: 6px;
-  border-radius: $radius-full;
-  background: $tsg-border-light;
-  overflow: hidden;
+.cl-name-cell {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+}
 
-  &__fill {
-    height: 100%;
-    border-radius: $radius-full;
-    transition: width $transition-slow;
+.cl-name-text {
+  font-weight: 600;
+  color: $cl-text;
+}
 
-    &--normal  { background: $tsg-success; }
-    &--warning { background: $tsg-warning; }
-    &--danger  { background: $tsg-danger; }
+// ── Type badge
+.cl-type-badge {
+  display: inline-block;
+  padding: .2rem .65rem;
+  border-radius: 6px;
+  font-size: .75rem;
+  font-weight: 500;
+  background: $cl-primary-light;
+  color: $cl-primary;
+  white-space: nowrap;
+}
+
+// ── Status badge
+.cl-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .25rem .7rem;
+  border-radius: 20px;
+  font-size: .78rem;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  &--active     { background: #dcfce7; color: #15803d; .cl-status-badge__dot { background: #16a34a; } }
+  &--inactive   { background: #f3f4f6; color: #4b5563; .cl-status-badge__dot { background: #9ca3af; } }
+  &--suspended  { background: #ffedd5; color: #c2410c; .cl-status-badge__dot { background: $cl-orange; } }
+  &--churn-risk { background: #fee2e2; color: #b91c1c; .cl-status-badge__dot { background: $cl-red; } }
+}
+
+// ── Action buttons
+.cl-actions {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  justify-content: flex-end;
+}
+
+.cl-action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  font-size: .8rem;
+  text-decoration: none;
+  transition: all .15s ease;
+
+  &--view {
+    background: $cl-primary-light;
+    color: $cl-primary;
+    border-color: #bfdbfe;
+    &:hover { background: $cl-primary; color: $cl-white; }
+  }
+
+  &--edit {
+    background: #ccfbf1;
+    color: $cl-teal;
+    border-color: #99f6e4;
+    &:hover { background: $cl-teal; color: $cl-white; }
+  }
+
+  &--delete {
+    background: #fee2e2;
+    color: $cl-red;
+    border-color: #fecaca;
+    &:hover { background: $cl-red; color: $cl-white; }
   }
 }
 
-.fw-medium { font-weight: 500; }
-.gap-3 { gap: 12px; }
-.gap-2 { gap: 8px; }
-.gap-1 { gap: 4px; }
+// ── Empty state
+.cl-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: $cl-white;
+  border-radius: 14px;
+  border: 1px solid $cl-border;
+}
+
+.cl-empty__icon {
+  font-size: 3rem;
+  color: #d1d5db;
+  margin-bottom: .75rem;
+}
+
+.cl-empty__text {
+  color: $cl-text-muted;
+  margin-bottom: 1rem;
+}
+
+// ── Loading
+.cl-loading {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: $cl-text-muted;
+}
+
+// ── Pagination row
+.cl-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .75rem;
+  margin-top: .75rem;
+  font-size: .85rem;
+  color: $cl-text-muted;
+}

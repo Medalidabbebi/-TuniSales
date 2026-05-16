@@ -1,0 +1,288 @@
+// ─── Client Update Component Styles ─────────────────────────────────────────
+// prefix: cu-
+
+$cu-primary:      #2563eb;
+$cu-primary-light:#dbeafe;
+$cu-teal:         #0d9488;
+$cu-teal-light:   #ccfbf1;
+$cu-green:        #16a34a;
+$cu-orange:       #ea580c;
+$cu-red:          #dc2626;
+$cu-gray:         #6b7280;
+$cu-border:       #e5e7eb;
+$cu-bg:           #f8fafc;
+$cu-white:        #ffffff;
+$cu-text:         #111827;
+$cu-text-muted:   #6b7280;
+
+// ── Page
+.cu-page {
+  padding: 2rem 1.5rem;
+  background: $cu-bg;
+  min-height: 100vh;
+}
+
+// ── Header
+.cu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.cu-header__left {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cu-header__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, $cu-teal, #0f766e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $cu-white;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(13,148,136,.25);
+}
+
+.cu-header__title {
+  margin: 0 0 3px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: $cu-text;
+  letter-spacing: -.3px;
+}
+
+.cu-header__subtitle {
+  margin: 0;
+  font-size: .85rem;
+  color: $cu-text-muted;
+}
+
+.cu-header__actions {
+  display: flex;
+  gap: .625rem;
+}
+
+// ── Buttons
+.cu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .5rem 1.1rem;
+  border-radius: 8px;
+  font-size: .875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all .18s;
+  text-decoration: none;
+
+  &--outline {
+    background: $cu-white;
+    border-color: $cu-border;
+    color: $cu-text;
+    &:hover { background: $cu-bg; color: $cu-text; }
+  }
+
+  &--primary {
+    background: $cu-teal;
+    color: $cu-white;
+    border-color: $cu-teal;
+    &:hover { background: #0f766e; color: $cu-white; }
+  }
+
+  &:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+  }
+}
+
+// ── Status strip
+.cu-status-strip {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .75rem 1.1rem;
+  background: $cu-white;
+  border: 1px solid $cu-border;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.cu-status-strip__label {
+  font-size: .8rem;
+  color: $cu-text-muted;
+  font-weight: 500;
+}
+
+.cu-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .22rem .7rem;
+  border-radius: 20px;
+  font-size: .78rem;
+  font-weight: 600;
+
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+
+  &--active     { background: #dcfce7; color: #15803d; .cu-status-badge__dot { background: $cu-green; } }
+  &--inactive   { background: #f3f4f6; color: #4b5563; .cu-status-badge__dot { background: #9ca3af; } }
+  &--suspended  { background: #ffedd5; color: #c2410c; .cu-status-badge__dot { background: $cu-orange; } }
+  &--churn-risk { background: #fee2e2; color: #b91c1c; .cu-status-badge__dot { background: $cu-red; } }
+}
+
+.cu-type-chip {
+  display: inline-block;
+  padding: .22rem .7rem;
+  border-radius: 6px;
+  font-size: .78rem;
+  font-weight: 500;
+  background: $cu-primary-light;
+  color: $cu-primary;
+}
+
+// ── Form grid
+.cu-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+
+  @media (max-width: 768px) { grid-template-columns: 1fr; }
+}
+
+.cu-card {
+  background: $cu-white;
+  border-radius: 14px;
+  border: 1px solid $cu-border;
+  box-shadow: 0 1px 6px rgba(0,0,0,.06);
+  overflow: hidden;
+}
+
+.cu-card__header {
+  padding: .875rem 1.25rem;
+  border-bottom: 1px solid $cu-border;
+  background: #f9fafb;
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+.cu-card__header-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .85rem;
+
+  &--teal { background: $cu-teal-light; color: $cu-teal; }
+  &--blue { background: $cu-primary-light; color: $cu-primary; }
+}
+
+.cu-card__title {
+  font-size: .9rem;
+  font-weight: 600;
+  color: $cu-text;
+  margin: 0;
+}
+
+.cu-card__body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+// ── Form field
+.cu-field {
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+}
+
+.cu-field__label {
+  font-size: .8rem;
+  font-weight: 600;
+  color: $cu-text;
+}
+
+.cu-field__label--required::after {
+  content: ' *';
+  color: $cu-red;
+}
+
+.cu-field__input {
+  width: 100%;
+  padding: .55rem .8rem;
+  border-radius: 8px;
+  border: 1.5px solid $cu-border;
+  font-size: .875rem;
+  color: $cu-text;
+  background: $cu-white;
+  transition: border-color .15s, box-shadow .15s;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: $cu-primary;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12);
+  }
+
+  &.ng-invalid.ng-touched {
+    border-color: $cu-red;
+    box-shadow: 0 0 0 3px rgba(220,38,38,.1);
+  }
+}
+
+select.cu-field__input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%236b7280'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .6rem center;
+  background-size: 16px;
+  padding-right: 2rem;
+  cursor: pointer;
+}
+
+.cu-field__error {
+  font-size: .75rem;
+  color: $cu-red;
+}
+
+// ── Checkbox row
+.cu-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  cursor: pointer;
+}
+
+.cu-checkbox-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: $cu-primary;
+  cursor: pointer;
+}
+
+// ── Footer actions
+.cu-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: .75rem;
+  margin-top: 1.5rem;
+}

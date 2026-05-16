@@ -1,97 +1,166 @@
-<div class="container-fluid py-4">
+<div class="cl-page">
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
 
   <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-    <div>
-      <h2 class="mb-0 fw-bold">
-        <fa-icon icon="users" class="me-2 text-primary"></fa-icon>
-        Gestion des Clients
-      </h2>
-      <small class="text-muted">Liste des clients — {{ totalItems }} client(s) au total</small>
+  <div class="cl-header">
+    <div class="cl-header__left">
+      <div class="cl-header__icon">
+        <fa-icon icon="users"></fa-icon>
+      </div>
+      <div>
+        <h2 class="cl-header__title">Gestion des Clients</h2>
+        <p class="cl-header__subtitle">Liste et suivi de tous vos clients</p>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+    <div class="cl-header__actions">
+      <button class="cl-btn cl-btn--outline" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
-      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/client/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
+      <a class="cl-btn cl-btn--primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/client/new']">
+        <fa-icon icon="plus"></fa-icon>
         Nouveau Client
       </a>
     </div>
   </div>
 
-  <jhi-alert-error></jhi-alert-error>
-  <jhi-alert></jhi-alert>
+  <!-- KPI Cards -->
+  <div class="cl-kpi-row">
+    <div class="cl-kpi-card cl-kpi-card--blue">
+      <div class="cl-kpi-card__icon cl-kpi-card__icon--blue">
+        <fa-icon icon="users"></fa-icon>
+      </div>
+      <div class="cl-kpi-card__body">
+        <div class="cl-kpi-card__value">{{ totalItems }}</div>
+        <div class="cl-kpi-card__label">Total clients</div>
+      </div>
+    </div>
 
-  <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+    <div class="cl-kpi-card cl-kpi-card--green">
+      <div class="cl-kpi-card__icon cl-kpi-card__icon--green">
+        <fa-icon icon="check-circle"></fa-icon>
+      </div>
+      <div class="cl-kpi-card__body">
+        <div class="cl-kpi-card__value">{{ countByStatus('ACTIVE') }}</div>
+        <div class="cl-kpi-card__label">Actifs</div>
+      </div>
+    </div>
+
+    <div class="cl-kpi-card cl-kpi-card--gray">
+      <div class="cl-kpi-card__icon cl-kpi-card__icon--gray">
+        <fa-icon icon="ban"></fa-icon>
+      </div>
+      <div class="cl-kpi-card__body">
+        <div class="cl-kpi-card__value">{{ countByStatus('INACTIVE') }}</div>
+        <div class="cl-kpi-card__label">Inactifs</div>
+      </div>
+    </div>
+
+    <div class="cl-kpi-card cl-kpi-card--red">
+      <div class="cl-kpi-card__icon cl-kpi-card__icon--red">
+        <fa-icon icon="clock"></fa-icon>
+      </div>
+      <div class="cl-kpi-card__body">
+        <div class="cl-kpi-card__value">{{ countByStatus('CHURN_RISK') }}</div>
+        <div class="cl-kpi-card__label">À risque</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && clients?.length === 0">
-    <fa-icon icon="users" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucun client trouvé. Créez votre premier client.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/client/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <!-- Loading -->
+  <div class="cl-loading" *ngIf="isLoading">
+    <fa-icon icon="sync" [spin]="true" size="2x"></fa-icon>
+    <p class="mt-2">Chargement en cours...</p>
+  </div>
+
+  <!-- Empty state -->
+  <div class="cl-empty" *ngIf="!isLoading && clients?.length === 0">
+    <div class="cl-empty__icon">
+      <fa-icon icon="users"></fa-icon>
+    </div>
+    <p class="cl-empty__text">Aucun client trouvé. Créez votre premier client.</p>
+    <a class="cl-btn cl-btn--primary" [routerLink]="['/client/new']">
+      <fa-icon icon="plus"></fa-icon> Ajouter un client
     </a>
   </div>
 
   <!-- Table -->
-  <div class="card shadow-sm" *ngIf="!isLoading && clients && clients.length > 0">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
-        <thead class="table-light">
+  <div class="cl-table-card" *ngIf="!isLoading && clients && clients.length > 0">
+    <div class="cl-table-responsive">
+      <table class="cl-table" aria-describedby="page-heading">
+        <thead>
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-            <th scope="col" jhiSortBy="name">
-              <div class="d-flex align-items-center gap-1">Nom <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="taxId">
-              <div class="d-flex align-items-center gap-1">Matricule fiscal <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="clientType">
-              <div class="d-flex align-items-center gap-1">Type <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="creditLimit">
-              <div class="d-flex align-items-center gap-1">Crédit (TND) <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="status" style="width:110px">
-              <div class="d-flex align-items-center gap-1">Actif <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" style="width:140px"></th>
+            <th scope="col" jhiSortBy="name">Nom</th>
+            <th scope="col" jhiSortBy="clientType">Type</th>
+            <th scope="col" jhiSortBy="status">Statut</th>
+            <th scope="col" jhiSortBy="creditLimit">Limite crédit</th>
+            <th scope="col" jhiSortBy="paymentTermsDays">Jours paiement</th>
+            <th scope="col" style="width:120px;"></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let client of clients; trackBy: trackId" data-cy="entityTable">
-            <td class="fw-semibold">{{ client.name }}</td>
-            <td><code class="text-secondary">{{ client.taxId || '—' }}</code></td>
-            <td>{{ client.clientType || '—' }}</td>
+
+            <!-- Nom + avatar -->
+            <td>
+              <div class="cl-name-cell">
+                <div class="cl-avatar">{{ (client.name || '?').charAt(0) }}</div>
+                <span class="cl-name-text">{{ client.name }}</span>
+              </div>
+            </td>
+
+            <!-- Type -->
+            <td>
+              <span class="cl-type-badge">{{ getTypeLabel(client.clientType) }}</span>
+            </td>
+
+            <!-- Statut -->
+            <td>
+              <span class="cl-status-badge" [ngClass]="getStatusClass(client.status)">
+                <span class="cl-status-badge__dot"></span>
+                {{ getStatusLabel(client.status) }}
+              </span>
+            </td>
+
+            <!-- Limite crédit -->
             <td>
               <span *ngIf="client.creditLimit !== null && client.creditLimit !== undefined">
                 {{ client.creditLimit | number:'1.0-0' }} TND
               </span>
               <span *ngIf="client.creditLimit === null || client.creditLimit === undefined" class="text-muted">—</span>
             </td>
+
+            <!-- Jours paiement -->
             <td>
-              <span class="badge rounded-pill" [ngClass]="client.status === 'ACTIVE' ? 'bg-success' : (client.status === 'SUSPENDED' ? 'bg-warning text-dark' : 'bg-danger')">
-                {{ client.status || '—' }}
+              <span *ngIf="client.paymentTermsDays !== null && client.paymentTermsDays !== undefined">
+                {{ client.paymentTermsDays }} j
               </span>
+              <span *ngIf="client.paymentTermsDays === null || client.paymentTermsDays === undefined" class="text-muted">—</span>
             </td>
+
+            <!-- Actions -->
             <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/client', client.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+              <div class="cl-actions">
+                <a [routerLink]="['/client', client.id, 'view']"
+                   class="cl-action-btn cl-action-btn--view"
+                   data-cy="entityDetailsButton" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/client', client.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                <a [routerLink]="['/client', client.id, 'edit']"
+                   class="cl-action-btn cl-action-btn--edit"
+                   data-cy="entityEditButton" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(client)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
-                  <fa-icon icon="times"></fa-icon>
+                <button (click)="delete(client)"
+                        class="cl-action-btn cl-action-btn--delete"
+                        data-cy="entityDeleteButton" title="Supprimer">
+                  <fa-icon icon="trash"></fa-icon>
                 </button>
               </div>
             </td>
+
           </tr>
         </tbody>
       </table>
@@ -99,7 +168,7 @@
   </div>
 
   <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="clients && clients.length > 0">
+  <div class="cl-pagination" *ngIf="clients && clients.length > 0">
     <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
     <ngb-pagination
       [collectionSize]="totalItems"

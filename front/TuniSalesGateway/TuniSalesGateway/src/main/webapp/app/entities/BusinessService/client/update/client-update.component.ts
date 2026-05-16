@@ -13,6 +13,7 @@ import { ClientStatus } from 'app/entities/enumerations/client-status.model';
 @Component({
   selector: 'jhi-client-update',
   templateUrl: './client-update.component.html',
+  styleUrls: ['./client-update.component.scss'],
 })
 export class ClientUpdateComponent implements OnInit {
   isSaving = false;
@@ -49,6 +50,36 @@ export class ClientUpdateComponent implements OnInit {
     } else {
       this.subscribeToSaveResponse(this.clientService.create(client));
     }
+  }
+
+  getStatusClass(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      ACTIVE:     'cu-status-badge--active',
+      INACTIVE:   'cu-status-badge--inactive',
+      SUSPENDED:  'cu-status-badge--suspended',
+      CHURN_RISK: 'cu-status-badge--churn-risk',
+    };
+    return map[status || ''] || 'cu-status-badge--inactive';
+  }
+
+  getStatusLabel(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      ACTIVE:     'Actif',
+      INACTIVE:   'Inactif',
+      SUSPENDED:  'Suspendu',
+      CHURN_RISK: 'À risque',
+    };
+    return map[status || ''] || (status || '—');
+  }
+
+  getTypeLabel(type: string | null | undefined): string {
+    const map: Record<string, string> = {
+      NATIONAL_DISTRIBUTOR:  'Distributeur national',
+      REGIONAL_WHOLESALER:   'Grossiste régional',
+      INDEPENDENT_POS:       'PDV indépendant',
+      TELECOM_OPERATOR:      'Opérateur télécom',
+    };
+    return map[type || ''] || (type || '—');
   }
 
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IClient>>): void {

@@ -1,76 +1,182 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <div *ngIf="client">
-      <h2 data-cy="clientDetailsHeading"><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.detail.title">Client</span></h2>
+<div class="cd-page" *ngIf="client">
 
-      <hr />
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
 
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ client.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.tenantId">Tenant Id</span></dt>
-        <dd>
-          <span>{{ client.tenantId }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.name">Name</span></dt>
-        <dd>
-          <span>{{ client.name }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.taxId">Tax Id</span></dt>
-        <dd>
-          <span>{{ client.taxId }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.clientType">Client Type</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'tuniSalesGatewayApp.ClientType.' + client.clientType }}">{{ client.clientType }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.creditLimit">Credit Limit</span></dt>
-        <dd>
-          <span>{{ client.creditLimit }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.creditUsed">Credit Used</span></dt>
-        <dd>
-          <span>{{ client.creditUsed }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.paymentTermsDays">Payment Terms Days</span></dt>
-        <dd>
-          <span>{{ client.paymentTermsDays }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.status">Status</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'tuniSalesGatewayApp.ClientStatus.' + client.status }}">{{ client.status }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.lastOrderAt">Last Order At</span></dt>
-        <dd>
-          <span>{{ client.lastOrderAt | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.isDeleted">Is Deleted</span></dt>
-        <dd>
-          <span>{{ client.isDeleted }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.createdAt">Created At</span></dt>
-        <dd>
-          <span>{{ client.createdAt | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.businessServiceClient.updatedAt">Updated At</span></dt>
-        <dd>
-          <span>{{ client.updatedAt | formatMediumDatetime }}</span>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+  <!-- Header -->
+  <div class="cd-header">
+    <div class="cd-header__left">
+      <div class="cd-header__icon">
+        <fa-icon icon="building"></fa-icon>
+      </div>
+      <div>
+        <h2 class="cd-header__title">{{ client.name }}</h2>
+        <p class="cd-header__subtitle">{{ getTypeLabel(client.clientType) }}</p>
+      </div>
+    </div>
+    <div class="cd-header__actions">
+      <span class="cd-status-badge" [ngClass]="getStatusClass(client.status)">
+        <span class="cd-status-badge__dot"></span>
+        {{ getStatusLabel(client.status) }}
+      </span>
+      <button type="button" class="cd-btn cd-btn--outline" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        Retour
       </button>
-
-      <button type="button" [routerLink]="['/client', client.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
-      </button>
+      <a [routerLink]="['/client', client.id, 'edit']" class="cd-btn cd-btn--primary">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        Modifier
+      </a>
     </div>
   </div>
+
+  <!-- KPI Row -->
+  <div class="cd-kpi-row">
+    <div class="cd-kpi-card cd-kpi-card--blue">
+      <div class="cd-kpi-card__icon cd-kpi-card__icon--blue">
+        <fa-icon icon="credit-card"></fa-icon>
+      </div>
+      <div>
+        <div class="cd-kpi-card__value">
+          {{ client.creditLimit !== null && client.creditLimit !== undefined ? (client.creditLimit | number:'1.0-0') + ' TND' : '—' }}
+        </div>
+        <div class="cd-kpi-card__label">Limite crédit</div>
+      </div>
+    </div>
+
+    <div class="cd-kpi-card cd-kpi-card--orange">
+      <div class="cd-kpi-card__icon cd-kpi-card__icon--orange">
+        <fa-icon icon="credit-card"></fa-icon>
+      </div>
+      <div>
+        <div class="cd-kpi-card__value">
+          {{ client.creditUsed !== null && client.creditUsed !== undefined ? (client.creditUsed | number:'1.0-0') + ' TND' : '—' }}
+        </div>
+        <div class="cd-kpi-card__label">Crédit utilisé</div>
+      </div>
+    </div>
+
+    <div class="cd-kpi-card cd-kpi-card--teal">
+      <div class="cd-kpi-card__icon cd-kpi-card__icon--teal">
+        <fa-icon icon="calendar-alt"></fa-icon>
+      </div>
+      <div>
+        <div class="cd-kpi-card__value">
+          {{ client.paymentTermsDays !== null && client.paymentTermsDays !== undefined ? client.paymentTermsDays + ' j' : '—' }}
+        </div>
+        <div class="cd-kpi-card__label">Jours paiement</div>
+      </div>
+    </div>
+
+    <div class="cd-kpi-card" [ngClass]="getKpiStatusClass(client.status)">
+      <div class="cd-kpi-card__icon" [ngClass]="getKpiStatusIconClass(client.status)">
+        <fa-icon icon="check-circle"></fa-icon>
+      </div>
+      <div>
+        <div class="cd-kpi-card__value">{{ getStatusLabel(client.status) }}</div>
+        <div class="cd-kpi-card__label">Statut</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Grid: Informations + Statut & Crédit -->
+  <div class="cd-grid">
+
+    <!-- Informations -->
+    <div class="cd-card">
+      <div class="cd-card__header">
+        <div class="cd-card__header-icon">
+          <fa-icon icon="building"></fa-icon>
+        </div>
+        <h3 class="cd-card__title">Informations</h3>
+      </div>
+      <div class="cd-card__body">
+        <div class="cd-info-row">
+          <span class="cd-info-row__label">Nom</span>
+          <span class="cd-info-row__value">{{ client.name }}</span>
+        </div>
+        <div class="cd-info-row">
+          <span class="cd-info-row__label">Matricule fiscal</span>
+          <span class="cd-info-row__value">{{ client.taxId || '—' }}</span>
+        </div>
+        <div class="cd-info-row">
+          <span class="cd-info-row__label">Type</span>
+          <span class="cd-info-row__value">{{ getTypeLabel(client.clientType) }}</span>
+        </div>
+        <div class="cd-info-row">
+          <span class="cd-info-row__label">Jours de paiement</span>
+          <span class="cd-info-row__value">
+            {{ client.paymentTermsDays !== null && client.paymentTermsDays !== undefined ? client.paymentTermsDays + ' jours' : '—' }}
+          </span>
+        </div>
+        <div class="cd-info-row">
+          <span class="cd-info-row__label">Dernière commande</span>
+          <span class="cd-info-row__value">{{ client.lastOrderAt ? (client.lastOrderAt | formatMediumDatetime) : '—' }}</span>
+        </div>
+        <div class="cd-info-row">
+          <span class="cd-info-row__label">Créé le</span>
+          <span class="cd-info-row__value">{{ client.createdAt ? (client.createdAt | formatMediumDatetime) : '—' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statut & Crédit -->
+    <div class="cd-card">
+      <div class="cd-card__header">
+        <div class="cd-card__header-icon">
+          <fa-icon icon="credit-card"></fa-icon>
+        </div>
+        <h3 class="cd-card__title">Statut &amp; Crédit</h3>
+      </div>
+      <div class="cd-card__body">
+        <div class="cd-info-row">
+          <span class="cd-info-row__label">Statut</span>
+          <span class="cd-info-row__value">
+            <span class="cd-status-badge" [ngClass]="getStatusClass(client.status)">
+              <span class="cd-status-badge__dot"></span>
+              {{ getStatusLabel(client.status) }}
+            </span>
+          </span>
+        </div>
+        <div class="cd-info-row">
+          <span class="cd-info-row__label">Limite crédit</span>
+          <span class="cd-info-row__value">
+            {{ client.creditLimit !== null && client.creditLimit !== undefined ? (client.creditLimit | number:'1.0-0') + ' TND' : '—' }}
+          </span>
+        </div>
+        <div class="cd-info-row">
+          <span class="cd-info-row__label">Crédit utilisé</span>
+          <span class="cd-info-row__value">
+            {{ client.creditUsed !== null && client.creditUsed !== undefined ? (client.creditUsed | number:'1.0-0') + ' TND' : '—' }}
+          </span>
+        </div>
+        <div class="cd-info-row">
+          <span class="cd-info-row__label">Supprimé</span>
+          <span class="cd-info-row__value">{{ client.isDeleted ? 'Oui' : 'Non' }}</span>
+        </div>
+        <div class="cd-info-row">
+          <span class="cd-info-row__label">Mis à jour le</span>
+          <span class="cd-info-row__value">{{ client.updatedAt ? (client.updatedAt | formatMediumDatetime) : '—' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contacts placeholder -->
+    <div class="cd-card cd-card--full">
+      <div class="cd-card__header">
+        <div class="cd-card__header-icon">
+          <fa-icon icon="users"></fa-icon>
+        </div>
+        <h3 class="cd-card__title">Contacts</h3>
+      </div>
+      <div class="cd-card__body">
+        <div class="cd-placeholder">
+          <fa-icon icon="users" size="2x" style="margin-bottom:.5rem; display:block;"></fa-icon>
+          Aucun contact associé pour le moment.
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </div>
