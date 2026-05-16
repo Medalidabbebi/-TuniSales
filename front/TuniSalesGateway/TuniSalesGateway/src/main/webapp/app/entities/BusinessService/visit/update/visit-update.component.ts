@@ -60,42 +60,53 @@ export class VisitUpdateComponent implements OnInit {
   getStatusClass(): string {
     const status = this.editForm.get('status')?.value;
     const map: Record<string, string> = {
-      PLANNED: 'tsg-badge--warning',
-      IN_PROGRESS: 'tsg-badge--info',
-      COMPLETED: 'tsg-badge--success',
-      MISSED: 'tsg-badge--danger',
-      CANCELLED: 'tsg-badge--neutral',
+      PLANNED:     'vu-status--planned',
+      IN_PROGRESS: 'vu-status--progress',
+      COMPLETED:   'vu-status--completed',
+      MISSED:      'vu-status--missed',
+      CANCELLED:   'vu-status--cancelled',
     };
-    return map[status ?? ''] || 'tsg-badge--neutral';
+    return map[status ?? ''] || 'vu-status--planned';
+  }
+
+  getStatusLabel(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      PLANNED:     'Planifiée',
+      IN_PROGRESS: 'En cours',
+      COMPLETED:   'Terminée',
+      MISSED:      'Manquée',
+      CANCELLED:   'Annulée',
+    };
+    return map[status ?? ''] || '—';
+  }
+
+  getObjectiveLabel(objective: string | null | undefined): string {
+    const map: Record<string, string> = {
+      SALE:        'Vente',
+      PROSPECTING: 'Prospection',
+      AUDIT:       'Audit',
+      COLLECTION:  'Recouvrement',
+      SUPPORT:     'Support',
+    };
+    return map[objective ?? ''] || '—';
+  }
+
+  getObjectiveClass(objective: string | null | undefined): string {
+    const map: Record<string, string> = {
+      SALE:        'vu-obj--sale',
+      PROSPECTING: 'vu-obj--prospect',
+      AUDIT:       'vu-obj--audit',
+      COLLECTION:  'vu-obj--collect',
+      SUPPORT:     'vu-obj--support',
+    };
+    return map[objective ?? ''] || '';
   }
 
   getVisitSnapshotName(): string {
     const client = this.editForm.get('client')?.value;
     const mission = this.editForm.get('mission')?.value;
     const objective = this.getObjectiveLabel(this.editForm.get('objective')?.value);
-    return `${objective} / ${client?.name || mission?.title || 'Draft visit'}`;
-  }
-
-  getStatusLabel(status: string | null | undefined): string {
-    const map: Record<string, string> = {
-      PLANNED: 'Planned',
-      IN_PROGRESS: 'In Progress',
-      COMPLETED: 'Completed',
-      MISSED: 'Missed',
-      CANCELLED: 'Cancelled',
-    };
-    return map[status ?? ''] || 'Unknown';
-  }
-
-  getObjectiveLabel(objective: string | null | undefined): string {
-    const map: Record<string, string> = {
-      SALE: 'Sale',
-      PROSPECTING: 'Prospecting',
-      AUDIT: 'Audit',
-      COLLECTION: 'Collection',
-      SUPPORT: 'Support',
-    };
-    return map[objective ?? ''] || 'Unknown';
+    return `${objective} / ${client?.name || mission?.title || 'Nouvelle visite'}`;
   }
 
   save(): void {

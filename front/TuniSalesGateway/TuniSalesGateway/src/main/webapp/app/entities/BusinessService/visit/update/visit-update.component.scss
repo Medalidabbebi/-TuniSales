@@ -1,106 +1,216 @@
-@import 'design-system';
+// ── Variables ─────────────────────────────────────────────────────
+$vu-teal:   #0e7490;
+$vu-teal-l: #cffafe;
+$vu-blue:   #2563eb;
+$vu-blue-l: #dbeafe;
+$vu-indigo: #4f46e5;
+$vu-ind-l:  #e0e7ff;
+$vu-green:  #16a34a;
+$vu-grn-l:  #dcfce7;
+$vu-amber:  #d97706;
+$vu-amb-l:  #fef3c7;
+$vu-red:    #dc2626;
+$vu-red-l:  #fee2e2;
+$vu-gray:   #64748b;
+$vu-border: #e2e8f0;
+$vu-bg:     #f8fafc;
+$vu-white:  #ffffff;
+$vu-text:   #0f172a;
+$vu-muted:  #64748b;
+$vu-shadow: 0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$vu-radius: 12px;
 
-.tsg-form-page {
+// ── Page ──────────────────────────────────────────────────────────
+.vu-page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 1.5rem;
+  max-width: 1000px;
 }
 
-.tsg-form-shell {
+// ── Header ────────────────────────────────────────────────────────
+.vu-header {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  &__left  { display: flex; align-items: center; gap: .9rem; }
+  &__icon  {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, $vu-teal, #0c6880);
+    color: #fff; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba($vu-teal,.28);
+  }
+  &__title { margin: 0; font-size: 1.45rem; font-weight: 800; color: $vu-text; }
+  &__sub   { margin: .25rem 0 0; font-size: .88rem; color: $vu-muted; }
+  &__actions { display: flex; align-items: center; gap: .75rem; }
 }
 
-.tsg-form-grid {
+.vu-back-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1.5px solid $vu-border; background: $vu-white;
+  color: $vu-muted; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: .9rem; transition: all .15s; flex-shrink: 0;
+  &:hover { border-color: $vu-teal; color: $vu-teal; background: $vu-teal-l; }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────
+.vu-btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .55rem 1.1rem;
+  border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .15s;
+
+  &--primary {
+    background: $vu-teal; color: #fff; border-color: $vu-teal;
+    &:hover:not([disabled]) { background: darken($vu-teal,6%); box-shadow: 0 3px 10px rgba($vu-teal,.3); }
+    &[disabled] { opacity: .45; cursor: not-allowed; }
+  }
+  &--ghost {
+    background: $vu-white; color: $vu-text; border-color: $vu-border;
+    &:hover { background: $vu-bg; }
+  }
+}
+
+// ── Status Badge ──────────────────────────────────────────────────
+.vu-status-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .75rem; border-radius: 999px;
+  font-size: .78rem; font-weight: 700;
+
+  &__dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+}
+.vu-status--planned   { background: $vu-amb-l; color: darken($vu-amber,10%);
+  .vu-status-badge__dot { background: $vu-amber; } }
+.vu-status--progress  { background: $vu-blue-l; color: darken($vu-blue,10%);
+  .vu-status-badge__dot { background: $vu-blue; } }
+.vu-status--completed { background: $vu-grn-l; color: darken($vu-green,10%);
+  .vu-status-badge__dot { background: $vu-green; } }
+.vu-status--missed    { background: $vu-red-l; color: darken($vu-red,10%);
+  .vu-status-badge__dot { background: $vu-red; } }
+.vu-status--cancelled { background: #f1f5f9; color: $vu-gray;
+  .vu-status-badge__dot { background: #94a3b8; } }
+
+// ── Objective Badge ───────────────────────────────────────────────
+.vu-obj-badge {
+  display: inline-block; padding: .2rem .65rem;
+  border-radius: 999px; font-size: .75rem; font-weight: 700;
+}
+.vu-obj--sale     { background: $vu-blue-l; color: darken($vu-blue,10%); }
+.vu-obj--prospect { background: $vu-ind-l;  color: darken($vu-indigo,10%); }
+.vu-obj--audit    { background: $vu-amb-l;  color: darken($vu-amber,15%); }
+.vu-obj--collect  { background: $vu-red-l;  color: darken($vu-red,10%); }
+.vu-obj--support  { background: $vu-grn-l;  color: darken($vu-green,10%); }
+
+// ── Status Strip ──────────────────────────────────────────────────
+.vu-strip {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .5rem;
+  background: $vu-white;
+  border: 1px solid $vu-border;
+  border-radius: $vu-radius;
+  padding: .85rem 1.25rem;
+  box-shadow: $vu-shadow;
+
+  &__item { display: flex; align-items: center; gap: .6rem; }
+  &__label { font-size: .72rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .05em; color: $vu-muted; }
+  &__val { font-size: .9rem; font-weight: 700; color: $vu-text; }
+  &__sep { width: 1px; height: 20px; background: $vu-border; margin: 0 .25rem; }
+}
+
+// ── Form Grid ─────────────────────────────────────────────────────
+.vu-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
 
-  @media (max-width: 991px) {
-    grid-template-columns: 1fr;
-  }
+  @media (max-width: 768px) { grid-template-columns: 1fr; }
 }
 
-.tsg-form-grid--two {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-
-  @media (max-width: 575px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.tsg-form-card {
-  padding: 24px;
-  border-radius: $radius-lg;
-  background: $tsg-surface;
-  border: 1px solid $tsg-border-light;
-  box-shadow: $shadow-sm;
-
-  &__header {
-    margin-bottom: 18px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid $tsg-border-light;
-
-    h2 {
-      margin: 0;
-      font-size: 18px;
-      color: $tsg-text;
-    }
-  }
-}
-
-.tsg-form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 18px;
-}
-
-.tsg-input {
-  width: 100%;
-  min-height: 44px;
-  border-radius: $radius-md;
-  border: 1px solid $tsg-border;
-  background: $tsg-surface;
-  color: $tsg-text;
-  padding: 10px 14px;
-
-  &:focus {
-    outline: none;
-    border-color: $tsg-accent;
-    box-shadow: 0 0 0 3px rgba($tsg-accent, 0.14);
-  }
-}
-
-.tsg-field-error {
-  color: $tsg-danger;
-  font-size: $font-size-sm;
-}
-
-.tsg-summary-grid {
-  margin-top: -4px;
-}
-
-.tsg-summary-card {
-  position: relative;
+// ── Card ──────────────────────────────────────────────────────────
+.vu-card {
+  background: $vu-white;
+  border: 1px solid $vu-border;
+  border-radius: $vu-radius;
+  box-shadow: $vu-shadow;
   overflow: hidden;
 
-  &::after {
-    content: '';
-    position: absolute;
-    inset-inline-end: -24px;
-    top: -24px;
-    width: 88px;
-    height: 88px;
-    border-radius: 50%;
-    background: rgba($tsg-accent, 0.06);
+  &__head {
+    display: flex; align-items: center; gap: .85rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid $vu-border;
+    background: $vu-bg;
   }
+  &__head-icon {
+    width: 38px; height: 38px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+    &--teal { background: $vu-teal-l; color: $vu-teal; }
+    &--blue { background: $vu-blue-l; color: $vu-blue; }
+  }
+  &__title { font-size: .95rem; font-weight: 700; color: $vu-text; }
+  &__sub   { font-size: .78rem; color: $vu-muted; margin-top: .1rem; }
+  &__body  { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+}
 
-  &__value {
-    position: relative;
-    z-index: 1;
+// ── Fields ────────────────────────────────────────────────────────
+.vu-field {
+  display: flex; flex-direction: column; gap: .35rem;
+  flex: 1;
+}
+
+.vu-field-row {
+  display: flex; gap: .85rem;
+  @media (max-width: 480px) { flex-direction: column; }
+}
+
+.vu-label {
+  font-size: .78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .04em;
+  color: $vu-text;
+}
+.vu-required { color: $vu-red; }
+
+.vu-input {
+  width: 100%;
+  padding: .6rem .85rem;
+  border: 1.5px solid $vu-border;
+  border-radius: 8px;
+  font-size: .9rem; color: $vu-text;
+  background: $vu-white;
+  transition: border-color .15s, box-shadow .15s;
+  outline: none;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: $vu-teal;
+    box-shadow: 0 0 0 3px rgba($vu-teal,.15);
+  }
+  &[readonly] { background: $vu-bg; color: $vu-muted; cursor: not-allowed; }
+  &--textarea { resize: vertical; min-height: 100px; font-family: inherit; }
+}
+
+.vu-select {
+  width: 100%;
+  padding: .6rem .85rem;
+  border: 1.5px solid $vu-border;
+  border-radius: 8px;
+  font-size: .9rem; color: $vu-text;
+  background: $vu-white;
+  appearance: auto;
+  transition: border-color .15s, box-shadow .15s;
+  outline: none; cursor: pointer;
+
+  &:focus {
+    border-color: $vu-teal;
+    box-shadow: 0 0 0 3px rgba($vu-teal,.15);
   }
 }
+
+.vu-error { font-size: .78rem; color: $vu-red; margin-top: .1rem; }
+
+.vu-divider { height: 1px; background: $vu-border; margin: .25rem 0; }

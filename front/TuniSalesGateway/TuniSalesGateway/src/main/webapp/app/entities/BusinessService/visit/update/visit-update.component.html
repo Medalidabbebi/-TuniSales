@@ -1,166 +1,204 @@
-<div class="tsg-form-page">
-  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm" class="tsg-form-shell">
-    <div class="tsg-page-header">
-      <div>
-        <h1
-          class="tsg-page-header__title"
-          id="jhi-visit-heading"
-          data-cy="VisitCreateUpdateHeading"
-          jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.home.createOrEditLabel"
-        >
-          Create or edit visit
-        </h1>
-        <p class="tsg-page-header__subtitle">Capture objective, location, schedule, and mission/client context.</p>
-      </div>
-      <div class="tsg-page-header__actions">
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="tsg-btn tsg-btn--secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>
-          <span jhiTranslate="entity.action.cancel">Cancel</span>
+<div class="vu-page">
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+
+    <!-- ── Header ─────────────────────────────────────────────────── -->
+    <div class="vu-header">
+      <div class="vu-header__left">
+        <button type="button" class="vu-back-btn" (click)="previousState()">
+          <fa-icon icon="arrow-left"></fa-icon>
         </button>
-        <button type="submit" id="save-entity" data-cy="entityCreateSaveButton" [disabled]="editForm.invalid || isSaving" class="tsg-btn tsg-btn--primary">
-          <fa-icon icon="save"></fa-icon>
-          <span jhiTranslate="entity.action.save">Save</span>
+        <div class="vu-header__icon">
+          <fa-icon icon="map-marker-alt"></fa-icon>
+        </div>
+        <div>
+          <h1 class="vu-header__title" id="jhi-visit-heading" data-cy="VisitCreateUpdateHeading">
+            {{ editForm.controls.id.value ? 'Modifier la visite' : 'Nouvelle visite' }}
+          </h1>
+          <p class="vu-header__sub">Objectif, localisation, planning et contexte</p>
+        </div>
+      </div>
+      <div class="vu-header__actions">
+        <button type="button" class="vu-btn vu-btn--ghost" (click)="previousState()" data-cy="entityCreateCancelButton">
+          <fa-icon icon="ban"></fa-icon> Annuler
+        </button>
+        <button type="submit" class="vu-btn vu-btn--primary" [disabled]="editForm.invalid || isSaving" data-cy="entityCreateSaveButton">
+          <fa-icon [icon]="isSaving ? 'spinner' : 'save'" [spin]="isSaving"></fa-icon>
+          {{ isSaving ? 'Enregistrement…' : 'Sauvegarder' }}
         </button>
       </div>
     </div>
 
     <jhi-alert-error></jhi-alert-error>
 
-    <div class="tsg-summary-grid">
-      <div class="tsg-summary-card">
-        <div class="tsg-summary-card__label">Visit snapshot</div>
-        <div class="tsg-summary-card__value">{{ getVisitSnapshotName() }}</div>
-        <div class="tsg-summary-card__meta">Visit ID {{ editForm.controls.id.value ?? 'New' }}</div>
+    <!-- ── Status Strip ────────────────────────────────────────────── -->
+    <div class="vu-strip">
+      <div class="vu-strip__item">
+        <span class="vu-strip__label">Statut</span>
+        <span class="vu-status-badge" [ngClass]="getStatusClass()">
+          <span class="vu-status-badge__dot"></span>
+          {{ getStatusLabel(editForm.get('status')?.value) }}
+        </span>
       </div>
-      <div class="tsg-summary-card">
-        <div class="tsg-summary-card__label">Order</div>
-        <div class="tsg-summary-card__value">#{{ editForm.get('visitOrder')?.value || '—' }}</div>
-        <div class="tsg-summary-card__meta">Execution sequence</div>
+      <div class="vu-strip__sep"></div>
+      <div class="vu-strip__item">
+        <span class="vu-strip__label">Objectif</span>
+        <span class="vu-obj-badge" [ngClass]="getObjectiveClass(editForm.get('objective')?.value)">
+          {{ getObjectiveLabel(editForm.get('objective')?.value) }}
+        </span>
       </div>
-      <div class="tsg-summary-card">
-        <div class="tsg-summary-card__label">Status</div>
-        <div class="tsg-summary-card__value"><span class="tsg-badge" [ngClass]="getStatusClass()">{{ getStatusLabel(editForm.get('status')?.value) }}</span></div>
-        <div class="tsg-summary-card__meta">Lifecycle state</div>
+      <div class="vu-strip__sep"></div>
+      <div class="vu-strip__item">
+        <span class="vu-strip__label">Ordre</span>
+        <strong class="vu-strip__val">#{{ editForm.get('visitOrder')?.value || '—' }}</strong>
       </div>
-      <div class="tsg-summary-card">
-        <div class="tsg-summary-card__label">Objective</div>
-        <div class="tsg-summary-card__value">{{ getObjectiveLabel(editForm.get('objective')?.value) }}</div>
-        <div class="tsg-summary-card__meta">Visit purpose</div>
+      <div class="vu-strip__sep" *ngIf="editForm.get('client')?.value"></div>
+      <div class="vu-strip__item" *ngIf="editForm.get('client')?.value">
+        <span class="vu-strip__label">Client</span>
+        <strong class="vu-strip__val">{{ editForm.get('client')?.value?.name }}</strong>
       </div>
     </div>
 
-    <div class="tsg-form-grid">
-      <section class="tsg-form-card">
-        <div class="tsg-form-card__header">
-          <h2>Visit setup</h2>
-        </div>
+    <!-- ── Form Grid ───────────────────────────────────────────────── -->
+    <div class="vu-grid">
 
-        <div class="tsg-form-group" *ngIf="editForm.controls.id.value !== null">
-          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="tsg-input" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
-
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.visitOrder" for="field_visitOrder">Visit Order</label>
-          <input type="number" class="tsg-input" name="visitOrder" id="field_visitOrder" data-cy="visitOrder" formControlName="visitOrder" />
-          <div *ngIf="editForm.get('visitOrder')!.invalid && (editForm.get('visitOrder')!.dirty || editForm.get('visitOrder')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('visitOrder')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
-            <small class="tsg-field-error" *ngIf="editForm.get('visitOrder')?.errors?.min" jhiTranslate="entity.validation.min" [translateValues]="{ min: 1 }">This field must be greater than or equal to 1.</small>
-            <small class="tsg-field-error" [hidden]="!editForm.get('visitOrder')?.errors?.number" jhiTranslate="entity.validation.number">This field must be a number.</small>
+      <!-- Left: Visit Setup -->
+      <div class="vu-card">
+        <div class="vu-card__head">
+          <div class="vu-card__head-icon vu-card__head-icon--teal"><fa-icon icon="clipboard-check"></fa-icon></div>
+          <div>
+            <div class="vu-card__title">Configuration de la visite</div>
+            <div class="vu-card__sub">Ordre, objectif, statut et notes</div>
           </div>
         </div>
+        <div class="vu-card__body">
 
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.objective" for="field_objective">Objective</label>
-          <select class="tsg-input" name="objective" formControlName="objective" id="field_objective" data-cy="objective">
-            <option [ngValue]="null">{{ 'tuniSalesGatewayApp.VisitObjective.null' | translate }}</option>
-            <option *ngFor="let visitObjective of visitObjectiveValues" [value]="visitObjective">{{ 'tuniSalesGatewayApp.VisitObjective.' + visitObjective | translate }}</option>
-          </select>
-          <div *ngIf="editForm.get('objective')!.invalid && (editForm.get('objective')!.dirty || editForm.get('objective')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('objective')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
+          <div class="vu-field" *ngIf="editForm.controls.id.value !== null">
+            <label class="vu-label" for="field_visitOrder">Ordre de visite <span class="vu-required">*</span></label>
+            <input type="number" class="vu-input" name="visitOrder" id="field_visitOrder"
+              data-cy="visitOrder" formControlName="visitOrder" placeholder="Ex: 1001" />
+            <span class="vu-error" *ngIf="editForm.get('visitOrder')?.invalid && editForm.get('visitOrder')?.touched">
+              <span *ngIf="editForm.get('visitOrder')?.errors?.required">Ce champ est obligatoire.</span>
+              <span *ngIf="editForm.get('visitOrder')?.errors?.min">Valeur minimum : 1.</span>
+            </span>
+          </div>
+
+          <div class="vu-field" *ngIf="editForm.controls.id.value === null">
+            <label class="vu-label" for="field_visitOrder2">Ordre de visite <span class="vu-required">*</span></label>
+            <input type="number" class="vu-input" name="visitOrder" id="field_visitOrder2"
+              data-cy="visitOrder" formControlName="visitOrder" placeholder="Ex: 1001" />
+            <span class="vu-error" *ngIf="editForm.get('visitOrder')?.invalid && editForm.get('visitOrder')?.touched">
+              <span *ngIf="editForm.get('visitOrder')?.errors?.required">Ce champ est obligatoire.</span>
+              <span *ngIf="editForm.get('visitOrder')?.errors?.min">Valeur minimum : 1.</span>
+            </span>
+          </div>
+
+          <div class="vu-field-row">
+            <div class="vu-field">
+              <label class="vu-label" for="field_objective">Objectif</label>
+              <select class="vu-select" name="objective" formControlName="objective" id="field_objective" data-cy="objective">
+                <option [ngValue]="null">— Sélectionner —</option>
+                <option *ngFor="let o of visitObjectiveValues" [value]="o">
+                  {{ 'tuniSalesGatewayApp.VisitObjective.' + o | translate }}
+                </option>
+              </select>
+            </div>
+            <div class="vu-field">
+              <label class="vu-label" for="field_status">Statut</label>
+              <select class="vu-select" name="status" formControlName="status" id="field_status" data-cy="status">
+                <option [ngValue]="null">— Sélectionner —</option>
+                <option *ngFor="let s of visitStatusValues" [value]="s">
+                  {{ 'tuniSalesGatewayApp.VisitStatus.' + s | translate }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="vu-field">
+            <label class="vu-label" for="field_notes">Notes</label>
+            <textarea class="vu-input vu-input--textarea" name="notes" id="field_notes"
+              data-cy="notes" formControlName="notes" rows="4"
+              placeholder="Observations, contexte ou remarques…"></textarea>
+            <span class="vu-error" *ngIf="editForm.get('notes')?.errors?.maxlength && editForm.get('notes')?.touched">
+              2000 caractères maximum.
+            </span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Right: Coordinates & Links -->
+      <div class="vu-card">
+        <div class="vu-card__head">
+          <div class="vu-card__head-icon vu-card__head-icon--blue"><fa-icon icon="map-marker-alt"></fa-icon></div>
+          <div>
+            <div class="vu-card__title">Localisation &amp; Liens</div>
+            <div class="vu-card__sub">GPS, timing, client et mission</div>
           </div>
         </div>
+        <div class="vu-card__body">
 
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.status" for="field_status">Status</label>
-          <select class="tsg-input" name="status" formControlName="status" id="field_status" data-cy="status">
-            <option [ngValue]="null">{{ 'tuniSalesGatewayApp.VisitStatus.null' | translate }}</option>
-            <option *ngFor="let visitStatus of visitStatusValues" [value]="visitStatus">{{ 'tuniSalesGatewayApp.VisitStatus.' + visitStatus | translate }}</option>
-          </select>
-          <div *ngIf="editForm.get('status')!.invalid && (editForm.get('status')!.dirty || editForm.get('status')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('status')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
+          <div class="vu-field-row">
+            <div class="vu-field">
+              <label class="vu-label" for="field_latitude">Latitude</label>
+              <input type="number" class="vu-input" name="latitude" id="field_latitude"
+                data-cy="latitude" formControlName="latitude" placeholder="Ex: 36.8065" />
+            </div>
+            <div class="vu-field">
+              <label class="vu-label" for="field_longitude">Longitude</label>
+              <input type="number" class="vu-input" name="longitude" id="field_longitude"
+                data-cy="longitude" formControlName="longitude" placeholder="Ex: 10.1815" />
+            </div>
           </div>
+
+          <div class="vu-field-row">
+            <div class="vu-field">
+              <label class="vu-label" for="field_checkinAt">Check-in</label>
+              <input id="field_checkinAt" data-cy="checkinAt" type="datetime-local"
+                class="vu-input" name="checkinAt" formControlName="checkinAt" />
+            </div>
+            <div class="vu-field">
+              <label class="vu-label" for="field_checkoutAt">Check-out</label>
+              <input id="field_checkoutAt" data-cy="checkoutAt" type="datetime-local"
+                class="vu-input" name="checkoutAt" formControlName="checkoutAt" />
+            </div>
+          </div>
+
+          <div class="vu-field">
+            <label class="vu-label" for="field_createdAt">Date de création <span class="vu-required">*</span></label>
+            <input id="field_createdAt" data-cy="createdAt" type="datetime-local"
+              class="vu-input" name="createdAt" formControlName="createdAt" />
+            <span class="vu-error" *ngIf="editForm.get('createdAt')?.invalid && editForm.get('createdAt')?.touched">
+              <span *ngIf="editForm.get('createdAt')?.errors?.required">Ce champ est obligatoire.</span>
+            </span>
+          </div>
+
+          <div class="vu-divider"></div>
+
+          <div class="vu-field">
+            <label class="vu-label" for="field_client">
+              <fa-icon icon="building" class="me-1" style="opacity:.6"></fa-icon> Client
+            </label>
+            <select class="vu-select" id="field_client" data-cy="client"
+              name="client" formControlName="client" [compareWith]="compareClient">
+              <option *ngIf="!editForm.get('client')!.value" [ngValue]="null" selected>— Sélectionner un client —</option>
+              <option [ngValue]="c" *ngFor="let c of clientsSharedCollection">{{ c.name }}</option>
+            </select>
+          </div>
+
+          <div class="vu-field">
+            <label class="vu-label" for="field_mission">
+              <fa-icon icon="bullseye" class="me-1" style="opacity:.6"></fa-icon> Mission
+            </label>
+            <select class="vu-select" id="field_mission" data-cy="mission"
+              name="mission" formControlName="mission" [compareWith]="compareMission">
+              <option *ngIf="editForm.get('mission')!.value == null" [ngValue]="null" selected>— Sélectionner une mission —</option>
+              <option [ngValue]="m" *ngFor="let m of missionsSharedCollection">{{ m.title }}</option>
+            </select>
+          </div>
+
         </div>
-
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.notes" for="field_notes">Notes</label>
-          <textarea class="tsg-input" name="notes" id="field_notes" data-cy="notes" formControlName="notes" rows="4"></textarea>
-          <div *ngIf="editForm.get('notes')!.invalid && (editForm.get('notes')!.dirty || editForm.get('notes')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('notes')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 2000 }">This field cannot exceed 2000 characters.</small>
-          </div>
-        </div>
-      </section>
-
-      <section class="tsg-form-card">
-        <div class="tsg-form-card__header">
-          <h2>Coordinates and links</h2>
-        </div>
-
-        <div class="tsg-form-grid--two">
-          <div class="tsg-form-group">
-            <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.latitude" for="field_latitude">Latitude</label>
-            <input type="number" class="tsg-input" name="latitude" id="field_latitude" data-cy="latitude" formControlName="latitude" />
-          </div>
-
-          <div class="tsg-form-group">
-            <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.longitude" for="field_longitude">Longitude</label>
-            <input type="number" class="tsg-input" name="longitude" id="field_longitude" data-cy="longitude" formControlName="longitude" />
-          </div>
-        </div>
-
-        <div class="tsg-form-grid--two">
-          <div class="tsg-form-group">
-            <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.checkinAt" for="field_checkinAt">Checkin At</label>
-            <input id="field_checkinAt" data-cy="checkinAt" type="datetime-local" class="tsg-input" name="checkinAt" formControlName="checkinAt" placeholder="YYYY-MM-DD HH:mm" />
-          </div>
-
-          <div class="tsg-form-group">
-            <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.checkoutAt" for="field_checkoutAt">Checkout At</label>
-            <input id="field_checkoutAt" data-cy="checkoutAt" type="datetime-local" class="tsg-input" name="checkoutAt" formControlName="checkoutAt" placeholder="YYYY-MM-DD HH:mm" />
-          </div>
-        </div>
-
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.createdAt" for="field_createdAt">Created At</label>
-          <input id="field_createdAt" data-cy="createdAt" type="datetime-local" class="tsg-input" name="createdAt" formControlName="createdAt" placeholder="YYYY-MM-DD HH:mm" />
-          <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('createdAt')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
-            <small class="tsg-field-error" [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal" jhiTranslate="entity.validation.datetimelocal">This field must be a date and time.</small>
-          </div>
-        </div>
-
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.client" for="field_client">Client</label>
-          <select class="tsg-input" id="field_client" data-cy="client" name="client" formControlName="client" [compareWith]="compareClient">
-            <option *ngIf="!editForm.get('client')!.value" [ngValue]="null" selected></option>
-            <option [ngValue]="clientOption" *ngFor="let clientOption of clientsSharedCollection">{{ clientOption.name }}</option>
-          </select>
-          <div *ngIf="editForm.get(['client'])!.invalid && (editForm.get(['client'])!.dirty || editForm.get(['client'])!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get(['client'])?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
-          </div>
-        </div>
-
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.mission" for="field_mission">Mission</label>
-          <select class="tsg-input" id="field_mission" data-cy="mission" name="mission" formControlName="mission" [compareWith]="compareMission">
-            <option *ngIf="editForm.get(['mission'])!.value == null" [ngValue]="null" selected></option>
-            <option [ngValue]="missionOption" *ngFor="let missionOption of missionsSharedCollection">{{ missionOption.title }}</option>
-          </select>
-          <div *ngIf="editForm.get(['mission'])!.invalid && (editForm.get(['mission'])!.dirty || editForm.get(['mission'])!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get(['mission'])?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
+
   </form>
 </div>
