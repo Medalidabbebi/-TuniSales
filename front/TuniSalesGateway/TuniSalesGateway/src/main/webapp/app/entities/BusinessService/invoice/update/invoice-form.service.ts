@@ -68,9 +68,7 @@ export class InvoiceFormService {
           validators: [Validators.required],
         }
       ),
-      tenantId: new FormControl(invoiceRawValue.tenantId, {
-        validators: [Validators.required],
-      }),
+      tenantId: new FormControl(invoiceRawValue.tenantId),
       invoiceNumber: new FormControl(invoiceRawValue.invoiceNumber, {
         validators: [Validators.required, Validators.minLength(5), Validators.maxLength(50)],
       }),
@@ -93,9 +91,7 @@ export class InvoiceFormService {
         validators: [Validators.required],
       }),
       paidAt: new FormControl(invoiceRawValue.paidAt),
-      isDeleted: new FormControl(invoiceRawValue.isDeleted, {
-        validators: [Validators.required],
-      }),
+      isDeleted: new FormControl(invoiceRawValue.isDeleted),
       createdAt: new FormControl(invoiceRawValue.createdAt, {
         validators: [Validators.required],
       }),
@@ -103,9 +99,7 @@ export class InvoiceFormService {
       client: new FormControl(invoiceRawValue.client, {
         validators: [Validators.required],
       }),
-      order: new FormControl(invoiceRawValue.order, {
-        validators: [Validators.required],
-      }),
+      order: new FormControl(invoiceRawValue.order),
     });
   }
 
