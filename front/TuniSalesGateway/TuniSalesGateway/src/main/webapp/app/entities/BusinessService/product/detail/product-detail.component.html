@@ -1,120 +1,173 @@
-<div class="tsg-detail-page" *ngIf="product">
-  <div class="tsg-page-header">
-    <div>
-      <h1 class="tsg-page-header__title" data-cy="productDetailsHeading" jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.detail.title">Product</h1>
-      <p class="tsg-page-header__subtitle">{{ product.name || product.sku || 'Product details' }}</p>
-    </div>
-    <div class="tsg-page-header__actions">
-      <button type="button" (click)="previousState()" class="tsg-btn tsg-btn--secondary" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>
-        <span jhiTranslate="entity.action.back">Back</span>
-      </button>
-      <button type="button" [routerLink]="['/product', product.id, 'edit']" class="tsg-btn tsg-btn--primary">
-        <fa-icon icon="pencil-alt"></fa-icon>
-        <span jhiTranslate="entity.action.edit">Edit</span>
-      </button>
-    </div>
-  </div>
+<div class="pd-page" *ngIf="product">
 
-  <div class="tsg-summary-grid">
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">SKU</div>
-      <div class="tsg-summary-card__value">{{ product.sku || '—' }}</div>
-      <div class="tsg-summary-card__meta">Tenant {{ product.tenantId || '—' }}</div>
-    </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Price</div>
-      <div class="tsg-summary-card__value">{{ getAmount(product.price) }}</div>
-      <div class="tsg-summary-card__meta">Tax {{ product.taxRate || '—' }}%</div>
-    </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Status</div>
-      <div class="tsg-summary-card__value">
-        <span class="tsg-badge" [ngClass]="getStatusBadgeClass()">{{ product.isActive ? 'Active' : 'Inactive' }}</span>
+  <!-- ── Header ──────────────────────────────────────────────────── -->
+  <div class="pd-header">
+    <div class="pd-header__left">
+      <button class="pd-back-btn" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+      </button>
+      <div class="pd-header__icon">
+        <fa-icon icon="box"></fa-icon>
       </div>
-      <div class="tsg-summary-card__meta">Catalog visibility</div>
+      <div>
+        <h1 class="pd-header__title" data-cy="productDetailsHeading">
+          {{ product.name || product.sku || 'Produit #' + product.id }}
+        </h1>
+        <p class="pd-header__sub">
+          <span *ngIf="product.sku">{{ product.sku }}</span>
+          <span *ngIf="product.sku && product.category"> · </span>
+          <span *ngIf="product.category">{{ product.category }}</span>
+        </p>
+      </div>
     </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Category</div>
-      <div class="tsg-summary-card__value">{{ product.category || '—' }}</div>
-      <div class="tsg-summary-card__meta">{{ product.brand || 'No brand' }}</div>
+    <div class="pd-header__actions">
+      <span class="pd-status-badge" [ngClass]="getStatusClass(product.isActive)">
+        <span class="pd-status-badge__dot"></span>
+        {{ getStatusLabel(product.isActive) }}
+      </span>
+      <button type="button" [routerLink]="['/product', product.id, 'edit']" class="pd-btn pd-btn--primary">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        Éditer
+      </button>
     </div>
   </div>
 
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
-  <div class="tsg-detail-grid">
-    <section class="tsg-detail-card">
-      <div class="tsg-detail-card__header">
-        <h2>Product details</h2>
+  <!-- ── KPI Row ─────────────────────────────────────────────────── -->
+  <div class="pd-kpi-row">
+    <div class="pd-kpi pd-kpi--blue" *ngIf="product.sku">
+      <div class="pd-kpi__icon"><fa-icon icon="tag"></fa-icon></div>
+      <div>
+        <div class="pd-kpi__value">{{ product.sku }}</div>
+        <div class="pd-kpi__label">Référence SKU</div>
       </div>
-      <dl class="tsg-detail-list">
-        <div>
-          <dt jhiTranslate="global.field.id">ID</dt>
-          <dd>{{ product.id }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.tenantId">Tenant Id</dt>
-          <dd>{{ product.tenantId || '—' }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.sku">Sku</dt>
-          <dd>{{ product.sku || '—' }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.name">Name</dt>
-          <dd>{{ product.name || '—' }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.brand">Brand</dt>
-          <dd>{{ product.brand || '—' }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.category">Category</dt>
-          <dd>{{ product.category || '—' }}</dd>
-        </div>
-      </dl>
-    </section>
-
-    <section class="tsg-detail-card">
-      <div class="tsg-detail-card__header">
-        <h2>Pricing and flags</h2>
+    </div>
+    <div class="pd-kpi pd-kpi--green" *ngIf="product.price != null">
+      <div class="pd-kpi__icon"><fa-icon icon="money-bill-wave"></fa-icon></div>
+      <div>
+        <div class="pd-kpi__value">{{ formatPrice(product.price) }} <small>TND</small></div>
+        <div class="pd-kpi__label">Prix</div>
       </div>
-      <dl class="tsg-detail-list">
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.price">Price</dt>
-          <dd>{{ getAmount(product.price) }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.taxRate">Tax Rate</dt>
-          <dd>{{ product.taxRate || '—' }}%</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.isActive">Is Active</dt>
-          <dd>{{ product.isActive }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.isDeleted">Is Deleted</dt>
-          <dd>{{ product.isDeleted }}</dd>
-        </div>
-      </dl>
-    </section>
-
-    <section class="tsg-detail-card tsg-detail-card--wide">
-      <div class="tsg-detail-card__header">
-        <h2>Timeline</h2>
+    </div>
+    <div class="pd-kpi pd-kpi--purple" *ngIf="product.taxRate != null">
+      <div class="pd-kpi__icon"><fa-icon icon="percent"></fa-icon></div>
+      <div>
+        <div class="pd-kpi__value">{{ product.taxRate }}%</div>
+        <div class="pd-kpi__label">TVA</div>
       </div>
-      <dl class="tsg-detail-list tsg-detail-list--split">
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.createdAt">Created At</dt>
-          <dd>{{ product.createdAt | formatMediumDatetime }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceProduct.updatedAt">Updated At</dt>
-          <dd>{{ product.updatedAt | formatMediumDatetime }}</dd>
-        </div>
-      </dl>
-    </section>
+    </div>
+    <div class="pd-kpi" [ngClass]="getStatusClass(product.isActive)">
+      <div class="pd-kpi__icon"><fa-icon [icon]="product.isActive ? 'check-circle' : 'times-circle'"></fa-icon></div>
+      <div>
+        <div class="pd-kpi__value">{{ getStatusLabel(product.isActive) }}</div>
+        <div class="pd-kpi__label">Statut</div>
+      </div>
+    </div>
   </div>
+
+  <!-- ── Cards Grid ──────────────────────────────────────────────── -->
+  <div class="pd-grid">
+
+    <!-- Catalogue -->
+    <div class="pd-card">
+      <div class="pd-card__head">
+        <div class="pd-card__head-icon pd-card__head-icon--blue">
+          <fa-icon icon="box"></fa-icon>
+        </div>
+        <div>
+          <div class="pd-card__title">Catalogue</div>
+          <div class="pd-card__sub">Identité du produit</div>
+        </div>
+      </div>
+      <div class="pd-info-list">
+        <div class="pd-info-row" *ngIf="product.sku">
+          <span class="pd-info-row__label">SKU</span>
+          <span class="pd-info-row__value pd-info-row__value--mono">{{ product.sku }}</span>
+        </div>
+        <div class="pd-info-row">
+          <span class="pd-info-row__label">Nom</span>
+          <span class="pd-info-row__value">{{ product.name || '—' }}</span>
+        </div>
+        <div class="pd-info-row" *ngIf="product.brand">
+          <span class="pd-info-row__label">Marque</span>
+          <span class="pd-info-row__value">{{ product.brand }}</span>
+        </div>
+        <div class="pd-info-row" *ngIf="product.category">
+          <span class="pd-info-row__label">Catégorie</span>
+          <span class="pd-info-row__value">{{ product.category }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Prix & Statut -->
+    <div class="pd-card">
+      <div class="pd-card__head">
+        <div class="pd-card__head-icon pd-card__head-icon--green">
+          <fa-icon icon="money-bill-wave"></fa-icon>
+        </div>
+        <div>
+          <div class="pd-card__title">Prix & Statut</div>
+          <div class="pd-card__sub">Tarification et disponibilité</div>
+        </div>
+      </div>
+      <div class="pd-info-list">
+        <div class="pd-info-row" *ngIf="product.price != null">
+          <span class="pd-info-row__label">Prix</span>
+          <span class="pd-info-row__value pd-info-row__value--price">{{ formatPrice(product.price) }} TND</span>
+        </div>
+        <div class="pd-info-row" *ngIf="product.taxRate != null">
+          <span class="pd-info-row__label">Taux TVA</span>
+          <span class="pd-info-row__value">{{ product.taxRate }}%</span>
+        </div>
+        <div class="pd-info-row">
+          <span class="pd-info-row__label">Actif</span>
+          <span class="pd-bool" [ngClass]="product.isActive ? 'pd-bool--yes' : 'pd-bool--no'">
+            <fa-icon [icon]="product.isActive ? 'check-circle' : 'times-circle'"></fa-icon>
+            {{ product.isActive ? 'Oui' : 'Non' }}
+          </span>
+        </div>
+        <div class="pd-info-row">
+          <span class="pd-info-row__label">Supprimé</span>
+          <span class="pd-bool" [ngClass]="product.isDeleted ? 'pd-bool--no' : 'pd-bool--yes'">
+            <fa-icon [icon]="product.isDeleted ? 'times-circle' : 'check-circle'"></fa-icon>
+            {{ product.isDeleted ? 'Oui' : 'Non' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Chronologie ─────────────────────────────────────────────── -->
+  <div class="pd-card">
+    <div class="pd-card__head">
+      <div class="pd-card__head-icon pd-card__head-icon--blue">
+        <fa-icon icon="history"></fa-icon>
+      </div>
+      <div>
+        <div class="pd-card__title">Chronologie</div>
+        <div class="pd-card__sub">Dates de création et mise à jour</div>
+      </div>
+    </div>
+    <div class="pd-timeline">
+      <div class="pd-tl-item" *ngIf="product.createdAt">
+        <div class="pd-tl-dot pd-tl-dot--blue"></div>
+        <div class="pd-tl-body">
+          <span class="pd-tl-label">Créé le</span>
+          <span class="pd-tl-date">{{ product.createdAt | formatMediumDatetime }}</span>
+        </div>
+      </div>
+      <div class="pd-tl-line" *ngIf="product.createdAt && product.updatedAt"></div>
+      <div class="pd-tl-item" *ngIf="product.updatedAt">
+        <div class="pd-tl-dot pd-tl-dot--gray"></div>
+        <div class="pd-tl-body">
+          <span class="pd-tl-label">Mis à jour</span>
+          <span class="pd-tl-date">{{ product.updatedAt | formatMediumDatetime }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>

@@ -24,11 +24,16 @@ export class ProductDetailComponent implements OnInit {
     window.history.back();
   }
 
-  getStatusBadgeClass(): string {
-    return this.product?.isActive ? 'tsg-badge--success' : 'tsg-badge--neutral';
+  getStatusClass(isActive: boolean | null | undefined): string {
+    return isActive ? 'pd-status--active' : 'pd-status--inactive';
   }
 
-  getAmount(value: number | null | undefined): string {
-    return value === null || value === undefined ? '—' : value.toLocaleString();
+  getStatusLabel(isActive: boolean | null | undefined): string {
+    return isActive ? 'Actif' : 'Inactif';
+  }
+
+  formatPrice(value: number | null | undefined): string {
+    if (value == null) return '—';
+    return value.toLocaleString('fr-TN');
   }
 }
