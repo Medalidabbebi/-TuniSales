@@ -37,15 +37,15 @@
 .iu-header__icon {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, #7c3aed, #6d28d9);
-  color: #fff;
+  background-color: #ede9fe;
+  color: #7c3aed;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.28);
+  border: 2px solid #ddd6fe;
 }
 
 .iu-header__title {
