@@ -12,6 +12,8 @@ import { StockItemService } from '../service/stock-item.service';
 import { IWarehouse } from 'app/entities/InventoryService/warehouse/warehouse.model';
 import { WarehouseService } from 'app/entities/InventoryService/warehouse/service/warehouse.service';
 import { StockItemStatus } from 'app/entities/enumerations/stock-item-status.model';
+import { IProduct } from 'app/entities/BusinessService/product/product.model';
+import { ProductService } from 'app/entities/BusinessService/product/service/product.service';
 
 @Component({
   selector: 'jhi-stock-item-update',
@@ -24,6 +26,7 @@ export class StockItemUpdateComponent implements OnInit {
   serverError: string | null = null;
 
   warehousesSharedCollection: IWarehouse[] = [];
+  productsCollection: IProduct[] = [];
 
   editForm: StockItemFormGroup = this.stockItemFormService.createStockItemFormGroup();
 
@@ -31,12 +34,21 @@ export class StockItemUpdateComponent implements OnInit {
     protected stockItemService: StockItemService,
     protected stockItemFormService: StockItemFormService,
     protected warehouseService: WarehouseService,
+    protected productService: ProductService,
     protected activatedRoute: ActivatedRoute
   ) {}
 
   compareWarehouse = (o1: IWarehouse | null, o2: IWarehouse | null): boolean => this.warehouseService.compareWarehouse(o1, o2);
 
   trackWarehouseById = (_index: number, item: IWarehouse): number => this.warehouseService.getWarehouseIdentifier(item);
+
+  onProductChange(productId: string): void {
+    const id = Number(productId);
+    const selected = this.productsCollection.find(p => p.id === id);
+    if (selected) {
+      this.editForm.patchValue({ productName: selected.name ?? null });
+    }
+  }
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ stockItem }) => {
@@ -126,5 +138,10 @@ export class StockItemUpdateComponent implements OnInit {
         )
       )
       .subscribe((warehouses: IWarehouse[]) => (this.warehousesSharedCollection = warehouses));
+
+    this.productService
+      .query({ size: 1000 })
+      .pipe(map((res: HttpResponse<IProduct[]>) => res.body ?? []))
+      .subscribe((products: IProduct[]) => (this.productsCollection = products));
   }
 }

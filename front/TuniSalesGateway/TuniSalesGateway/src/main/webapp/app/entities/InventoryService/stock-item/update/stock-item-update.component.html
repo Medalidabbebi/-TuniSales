@@ -37,26 +37,30 @@
               </select>
             </div>
 
-            <!-- Produit ID -->
+            <!-- Produit -->
             <div class="mb-3">
               <label class="form-label fw-semibold" for="field_productId">
-                ID Produit <span class="text-danger">*</span>
+                Produit <span class="text-danger">*</span>
               </label>
-              <input
-                type="number"
-                class="form-control"
+              <select
+                class="form-select"
                 id="field_productId"
                 formControlName="productId"
-                placeholder="Ex: 3"
                 [class.is-invalid]="editForm.get('productId')!.invalid && editForm.get('productId')!.touched"
-              />
-              <div class="form-text text-muted">
-                Entrez l'ID du produit tel qu'il apparaît dans BusinessService (page Produits).
+                (change)="onProductChange($any($event.target).value)"
+              >
+                <option [ngValue]="null">-- Sélectionner un produit --</option>
+                <option *ngFor="let p of productsCollection" [value]="p.id">
+                  #{{ p.id }} — {{ p.name }} ({{ p.sku }})
+                </option>
+              </select>
+              <div class="form-text text-muted" *ngIf="productsCollection.length === 0">
+                Chargement des produits…
               </div>
-              <div class="invalid-feedback">L'ID produit est obligatoire.</div>
+              <div class="invalid-feedback">Le produit est obligatoire.</div>
             </div>
 
-            <!-- Nom produit -->
+            <!-- Nom produit (auto-rempli) -->
             <div class="mb-3">
               <label class="form-label fw-semibold" for="field_productName">Nom du produit</label>
               <input
@@ -64,9 +68,10 @@
                 class="form-control"
                 id="field_productName"
                 formControlName="productName"
-                placeholder="Ex: AGP lavender"
+                placeholder="Auto-rempli après sélection"
+                readonly
               />
-              <div class="form-text text-muted">Copie locale du nom (information uniquement).</div>
+              <div class="form-text text-muted">Rempli automatiquement selon le produit sélectionné.</div>
             </div>
 
             <!-- IMEI -->
