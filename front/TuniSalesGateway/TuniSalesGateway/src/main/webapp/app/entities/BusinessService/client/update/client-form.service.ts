@@ -64,9 +64,7 @@ export class ClientFormService {
           validators: [Validators.required],
         }
       ),
-      tenantId: new FormControl(clientRawValue.tenantId, {
-        validators: [Validators.required],
-      }),
+      tenantId: new FormControl(clientRawValue.tenantId),
       name: new FormControl(clientRawValue.name, {
         validators: [Validators.required, Validators.maxLength(255)],
       }),
