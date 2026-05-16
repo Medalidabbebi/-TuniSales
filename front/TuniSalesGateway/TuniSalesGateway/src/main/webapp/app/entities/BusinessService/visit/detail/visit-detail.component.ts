@@ -23,36 +23,51 @@ export class VisitDetailComponent implements OnInit {
     window.history.back();
   }
 
-  getStatusBadgeClass(): string {
+  getStatusClass(): string {
     const map: Record<string, string> = {
-      PLANNED: 'tsg-badge--warning',
-      IN_PROGRESS: 'tsg-badge--info',
-      COMPLETED: 'tsg-badge--success',
-      MISSED: 'tsg-badge--danger',
-      CANCELLED: 'tsg-badge--neutral',
+      PLANNED:     'vd-status--planned',
+      IN_PROGRESS: 'vd-status--progress',
+      COMPLETED:   'vd-status--completed',
+      MISSED:      'vd-status--missed',
+      CANCELLED:   'vd-status--cancelled',
     };
-    return map[this.visit?.status ?? ''] || 'tsg-badge--neutral';
+    return map[this.visit?.status ?? ''] || 'vd-status--planned';
+  }
+
+  getStatusBadgeClass(): string {
+    return this.getStatusClass();
   }
 
   getStatusLabel(): string {
     const map: Record<string, string> = {
-      PLANNED: 'Planned',
-      IN_PROGRESS: 'In Progress',
-      COMPLETED: 'Completed',
-      MISSED: 'Missed',
-      CANCELLED: 'Cancelled',
+      PLANNED:     'Planifiée',
+      IN_PROGRESS: 'En cours',
+      COMPLETED:   'Terminée',
+      MISSED:      'Manquée',
+      CANCELLED:   'Annulée',
     };
-    return map[this.visit?.status ?? ''] || 'Unknown';
+    return map[this.visit?.status ?? ''] || 'Inconnu';
   }
 
   getObjectiveLabel(): string {
     const map: Record<string, string> = {
-      SALE: 'Sale',
-      PROSPECTING: 'Prospecting',
-      AUDIT: 'Audit',
-      COLLECTION: 'Collection',
-      SUPPORT: 'Support',
+      SALE:        'Vente',
+      PROSPECTING: 'Prospection',
+      AUDIT:       'Audit',
+      COLLECTION:  'Recouvrement',
+      SUPPORT:     'Support',
     };
-    return map[this.visit?.objective ?? ''] || 'Unknown';
+    return map[this.visit?.objective ?? ''] || '—';
+  }
+
+  getObjectiveClass(): string {
+    const map: Record<string, string> = {
+      SALE:        'vd-obj--sale',
+      PROSPECTING: 'vd-obj--prospect',
+      AUDIT:       'vd-obj--audit',
+      COLLECTION:  'vd-obj--collect',
+      SUPPORT:     'vd-obj--support',
+    };
+    return map[this.visit?.objective ?? ''] || '';
   }
 }

@@ -1,128 +1,196 @@
-<div class="tsg-detail-page" *ngIf="visit">
-  <div class="tsg-page-header">
-    <div>
-      <h1 class="tsg-page-header__title" data-cy="visitDetailsHeading" jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.detail.title">
-        Visit
-      </h1>
-      <p class="tsg-page-header__subtitle">{{ visit.client?.name || visit.mission?.title || ('Visit #' + visit.id) }}</p>
-    </div>
-    <div class="tsg-page-header__actions">
-      <button type="button" (click)="previousState()" class="tsg-btn tsg-btn--secondary" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>
-        <span jhiTranslate="entity.action.back">Back</span>
-      </button>
-      <button type="button" [routerLink]="['/visit', visit.id, 'edit']" class="tsg-btn tsg-btn--primary">
-        <fa-icon icon="pencil-alt"></fa-icon>
-        <span jhiTranslate="entity.action.edit">Edit</span>
-      </button>
-    </div>
-  </div>
+<div class="vd-page" *ngIf="visit">
 
-  <div class="tsg-summary-grid">
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Visit order</div>
-      <div class="tsg-summary-card__value">#{{ visit.visitOrder || visit.id }}</div>
-      <div class="tsg-summary-card__meta">Visit ID {{ visit.id }}</div>
-    </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Objective</div>
-      <div class="tsg-summary-card__value">{{ getObjectiveLabel() }}</div>
-      <div class="tsg-summary-card__meta">Operational purpose</div>
-    </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Status</div>
-      <div class="tsg-summary-card__value">
-        <span class="tsg-badge" [ngClass]="getStatusBadgeClass()">{{ getStatusLabel() }}</span>
+  <!-- ── Header ──────────────────────────────────────────────────── -->
+  <div class="vd-header">
+    <div class="vd-header__left">
+      <button class="vd-back-btn" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+      </button>
+      <div class="vd-header__icon">
+        <fa-icon icon="map-marker-alt"></fa-icon>
       </div>
-      <div class="tsg-summary-card__meta">Execution state</div>
+      <div>
+        <h1 class="vd-header__title">
+          Visite {{ visit.visitOrder ? '#' + visit.visitOrder : '#' + visit.id }}
+        </h1>
+        <p class="vd-header__sub">
+          <span *ngIf="visit.client">
+            <fa-icon icon="building" class="me-1" style="opacity:.5"></fa-icon>
+            <a [routerLink]="['/client', visit.client.id, 'view']" class="vd-header__client">{{ visit.client.name }}</a>
+          </span>
+          <span *ngIf="visit.mission" class="ms-2">
+            <fa-icon icon="bullseye" class="me-1" style="opacity:.5"></fa-icon>
+            <a [routerLink]="['/mission', visit.mission.id, 'view']" class="vd-header__client">{{ visit.mission.title }}</a>
+          </span>
+        </p>
+      </div>
     </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Check-in</div>
-      <div class="tsg-summary-card__value">{{ visit.checkinAt | formatMediumDatetime }}</div>
-      <div class="tsg-summary-card__meta">Field start time</div>
+    <div class="vd-header__actions">
+      <span class="vd-status-badge" [ngClass]="getStatusClass()">
+        <span class="vd-status-badge__dot"></span>
+        {{ getStatusLabel() }}
+      </span>
+      <button type="button" [routerLink]="['/visit', visit.id, 'edit']" class="vd-btn vd-btn--primary">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        Éditer
+      </button>
     </div>
   </div>
 
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
-  <div class="tsg-detail-grid">
-    <section class="tsg-detail-card">
-      <div class="tsg-detail-card__header">
-        <h2>Visit details</h2>
+  <!-- ── KPI Strip ────────────────────────────────────────────────── -->
+  <div class="vd-kpi-row">
+    <div class="vd-kpi vd-kpi--teal">
+      <div class="vd-kpi__icon"><fa-icon icon="list-ol"></fa-icon></div>
+      <div>
+        <div class="vd-kpi__value">#{{ visit.visitOrder || visit.id }}</div>
+        <div class="vd-kpi__label">Ordre de visite</div>
       </div>
-      <dl class="tsg-detail-list">
-        <div>
-          <dt jhiTranslate="global.field.id">ID</dt>
-          <dd>{{ visit.id }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.visitOrder">Visit Order</dt>
-          <dd>{{ visit.visitOrder || '—' }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.objective">Objective</dt>
-          <dd>{{ getObjectiveLabel() }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.status">Status</dt>
-          <dd>{{ getStatusLabel() }}</dd>
-        </div>
-      </dl>
-    </section>
+    </div>
+    <div class="vd-kpi vd-kpi--indigo">
+      <div class="vd-kpi__icon"><fa-icon icon="bullseye"></fa-icon></div>
+      <div>
+        <div class="vd-kpi__value">{{ getObjectiveLabel() }}</div>
+        <div class="vd-kpi__label">Objectif</div>
+      </div>
+    </div>
+    <div class="vd-kpi vd-kpi--amber" *ngIf="visit.checkinAt">
+      <div class="vd-kpi__icon"><fa-icon icon="sign-in-alt"></fa-icon></div>
+      <div>
+        <div class="vd-kpi__value">{{ visit.checkinAt | formatMediumDate }}</div>
+        <div class="vd-kpi__label">Check-in</div>
+      </div>
+    </div>
+    <div class="vd-kpi vd-kpi--green" *ngIf="visit.checkoutAt">
+      <div class="vd-kpi__icon"><fa-icon icon="sign-out-alt"></fa-icon></div>
+      <div>
+        <div class="vd-kpi__value">{{ visit.checkoutAt | formatMediumDate }}</div>
+        <div class="vd-kpi__label">Check-out</div>
+      </div>
+    </div>
+  </div>
 
-    <section class="tsg-detail-card">
-      <div class="tsg-detail-card__header">
-        <h2>Location and timing</h2>
-      </div>
-      <dl class="tsg-detail-list">
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.latitude">Latitude</dt>
-          <dd>{{ visit.latitude || '—' }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.longitude">Longitude</dt>
-          <dd>{{ visit.longitude || '—' }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.checkinAt">Checkin At</dt>
-          <dd>{{ visit.checkinAt | formatMediumDatetime }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.checkoutAt">Checkout At</dt>
-          <dd>{{ visit.checkoutAt | formatMediumDatetime }}</dd>
-        </div>
-      </dl>
-    </section>
+  <!-- ── Main Grid ────────────────────────────────────────────────── -->
+  <div class="vd-grid">
 
-    <section class="tsg-detail-card tsg-detail-card--wide">
-      <div class="tsg-detail-card__header">
-        <h2>Links and notes</h2>
+    <!-- Visit Info -->
+    <div class="vd-card">
+      <div class="vd-card__head">
+        <div class="vd-card__head-icon vd-card__head-icon--teal"><fa-icon icon="clipboard-check"></fa-icon></div>
+        <div>
+          <div class="vd-card__title">Informations de la visite</div>
+          <div class="vd-card__sub">Détails généraux</div>
+        </div>
       </div>
-      <dl class="tsg-detail-list tsg-detail-list--split">
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.client">Client</dt>
-          <dd>
-            <a *ngIf="visit.client" [routerLink]="['/client', visit.client.id, 'view']">{{ visit.client.name }}</a>
-            <span *ngIf="!visit.client">—</span>
-          </dd>
+      <div class="vd-info-list">
+        <div class="vd-info-row">
+          <span class="vd-info-row__label">Ordre</span>
+          <span class="vd-info-row__value vd-info-row__value--mono">#{{ visit.visitOrder || visit.id }}</span>
         </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.mission">Mission</dt>
-          <dd>
-            <a *ngIf="visit.mission" [routerLink]="['/mission', visit.mission.id, 'view']">{{ visit.mission.title }}</a>
-            <span *ngIf="!visit.mission">—</span>
-          </dd>
+        <div class="vd-info-row">
+          <span class="vd-info-row__label">Objectif</span>
+          <span class="vd-info-row__value">
+            <span class="vd-objective-badge" [ngClass]="getObjectiveClass()">{{ getObjectiveLabel() }}</span>
+          </span>
         </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.notes">Notes</dt>
-          <dd>{{ visit.notes || 'No notes provided.' }}</dd>
+        <div class="vd-info-row">
+          <span class="vd-info-row__label">Statut</span>
+          <span class="vd-info-row__value">
+            <span class="vd-status-badge" [ngClass]="getStatusClass()">
+              <span class="vd-status-badge__dot"></span>
+              {{ getStatusLabel() }}
+            </span>
+          </span>
         </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceVisit.createdAt">Created At</dt>
-          <dd>{{ visit.createdAt | formatMediumDatetime }}</dd>
+        <div class="vd-info-row" *ngIf="visit.notes">
+          <span class="vd-info-row__label">Notes</span>
+          <span class="vd-info-row__value vd-info-row__value--note">{{ visit.notes }}</span>
         </div>
-      </dl>
-    </section>
+      </div>
+    </div>
+
+    <!-- Location & Timing -->
+    <div class="vd-card">
+      <div class="vd-card__head">
+        <div class="vd-card__head-icon vd-card__head-icon--blue"><fa-icon icon="map-marker-alt"></fa-icon></div>
+        <div>
+          <div class="vd-card__title">Localisation &amp; Horaires</div>
+          <div class="vd-card__sub">Coordonnées GPS et timing</div>
+        </div>
+      </div>
+
+      <div class="vd-info-list" *ngIf="visit.latitude || visit.longitude">
+        <div class="vd-info-row">
+          <span class="vd-info-row__label">Latitude</span>
+          <span class="vd-info-row__value vd-info-row__value--mono">{{ visit.latitude ?? '—' }}</span>
+        </div>
+        <div class="vd-info-row">
+          <span class="vd-info-row__label">Longitude</span>
+          <span class="vd-info-row__value vd-info-row__value--mono">{{ visit.longitude ?? '—' }}</span>
+        </div>
+      </div>
+
+      <div class="vd-timing-track">
+        <div class="vd-timing-item vd-timing-item--in" *ngIf="visit.checkinAt">
+          <div class="vd-timing-item__dot"></div>
+          <div class="vd-timing-item__body">
+            <span class="vd-timing-item__label">Check-in</span>
+            <span class="vd-timing-item__date">{{ visit.checkinAt | formatMediumDatetime }}</span>
+          </div>
+        </div>
+        <div class="vd-timing-line" *ngIf="visit.checkinAt && visit.checkoutAt"></div>
+        <div class="vd-timing-item vd-timing-item--out" *ngIf="visit.checkoutAt">
+          <div class="vd-timing-item__dot"></div>
+          <div class="vd-timing-item__body">
+            <span class="vd-timing-item__label">Check-out</span>
+            <span class="vd-timing-item__date">{{ visit.checkoutAt | formatMediumDatetime }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Links & Notes -->
+    <div class="vd-card vd-card--full">
+      <div class="vd-card__head">
+        <div class="vd-card__head-icon vd-card__head-icon--indigo"><fa-icon icon="link"></fa-icon></div>
+        <div>
+          <div class="vd-card__title">Liens &amp; Contexte</div>
+          <div class="vd-card__sub">Client, mission et métadonnées</div>
+        </div>
+      </div>
+      <div class="vd-links-grid">
+        <div class="vd-link-item" *ngIf="visit.client">
+          <div class="vd-link-item__icon vd-link-item__icon--blue"><fa-icon icon="building"></fa-icon></div>
+          <div>
+            <div class="vd-link-item__label">Client</div>
+            <a [routerLink]="['/client', visit.client.id, 'view']" class="vd-link-item__value">{{ visit.client.name }}</a>
+          </div>
+        </div>
+        <div class="vd-link-item" *ngIf="visit.mission">
+          <div class="vd-link-item__icon vd-link-item__icon--indigo"><fa-icon icon="bullseye"></fa-icon></div>
+          <div>
+            <div class="vd-link-item__label">Mission</div>
+            <a [routerLink]="['/mission', visit.mission.id, 'view']" class="vd-link-item__value">{{ visit.mission.title }}</a>
+          </div>
+        </div>
+        <div class="vd-link-item" *ngIf="visit.createdAt">
+          <div class="vd-link-item__icon vd-link-item__icon--gray"><fa-icon icon="calendar-alt"></fa-icon></div>
+          <div>
+            <div class="vd-link-item__label">Créé le</div>
+            <div class="vd-link-item__value">{{ visit.createdAt | formatMediumDatetime }}</div>
+          </div>
+        </div>
+        <div class="vd-link-item" *ngIf="visit.notes">
+          <div class="vd-link-item__icon vd-link-item__icon--amber"><fa-icon icon="sticky-note"></fa-icon></div>
+          <div>
+            <div class="vd-link-item__label">Notes</div>
+            <div class="vd-link-item__value vd-link-item__value--note">{{ visit.notes }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
