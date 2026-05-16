@@ -1,156 +1,174 @@
-<div class="tsg-list-page">
-  <div class="tsg-page-header">
-    <div>
-      <h1 class="tsg-page-header__title" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.home.title">Orders</h1>
-      <p class="tsg-page-header__subtitle">Track order flow, approvals, and fulfillment state.</p>
+<div class="ol-page">
+
+  <!-- ── Header ──────────────────────────────────────────────────── -->
+  <div class="ol-header">
+    <div class="ol-header__left">
+      <div class="ol-header__icon">
+        <fa-icon icon="shopping-cart"></fa-icon>
+      </div>
+      <div>
+        <h1 class="ol-header__title">Gestion des Commandes</h1>
+        <p class="ol-header__sub">Suivi des commandes, validations et livraisons</p>
+      </div>
     </div>
-    <div class="tsg-page-header__actions">
-      <button class="tsg-btn tsg-btn--secondary" (click)="load()" [disabled]="isLoading">
+    <div class="ol-header__actions">
+      <button class="ol-btn ol-btn--ghost" (click)="load()" [disabled]="isLoading">
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-        <span class="d-none d-md-inline" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.home.refreshListLabel">Refresh</span>
+        <span>Actualiser</span>
       </button>
-
-      <button id="jh-create-entity" data-cy="entityCreateButton" class="tsg-btn tsg-btn--primary" [routerLink]="['/order/new']">
+      <button class="ol-btn ol-btn--primary" [routerLink]="['/order/new']">
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.home.createLabel">New Order</span>
+        <span>Nouvel Ordre</span>
       </button>
-    </div>
-  </div>
-
-  <div class="tsg-summary-grid" *ngIf="orders && orders.length > 0">
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Visible orders</div>
-      <div class="tsg-summary-card__value">{{ orders.length }}</div>
-      <div class="tsg-summary-card__meta">Current page only</div>
-    </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Submitted</div>
-      <div class="tsg-summary-card__value">{{ countOrdersByStatus(orderStatus.SUBMITTED) }}</div>
-      <div class="tsg-summary-card__meta">Awaiting review</div>
-    </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Approved</div>
-      <div class="tsg-summary-card__value">{{ countOrdersByStatus(orderStatus.APPROVED) }}</div>
-      <div class="tsg-summary-card__meta">Ready for preparation</div>
-    </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Rejected</div>
-      <div class="tsg-summary-card__value">{{ countOrdersByStatus(orderStatus.REJECTED) }}</div>
-      <div class="tsg-summary-card__meta">Needs attention</div>
     </div>
   </div>
 
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
-  <div class="tsg-empty" *ngIf="orders?.length === 0">
-    <div class="tsg-empty__icon">
-      <fa-icon icon="shopping-cart"></fa-icon>
+  <!-- ── KPI Cards ────────────────────────────────────────────────── -->
+  <div class="ol-kpi-grid" *ngIf="orders && orders.length > 0">
+    <div class="ol-kpi ol-kpi--blue">
+      <div class="ol-kpi__icon"><fa-icon icon="list"></fa-icon></div>
+      <div class="ol-kpi__body">
+        <div class="ol-kpi__value">{{ totalItems }}</div>
+        <div class="ol-kpi__label">Total commandes</div>
+      </div>
     </div>
-    <div class="tsg-empty__title" jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.home.notFound">No orders found</div>
-    <div class="tsg-empty__text">Create an order to start tracking approvals and fulfillment.</div>
+    <div class="ol-kpi ol-kpi--orange">
+      <div class="ol-kpi__icon"><fa-icon icon="clock"></fa-icon></div>
+      <div class="ol-kpi__body">
+        <div class="ol-kpi__value">{{ countByStatuses(['SUBMITTED','UNDER_REVIEW']) }}</div>
+        <div class="ol-kpi__label">En attente de validation</div>
+      </div>
+    </div>
+    <div class="ol-kpi ol-kpi--indigo">
+      <div class="ol-kpi__icon"><fa-icon icon="truck"></fa-icon></div>
+      <div class="ol-kpi__body">
+        <div class="ol-kpi__value">{{ countByStatuses(['APPROVED','IN_PREPARATION','SHIPPED']) }}</div>
+        <div class="ol-kpi__label">En cours de traitement</div>
+      </div>
+    </div>
+    <div class="ol-kpi ol-kpi--green">
+      <div class="ol-kpi__icon"><fa-icon icon="check-circle"></fa-icon></div>
+      <div class="ol-kpi__body">
+        <div class="ol-kpi__value">{{ countByStatuses(['DELIVERED','INVOICED','PAID']) }}</div>
+        <div class="ol-kpi__label">Terminées</div>
+      </div>
+    </div>
   </div>
 
-  <div class="tsg-table-wrapper" *ngIf="orders && orders.length > 0">
-    <table class="tsg-table" aria-describedby="page-heading">
-      <thead>
-        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-          <th scope="col" jhiSortBy="orderNumber">
-            <div class="d-flex align-items-center">
-              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.orderNumber">Order Number</span>
-              <fa-icon class="sort-icon p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="client.name">
-            <div class="d-flex align-items-center">
-              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.client">Client</span>
-              <fa-icon class="sort-icon p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="status">
-            <div class="d-flex align-items-center">
-              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.status">Status</span>
-              <fa-icon class="sort-icon p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="totalAmount">
-            <div class="d-flex align-items-center">
-              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.totalAmount">Total Amount</span>
-              <fa-icon class="sort-icon p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="dueDate">
-            <div class="d-flex align-items-center">
-              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.dueDate">Due Date</span>
-              <fa-icon class="sort-icon p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="submittedAt">
-            <div class="d-flex align-items-center">
-              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.submittedAt">Submitted At</span>
-              <fa-icon class="sort-icon p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" jhiSortBy="validatedAt">
-            <div class="d-flex align-items-center">
-              <span jhiTranslate="tuniSalesGatewayApp.businessServiceOrder.validatedAt">Validated At</span>
-              <fa-icon class="sort-icon p-1" icon="sort"></fa-icon>
-            </div>
-          </th>
-          <th scope="col" style="width: 120px;"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let order of orders; trackBy: trackId" data-cy="entityTable">
-          <td>
-            <div class="d-flex align-items-center gap-3">
-              <div class="tsg-order-avatar">{{ getOrderAvatar(order) }}</div>
-              <div>
-                <a [routerLink]="['/order', order.id, 'view']" class="fw-medium">{{ order.orderNumber || order.id }}</a>
-                <div class="tsg-order-meta">Tenant {{ order.tenantId || '—' }}</div>
+  <!-- ── Empty State ──────────────────────────────────────────────── -->
+  <div class="ol-empty" *ngIf="!isLoading && orders?.length === 0">
+    <div class="ol-empty__icon"><fa-icon icon="shopping-cart"></fa-icon></div>
+    <div class="ol-empty__title">Aucune commande trouvée</div>
+    <div class="ol-empty__sub">Créez votre première commande pour démarrer le suivi.</div>
+    <button class="ol-btn ol-btn--primary" [routerLink]="['/order/new']">
+      <fa-icon icon="plus"></fa-icon> Créer un ordre
+    </button>
+  </div>
+
+  <!-- ── Table ────────────────────────────────────────────────────── -->
+  <div class="ol-card" *ngIf="orders && orders.length > 0">
+    <div class="ol-table-wrap">
+      <table class="ol-table" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+            <th jhiSortBy="orderNumber">
+              <div class="ol-th-inner">N° Ordre <fa-icon icon="sort" class="ol-sort-icon"></fa-icon></div>
+            </th>
+            <th jhiSortBy="client.name">
+              <div class="ol-th-inner">Client <fa-icon icon="sort" class="ol-sort-icon"></fa-icon></div>
+            </th>
+            <th jhiSortBy="status">
+              <div class="ol-th-inner">Statut <fa-icon icon="sort" class="ol-sort-icon"></fa-icon></div>
+            </th>
+            <th jhiSortBy="totalAmount" class="text-end">
+              <div class="ol-th-inner justify-content-end">Montant <fa-icon icon="sort" class="ol-sort-icon"></fa-icon></div>
+            </th>
+            <th jhiSortBy="dueDate">
+              <div class="ol-th-inner">Échéance <fa-icon icon="sort" class="ol-sort-icon"></fa-icon></div>
+            </th>
+            <th jhiSortBy="submittedAt">
+              <div class="ol-th-inner">Soumis le <fa-icon icon="sort" class="ol-sort-icon"></fa-icon></div>
+            </th>
+            <th style="width:110px;"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of orders; trackBy: trackId" data-cy="entityTable">
+
+            <!-- N° Ordre -->
+            <td>
+              <div class="ol-order-cell">
+                <div class="ol-avatar" [ngClass]="getAvatarClass(order.status)">
+                  {{ getOrderAvatar(order) }}
+                </div>
+                <div>
+                  <a [routerLink]="['/order', order.id, 'view']" class="ol-order-num">
+                    {{ order.orderNumber || '—' }}
+                  </a>
+                </div>
               </div>
-            </div>
-          </td>
-          <td>
-            <div *ngIf="order.client; else noClient">
-              <a [routerLink]="['/client', order.client.id, 'view']" class="fw-medium">{{ order.client.name }}</a>
-            </div>
-            <ng-template #noClient>
-              <span class="tsg-order-meta">Unassigned</span>
-            </ng-template>
-          </td>
-          <td>
-            <span class="tsg-badge" [ngClass]="getStatusBadgeClass(order.status)">
-              <span jhiTranslate="{{ 'tuniSalesGatewayApp.OrderStatus.' + order.status }}">{{ order.status }}</span>
-            </span>
-          </td>
-          <td>
-            <div class="tsg-order-amount">{{ getAmount(order.totalAmount) }}</div>
-            <div class="tsg-order-meta">Subtotal: {{ getAmount(order.subtotal) }} | Tax: {{ getAmount(order.taxAmount) }}</div>
-          </td>
-          <td>{{ order.dueDate | formatMediumDatetime }}</td>
-          <td>{{ order.submittedAt | formatMediumDatetime }}</td>
-          <td>{{ order.validatedAt | formatMediumDatetime }}</td>
-          <td>
-            <div class="d-flex gap-1 justify-content-end">
-              <button type="button" [routerLink]="['/order', order.id, 'view']" class="tsg-btn tsg-btn--ghost tsg-btn--icon tsg-btn--sm" title="View">
-                <fa-icon icon="eye"></fa-icon>
-              </button>
-              <button type="button" [routerLink]="['/order', order.id, 'edit']" class="tsg-btn tsg-btn--ghost tsg-btn--icon tsg-btn--sm" title="Edit">
-                <fa-icon icon="pencil-alt"></fa-icon>
-              </button>
-              <button type="button" (click)="delete(order)" class="tsg-btn tsg-btn--danger tsg-btn--icon tsg-btn--sm" title="Delete">
-                <fa-icon icon="trash-alt"></fa-icon>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+            </td>
 
-  <div *ngIf="orders && orders.length > 0" class="tsg-pagination">
-    <div class="d-flex justify-content-center align-items-center gap-4 mt-4">
+            <!-- Client -->
+            <td>
+              <a *ngIf="order.client" [routerLink]="['/client', order.client.id, 'view']" class="ol-client-link">
+                <div class="ol-client-avatar">{{ (order.client.name || '?').charAt(0).toUpperCase() }}</div>
+                {{ order.client.name }}
+              </a>
+              <span *ngIf="!order.client" class="ol-muted">—</span>
+            </td>
+
+            <!-- Statut -->
+            <td>
+              <span class="ol-badge" [ngClass]="getStatusClass(order.status)">
+                <span class="ol-badge__dot"></span>
+                <span jhiTranslate="{{ 'tuniSalesGatewayApp.OrderStatus.' + order.status }}">{{ order.status }}</span>
+              </span>
+            </td>
+
+            <!-- Montant -->
+            <td class="text-end">
+              <div class="ol-amount">{{ order.totalAmount | number:'1.2-2' }} <span class="ol-currency">TND</span></div>
+            </td>
+
+            <!-- Échéance -->
+            <td>
+              <span class="ol-date">{{ order.dueDate | formatMediumDate }}</span>
+            </td>
+
+            <!-- Soumis le -->
+            <td>
+              <span class="ol-date">{{ order.submittedAt | formatMediumDate }}</span>
+            </td>
+
+            <!-- Actions -->
+            <td>
+              <div class="ol-actions">
+                <button type="button" [routerLink]="['/order', order.id, 'view']"
+                  class="ol-icon-btn ol-icon-btn--view" title="Voir">
+                  <fa-icon icon="eye"></fa-icon>
+                </button>
+                <button type="button" [routerLink]="['/order', order.id, 'edit']"
+                  class="ol-icon-btn ol-icon-btn--edit" title="Modifier">
+                  <fa-icon icon="pencil-alt"></fa-icon>
+                </button>
+                <button type="button" (click)="delete(order)"
+                  class="ol-icon-btn ol-icon-btn--delete" title="Supprimer">
+                  <fa-icon icon="trash"></fa-icon>
+                </button>
+              </div>
+            </td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="ol-pagination">
       <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
       <ngb-pagination
         [collectionSize]="totalItems"
@@ -163,4 +181,5 @@
       ></ngb-pagination>
     </div>
   </div>
+
 </div>

@@ -108,21 +108,45 @@ export class OrderComponent implements OnInit {
     return this.orders?.filter(order => order.status === status).length ?? 0;
   }
 
-  getStatusBadgeClass(status: OrderStatus | null | undefined): string {
+  countByStatuses(statuses: string[]): number {
+    return this.orders?.filter(o => statuses.includes(o.status ?? '')).length ?? 0;
+  }
+
+  getStatusClass(status: string | null | undefined): string {
     const map: Record<string, string> = {
-      DRAFT: 'tsg-badge--neutral',
-      SUBMITTED: 'tsg-badge--info',
-      UNDER_REVIEW: 'tsg-badge--warning',
-      APPROVED: 'tsg-badge--success',
-      IN_PREPARATION: 'tsg-badge--accent',
-      SHIPPED: 'tsg-badge--accent',
-      DELIVERED: 'tsg-badge--success',
-      INVOICED: 'tsg-badge--neutral',
-      PAID: 'tsg-badge--success',
-      REJECTED: 'tsg-badge--danger',
-      CANCELLED: 'tsg-badge--danger',
+      DRAFT:          'ol-badge--draft',
+      SUBMITTED:      'ol-badge--submitted',
+      UNDER_REVIEW:   'ol-badge--review',
+      APPROVED:       'ol-badge--approved',
+      IN_PREPARATION: 'ol-badge--preparation',
+      SHIPPED:        'ol-badge--shipped',
+      DELIVERED:      'ol-badge--delivered',
+      INVOICED:       'ol-badge--invoiced',
+      PAID:           'ol-badge--paid',
+      REJECTED:       'ol-badge--rejected',
+      CANCELLED:      'ol-badge--cancelled',
     };
-    return map[status || ''] || 'tsg-badge--neutral';
+    return map[status || ''] || 'ol-badge--draft';
+  }
+
+  getAvatarClass(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      SUBMITTED:      'ol-avatar--blue',
+      UNDER_REVIEW:   'ol-avatar--orange',
+      APPROVED:       'ol-avatar--green',
+      IN_PREPARATION: 'ol-avatar--indigo',
+      SHIPPED:        'ol-avatar--indigo',
+      DELIVERED:      'ol-avatar--teal',
+      INVOICED:       'ol-avatar--teal',
+      PAID:           'ol-avatar--green',
+      REJECTED:       'ol-avatar--red',
+      CANCELLED:      'ol-avatar--red',
+    };
+    return map[status || ''] || 'ol-avatar--gray';
+  }
+
+  getStatusBadgeClass(status: OrderStatus | null | undefined): string {
+    return this.getStatusClass(status as string);
   }
 
   getOrderAvatar(order: IOrder): string {
@@ -134,7 +158,7 @@ export class OrderComponent implements OnInit {
   }
 
   getClientName(order: IOrder): string {
-    return order.client?.name || 'Unassigned';
+    return order.client?.name || '—';
   }
 
   protected queryBackend(page?: number, predicate?: string, ascending?: boolean): Observable<EntityArrayResponseType> {

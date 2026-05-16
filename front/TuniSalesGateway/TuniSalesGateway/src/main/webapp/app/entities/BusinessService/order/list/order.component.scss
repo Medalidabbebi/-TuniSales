@@ -1,83 +1,364 @@
 @import 'design-system';
 
-.tsg-list-page {
+// ── Variables ─────────────────────────────────────────────────────
+$ol-blue:    #2563eb;
+$ol-indigo:  #4f46e5;
+$ol-green:   #16a34a;
+$ol-teal:    #0e7490;
+$ol-orange:  #d97706;
+$ol-red:     #dc2626;
+$ol-gray:    #64748b;
+$ol-border:  #e2e8f0;
+$ol-bg:      #f8fafc;
+$ol-white:   #ffffff;
+$ol-text:    #0f172a;
+$ol-muted:   #64748b;
+$ol-shadow:  0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$ol-radius:  12px;
+
+// ── Page ──────────────────────────────────────────────────────────
+.ol-page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 1.5rem;
 }
 
-.tsg-summary-grid {
+// ── Header ────────────────────────────────────────────────────────
+.ol-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, #00355f, #005f9e);
+    color: #fff;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(0,53,95,.25);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: $ol-text;
+    line-height: 1.2;
+  }
+
+  &__sub {
+    margin: .2rem 0 0;
+    color: $ol-muted;
+    font-size: .88rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+  }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────
+.ol-btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .55rem 1.1rem;
+  border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .9rem; font-weight: 600; cursor: pointer;
+  transition: all .15s; line-height: 1.5;
+
+  &--primary {
+    background: #00355f; color: #fff; border-color: #00355f;
+    &:hover:not([disabled]) { background: #004f8c; box-shadow: 0 3px 10px rgba(0,53,95,.3); }
+  }
+  &--ghost {
+    background: $ol-white; color: $ol-text; border-color: $ol-border;
+    &:hover:not([disabled]) { background: $ol-bg; }
+  }
+  &[disabled] { opacity: .45; cursor: not-allowed; }
+}
+
+// ── KPI Cards ─────────────────────────────────────────────────────
+.ol-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
 
-  @media (max-width: 991px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  @media (max-width: 575px) {
-    grid-template-columns: 1fr;
-  }
+  @media (max-width: 900px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
 }
 
-.tsg-summary-card {
-  padding: 18px 20px;
-  border-radius: $radius-lg;
-  background: linear-gradient(180deg, rgba($tsg-surface, 0.96), rgba($tsg-surface, 0.9));
-  border: 1px solid $tsg-border-light;
-  box-shadow: $shadow-sm;
+.ol-kpi {
+  background: $ol-white;
+  border: 1px solid $ol-border;
+  border-radius: $ol-radius;
+  padding: 1.2rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: $ol-shadow;
+  transition: transform .15s, box-shadow .15s;
 
-  &__label {
-    color: $tsg-text-muted;
-    font-size: $font-size-sm;
-    margin-bottom: 6px;
+  &:hover { transform: translateY(-2px); box-shadow: 0 4px 20px rgba(15,23,42,.1); }
+
+  &__icon {
+    width: 46px; height: 46px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
   }
 
   &__value {
-    font-size: 28px;
-    font-weight: $font-weight-bold;
-    line-height: 1.1;
-    color: $tsg-text;
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1;
+    color: $ol-text;
+  }
+  &__label {
+    font-size: .78rem;
+    color: $ol-muted;
+    margin-top: .25rem;
+    font-weight: 500;
   }
 
-  &__meta {
-    margin-top: 6px;
-    color: $tsg-text-muted;
-    font-size: $font-size-sm;
+  &--blue   .ol-kpi__icon { background: #dbeafe; color: $ol-blue; }
+  &--orange .ol-kpi__icon { background: #fef3c7; color: $ol-orange; }
+  &--indigo .ol-kpi__icon { background: #e0e7ff; color: $ol-indigo; }
+  &--green  .ol-kpi__icon { background: #dcfce7; color: $ol-green; }
+
+  &--blue   { border-left: 3px solid $ol-blue; }
+  &--orange { border-left: 3px solid $ol-orange; }
+  &--indigo { border-left: 3px solid $ol-indigo; }
+  &--green  { border-left: 3px solid $ol-green; }
+}
+
+// ── Empty ─────────────────────────────────────────────────────────
+.ol-empty {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 4rem 2rem;
+  background: $ol-white;
+  border: 1px solid $ol-border;
+  border-radius: $ol-radius;
+  text-align: center;
+  gap: .75rem;
+
+  &__icon {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: $ol-bg;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; color: $ol-muted;
+    margin-bottom: .5rem;
+  }
+  &__title { font-size: 1.1rem; font-weight: 700; color: $ol-text; }
+  &__sub   { font-size: .88rem; color: $ol-muted; }
+}
+
+// ── Card ──────────────────────────────────────────────────────────
+.ol-card {
+  background: $ol-white;
+  border: 1px solid $ol-border;
+  border-radius: $ol-radius;
+  box-shadow: $ol-shadow;
+  overflow: hidden;
+}
+
+// ── Table ─────────────────────────────────────────────────────────
+.ol-table-wrap { overflow-x: auto; }
+
+.ol-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead tr {
+    background: $ol-bg;
+    border-bottom: 2px solid $ol-border;
+
+    th {
+      padding: .75rem 1rem;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: $ol-muted;
+      white-space: nowrap;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #f1f5f9;
+    transition: background .1s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: #fafbff; }
+
+    td {
+      padding: .85rem 1rem;
+      vertical-align: middle;
+    }
   }
 }
 
-.tsg-order-avatar {
-  @include flex-center;
-  width: 38px;
-  height: 38px;
-  border-radius: $radius-sm;
-  background: linear-gradient(135deg, $tsg-primary, $tsg-accent);
-  color: #fff;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
+.ol-th-inner {
+  display: flex; align-items: center; gap: .3rem;
+}
+.ol-sort-icon { color: #cbd5e1; font-size: .75rem; }
+
+// ── Order Cell ────────────────────────────────────────────────────
+.ol-order-cell {
+  display: flex; align-items: center; gap: .75rem;
+}
+
+.ol-avatar {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .85rem; font-weight: 700;
+  flex-shrink: 0;
+
+  &--blue   { background: #dbeafe; color: $ol-blue; }
+  &--orange { background: #fef3c7; color: $ol-orange; }
+  &--green  { background: #dcfce7; color: $ol-green; }
+  &--indigo { background: #e0e7ff; color: $ol-indigo; }
+  &--teal   { background: #cffafe; color: $ol-teal; }
+  &--red    { background: #fee2e2; color: $ol-red; }
+  &--gray   { background: #f1f5f9; color: $ol-gray; }
+}
+
+.ol-order-num {
+  font-weight: 600;
+  font-size: .9rem;
+  color: $ol-text;
+  text-decoration: none;
+  font-family: 'Courier New', monospace;
+
+  &:hover { color: #00355f; text-decoration: underline; }
+}
+
+// ── Client ────────────────────────────────────────────────────────
+.ol-client-link {
+  display: flex; align-items: center; gap: .5rem;
+  color: $ol-text; text-decoration: none; font-size: .88rem; font-weight: 500;
+
+  &:hover { color: #2563eb; }
+}
+
+.ol-client-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e0e7ff, #dbeafe);
+  color: $ol-indigo;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .75rem; font-weight: 700;
   flex-shrink: 0;
 }
 
-.tsg-order-meta {
-  color: $tsg-text-muted;
-  font-size: 12px;
-  margin-top: 2px;
+// ── Status Badge ──────────────────────────────────────────────────
+.ol-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .7rem;
+  border-radius: 999px;
+  font-size: .75rem; font-weight: 700;
+  white-space: nowrap;
+
+  &__dot {
+    width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+  }
+
+  &--draft       { background: #f1f5f9; color: #475569;
+    .ol-badge__dot { background: #94a3b8; } }
+  &--submitted   { background: #dbeafe; color: #1d4ed8;
+    .ol-badge__dot { background: #2563eb; } }
+  &--review      { background: #fef3c7; color: #92400e;
+    .ol-badge__dot { background: #d97706; } }
+  &--approved    { background: #dcfce7; color: #14532d;
+    .ol-badge__dot { background: #16a34a; } }
+  &--preparation { background: #e0e7ff; color: #3730a3;
+    .ol-badge__dot { background: #4f46e5; } }
+  &--shipped     { background: #cffafe; color: #155e75;
+    .ol-badge__dot { background: #0891b2; } }
+  &--delivered   { background: #d1fae5; color: #065f46;
+    .ol-badge__dot { background: #059669; } }
+  &--invoiced    { background: #f3e8ff; color: #6b21a8;
+    .ol-badge__dot { background: #9333ea; } }
+  &--paid        { background: #dcfce7; color: #14532d;
+    .ol-badge__dot { background: #16a34a; } }
+  &--rejected    { background: #fee2e2; color: #991b1b;
+    .ol-badge__dot { background: #dc2626; } }
+  &--cancelled   { background: #f1f5f9; color: #374151;
+    .ol-badge__dot { background: #6b7280; } }
 }
 
-.tsg-order-amount {
-  font-weight: $font-weight-bold;
-  color: $tsg-text;
+// ── Amount ────────────────────────────────────────────────────────
+.ol-amount {
+  font-weight: 700;
+  font-size: .92rem;
+  color: $ol-text;
 }
-
-.fw-medium {
+.ol-currency {
+  font-size: .75rem;
   font-weight: 500;
+  color: $ol-muted;
 }
 
-.gap-3 {
-  gap: 12px;
+// ── Date ──────────────────────────────────────────────────────────
+.ol-date {
+  font-size: .82rem;
+  color: $ol-muted;
 }
 
-.gap-1 {
-  gap: 4px;
+// ── Misc ──────────────────────────────────────────────────────────
+.ol-muted { color: $ol-muted; font-size: .88rem; }
+.text-end { text-align: right; }
+
+// ── Action Buttons ────────────────────────────────────────────────
+.ol-actions {
+  display: flex; align-items: center; gap: .3rem; justify-content: flex-end;
+}
+
+.ol-icon-btn {
+  width: 30px; height: 30px;
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid transparent;
+  font-size: .8rem; cursor: pointer;
+  transition: all .12s;
+  background: transparent;
+
+  &--view {
+    color: #0284c7; border-color: #bae6fd;
+    &:hover { background: #e0f2fe; }
+  }
+  &--edit {
+    color: #0f766e; border-color: #99f6e4;
+    &:hover { background: #ccfbf1; }
+  }
+  &--delete {
+    color: #dc2626; border-color: #fecaca;
+    &:hover { background: #fee2e2; }
+  }
+}
+
+// ── Pagination ────────────────────────────────────────────────────
+.ol-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .9rem 1rem;
+  border-top: 1px solid $ol-border;
+  background: $ol-bg;
+  font-size: .83rem;
+  color: $ol-muted;
+  flex-wrap: wrap;
+  gap: .75rem;
 }
