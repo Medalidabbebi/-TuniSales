@@ -23,19 +23,27 @@ export class InvoiceDetailComponent implements OnInit {
     window.history.back();
   }
 
-  getStatusBadgeClass(status: string | null | undefined): string {
+  getStatusClass(status: string | null | undefined): string {
     const map: Record<string, string> = {
-      DRAFT: 'tsg-badge--draft',
-      ISSUED: 'tsg-badge--issued',
-      PARTIALLY_PAID: 'tsg-badge--warning',
-      PAID: 'tsg-badge--success',
-      OVERDUE: 'tsg-badge--danger',
-      CANCELLED: 'tsg-badge--danger',
+      DRAFT:          'id-status--draft',
+      ISSUED:         'id-status--issued',
+      PARTIALLY_PAID: 'id-status--partial',
+      PAID:           'id-status--paid',
+      OVERDUE:        'id-status--overdue',
+      CANCELLED:      'id-status--cancelled',
     };
-    return map[status || ''] || 'tsg-badge--neutral';
+    return map[status ?? ''] || 'id-status--draft';
   }
 
-  getAmount(value: number | null | undefined): string {
-    return value === null || value === undefined ? '—' : value.toLocaleString();
+  getStatusLabel(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      DRAFT:          'Brouillon',
+      ISSUED:         'Émise',
+      PARTIALLY_PAID: 'Part. payée',
+      PAID:           'Payée',
+      OVERDUE:        'En retard',
+      CANCELLED:      'Annulée',
+    };
+    return map[status ?? ''] || '—';
   }
 }

@@ -1,136 +1,204 @@
-<div class="tsg-detail-page" *ngIf="invoice">
-  <div class="tsg-page-header">
-    <div>
-      <h1 class="tsg-page-header__title" data-cy="invoiceDetailsHeading" jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.detail.title">Invoice</h1>
-      <p class="tsg-page-header__subtitle">Invoice {{ invoice.invoiceNumber || invoice.id }} details and lifecycle data.</p>
-    </div>
-    <div class="tsg-page-header__actions">
-      <button type="button" (click)="previousState()" class="tsg-btn tsg-btn--secondary" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>
-        <span jhiTranslate="entity.action.back">Back</span>
-      </button>
-      <button type="button" [routerLink]="['/invoice', invoice.id, 'edit']" class="tsg-btn tsg-btn--primary">
-        <fa-icon icon="pencil-alt"></fa-icon>
-        <span jhiTranslate="entity.action.edit">Edit</span>
-      </button>
-    </div>
-  </div>
+<div class="id-page" *ngIf="invoice">
 
-  <div class="tsg-summary-grid">
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Invoice number</div>
-      <div class="tsg-summary-card__value">{{ invoice.invoiceNumber || '—' }}</div>
-      <div class="tsg-summary-card__meta">Tenant {{ invoice.tenantId || '—' }}</div>
-    </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Total amount</div>
-      <div class="tsg-summary-card__value">{{ getAmount(invoice.amountTtc) }}</div>
-      <div class="tsg-summary-card__meta">HT {{ getAmount(invoice.amountHt) }} | Tax {{ getAmount(invoice.taxAmount) }}</div>
-    </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Status</div>
-      <div class="tsg-summary-card__value">
-        <span class="tsg-badge" [ngClass]="getStatusBadgeClass(invoice.status)">
-          <span jhiTranslate="{{ 'tuniSalesGatewayApp.InvoiceStatus.' + invoice.status }}">{{ invoice.status }}</span>
-        </span>
+  <!-- ── Header ──────────────────────────────────────────────────── -->
+  <div class="id-header">
+    <div class="id-header__left">
+      <button class="id-back-btn" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+      </button>
+      <div class="id-header__icon">
+        <fa-icon icon="file-invoice-dollar"></fa-icon>
       </div>
-      <div class="tsg-summary-card__meta">Lifecycle state</div>
+      <div>
+        <h1 class="id-header__title" data-cy="invoiceDetailsHeading">
+          {{ invoice.invoiceNumber || 'Facture #' + invoice.id }}
+        </h1>
+        <p class="id-header__sub">
+          <span *ngIf="invoice.client">
+            <fa-icon icon="building" class="me-1" style="opacity:.5"></fa-icon>
+            <a [routerLink]="['/client', invoice.client.id, 'view']" class="id-header__link">{{ invoice.client.name }}</a>
+          </span>
+          <span *ngIf="invoice.order" class="ms-2">
+            <fa-icon icon="shopping-cart" class="me-1" style="opacity:.5"></fa-icon>
+            <a [routerLink]="['/order', invoice.order.id, 'view']" class="id-header__link">{{ invoice.order.orderNumber }}</a>
+          </span>
+        </p>
+      </div>
     </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Linked order</div>
-      <div class="tsg-summary-card__value">{{ invoice.order?.orderNumber || '—' }}</div>
-      <div class="tsg-summary-card__meta">{{ invoice.client?.name || 'Unassigned client' }}</div>
+    <div class="id-header__actions">
+      <span class="id-status-badge" [ngClass]="getStatusClass(invoice.status)">
+        <span class="id-status-badge__dot"></span>
+        {{ getStatusLabel(invoice.status) }}
+      </span>
+      <button type="button" [routerLink]="['/invoice', invoice.id, 'edit']" class="id-btn id-btn--primary">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        Éditer
+      </button>
     </div>
   </div>
 
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
-  <div class="tsg-detail-grid">
-    <section class="tsg-detail-card">
-      <div class="tsg-detail-card__header">
-        <h2>Billing</h2>
+  <!-- ── KPI Row ──────────────────────────────────────────────────── -->
+  <div class="id-kpi-row">
+    <div class="id-kpi id-kpi--purple">
+      <div class="id-kpi__icon"><fa-icon icon="file-invoice"></fa-icon></div>
+      <div>
+        <div class="id-kpi__value">{{ invoice.invoiceNumber || '—' }}</div>
+        <div class="id-kpi__label">N° Facture</div>
       </div>
-      <dl class="tsg-detail-list">
-        <div>
-          <dt jhiTranslate="global.field.id">ID</dt>
-          <dd>{{ invoice.id }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.tenantId">Tenant Id</dt>
-          <dd>{{ invoice.tenantId || '—' }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.amountHt">Amount Ht</dt>
-          <dd>{{ getAmount(invoice.amountHt) }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.taxAmount">Tax Amount</dt>
-          <dd>{{ getAmount(invoice.taxAmount) }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.amountTtc">Amount Ttc</dt>
-          <dd>{{ getAmount(invoice.amountTtc) }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.isDeleted">Is Deleted</dt>
-          <dd>{{ invoice.isDeleted }}</dd>
-        </div>
-      </dl>
-    </section>
+    </div>
+    <div class="id-kpi id-kpi--blue">
+      <div class="id-kpi__icon"><fa-icon icon="money-bill-wave"></fa-icon></div>
+      <div>
+        <div class="id-kpi__value">{{ invoice.amountTtc | number:'1.2-2' }} <span class="id-kpi__currency">TND</span></div>
+        <div class="id-kpi__label">Montant TTC</div>
+      </div>
+    </div>
+    <div class="id-kpi id-kpi--green" *ngIf="invoice.amountHt">
+      <div class="id-kpi__icon"><fa-icon icon="percent"></fa-icon></div>
+      <div>
+        <div class="id-kpi__value">{{ invoice.amountHt | number:'1.2-2' }} <span class="id-kpi__currency">TND</span></div>
+        <div class="id-kpi__label">Montant HT</div>
+      </div>
+    </div>
+    <div class="id-kpi id-kpi--orange" *ngIf="invoice.dueDate">
+      <div class="id-kpi__icon"><fa-icon icon="calendar-alt"></fa-icon></div>
+      <div>
+        <div class="id-kpi__value">{{ invoice.dueDate | formatMediumDate }}</div>
+        <div class="id-kpi__label">Date d'échéance</div>
+      </div>
+    </div>
+  </div>
 
-    <section class="tsg-detail-card">
-      <div class="tsg-detail-card__header">
-        <h2>Timing</h2>
-      </div>
-      <dl class="tsg-detail-list">
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.issueDate">Issue Date</dt>
-          <dd>{{ invoice.issueDate | formatMediumDatetime }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.dueDate">Due Date</dt>
-          <dd>{{ invoice.dueDate | formatMediumDatetime }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.paidAt">Paid At</dt>
-          <dd>{{ invoice.paidAt | formatMediumDatetime }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.createdAt">Created At</dt>
-          <dd>{{ invoice.createdAt | formatMediumDatetime }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.updatedAt">Updated At</dt>
-          <dd>{{ invoice.updatedAt | formatMediumDatetime }}</dd>
-        </div>
-      </dl>
-    </section>
+  <!-- ── Main Grid ────────────────────────────────────────────────── -->
+  <div class="id-grid">
 
-    <section class="tsg-detail-card tsg-detail-card--wide">
-      <div class="tsg-detail-card__header">
-        <h2>Relations</h2>
+    <!-- Facturation -->
+    <div class="id-card">
+      <div class="id-card__head">
+        <div class="id-card__head-icon id-card__head-icon--purple"><fa-icon icon="file-invoice-dollar"></fa-icon></div>
+        <div>
+          <div class="id-card__title">Facturation</div>
+          <div class="id-card__sub">Montants et statut de paiement</div>
+        </div>
       </div>
-      <dl class="tsg-detail-list tsg-detail-list--split">
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.client">Client</dt>
-          <dd>
-            <div *ngIf="invoice.client; else noClient">
-              <a [routerLink]="['/client', invoice.client.id, 'view']">{{ invoice.client.name }}</a>
-            </div>
-            <ng-template #noClient>—</ng-template>
-          </dd>
+      <div class="id-finance-grid">
+        <div class="id-finance-item">
+          <span class="id-finance-item__label">Montant HT</span>
+          <span class="id-finance-item__value">{{ invoice.amountHt | number:'1.2-2' }} TND</span>
         </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceInvoice.order">Order</dt>
-          <dd>
-            <div *ngIf="invoice.order; else noOrder">
-              <a [routerLink]="['/order', invoice.order.id, 'view']">{{ invoice.order.orderNumber }}</a>
-            </div>
-            <ng-template #noOrder>—</ng-template>
-          </dd>
+        <div class="id-finance-item">
+          <span class="id-finance-item__label">TVA</span>
+          <span class="id-finance-item__value">{{ invoice.taxAmount | number:'1.2-2' }} TND</span>
         </div>
-      </dl>
-    </section>
+        <div class="id-finance-item id-finance-item--total">
+          <span class="id-finance-item__label">Total TTC</span>
+          <span class="id-finance-item__value id-finance-item__value--total">{{ invoice.amountTtc | number:'1.2-2' }} TND</span>
+        </div>
+        <div class="id-finance-item">
+          <span class="id-finance-item__label">Statut</span>
+          <span class="id-status-badge" [ngClass]="getStatusClass(invoice.status)">
+            <span class="id-status-badge__dot"></span>
+            {{ getStatusLabel(invoice.status) }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chronologie -->
+    <div class="id-card">
+      <div class="id-card__head">
+        <div class="id-card__head-icon id-card__head-icon--teal"><fa-icon icon="history"></fa-icon></div>
+        <div>
+          <div class="id-card__title">Chronologie</div>
+          <div class="id-card__sub">Dates clés du cycle de vie</div>
+        </div>
+      </div>
+      <div class="id-timeline">
+        <div class="id-tl-item" *ngIf="invoice.issueDate">
+          <div class="id-tl-dot id-tl-dot--blue"></div>
+          <div class="id-tl-body">
+            <span class="id-tl-label">Date d'émission</span>
+            <span class="id-tl-date">{{ invoice.issueDate | formatMediumDatetime }}</span>
+          </div>
+        </div>
+        <div class="id-tl-line" *ngIf="invoice.issueDate && invoice.dueDate"></div>
+        <div class="id-tl-item" *ngIf="invoice.dueDate">
+          <div class="id-tl-dot id-tl-dot--orange"></div>
+          <div class="id-tl-body">
+            <span class="id-tl-label">Date d'échéance</span>
+            <span class="id-tl-date">{{ invoice.dueDate | formatMediumDatetime }}</span>
+          </div>
+        </div>
+        <div class="id-tl-line" *ngIf="invoice.dueDate && invoice.paidAt"></div>
+        <div class="id-tl-item" *ngIf="invoice.paidAt">
+          <div class="id-tl-dot id-tl-dot--green"></div>
+          <div class="id-tl-body">
+            <span class="id-tl-label">Payée le</span>
+            <span class="id-tl-date">{{ invoice.paidAt | formatMediumDatetime }}</span>
+          </div>
+        </div>
+        <div class="id-tl-line" *ngIf="invoice.createdAt"></div>
+        <div class="id-tl-item" *ngIf="invoice.createdAt">
+          <div class="id-tl-dot id-tl-dot--gray"></div>
+          <div class="id-tl-body">
+            <span class="id-tl-label">Créée le</span>
+            <span class="id-tl-date">{{ invoice.createdAt | formatMediumDatetime }}</span>
+          </div>
+        </div>
+        <div class="id-tl-line" *ngIf="invoice.updatedAt"></div>
+        <div class="id-tl-item" *ngIf="invoice.updatedAt">
+          <div class="id-tl-dot id-tl-dot--gray"></div>
+          <div class="id-tl-body">
+            <span class="id-tl-label">Mise à jour</span>
+            <span class="id-tl-date">{{ invoice.updatedAt | formatMediumDatetime }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Relations -->
+    <div class="id-card id-card--full">
+      <div class="id-card__head">
+        <div class="id-card__head-icon id-card__head-icon--indigo"><fa-icon icon="link"></fa-icon></div>
+        <div>
+          <div class="id-card__title">Relations</div>
+          <div class="id-card__sub">Client et commande associés</div>
+        </div>
+      </div>
+      <div class="id-links-grid">
+        <div class="id-link-item" *ngIf="invoice.client">
+          <div class="id-link-item__icon id-link-item__icon--blue"><fa-icon icon="building"></fa-icon></div>
+          <div>
+            <div class="id-link-item__label">Client</div>
+            <a [routerLink]="['/client', invoice.client.id, 'view']" class="id-link-item__value">{{ invoice.client.name }}</a>
+          </div>
+        </div>
+        <div class="id-link-item" *ngIf="invoice.order">
+          <div class="id-link-item__icon id-link-item__icon--teal"><fa-icon icon="shopping-cart"></fa-icon></div>
+          <div>
+            <div class="id-link-item__label">Commande liée</div>
+            <a [routerLink]="['/order', invoice.order.id, 'view']" class="id-link-item__value">{{ invoice.order.orderNumber }}</a>
+          </div>
+        </div>
+        <div class="id-link-item" *ngIf="invoice.issueDate">
+          <div class="id-link-item__icon id-link-item__icon--gray"><fa-icon icon="calendar-alt"></fa-icon></div>
+          <div>
+            <div class="id-link-item__label">Émise le</div>
+            <div class="id-link-item__value">{{ invoice.issueDate | formatMediumDate }}</div>
+          </div>
+        </div>
+        <div class="id-link-item" *ngIf="invoice.paidAt">
+          <div class="id-link-item__icon id-link-item__icon--green"><fa-icon icon="check-circle"></fa-icon></div>
+          <div>
+            <div class="id-link-item__label">Payée le</div>
+            <div class="id-link-item__value">{{ invoice.paidAt | formatMediumDate }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
