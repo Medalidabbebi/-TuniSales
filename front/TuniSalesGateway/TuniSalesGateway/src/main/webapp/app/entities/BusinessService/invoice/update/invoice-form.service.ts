@@ -68,7 +68,9 @@ export class InvoiceFormService {
           validators: [Validators.required],
         }
       ),
-      tenantId: new FormControl(invoiceRawValue.tenantId),
+      tenantId: new FormControl(invoiceRawValue.tenantId, {
+        validators: [Validators.required],
+      }),
       invoiceNumber: new FormControl(invoiceRawValue.invoiceNumber, {
         validators: [Validators.required, Validators.minLength(5), Validators.maxLength(50)],
       }),
