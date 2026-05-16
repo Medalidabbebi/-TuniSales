@@ -62,7 +62,9 @@ export class ProductFormService {
           validators: [Validators.required],
         }
       ),
-      tenantId: new FormControl(productRawValue.tenantId),
+      tenantId: new FormControl(productRawValue.tenantId, {
+        validators: [Validators.required],
+      }),
       sku: new FormControl(productRawValue.sku, {
         validators: [Validators.required, Validators.minLength(3), Validators.maxLength(100)],
       }),
