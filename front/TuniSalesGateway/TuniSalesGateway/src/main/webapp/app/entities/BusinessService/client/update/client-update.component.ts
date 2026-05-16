@@ -9,8 +9,6 @@ import { IClient } from '../client.model';
 import { ClientService } from '../service/client.service';
 import { ClientType } from 'app/entities/enumerations/client-type.model';
 import { ClientStatus } from 'app/entities/enumerations/client-status.model';
-import { TenantService } from 'app/entities/PlatformService/tenant/service/tenant.service';
-import { ITenant } from 'app/entities/PlatformService/tenant/tenant.model';
 
 @Component({
   selector: 'jhi-client-update',
@@ -23,7 +21,6 @@ export class ClientUpdateComponent implements OnInit {
   client: IClient | null = null;
   clientTypeValues = Object.keys(ClientType);
   clientStatusValues = Object.keys(ClientStatus);
-  tenants: ITenant[] = [];
 
   editForm: ClientFormGroup = this.clientFormService.createClientFormGroup();
 
@@ -31,14 +28,9 @@ export class ClientUpdateComponent implements OnInit {
     protected clientService: ClientService,
     protected clientFormService: ClientFormService,
     protected activatedRoute: ActivatedRoute,
-    protected tenantService: TenantService
   ) {}
 
   ngOnInit(): void {
-    this.tenantService.query({ size: 200 }).subscribe(res => {
-      this.tenants = res.body ?? [];
-    });
-
     this.activatedRoute.data.subscribe(({ client }) => {
       this.client = client;
       if (client) {
