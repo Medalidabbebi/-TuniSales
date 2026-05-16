@@ -1043,4 +1043,39 @@ h4 { font-size: $font-size-lg; }
   margin-top: $space-1;
 }
 
+// ── Entity page styles (imported here so webpack picks them up via HMR) ──
+@import '../../app/entities/InventoryService/warehouse/detail/warehouse-detail.component';
+@import '../../app/entities/InventoryService/warehouse/update/warehouse-update.component';
+@import '../../app/entities/BusinessService/delivery/detail/delivery-detail.component';
+@import '../../app/entities/BusinessService/delivery/list/delivery.component';
+@import '../../app/entities/BusinessService/delivery/update/delivery-update.component';
+@import '../../app/entities/BusinessService/invoice/detail/invoice-detail.component';
+@import '../../app/entities/BusinessService/invoice/list/invoice.component';
+@import '../../app/entities/BusinessService/invoice/update/invoice-update.component';
+@import '../../app/entities/BusinessService/client/detail/client-detail.component';
+@import '../../app/entities/BusinessService/client/list/client.component';
+@import '../../app/entities/BusinessService/client/update/client-update.component';
+@import '../../app/entities/BusinessService/client-contact/detail/client-contact-detail.component';
+@import '../../app/entities/BusinessService/client-contact/list/client-contact.component';
+@import '../../app/entities/BusinessService/client-contact/update/client-contact-update.component';
+@import '../../app/entities/BusinessService/mission/detail/mission-detail.component';
+@import '../../app/entities/BusinessService/mission/list/mission.component';
+@import '../../app/entities/BusinessService/mission/update/mission-update.component';
+@import '../../app/entities/BusinessService/visit/detail/visit-detail.component';
+@import '../../app/entities/BusinessService/visit/list/visit.component';
+@import '../../app/entities/BusinessService/visit/update/visit-update.component';
+@import '../../app/entities/BusinessService/order/detail/order-detail.component';
+@import '../../app/entities/BusinessService/order/list/order.component';
+@import '../../app/entities/BusinessService/order/update/order-update.component';
+@import '../../app/entities/BusinessService/order-line/detail/order-line-detail.component';
+@import '../../app/entities/BusinessService/order-line/list/order-line.component';
+@import '../../app/entities/BusinessService/order-line/update/order-line-update.component';
+@import '../../app/entities/BusinessService/price-list/detail/price-list-detail.component';
+@import '../../app/entities/BusinessService/price-list/list/price-list.component';
+@import '../../app/entities/BusinessService/price-list/update/price-list-update.component';
+@import '../../app/entities/BusinessService/product/detail/product-detail.component';
+@import '../../app/entities/BusinessService/product/list/product.component';
+@import '../../app/entities/BusinessService/product/update/product-update.component';
+@import '../../app/entities/BusinessService/sales-offer/create/sales-offer-create.component';
+
 /* jhipster-needle-scss-add-main JHipster will add new css style */
