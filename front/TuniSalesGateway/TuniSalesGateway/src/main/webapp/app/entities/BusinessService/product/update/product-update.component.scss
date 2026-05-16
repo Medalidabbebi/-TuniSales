@@ -1,118 +1,194 @@
-@import 'design-system';
+// ── Variables ─────────────────────────────────────────────────────
+$pru-blue:   #2563eb;
+$pru-blue-l: #dbeafe;
+$pru-green:  #16a34a;
+$pru-grn-l:  #dcfce7;
+$pru-red:    #dc2626;
+$pru-red-l:  #fee2e2;
+$pru-gray:   #64748b;
+$pru-border: #e2e8f0;
+$pru-bg:     #f8fafc;
+$pru-white:  #ffffff;
+$pru-text:   #0f172a;
+$pru-muted:  #64748b;
+$pru-shadow: 0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$pru-radius: 12px;
 
-.tsg-form-page {
+// ── Page ──────────────────────────────────────────────────────────
+.pru-page {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 1.5rem;
 }
 
-.tsg-form-shell {
+// ── Header ────────────────────────────────────────────────────────
+.pru-header {
   display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.tsg-form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-
-  @media (max-width: 991px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.tsg-form-grid--two {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-
-  @media (max-width: 575px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.tsg-form-card {
-  padding: 24px;
-  border-radius: $radius-lg;
-  background: $tsg-surface;
-  border: 1px solid $tsg-border-light;
-  box-shadow: $shadow-sm;
-
-  &--wide {
-    grid-column: 1 / -1;
-  }
-
-  &__header {
-    margin-bottom: 18px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid $tsg-border-light;
-
-    h2 {
-      margin: 0;
-      font-size: 18px;
-      color: $tsg-text;
-    }
-  }
-}
-
-.tsg-form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 18px;
-}
-
-.tsg-input {
-  width: 100%;
-  min-height: 44px;
-  border-radius: $radius-md;
-  border: 1px solid $tsg-border;
-  background: $tsg-surface;
-  color: $tsg-text;
-  padding: 10px 14px;
-
-  &:focus {
-    outline: none;
-    border-color: $tsg-accent;
-    box-shadow: 0 0 0 3px rgba($tsg-accent, 0.14);
-  }
-}
-
-.tsg-checkbox {
-  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  color: $tsg-text;
-  font-weight: $font-weight-medium;
-}
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
 
-.tsg-field-error {
-  color: $tsg-danger;
-  font-size: $font-size-sm;
-}
-
-.tsg-summary-grid {
-  margin-top: -4px;
-}
-
-.tsg-summary-card {
-  position: relative;
-  overflow: hidden;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset-inline-end: -24px;
-    top: -24px;
-    width: 88px;
-    height: 88px;
-    border-radius: 50%;
-    background: rgba($tsg-accent, 0.06);
+  &__left    { display: flex; align-items: center; gap: .9rem; }
+  &__icon    {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, $pru-blue, darken($pru-blue, 8%));
+    color: #fff; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba($pru-blue, .28);
   }
+  &__title   { margin: 0; font-size: 1.45rem; font-weight: 800; color: $pru-text; }
+  &__sub     { margin: .25rem 0 0; font-size: .88rem; color: $pru-muted; }
+  &__actions { display: flex; align-items: center; gap: .75rem; }
+}
 
-  &__value {
+.pru-back-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1.5px solid $pru-border; background: $pru-white;
+  color: $pru-muted; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: .9rem; transition: all .15s; flex-shrink: 0;
+  &:hover { border-color: $pru-blue; color: $pru-blue; background: $pru-blue-l; }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────
+.pru-btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .55rem 1.1rem;
+  border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .15s;
+
+  &--primary {
+    background: $pru-blue; color: #fff; border-color: $pru-blue;
+    &:hover:not([disabled]) { background: darken($pru-blue,6%); box-shadow: 0 3px 10px rgba($pru-blue,.3); }
+    &[disabled] { opacity: .45; cursor: not-allowed; }
+  }
+  &--ghost {
+    background: $pru-white; color: $pru-text; border-color: $pru-border;
+    &:hover { background: $pru-bg; }
+  }
+}
+
+// ── Status Badge ──────────────────────────────────────────────────
+.pru-status-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .28rem .75rem; border-radius: 999px;
+  font-size: .78rem; font-weight: 700;
+  &__dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+}
+.pru-status--active   { background: $pru-grn-l; color: darken($pru-green,8%);
+  .pru-status-badge__dot { background: $pru-green; } }
+.pru-status--inactive { background: #f1f5f9; color: $pru-gray;
+  .pru-status-badge__dot { background: #94a3b8; } }
+
+// ── Status Strip ──────────────────────────────────────────────────
+.pru-strip {
+  display: flex; align-items: center; flex-wrap: wrap; gap: .5rem;
+  background: $pru-white; border: 1px solid $pru-border;
+  border-radius: $pru-radius; padding: .85rem 1.25rem;
+  box-shadow: $pru-shadow;
+
+  &__item  { display: flex; align-items: center; gap: .6rem; }
+  &__label { font-size: .72rem; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .05em; color: $pru-muted; }
+  &__val   { font-size: .9rem; font-weight: 700; color: $pru-text;
+    &--blue { color: $pru-blue; } }
+  &__sep   { width: 1px; height: 20px; background: $pru-border; margin: 0 .25rem; }
+}
+
+// ── Form Grid ─────────────────────────────────────────────────────
+.pru-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  @media (max-width: 768px) { grid-template-columns: 1fr; }
+}
+
+// ── Card ──────────────────────────────────────────────────────────
+.pru-card {
+  background: $pru-white; border: 1px solid $pru-border;
+  border-radius: $pru-radius; box-shadow: $pru-shadow; overflow: hidden;
+
+  &__head {
+    display: flex; align-items: center; gap: .85rem;
+    padding: 1rem 1.25rem; border-bottom: 1px solid $pru-border;
+    background: $pru-bg;
+  }
+  &__head-icon {
+    width: 38px; height: 38px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; flex-shrink: 0;
+    &--blue  { background: $pru-blue-l; color: $pru-blue; }
+    &--green { background: $pru-grn-l; color: $pru-green; }
+  }
+  &__title { font-size: .95rem; font-weight: 700; color: $pru-text; }
+  &__sub   { font-size: .78rem; color: $pru-muted; margin-top: .1rem; }
+  &__body  { padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem; }
+}
+
+// ── Fields ────────────────────────────────────────────────────────
+.pru-field { display: flex; flex-direction: column; gap: .35rem; flex: 1; }
+.pru-field-row {
+  display: flex; gap: .85rem;
+  @media (max-width: 480px) { flex-direction: column; }
+}
+.pru-label {
+  font-size: .78rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .04em; color: $pru-text;
+}
+.pru-required { color: $pru-red; }
+
+.pru-input {
+  width: 100%; padding: .6rem .85rem;
+  border: 1.5px solid $pru-border; border-radius: 8px;
+  font-size: .9rem; color: $pru-text; background: $pru-white;
+  transition: border-color .15s, box-shadow .15s; outline: none;
+  box-sizing: border-box;
+  &:focus { border-color: $pru-blue; box-shadow: 0 0 0 3px rgba($pru-blue,.15); }
+  &[readonly] { background: $pru-bg; color: $pru-muted; cursor: not-allowed; }
+}
+
+.pru-input-group {
+  display: flex; align-items: stretch;
+  border: 1.5px solid $pru-border; border-radius: 8px; overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+  &:focus-within { border-color: $pru-blue; box-shadow: 0 0 0 3px rgba($pru-blue,.15); }
+  .pru-input { border: none; border-radius: 0; flex: 1; &:focus { box-shadow: none; } }
+}
+.pru-input-addon {
+  display: flex; align-items: center; padding: 0 .75rem;
+  font-size: .82rem; font-weight: 600; color: $pru-blue;
+  background: $pru-blue-l; white-space: nowrap; flex-shrink: 0;
+}
+
+.pru-error { font-size: .78rem; color: $pru-red; margin-top: .1rem; }
+.pru-divider { height: 1px; background: $pru-border; margin: .1rem 0; }
+
+// ── Toggle ────────────────────────────────────────────────────────
+.pru-toggle-row { display: flex; flex-direction: column; gap: .25rem; }
+
+.pru-toggle {
+  display: inline-flex; align-items: center; gap: .65rem;
+  cursor: pointer; user-select: none;
+
+  input[type="checkbox"] { display: none; }
+
+  &__track {
+    width: 40px; height: 22px; border-radius: 999px;
+    background: #cbd5e1; transition: background .2s; flex-shrink: 0;
     position: relative;
-    z-index: 1;
+    &::after {
+      content: ''; position: absolute; top: 3px; left: 3px;
+      width: 16px; height: 16px; border-radius: 50%;
+      background: #fff; transition: transform .2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+    &--danger { background: #fca5a5; }
   }
+  &__label { font-size: .9rem; font-weight: 600; color: $pru-text; }
+
+  input:checked ~ .pru-toggle__track { background: $pru-green; }
+  input:checked ~ .pru-toggle__track::after { transform: translateX(18px); }
+  input:checked ~ .pru-toggle__track--danger { background: $pru-red; }
 }
+.pru-toggle-hint { font-size: .78rem; color: $pru-muted; padding-left: 1.35rem; }
