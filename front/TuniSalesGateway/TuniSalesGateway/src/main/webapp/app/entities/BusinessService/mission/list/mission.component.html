@@ -1,21 +1,23 @@
-<div class="container-fluid py-4">
+<div class="ml-page">
 
-  <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-    <div>
-      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="MissionHeading">
-        <fa-icon icon="map-marker-alt" class="me-2 text-primary"></fa-icon>
-        Gestion des Missions
-      </h2>
-      <small class="text-muted">Liste des missions — {{ totalItems }} mission(s) au total</small>
+  <!-- ── Header ───────────────────────────────────────────────── -->
+  <div class="ml-header">
+    <div class="ml-header__left">
+      <div class="ml-header__icon">
+        <fa-icon icon="bullseye"></fa-icon>
+      </div>
+      <div>
+        <h1 class="ml-header__title" id="page-heading" data-cy="MissionHeading">Gestion des Missions</h1>
+        <p class="ml-header__sub">{{ totalItems }} mission(s) au total</p>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+    <div class="ml-header__actions">
+      <button class="ml-btn ml-btn--ghost" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
-      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/mission/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
+      <a class="ml-btn ml-btn--primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/mission/new']">
+        <fa-icon icon="plus"></fa-icon>
         Nouvelle Mission
       </a>
     </div>
@@ -24,73 +26,137 @@
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
-  <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+  <!-- ── KPI Cards ──────────────────────────────────────────────── -->
+  <div class="ml-kpi-row">
+    <div class="ml-kpi ml-kpi--indigo">
+      <div class="ml-kpi__icon">
+        <fa-icon icon="bullseye"></fa-icon>
+      </div>
+      <div class="ml-kpi__body">
+        <span class="ml-kpi__value">{{ totalItems }}</span>
+        <span class="ml-kpi__label">Total</span>
+      </div>
+    </div>
+
+    <div class="ml-kpi ml-kpi--amber">
+      <div class="ml-kpi__icon">
+        <fa-icon icon="clock"></fa-icon>
+      </div>
+      <div class="ml-kpi__body">
+        <span class="ml-kpi__value">{{ countByStatus('PLANNED') }}</span>
+        <span class="ml-kpi__label">Planifiées</span>
+      </div>
+    </div>
+
+    <div class="ml-kpi ml-kpi--blue">
+      <div class="ml-kpi__icon">
+        <fa-icon icon="tasks"></fa-icon>
+      </div>
+      <div class="ml-kpi__body">
+        <span class="ml-kpi__value">{{ countByStatus('IN_PROGRESS') }}</span>
+        <span class="ml-kpi__label">En cours</span>
+      </div>
+    </div>
+
+    <div class="ml-kpi ml-kpi--green">
+      <div class="ml-kpi__icon">
+        <fa-icon icon="check-circle"></fa-icon>
+      </div>
+      <div class="ml-kpi__body">
+        <span class="ml-kpi__value">{{ countByStatus('COMPLETED') }}</span>
+        <span class="ml-kpi__label">Terminées</span>
+      </div>
+    </div>
   </div>
 
-  <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && missions?.length === 0">
-    <fa-icon icon="map-marker-alt" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucune mission trouvée. Créez votre première mission.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/mission/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <!-- ── Loading ────────────────────────────────────────────────── -->
+  <div class="ml-state-box" *ngIf="isLoading">
+    <fa-icon icon="sync" [spin]="true" class="ml-state-box__icon"></fa-icon>
+    <p class="ml-state-box__text">Chargement en cours…</p>
+  </div>
+
+  <!-- ── Empty ──────────────────────────────────────────────────── -->
+  <div class="ml-state-box ml-state-box--card" *ngIf="!isLoading && missions?.length === 0">
+    <fa-icon icon="bullseye" class="ml-state-box__icon ml-state-box__icon--muted"></fa-icon>
+    <p class="ml-state-box__text">Aucune mission trouvée. Créez votre première mission.</p>
+    <a class="ml-btn ml-btn--primary mt-2" [routerLink]="['/mission/new']">
+      <fa-icon icon="plus"></fa-icon> Ajouter
     </a>
   </div>
 
-  <!-- Table -->
-  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && missions && missions.length > 0">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
-        <thead class="table-light">
+  <!-- ── Table ──────────────────────────────────────────────────── -->
+  <div class="ml-card" id="entities" *ngIf="!isLoading && missions && missions.length > 0">
+    <div class="ml-table-wrap">
+      <table class="ml-table" aria-describedby="page-heading">
+        <thead>
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
             <th scope="col" jhiSortBy="title">
-              <div class="d-flex align-items-center gap-1">Titre <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              <span class="ml-th-inner">Titre <fa-icon icon="sort" class="ml-sort-icon"></fa-icon></span>
             </th>
             <th scope="col" jhiSortBy="assignedToLogin">
-              <div class="d-flex align-items-center gap-1">Commercial <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              <span class="ml-th-inner">Assignée à <fa-icon icon="sort" class="ml-sort-icon"></fa-icon></span>
             </th>
-            <th scope="col" jhiSortBy="status" style="width:130px">
-              <div class="d-flex align-items-center gap-1">Statut <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th scope="col" jhiSortBy="status" style="width:140px">
+              <span class="ml-th-inner">Statut <fa-icon icon="sort" class="ml-sort-icon"></fa-icon></span>
             </th>
             <th scope="col" jhiSortBy="missionDate">
-              <div class="d-flex align-items-center gap-1">Date début <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              <span class="ml-th-inner">Date mission <fa-icon icon="sort" class="ml-sort-icon"></fa-icon></span>
             </th>
-            <th scope="col" jhiSortBy="updatedAt">
-              <div class="d-flex align-items-center gap-1">Date fin <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" style="width:140px"></th>
+            <th scope="col" style="width:130px"></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let mission of missions; trackBy: trackId" data-cy="entityTable">
-            <td class="fw-semibold">{{ mission.title || '—' }}</td>
-            <td>{{ mission.assignedToLogin || '—' }}</td>
+          <tr *ngFor="let mission of missions; trackBy: trackId" data-cy="entityTable" class="ml-row">
+
+            <!-- Titre with avatar -->
             <td>
-              <span class="badge rounded-pill"
-                [ngClass]="{
-                  'bg-success': mission.status === 'COMPLETED',
-                  'bg-info': mission.status === 'IN_PROGRESS',
-                  'bg-warning text-dark': mission.status === 'PLANNED',
-                  'bg-danger': mission.status === 'CANCELLED',
-                  'bg-secondary': !mission.status
-                }">
-                {{ mission.status }}
+              <div class="ml-title-cell">
+                <div class="ml-avatar">{{ getStatusInitial(mission) }}</div>
+                <div>
+                  <div class="ml-title-cell__name">{{ mission.title || '—' }}</div>
+                  <div class="ml-title-cell__sub" *ngIf="mission.description">{{ mission.description | slice:0:45 }}…</div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Assignée à -->
+            <td>
+              <div class="ml-user-cell">
+                <fa-icon icon="user" class="ml-user-cell__icon"></fa-icon>
+                <span>{{ mission.assignedToLogin || '—' }}</span>
+              </div>
+            </td>
+
+            <!-- Statut -->
+            <td>
+              <span class="ml-badge" [ngClass]="getStatusClass(mission.status)">
+                <span class="ml-badge__dot"></span>
+                {{ getStatusLabel(mission.status) }}
               </span>
             </td>
-            <td><span class="text-muted small">{{ mission.missionDate | formatMediumDatetime }}</span></td>
-            <td><span class="text-muted small">{{ mission.updatedAt | formatMediumDatetime }}</span></td>
+
+            <!-- Date -->
             <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/mission', mission.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+              <div class="ml-date-cell">
+                <fa-icon icon="calendar-alt" class="ml-date-cell__icon"></fa-icon>
+                {{ mission.missionDate | formatMediumDatetime }}
+              </div>
+            </td>
+
+            <!-- Actions -->
+            <td>
+              <div class="ml-actions">
+                <a [routerLink]="['/mission', mission.id, 'view']"
+                   class="ml-action ml-action--view" data-cy="entityDetailsButton" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/mission', mission.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                <a [routerLink]="['/mission', mission.id, 'edit']"
+                   class="ml-action ml-action--edit" data-cy="entityEditButton" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(mission)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
-                  <fa-icon icon="times"></fa-icon>
+                <button (click)="delete(mission)"
+                        class="ml-action ml-action--delete" data-cy="entityDeleteButton" title="Supprimer">
+                  <fa-icon icon="trash"></fa-icon>
                 </button>
               </div>
             </td>
@@ -100,8 +166,8 @@
     </div>
   </div>
 
-  <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="missions && missions.length > 0">
+  <!-- ── Pagination ─────────────────────────────────────────────── -->
+  <div class="ml-pagination" *ngIf="missions && missions.length > 0">
     <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
     <ngb-pagination
       [collectionSize]="totalItems"

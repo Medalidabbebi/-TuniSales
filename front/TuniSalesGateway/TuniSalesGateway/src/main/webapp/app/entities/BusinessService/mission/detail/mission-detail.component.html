@@ -1,106 +1,141 @@
-<div class="tsg-detail-page" *ngIf="mission">
-  <div class="tsg-page-header">
-    <div>
-      <h1 class="tsg-page-header__title" data-cy="missionDetailsHeading" jhiTranslate="tuniSalesGatewayApp.businessServiceMission.detail.title">Mission</h1>
-      <p class="tsg-page-header__subtitle">{{ mission.title || 'Mission details' }}</p>
-    </div>
-    <div class="tsg-page-header__actions">
-      <button type="button" (click)="previousState()" class="tsg-btn tsg-btn--secondary" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>
-        <span jhiTranslate="entity.action.back">Back</span>
-      </button>
-      <button type="button" [routerLink]="['/mission', mission.id, 'edit']" class="tsg-btn tsg-btn--primary">
-        <fa-icon icon="pencil-alt"></fa-icon>
-        <span jhiTranslate="entity.action.edit">Edit</span>
-      </button>
-    </div>
-  </div>
+<div class="md-page" *ngIf="mission">
 
-  <div class="tsg-summary-grid">
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Title</div>
-      <div class="tsg-summary-card__value">{{ mission.title || '—' }}</div>
-      <div class="tsg-summary-card__meta">Mission ID #{{ mission.id }}</div>
+  <!-- ── Header ───────────────────────────────────────────────── -->
+  <div class="md-header">
+    <div class="md-header__left">
+      <div class="md-header__icon">
+        <fa-icon icon="bullseye"></fa-icon>
+      </div>
+      <div>
+        <h1 class="md-header__title" data-cy="missionDetailsHeading">{{ mission.title || 'Détail Mission' }}</h1>
+        <p class="md-header__sub">
+          <fa-icon icon="user" class="md-header__sub-icon"></fa-icon>
+          {{ mission.assignedToLogin || '—' }}
+        </p>
+      </div>
     </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Assigned to</div>
-      <div class="tsg-summary-card__value">{{ mission.assignedToLogin || '—' }}</div>
-      <div class="tsg-summary-card__meta">Tenant {{ mission.tenantId || '—' }}</div>
-    </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Status</div>
-      <div class="tsg-summary-card__value"><span class="tsg-badge" [ngClass]="getStatusBadgeClass()">{{ getStatusLabel() }}</span></div>
-      <div class="tsg-summary-card__meta">Execution state</div>
-    </div>
-    <div class="tsg-summary-card">
-      <div class="tsg-summary-card__label">Mission date</div>
-      <div class="tsg-summary-card__value">{{ mission.missionDate | formatMediumDatetime }}</div>
-      <div class="tsg-summary-card__meta">Scheduled timestamp</div>
+    <div class="md-header__actions">
+      <span class="md-status-pill" [ngClass]="getStatusClass()">
+        <span class="md-status-pill__dot"></span>
+        {{ getStatusLabel() }}
+      </span>
+      <button type="button" (click)="previousState()" class="md-btn md-btn--ghost" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
+        Retour
+      </button>
+      <a [routerLink]="['/mission', mission.id, 'edit']" class="md-btn md-btn--primary">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        Modifier
+      </a>
     </div>
   </div>
 
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
-  <div class="tsg-detail-grid">
-    <section class="tsg-detail-card">
-      <div class="tsg-detail-card__header">
-        <h2>Mission details</h2>
+  <!-- ── KPI Row ────────────────────────────────────────────────── -->
+  <div class="md-kpi-row">
+    <div class="md-kpi md-kpi--indigo">
+      <div class="md-kpi__icon"><fa-icon icon="tasks"></fa-icon></div>
+      <div class="md-kpi__body">
+        <span class="md-kpi__label">Statut</span>
+        <span class="md-kpi__value">{{ getStatusLabel() }}</span>
       </div>
-      <dl class="tsg-detail-list">
-        <div>
-          <dt jhiTranslate="global.field.id">ID</dt>
-          <dd>{{ mission.id }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.tenantId">Tenant Id</dt>
-          <dd>{{ mission.tenantId || '—' }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.assignedToLogin">Assigned To Login</dt>
-          <dd>{{ mission.assignedToLogin || '—' }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.title">Title</dt>
-          <dd>{{ mission.title || '—' }}</dd>
-        </div>
-      </dl>
-    </section>
+    </div>
 
-    <section class="tsg-detail-card">
-      <div class="tsg-detail-card__header">
-        <h2>Status and timeline</h2>
+    <div class="md-kpi md-kpi--orange">
+      <div class="md-kpi__icon"><fa-icon icon="calendar-alt"></fa-icon></div>
+      <div class="md-kpi__body">
+        <span class="md-kpi__label">Date mission</span>
+        <span class="md-kpi__value md-kpi__value--sm">{{ mission.missionDate | formatMediumDatetime }}</span>
       </div>
-      <dl class="tsg-detail-list">
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.status">Status</dt>
-          <dd>{{ getStatusLabel() }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.missionDate">Mission Date</dt>
-          <dd>{{ mission.missionDate | formatMediumDatetime }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.createdAt">Created At</dt>
-          <dd>{{ mission.createdAt | formatMediumDatetime }}</dd>
-        </div>
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.updatedAt">Updated At</dt>
-          <dd>{{ mission.updatedAt | formatMediumDatetime }}</dd>
-        </div>
-      </dl>
-    </section>
+    </div>
 
-    <section class="tsg-detail-card tsg-detail-card--wide">
-      <div class="tsg-detail-card__header">
-        <h2>Description</h2>
+    <div class="md-kpi md-kpi--gray">
+      <div class="md-kpi__icon"><fa-icon icon="clock"></fa-icon></div>
+      <div class="md-kpi__body">
+        <span class="md-kpi__label">Créée le</span>
+        <span class="md-kpi__value md-kpi__value--sm">{{ mission.createdAt | formatMediumDatetime }}</span>
       </div>
-      <dl class="tsg-detail-list tsg-detail-list--split">
-        <div>
-          <dt jhiTranslate="tuniSalesGatewayApp.businessServiceMission.description">Description</dt>
-          <dd>{{ mission.description || 'No description provided.' }}</dd>
-        </div>
-      </dl>
-    </section>
+    </div>
+
+    <div class="md-kpi md-kpi--blue">
+      <div class="md-kpi__icon"><fa-icon icon="user"></fa-icon></div>
+      <div class="md-kpi__body">
+        <span class="md-kpi__label">Assignée à</span>
+        <span class="md-kpi__value md-kpi__value--sm">{{ mission.assignedToLogin || '—' }}</span>
+      </div>
+    </div>
   </div>
+
+  <!-- ── 2-col detail grid ──────────────────────────────────────── -->
+  <div class="md-grid">
+
+    <!-- Card 1 : Détails -->
+    <section class="md-card">
+      <div class="md-card__header">
+        <div class="md-card__header-icon">
+          <fa-icon icon="bullseye"></fa-icon>
+        </div>
+        <h2 class="md-card__title">Détails</h2>
+      </div>
+
+      <dl class="md-dl">
+        <div class="md-dl__item">
+          <dt class="md-dl__label">Titre</dt>
+          <dd class="md-dl__value">{{ mission.title || '—' }}</dd>
+        </div>
+        <div class="md-dl__item">
+          <dt class="md-dl__label">Assignée à</dt>
+          <dd class="md-dl__value">{{ mission.assignedToLogin || '—' }}</dd>
+        </div>
+        <div class="md-dl__item md-dl__item--full">
+          <dt class="md-dl__label">Description</dt>
+          <dd class="md-dl__value md-dl__value--desc">{{ mission.description || 'Aucune description.' }}</dd>
+        </div>
+        <div class="md-dl__item">
+          <dt class="md-dl__label">Date mission</dt>
+          <dd class="md-dl__value">{{ mission.missionDate | formatMediumDatetime }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- Card 2 : Chronologie -->
+    <section class="md-card">
+      <div class="md-card__header">
+        <div class="md-card__header-icon md-card__header-icon--gray">
+          <fa-icon icon="clock"></fa-icon>
+        </div>
+        <h2 class="md-card__title">Chronologie</h2>
+      </div>
+
+      <div class="md-timeline">
+        <div class="md-timeline__item md-timeline__item--indigo">
+          <div class="md-timeline__dot"></div>
+          <div class="md-timeline__content">
+            <span class="md-timeline__label">Créée le</span>
+            <span class="md-timeline__value">{{ mission.createdAt | formatMediumDatetime }}</span>
+          </div>
+        </div>
+
+        <div class="md-timeline__item md-timeline__item--orange">
+          <div class="md-timeline__dot"></div>
+          <div class="md-timeline__content">
+            <span class="md-timeline__label">Date mission</span>
+            <span class="md-timeline__value">{{ mission.missionDate | formatMediumDatetime }}</span>
+          </div>
+        </div>
+
+        <div class="md-timeline__item md-timeline__item--green">
+          <div class="md-timeline__dot"></div>
+          <div class="md-timeline__content">
+            <span class="md-timeline__label">Mise à jour</span>
+            <span class="md-timeline__value">{{ mission.updatedAt | formatMediumDatetime }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
 </div>

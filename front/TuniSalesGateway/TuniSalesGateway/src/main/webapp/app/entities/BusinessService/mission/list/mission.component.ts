@@ -76,6 +76,11 @@ export class MissionComponent implements OnInit {
     return this.missions?.filter(mission => mission.status === status).length ?? 0;
   }
 
+  /** Alias used by new template (ml- design) */
+  countByStatus(status: string): number {
+    return this.countMissionsByStatus(status);
+  }
+
   getStatusBadgeClass(status: string | null | undefined): string {
     const map: Record<string, string> = {
       PLANNED: 'tsg-badge--warning',
@@ -86,19 +91,35 @@ export class MissionComponent implements OnInit {
     return map[status ?? ''] || 'tsg-badge--neutral';
   }
 
+  /** CSS modifier used by new ml-badge classes */
+  getStatusClass(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      PLANNED: 'ml-badge--planned',
+      IN_PROGRESS: 'ml-badge--progress',
+      COMPLETED: 'ml-badge--done',
+      CANCELLED: 'ml-badge--cancelled',
+    };
+    return map[status ?? ''] || 'ml-badge--cancelled';
+  }
+
   getStatusLabel(status: string | null | undefined): string {
     const map: Record<string, string> = {
-      PLANNED: 'Planned',
-      IN_PROGRESS: 'In Progress',
-      COMPLETED: 'Completed',
-      CANCELLED: 'Cancelled',
+      PLANNED: 'Planifiée',
+      IN_PROGRESS: 'En cours',
+      COMPLETED: 'Terminée',
+      CANCELLED: 'Annulée',
     };
-    return map[status ?? ''] || 'Unknown';
+    return map[status ?? ''] || 'Inconnu';
   }
 
   getMissionAvatar(mission: IMission): string {
     const source = mission.title || mission.assignedToLogin || mission.id?.toString() || '?';
     return source.charAt(0).toUpperCase();
+  }
+
+  /** First letter shown in the indigo avatar (uses title or login) */
+  getStatusInitial(mission: IMission): string {
+    return this.getMissionAvatar(mission);
   }
 
   protected loadFromBackendWithRouteInformations(): Observable<EntityArrayResponseType> {

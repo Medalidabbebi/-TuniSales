@@ -43,26 +43,26 @@ export class MissionUpdateComponent implements OnInit {
   getStatusClass(): string {
     const status = this.editForm.get('status')?.value;
     const map: Record<string, string> = {
-      PLANNED: 'tsg-badge--warning',
-      IN_PROGRESS: 'tsg-badge--info',
-      COMPLETED: 'tsg-badge--success',
-      CANCELLED: 'tsg-badge--danger',
+      PLANNED: 'mu-status-pill--planned',
+      IN_PROGRESS: 'mu-status-pill--progress',
+      COMPLETED: 'mu-status-pill--done',
+      CANCELLED: 'mu-status-pill--cancelled',
     };
-    return map[status ?? ''] || 'tsg-badge--neutral';
+    return map[status ?? ''] || 'mu-status-pill--cancelled';
   }
 
   getMissionSnapshotName(): string {
-    return this.editForm.get('title')?.value || this.editForm.get('assignedToLogin')?.value || 'Draft mission';
+    return this.editForm.get('title')?.value || this.editForm.get('assignedToLogin')?.value || 'Nouvelle mission';
   }
 
   getStatusLabel(status: string | null | undefined): string {
     const map: Record<string, string> = {
-      PLANNED: 'Planned',
-      IN_PROGRESS: 'In Progress',
-      COMPLETED: 'Completed',
-      CANCELLED: 'Cancelled',
+      PLANNED: 'Planifiée',
+      IN_PROGRESS: 'En cours',
+      COMPLETED: 'Terminée',
+      CANCELLED: 'Annulée',
     };
-    return map[status ?? ''] || 'Unknown';
+    return map[status ?? ''] || 'Inconnu';
   }
 
   save(): void {

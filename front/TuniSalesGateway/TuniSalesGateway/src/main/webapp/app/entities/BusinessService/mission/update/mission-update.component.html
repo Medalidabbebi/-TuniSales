@@ -1,140 +1,215 @@
-<div class="tsg-form-page">
-  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm" class="tsg-form-shell">
-    <div class="tsg-page-header">
-      <div>
-        <h1 class="tsg-page-header__title" id="jhi-mission-heading" data-cy="MissionCreateUpdateHeading" jhiTranslate="tuniSalesGatewayApp.businessServiceMission.home.createOrEditLabel">
-          Create or edit mission
-        </h1>
-        <p class="tsg-page-header__subtitle">Organize assignment, execution window, and mission lifecycle in one form.</p>
-      </div>
-      <div class="tsg-page-header__actions">
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="tsg-btn tsg-btn--secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>
-          <span jhiTranslate="entity.action.cancel">Cancel</span>
-        </button>
+<div class="mu-page">
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm" class="mu-form">
 
-        <button type="submit" id="save-entity" data-cy="entityCreateSaveButton" [disabled]="editForm.invalid || isSaving" class="tsg-btn tsg-btn--primary">
-          <fa-icon icon="save"></fa-icon>
-          <span jhiTranslate="entity.action.save">Save</span>
+    <!-- ── Header ─────────────────────────────────────────────── -->
+    <div class="mu-header">
+      <div class="mu-header__left">
+        <div class="mu-header__icon">
+          <fa-icon icon="bullseye"></fa-icon>
+        </div>
+        <div>
+          <h1 class="mu-header__title" id="jhi-mission-heading" data-cy="MissionCreateUpdateHeading">
+            {{ mission ? 'Modifier la Mission' : 'Nouvelle Mission' }}
+          </h1>
+          <p class="mu-header__sub">{{ getMissionSnapshotName() }}</p>
+        </div>
+      </div>
+      <div class="mu-header__actions">
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton"
+                class="mu-btn mu-btn--ghost" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>
+          Annuler
+        </button>
+        <button type="submit" id="save-entity" data-cy="entityCreateSaveButton"
+                [disabled]="editForm.invalid || isSaving" class="mu-btn mu-btn--primary">
+          <fa-icon icon="check-circle" *ngIf="!isSaving"></fa-icon>
+          <fa-icon icon="sync" [spin]="true" *ngIf="isSaving"></fa-icon>
+          {{ isSaving ? 'Enregistrement…' : 'Enregistrer' }}
         </button>
       </div>
     </div>
 
     <jhi-alert-error></jhi-alert-error>
 
-    <div class="tsg-summary-grid">
-      <div class="tsg-summary-card">
-        <div class="tsg-summary-card__label">Mission</div>
-        <div class="tsg-summary-card__value">{{ getMissionSnapshotName() }}</div>
-        <div class="tsg-summary-card__meta">Tenant {{ editForm.get('tenantId')?.value || '—' }}</div>
+    <!-- ── Status strip ───────────────────────────────────────── -->
+    <div class="mu-strip">
+      <div class="mu-strip__item">
+        <span class="mu-strip__label">Statut actuel</span>
+        <span class="mu-status-pill" [ngClass]="getStatusClass()">
+          <span class="mu-status-pill__dot"></span>
+          {{ getStatusLabel(editForm.get('status')?.value) }}
+        </span>
       </div>
-      <div class="tsg-summary-card">
-        <div class="tsg-summary-card__label">Assigned to</div>
-        <div class="tsg-summary-card__value">{{ editForm.get('assignedToLogin')?.value || '—' }}</div>
-        <div class="tsg-summary-card__meta">Owner login</div>
-      </div>
-      <div class="tsg-summary-card">
-        <div class="tsg-summary-card__label">Status</div>
-        <div class="tsg-summary-card__value"><span class="tsg-badge" [ngClass]="getStatusClass()">{{ getStatusLabel(editForm.get('status')?.value) }}</span></div>
-        <div class="tsg-summary-card__meta">Execution stage</div>
-      </div>
-      <div class="tsg-summary-card">
-        <div class="tsg-summary-card__label">Date</div>
-        <div class="tsg-summary-card__value">{{ editForm.get('missionDate')?.value ? 'Scheduled' : 'Pending' }}</div>
-        <div class="tsg-summary-card__meta">Mission planning window</div>
+      <div class="mu-strip__sep"></div>
+      <div class="mu-strip__item">
+        <fa-icon icon="calendar-alt" class="mu-strip__cal-icon"></fa-icon>
+        <span class="mu-strip__label">Date mission :</span>
+        <span class="mu-strip__date">
+          {{ editForm.get('missionDate')?.value ? editForm.get('missionDate')?.value : '—' }}
+        </span>
       </div>
     </div>
 
-    <div class="tsg-form-grid">
-      <section class="tsg-form-card">
-        <div class="tsg-form-card__header">
-          <h2>Mission basics</h2>
-        </div>
+    <!-- ── 2-col form grid ────────────────────────────────────── -->
+    <div class="mu-grid">
 
-        <div class="tsg-form-group" *ngIf="editForm.controls.id.value !== null">
-          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="tsg-input" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
-        </div>
-
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceMission.tenantId" for="field_tenantId">Tenant Id</label>
-          <input type="number" class="tsg-input" name="tenantId" id="field_tenantId" data-cy="tenantId" formControlName="tenantId" />
-          <div *ngIf="editForm.get('tenantId')!.invalid && (editForm.get('tenantId')!.dirty || editForm.get('tenantId')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('tenantId')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
-            <small class="tsg-field-error" [hidden]="!editForm.get('tenantId')?.errors?.number" jhiTranslate="entity.validation.number">This field must be a number.</small>
+      <!-- Card 1 : Mission -->
+      <section class="mu-card">
+        <div class="mu-card__header">
+          <div class="mu-card__header-icon">
+            <fa-icon icon="bullseye"></fa-icon>
           </div>
+          <h2 class="mu-card__title">Mission</h2>
         </div>
 
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceMission.assignedToLogin" for="field_assignedToLogin">Assigned To Login</label>
-          <input type="text" class="tsg-input" name="assignedToLogin" id="field_assignedToLogin" data-cy="assignedToLogin" formControlName="assignedToLogin" />
-          <div *ngIf="editForm.get('assignedToLogin')!.invalid && (editForm.get('assignedToLogin')!.dirty || editForm.get('assignedToLogin')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('assignedToLogin')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
-            <small class="tsg-field-error" *ngIf="editForm.get('assignedToLogin')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 100 }">This field cannot exceed 100 characters.</small>
-          </div>
+        <!-- Hidden ID -->
+        <div class="mu-field" *ngIf="editForm.controls.id.value !== null">
+          <label class="mu-label" for="field_id" jhiTranslate="global.field.id">ID</label>
+          <input type="number" class="mu-input" name="id" id="field_id"
+                 data-cy="id" formControlName="id" [readonly]="true" />
         </div>
 
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceMission.title" for="field_title">Title</label>
-          <input type="text" class="tsg-input" name="title" id="field_title" data-cy="title" formControlName="title" />
+        <!-- Title -->
+        <div class="mu-field">
+          <label class="mu-label" for="field_title"
+                 jhiTranslate="tuniSalesGatewayApp.businessServiceMission.title">Titre</label>
+          <input type="text" class="mu-input" name="title" id="field_title"
+                 data-cy="title" formControlName="title"
+                 placeholder="Titre de la mission" />
           <div *ngIf="editForm.get('title')!.invalid && (editForm.get('title')!.dirty || editForm.get('title')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('title')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
-            <small class="tsg-field-error" *ngIf="editForm.get('title')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 255 }">This field cannot exceed 255 characters.</small>
+            <small class="mu-error" *ngIf="editForm.get('title')?.errors?.required"
+                   jhiTranslate="entity.validation.required">Ce champ est requis.</small>
+            <small class="mu-error" *ngIf="editForm.get('title')?.errors?.maxlength"
+                   jhiTranslate="entity.validation.maxlength"
+                   [translateValues]="{ max: 255 }">255 caractères max.</small>
           </div>
         </div>
 
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceMission.description" for="field_description">Description</label>
-          <textarea class="tsg-input" name="description" id="field_description" data-cy="description" formControlName="description" rows="4"></textarea>
+        <!-- Description -->
+        <div class="mu-field">
+          <label class="mu-label" for="field_description"
+                 jhiTranslate="tuniSalesGatewayApp.businessServiceMission.description">Description</label>
+          <textarea class="mu-input mu-input--textarea" name="description" id="field_description"
+                    data-cy="description" formControlName="description" rows="4"
+                    placeholder="Décrivez la mission…"></textarea>
           <div *ngIf="editForm.get('description')!.invalid && (editForm.get('description')!.dirty || editForm.get('description')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('description')?.errors?.maxlength" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: 2000 }">This field cannot exceed 2000 characters.</small>
+            <small class="mu-error" *ngIf="editForm.get('description')?.errors?.maxlength"
+                   jhiTranslate="entity.validation.maxlength"
+                   [translateValues]="{ max: 2000 }">2000 caractères max.</small>
           </div>
         </div>
+
+        <!-- Assigned to -->
+        <div class="mu-field">
+          <label class="mu-label" for="field_assignedToLogin"
+                 jhiTranslate="tuniSalesGatewayApp.businessServiceMission.assignedToLogin">Assignée à</label>
+          <div class="mu-input-with-icon">
+            <fa-icon icon="user" class="mu-input-with-icon__icon"></fa-icon>
+            <input type="text" class="mu-input mu-input--icon-left" name="assignedToLogin"
+                   id="field_assignedToLogin" data-cy="assignedToLogin"
+                   formControlName="assignedToLogin" placeholder="Login du responsable" />
+          </div>
+          <div *ngIf="editForm.get('assignedToLogin')!.invalid && (editForm.get('assignedToLogin')!.dirty || editForm.get('assignedToLogin')!.touched)">
+            <small class="mu-error" *ngIf="editForm.get('assignedToLogin')?.errors?.required"
+                   jhiTranslate="entity.validation.required">Ce champ est requis.</small>
+            <small class="mu-error" *ngIf="editForm.get('assignedToLogin')?.errors?.maxlength"
+                   jhiTranslate="entity.validation.maxlength"
+                   [translateValues]="{ max: 100 }">100 caractères max.</small>
+          </div>
+        </div>
+
+        <!-- Mission date -->
+        <div class="mu-field">
+          <label class="mu-label" for="field_missionDate"
+                 jhiTranslate="tuniSalesGatewayApp.businessServiceMission.missionDate">Date mission</label>
+          <div class="mu-input-with-icon">
+            <fa-icon icon="calendar-alt" class="mu-input-with-icon__icon"></fa-icon>
+            <input id="field_missionDate" data-cy="missionDate" type="datetime-local"
+                   class="mu-input mu-input--icon-left" name="missionDate"
+                   formControlName="missionDate" placeholder="YYYY-MM-DD HH:mm" />
+          </div>
+          <div *ngIf="editForm.get('missionDate')!.invalid && (editForm.get('missionDate')!.dirty || editForm.get('missionDate')!.touched)">
+            <small class="mu-error" *ngIf="editForm.get('missionDate')?.errors?.required"
+                   jhiTranslate="entity.validation.required">Ce champ est requis.</small>
+            <small class="mu-error" [hidden]="!editForm.get('missionDate')?.errors?.datetimelocal"
+                   jhiTranslate="entity.validation.datetimelocal">Format date/heure invalide.</small>
+          </div>
+        </div>
+
       </section>
 
-      <section class="tsg-form-card">
-        <div class="tsg-form-card__header">
-          <h2>Status and timeline</h2>
+      <!-- Card 2 : Statut & dates système -->
+      <section class="mu-card">
+        <div class="mu-card__header">
+          <div class="mu-card__header-icon mu-card__header-icon--gray">
+            <fa-icon icon="tasks"></fa-icon>
+          </div>
+          <h2 class="mu-card__title">Statut</h2>
         </div>
 
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceMission.status" for="field_status">Status</label>
-          <select class="tsg-input" name="status" formControlName="status" id="field_status" data-cy="status">
+        <!-- Tenant ID -->
+        <div class="mu-field">
+          <label class="mu-label" for="field_tenantId"
+                 jhiTranslate="tuniSalesGatewayApp.businessServiceMission.tenantId">Tenant</label>
+          <input type="number" class="mu-input" name="tenantId" id="field_tenantId"
+                 data-cy="tenantId" formControlName="tenantId" />
+          <div *ngIf="editForm.get('tenantId')!.invalid && (editForm.get('tenantId')!.dirty || editForm.get('tenantId')!.touched)">
+            <small class="mu-error" *ngIf="editForm.get('tenantId')?.errors?.required"
+                   jhiTranslate="entity.validation.required">Ce champ est requis.</small>
+            <small class="mu-error" [hidden]="!editForm.get('tenantId')?.errors?.number"
+                   jhiTranslate="entity.validation.number">Doit être un nombre.</small>
+          </div>
+        </div>
+
+        <!-- Status select -->
+        <div class="mu-field">
+          <label class="mu-label" for="field_status"
+                 jhiTranslate="tuniSalesGatewayApp.businessServiceMission.status">Statut</label>
+          <select class="mu-input mu-select" name="status" formControlName="status"
+                  id="field_status" data-cy="status">
             <option [ngValue]="null">{{ 'tuniSalesGatewayApp.MissionStatus.null' | translate }}</option>
             <option *ngFor="let missionStatus of missionStatusValues" [value]="missionStatus">
               {{ 'tuniSalesGatewayApp.MissionStatus.' + missionStatus | translate }}
             </option>
           </select>
           <div *ngIf="editForm.get('status')!.invalid && (editForm.get('status')!.dirty || editForm.get('status')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('status')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
+            <small class="mu-error" *ngIf="editForm.get('status')?.errors?.required"
+                   jhiTranslate="entity.validation.required">Ce champ est requis.</small>
           </div>
         </div>
 
-        <div class="tsg-form-group">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceMission.missionDate" for="field_missionDate">Mission Date</label>
-          <input id="field_missionDate" data-cy="missionDate" type="datetime-local" class="tsg-input" name="missionDate" formControlName="missionDate" placeholder="YYYY-MM-DD HH:mm" />
-          <div *ngIf="editForm.get('missionDate')!.invalid && (editForm.get('missionDate')!.dirty || editForm.get('missionDate')!.touched)">
-            <small class="tsg-field-error" *ngIf="editForm.get('missionDate')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
-            <small class="tsg-field-error" [hidden]="!editForm.get('missionDate')?.errors?.datetimelocal" jhiTranslate="entity.validation.datetimelocal">This field must be a date and time.</small>
+        <!-- Status preview pill -->
+        <div class="mu-status-preview">
+          <span class="mu-status-preview__label">Aperçu</span>
+          <span class="mu-status-pill" [ngClass]="getStatusClass()">
+            <span class="mu-status-pill__dot"></span>
+            {{ getStatusLabel(editForm.get('status')?.value) }}
+          </span>
+        </div>
+
+        <!-- Dates système -->
+        <div class="mu-field">
+          <label class="mu-label" for="field_createdAt"
+                 jhiTranslate="tuniSalesGatewayApp.businessServiceMission.createdAt">Créée le</label>
+          <input id="field_createdAt" data-cy="createdAt" type="datetime-local" class="mu-input"
+                 name="createdAt" formControlName="createdAt" placeholder="YYYY-MM-DD HH:mm" />
+          <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
+            <small class="mu-error" *ngIf="editForm.get('createdAt')?.errors?.required"
+                   jhiTranslate="entity.validation.required">Ce champ est requis.</small>
+            <small class="mu-error" [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal"
+                   jhiTranslate="entity.validation.datetimelocal">Format date/heure invalide.</small>
           </div>
         </div>
 
-        <div class="tsg-form-grid--two">
-          <div class="tsg-form-group">
-            <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceMission.createdAt" for="field_createdAt">Created At</label>
-            <input id="field_createdAt" data-cy="createdAt" type="datetime-local" class="tsg-input" name="createdAt" formControlName="createdAt" placeholder="YYYY-MM-DD HH:mm" />
-            <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
-              <small class="tsg-field-error" *ngIf="editForm.get('createdAt')?.errors?.required" jhiTranslate="entity.validation.required">This field is required.</small>
-              <small class="tsg-field-error" [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal" jhiTranslate="entity.validation.datetimelocal">This field must be a date and time.</small>
-            </div>
-          </div>
-
-          <div class="tsg-form-group">
-            <label class="form-label" jhiTranslate="tuniSalesGatewayApp.businessServiceMission.updatedAt" for="field_updatedAt">Updated At</label>
-            <input id="field_updatedAt" data-cy="updatedAt" type="datetime-local" class="tsg-input" name="updatedAt" formControlName="updatedAt" placeholder="YYYY-MM-DD HH:mm" />
-          </div>
+        <div class="mu-field">
+          <label class="mu-label" for="field_updatedAt"
+                 jhiTranslate="tuniSalesGatewayApp.businessServiceMission.updatedAt">Mise à jour</label>
+          <input id="field_updatedAt" data-cy="updatedAt" type="datetime-local" class="mu-input"
+                 name="updatedAt" formControlName="updatedAt" placeholder="YYYY-MM-DD HH:mm" />
         </div>
+
       </section>
     </div>
+
   </form>
 </div>

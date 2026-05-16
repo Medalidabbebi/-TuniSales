@@ -33,13 +33,24 @@ export class MissionDetailComponent implements OnInit {
     return map[this.mission?.status ?? ''] || 'tsg-badge--neutral';
   }
 
+  /** CSS modifier for the new md-status-pill */
+  getStatusClass(): string {
+    const map: Record<string, string> = {
+      PLANNED: 'md-status-pill--planned',
+      IN_PROGRESS: 'md-status-pill--progress',
+      COMPLETED: 'md-status-pill--done',
+      CANCELLED: 'md-status-pill--cancelled',
+    };
+    return map[this.mission?.status ?? ''] || 'md-status-pill--cancelled';
+  }
+
   getStatusLabel(): string {
     const map: Record<string, string> = {
-      PLANNED: 'Planned',
-      IN_PROGRESS: 'In Progress',
-      COMPLETED: 'Completed',
-      CANCELLED: 'Cancelled',
+      PLANNED: 'Planifiée',
+      IN_PROGRESS: 'En cours',
+      COMPLETED: 'Terminée',
+      CANCELLED: 'Annulée',
     };
-    return map[this.mission?.status ?? ''] || 'Unknown';
+    return map[this.mission?.status ?? ''] || 'Inconnu';
   }
 }
