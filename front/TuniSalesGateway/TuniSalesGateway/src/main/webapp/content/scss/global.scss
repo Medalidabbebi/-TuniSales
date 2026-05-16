@@ -1045,6 +1045,7 @@ h4 { font-size: $font-size-lg; }
 
 // ── Entity page styles (imported here so webpack picks them up via HMR) ──
 @import '../../app/entities/InventoryService/warehouse/detail/warehouse-detail.component';
+@import '../../app/entities/InventoryService/stock-audit/detail/stock-audit-detail.component';
 @import '../../app/entities/InventoryService/warehouse/update/warehouse-update.component';
 @import '../../app/entities/BusinessService/delivery/detail/delivery-detail.component';
 @import '../../app/entities/BusinessService/delivery/list/delivery.component';

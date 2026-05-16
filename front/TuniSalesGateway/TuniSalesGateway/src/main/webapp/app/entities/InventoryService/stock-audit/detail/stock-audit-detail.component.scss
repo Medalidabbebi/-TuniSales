@@ -1,0 +1,157 @@
+$sad-emerald: #059669;
+$sad-eme-l:   #d1fae5;
+$sad-blue:    #2563eb;
+$sad-blue-l:  #dbeafe;
+$sad-purple:  #7c3aed;
+$sad-pur-l:   #ede9fe;
+$sad-amber:   #d97706;
+$sad-amb-l:   #fef3c7;
+$sad-red:     #dc2626;
+$sad-red-l:   #fee2e2;
+$sad-green:   #16a34a;
+$sad-grn-l:   #dcfce7;
+$sad-gray:    #64748b;
+$sad-border:  #e2e8f0;
+$sad-bg:      #f8fafc;
+$sad-white:   #ffffff;
+$sad-text:    #0f172a;
+$sad-muted:   #64748b;
+$sad-shadow:  0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$sad-radius:  12px;
+
+.sad-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// Header
+.sad-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.sad-header__left  { display: flex; align-items: center; gap: .9rem; }
+.sad-header__icon  {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, $sad-emerald, darken($sad-emerald, 10%));
+  color: #fff; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba($sad-emerald, .28);
+}
+.sad-header__title   { margin: 0; font-size: 1.45rem; font-weight: 800; color: $sad-text; }
+.sad-header__sub     { margin: .25rem 0 0; font-size: .88rem; color: $sad-muted; }
+.sad-header__link    { color: $sad-emerald; font-weight: 600; text-decoration: none; }
+.sad-header__link:hover { text-decoration: underline; }
+.sad-header__actions { display: flex; align-items: center; gap: .75rem; }
+
+.sad-back-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1.5px solid $sad-border; background: $sad-white;
+  color: $sad-muted; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: .9rem; transition: all .15s; flex-shrink: 0;
+}
+.sad-back-btn:hover { border-color: $sad-emerald; color: $sad-emerald; background: $sad-eme-l; }
+
+// Buttons
+.sad-btn {
+  display: inline-flex; align-items: center; gap: .45rem;
+  padding: .55rem 1.1rem; border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .15s; text-decoration: none;
+}
+.sad-btn--primary { background: $sad-emerald; color: #fff; border-color: $sad-emerald; }
+.sad-btn--primary:hover { background: darken($sad-emerald, 6%); color: #fff; box-shadow: 0 3px 10px rgba($sad-emerald,.3); }
+
+// Status badge
+.sad-status-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .75rem; border-radius: 999px;
+  font-size: .78rem; font-weight: 700;
+}
+.sad-status-badge__dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+.sad-status--progress  { background: $sad-amb-l;  color: darken($sad-amber, 10%); }
+.sad-status--progress  .sad-status-badge__dot { background: $sad-amber; }
+.sad-status--closed    { background: $sad-eme-l;  color: darken($sad-emerald, 10%); }
+.sad-status--closed    .sad-status-badge__dot { background: $sad-emerald; }
+.sad-status--cancelled { background: $sad-red-l;  color: darken($sad-red, 10%); }
+.sad-status--cancelled .sad-status-badge__dot { background: $sad-red; }
+.sad-status--neutral   { background: #f1f5f9; color: $sad-gray; }
+.sad-status--neutral   .sad-status-badge__dot { background: #94a3b8; }
+
+// KPI row
+.sad-kpi-row { display: flex; flex-wrap: wrap; gap: 1rem; }
+.sad-kpi {
+  display: flex; align-items: center; gap: .85rem;
+  background: $sad-white; border: 1px solid $sad-border;
+  border-left: 4px solid transparent;
+  border-radius: $sad-radius; padding: 1rem 1.25rem;
+  box-shadow: $sad-shadow; flex: 1; min-width: 180px;
+}
+.sad-kpi__icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; flex-shrink: 0;
+}
+.sad-kpi__value { font-size: 1.05rem; font-weight: 700; color: $sad-text; line-height: 1.2; }
+.sad-kpi__label { font-size: .72rem; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .05em; color: $sad-muted; margin-top: .2rem; }
+
+.sad-kpi--emerald { border-left-color: $sad-emerald; }
+.sad-kpi--emerald .sad-kpi__icon { background: $sad-eme-l; color: $sad-emerald; }
+.sad-kpi--blue    { border-left-color: $sad-blue; }
+.sad-kpi--blue    .sad-kpi__icon { background: $sad-blue-l; color: $sad-blue; }
+.sad-kpi--purple  { border-left-color: $sad-purple; }
+.sad-kpi--purple  .sad-kpi__icon { background: $sad-pur-l; color: $sad-purple; }
+.sad-kpi--green   { border-left-color: $sad-green; }
+.sad-kpi--green   .sad-kpi__icon { background: $sad-grn-l; color: $sad-green; }
+.sad-kpi--red     { border-left-color: $sad-red; }
+.sad-kpi--red     .sad-kpi__icon { background: $sad-red-l; color: $sad-red; }
+.sad-kpi--gray    { border-left-color: #94a3b8; }
+.sad-kpi--gray    .sad-kpi__icon { background: #f1f5f9; color: $sad-gray; }
+
+// Grid
+.sad-grid { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+
+// Card
+.sad-card {
+  background: $sad-white; border: 1px solid $sad-border;
+  border-radius: $sad-radius; box-shadow: $sad-shadow;
+  overflow: hidden; flex: 1; min-width: 280px;
+}
+.sad-card__head {
+  display: flex; align-items: center; gap: .85rem;
+  padding: 1rem 1.25rem; border-bottom: 1px solid $sad-border; background: $sad-bg;
+}
+.sad-card__head-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.sad-card__head-icon--emerald { background: $sad-eme-l; color: $sad-emerald; }
+.sad-card__head-icon--blue    { background: $sad-blue-l; color: $sad-blue; }
+.sad-card__title { font-size: .95rem; font-weight: 700; color: $sad-text; }
+.sad-card__sub   { font-size: .78rem; color: $sad-muted; margin-top: .1rem; }
+
+// Info list
+.sad-info-list { display: flex; flex-direction: column; padding: 1.25rem; }
+.sad-info-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .65rem 0; border-bottom: 1px solid $sad-border; gap: 1rem;
+}
+.sad-info-row:last-child { border-bottom: none; }
+.sad-info-row__label { font-size: .82rem; color: $sad-muted; font-weight: 500; flex-shrink: 0; }
+.sad-info-row__value { font-size: .9rem; font-weight: 600; color: $sad-text; text-align: right; }
+.sad-info-row__link  { font-size: .9rem; font-weight: 600; color: $sad-emerald; text-decoration: none; text-align: right; }
+.sad-info-row__link:hover { text-decoration: underline; }
+
+// Timeline
+.sad-timeline { display: flex; flex-direction: column; padding: 1.25rem; }
+.sad-tl-item  { display: flex; align-items: flex-start; gap: .85rem; }
+.sad-tl-dot   { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; margin-top: .2rem; }
+.sad-tl-dot--emerald { background: $sad-emerald; box-shadow: 0 0 0 3px rgba($sad-emerald,.18); }
+.sad-tl-dot--gray    { background: #94a3b8;      box-shadow: 0 0 0 3px rgba(148,163,184,.18); }
+.sad-tl-line  { width: 2px; height: 20px; background: $sad-border; margin-left: 5px; }
+.sad-tl-body  { display: flex; flex-direction: column; gap: .1rem; }
+.sad-tl-label { font-size: .78rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .04em; color: $sad-muted; }
+.sad-tl-date  { font-size: .88rem; font-weight: 600; color: $sad-text; }

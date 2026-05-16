@@ -1,72 +1,152 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <div *ngIf="stockAudit">
-      <h2 data-cy="stockAuditDetailsHeading">
-        <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.detail.title">Stock Audit</span>
-      </h2>
+<div class="sad-page" *ngIf="stockAudit">
 
-      <hr />
-
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ stockAudit.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.tenantId">Tenant Id</span></dt>
-        <dd>
-          <span>{{ stockAudit.tenantId }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.status">Status</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'tuniSalesGatewayApp.AuditStatus.' + stockAudit.status }}">{{ stockAudit.status }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.theoreticalCount">Theoretical Count</span></dt>
-        <dd>
-          <span>{{ stockAudit.theoreticalCount }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.physicalCount">Physical Count</span></dt>
-        <dd>
-          <span>{{ stockAudit.physicalCount }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.discrepancyCount">Discrepancy Count</span></dt>
-        <dd>
-          <span>{{ stockAudit.discrepancyCount }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.notes">Notes</span></dt>
-        <dd>
-          <span>{{ stockAudit.notes }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.auditorLogin">Auditor Login</span></dt>
-        <dd>
-          <span>{{ stockAudit.auditorLogin }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.startedAt">Started At</span></dt>
-        <dd>
-          <span>{{ stockAudit.startedAt | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.closedAt">Closed At</span></dt>
-        <dd>
-          <span>{{ stockAudit.closedAt | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockAudit.warehouse">Warehouse</span></dt>
-        <dd>
-          <div *ngIf="stockAudit.warehouse">
-            <a [routerLink]="['/warehouse', stockAudit.warehouse.id, 'view']">{{ stockAudit.warehouse.name }}</a>
-          </div>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+  <!-- ── Header ──────────────────────────────────────────────────── -->
+  <div class="sad-header">
+    <div class="sad-header__left">
+      <button class="sad-back-btn" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
       </button>
-
-      <button type="button" [routerLink]="['/stock-audit', stockAudit.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      <div class="sad-header__icon">
+        <fa-icon icon="clipboard-check"></fa-icon>
+      </div>
+      <div>
+        <h1 class="sad-header__title" data-cy="stockAuditDetailsHeading">
+          Audit de Stock #{{ stockAudit.id }}
+        </h1>
+        <p class="sad-header__sub">
+          <span *ngIf="stockAudit.auditorLogin">
+            <fa-icon icon="user" style="opacity:.5"></fa-icon>
+            {{ stockAudit.auditorLogin }}
+          </span>
+          <span *ngIf="stockAudit.auditorLogin && stockAudit.warehouse"> · </span>
+          <span *ngIf="stockAudit.warehouse">
+            <a [routerLink]="['/warehouse', stockAudit.warehouse.id, 'view']" class="sad-header__link">
+              {{ stockAudit.warehouse.name }}
+            </a>
+          </span>
+        </p>
+      </div>
+    </div>
+    <div class="sad-header__actions">
+      <span class="sad-status-badge" [ngClass]="getStatusClass(stockAudit.status)">
+        <span class="sad-status-badge__dot"></span>
+        {{ getStatusLabel(stockAudit.status) }}
+      </span>
+      <button type="button" [routerLink]="['/stock-audit', stockAudit.id, 'edit']" class="sad-btn sad-btn--primary">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        Éditer
       </button>
     </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── KPI Row ─────────────────────────────────────────────────── -->
+  <div class="sad-kpi-row">
+    <div class="sad-kpi sad-kpi--emerald">
+      <div class="sad-kpi__icon"><fa-icon icon="clipboard-check"></fa-icon></div>
+      <div>
+        <div class="sad-kpi__value">
+          <span class="sad-status-badge" [ngClass]="getStatusClass(stockAudit.status)">
+            <span class="sad-status-badge__dot"></span>
+            {{ getStatusLabel(stockAudit.status) }}
+          </span>
+        </div>
+        <div class="sad-kpi__label">Statut</div>
+      </div>
+    </div>
+    <div class="sad-kpi sad-kpi--blue" *ngIf="stockAudit.theoreticalCount != null">
+      <div class="sad-kpi__icon"><fa-icon icon="list-ol"></fa-icon></div>
+      <div>
+        <div class="sad-kpi__value">{{ stockAudit.theoreticalCount | number }}</div>
+        <div class="sad-kpi__label">Stock théorique</div>
+      </div>
+    </div>
+    <div class="sad-kpi sad-kpi--purple" *ngIf="stockAudit.physicalCount != null">
+      <div class="sad-kpi__icon"><fa-icon icon="boxes"></fa-icon></div>
+      <div>
+        <div class="sad-kpi__value">{{ stockAudit.physicalCount | number }}</div>
+        <div class="sad-kpi__label">Stock physique</div>
+      </div>
+    </div>
+    <div class="sad-kpi" [ngClass]="getDiscrepancyClass(stockAudit.discrepancyCount)" *ngIf="stockAudit.discrepancyCount != null">
+      <div class="sad-kpi__icon"><fa-icon icon="exclamation-triangle"></fa-icon></div>
+      <div>
+        <div class="sad-kpi__value">{{ stockAudit.discrepancyCount | number }}</div>
+        <div class="sad-kpi__label">Écart</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Cards Grid ──────────────────────────────────────────────── -->
+  <div class="sad-grid">
+
+    <!-- Informations -->
+    <div class="sad-card">
+      <div class="sad-card__head">
+        <div class="sad-card__head-icon sad-card__head-icon--emerald">
+          <fa-icon icon="clipboard-check"></fa-icon>
+        </div>
+        <div>
+          <div class="sad-card__title">Informations</div>
+          <div class="sad-card__sub">Détails de l'audit</div>
+        </div>
+      </div>
+      <div class="sad-info-list">
+        <div class="sad-info-row">
+          <span class="sad-info-row__label">Statut</span>
+          <span class="sad-status-badge" [ngClass]="getStatusClass(stockAudit.status)">
+            <span class="sad-status-badge__dot"></span>
+            {{ getStatusLabel(stockAudit.status) }}
+          </span>
+        </div>
+        <div class="sad-info-row" *ngIf="stockAudit.auditorLogin">
+          <span class="sad-info-row__label">Auditeur</span>
+          <span class="sad-info-row__value">{{ stockAudit.auditorLogin }}</span>
+        </div>
+        <div class="sad-info-row" *ngIf="stockAudit.warehouse">
+          <span class="sad-info-row__label">Entrepôt</span>
+          <a [routerLink]="['/warehouse', stockAudit.warehouse.id, 'view']" class="sad-info-row__link">
+            {{ stockAudit.warehouse.name }}
+          </a>
+        </div>
+        <div class="sad-info-row" *ngIf="stockAudit.notes">
+          <span class="sad-info-row__label">Notes</span>
+          <span class="sad-info-row__value">{{ stockAudit.notes }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chronologie -->
+    <div class="sad-card">
+      <div class="sad-card__head">
+        <div class="sad-card__head-icon sad-card__head-icon--blue">
+          <fa-icon icon="history"></fa-icon>
+        </div>
+        <div>
+          <div class="sad-card__title">Chronologie</div>
+          <div class="sad-card__sub">Dates clés de l'audit</div>
+        </div>
+      </div>
+      <div class="sad-timeline">
+        <div class="sad-tl-item" *ngIf="stockAudit.startedAt">
+          <div class="sad-tl-dot sad-tl-dot--emerald"></div>
+          <div class="sad-tl-body">
+            <span class="sad-tl-label">Démarré le</span>
+            <span class="sad-tl-date">{{ stockAudit.startedAt | formatMediumDatetime }}</span>
+          </div>
+        </div>
+        <div class="sad-tl-line" *ngIf="stockAudit.startedAt && stockAudit.closedAt"></div>
+        <div class="sad-tl-item" *ngIf="stockAudit.closedAt">
+          <div class="sad-tl-dot sad-tl-dot--gray"></div>
+          <div class="sad-tl-body">
+            <span class="sad-tl-label">Clôturé le</span>
+            <span class="sad-tl-date">{{ stockAudit.closedAt | formatMediumDatetime }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
