@@ -89,9 +89,7 @@ export class ClientFormService {
         validators: [Validators.required],
       }),
       lastOrderAt: new FormControl(clientRawValue.lastOrderAt),
-      isDeleted: new FormControl(clientRawValue.isDeleted, {
-        validators: [Validators.required],
-      }),
+      isDeleted: new FormControl(clientRawValue.isDeleted),
       createdAt: new FormControl(clientRawValue.createdAt, {
         validators: [Validators.required],
       }),
