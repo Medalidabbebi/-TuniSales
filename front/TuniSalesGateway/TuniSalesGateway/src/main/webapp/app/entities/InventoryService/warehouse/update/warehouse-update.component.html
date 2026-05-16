@@ -1,223 +1,175 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="jhi-warehouse-heading"
-        data-cy="WarehouseCreateUpdateHeading"
-        jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.home.createOrEditLabel"
-      >
-        Créer ou éditer un Warehouse
-      </h2>
+<div class="wu-page">
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
 
-      <div>
-        <jhi-alert-error></jhi-alert-error>
+    <!-- Hidden system fields -->
+    <div style="display:none">
+      <input type="number" formControlName="id" />
+      <input type="number" formControlName="tenantId" />
+    </div>
 
-        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
-          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+    <!-- ── Header ──────────────────────────────────────────────────── -->
+    <div class="wu-header">
+      <div class="wu-header__left">
+        <button type="button" class="wu-back-btn" (click)="previousState()" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>
+        </button>
+        <div class="wu-header__icon">
+          <fa-icon icon="warehouse"></fa-icon>
         </div>
+        <div>
+          <h1 class="wu-header__title" data-cy="WarehouseCreateUpdateHeading">
+            {{ isNew ? 'Nouvel Entrepôt' : (warehouse?.name || 'Modifier l\'entrepôt') }}
+          </h1>
+          <p class="wu-header__sub">
+            {{ isNew ? 'Créer un nouvel entrepôt' : 'Modifier les informations de l\'entrepôt' }}
+          </p>
+        </div>
+      </div>
+    </div>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.tenantId" for="field_tenantId"
-            >Tenant Id</label
-          >
-          <input type="number" class="form-control" name="tenantId" id="field_tenantId" data-cy="tenantId" formControlName="tenantId" />
-          <div *ngIf="editForm.get('tenantId')!.invalid && (editForm.get('tenantId')!.dirty || editForm.get('tenantId')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('tenantId')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('tenantId')?.errors?.number"
-              jhiTranslate="entity.validation.number"
-            >
-              Ce champ doit être un nombre.
-            </small>
+    <jhi-alert-error></jhi-alert-error>
+
+    <!-- ── Cards Grid ──────────────────────────────────────────────── -->
+    <div class="wu-grid">
+
+      <!-- Informations -->
+      <div class="wu-card">
+        <div class="wu-card__head">
+          <div class="wu-card__head-icon wu-card__head-icon--orange">
+            <fa-icon icon="warehouse"></fa-icon>
+          </div>
+          <div>
+            <div class="wu-card__title">Informations</div>
+            <div class="wu-card__sub">Identité de l'entrepôt</div>
           </div>
         </div>
+        <div class="wu-card__body">
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.name" for="field_name">Name</label>
-          <input type="text" class="form-control" name="name" id="field_name" data-cy="name" formControlName="name" />
-          <div *ngIf="editForm.get('name')!.invalid && (editForm.get('name')!.dirty || editForm.get('name')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('name')?.errors?.required" jhiTranslate="entity.validation.required">
-              Ce champ est obligatoire.
-            </small>
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('name')?.errors?.maxlength"
-              jhiTranslate="entity.validation.maxlength"
-              [translateValues]="{ max: 255 }"
-            >
-              Ce champ doit faire moins de 255 caractères.
-            </small>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.type" for="field_type">Type</label>
-          <select class="form-control" name="type" formControlName="type" id="field_type" data-cy="type">
-            <option [ngValue]="null">{{ 'tuniSalesGatewayApp.WarehouseType.null' | translate }}</option>
-            <option *ngFor="let warehouseType of warehouseTypeValues" [value]="warehouseType">
-              {{ 'tuniSalesGatewayApp.WarehouseType.' + warehouseType | translate }}
-            </option>
-          </select>
-          <div *ngIf="editForm.get('type')!.invalid && (editForm.get('type')!.dirty || editForm.get('type')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('type')?.errors?.required" jhiTranslate="entity.validation.required">
-              Ce champ est obligatoire.
-            </small>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.address" for="field_address">Address</label>
-          <input type="text" class="form-control" name="address" id="field_address" data-cy="address" formControlName="address" />
-          <div *ngIf="editForm.get('address')!.invalid && (editForm.get('address')!.dirty || editForm.get('address')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('address')?.errors?.maxlength"
-              jhiTranslate="entity.validation.maxlength"
-              [translateValues]="{ max: 500 }"
-            >
-              Ce champ doit faire moins de 500 caractères.
-            </small>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.city" for="field_city">City</label>
-          <input type="text" class="form-control" name="city" id="field_city" data-cy="city" formControlName="city" />
-          <div *ngIf="editForm.get('city')!.invalid && (editForm.get('city')!.dirty || editForm.get('city')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('city')?.errors?.maxlength"
-              jhiTranslate="entity.validation.maxlength"
-              [translateValues]="{ max: 100 }"
-            >
-              Ce champ doit faire moins de 100 caractères.
-            </small>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.minThreshold" for="field_minThreshold"
-            >Min Threshold</label
-          >
-          <input
-            type="number"
-            class="form-control"
-            name="minThreshold"
-            id="field_minThreshold"
-            data-cy="minThreshold"
-            formControlName="minThreshold"
-          />
-          <div
-            *ngIf="editForm.get('minThreshold')!.invalid && (editForm.get('minThreshold')!.dirty || editForm.get('minThreshold')!.touched)"
-          >
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('minThreshold')?.errors?.min"
-              jhiTranslate="entity.validation.min"
-              [translateValues]="{ min: 0 }"
-            >
-              Ce champ doit être supérieur à 0.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('minThreshold')?.errors?.number"
-              jhiTranslate="entity.validation.number"
-            >
-              Ce champ doit être un nombre.
-            </small>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.isActive" for="field_isActive"
-            >Is Active</label
-          >
-          <input type="checkbox" class="form-check" name="isActive" id="field_isActive" data-cy="isActive" formControlName="isActive" />
-          <div *ngIf="editForm.get('isActive')!.invalid && (editForm.get('isActive')!.dirty || editForm.get('isActive')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('isActive')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.createdAt" for="field_createdAt"
-            >Created At</label
-          >
-          <div class="d-flex">
+          <div class="wu-field">
+            <label class="wu-label" for="field_name">Nom <span class="wu-required">*</span></label>
             <input
-              id="field_createdAt"
-              data-cy="createdAt"
-              type="datetime-local"
-              class="form-control"
-              name="createdAt"
-              formControlName="createdAt"
-              placeholder="YYYY-MM-DD HH:mm"
+              type="text" class="wu-input" id="field_name" name="name" data-cy="name"
+              formControlName="name" placeholder="Nom de l'entrepôt"
             />
+            <div class="wu-error" *ngIf="editForm.get('name')!.invalid && (editForm.get('name')!.dirty || editForm.get('name')!.touched)">
+              <span *ngIf="editForm.get('name')?.errors?.required">Ce champ est obligatoire.</span>
+              <span *ngIf="editForm.get('name')?.errors?.maxlength">Maximum 255 caractères.</span>
+            </div>
           </div>
-          <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('createdAt')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal"
-              jhiTranslate="entity.validation.datetimelocal"
-            >
-              Ce champ doit être une date et une heure.
-            </small>
-          </div>
-        </div>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.updatedAt" for="field_updatedAt"
-            >Updated At</label
-          >
-          <div class="d-flex">
-            <input
-              id="field_updatedAt"
-              data-cy="updatedAt"
-              type="datetime-local"
-              class="form-control"
-              name="updatedAt"
-              formControlName="updatedAt"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
+          <div class="wu-field">
+            <label class="wu-label" for="field_type">Type</label>
+            <select class="wu-select" id="field_type" name="type" data-cy="type" formControlName="type">
+              <option [ngValue]="null">— Sélectionner un type —</option>
+              <option *ngFor="let t of warehouseTypeValues" [value]="t">{{ getTypeLabel(t) }}</option>
+            </select>
           </div>
+
+          <div class="wu-field">
+            <label class="wu-label" for="field_address">Adresse</label>
+            <input
+              type="text" class="wu-input" id="field_address" name="address" data-cy="address"
+              formControlName="address" placeholder="Adresse complète"
+            />
+            <div class="wu-error" *ngIf="editForm.get('address')!.invalid && (editForm.get('address')!.dirty || editForm.get('address')!.touched)">
+              <span *ngIf="editForm.get('address')?.errors?.maxlength">Maximum 500 caractères.</span>
+            </div>
+          </div>
+
+          <div class="wu-field">
+            <label class="wu-label" for="field_city">Ville</label>
+            <div class="wu-input-group">
+              <span class="wu-input-addon"><fa-icon icon="map-marker-alt"></fa-icon></span>
+              <input
+                type="text" class="wu-input wu-input--addon" id="field_city" name="city" data-cy="city"
+                formControlName="city" placeholder="Ville"
+              />
+            </div>
+            <div class="wu-error" *ngIf="editForm.get('city')!.invalid && (editForm.get('city')!.dirty || editForm.get('city')!.touched)">
+              <span *ngIf="editForm.get('city')?.errors?.maxlength">Maximum 100 caractères.</span>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
-        </button>
+      <!-- Configuration -->
+      <div class="wu-card">
+        <div class="wu-card__head">
+          <div class="wu-card__head-icon wu-card__head-icon--blue">
+            <fa-icon icon="cogs"></fa-icon>
+          </div>
+          <div>
+            <div class="wu-card__title">Configuration</div>
+            <div class="wu-card__sub">Paramètres et disponibilité</div>
+          </div>
+        </div>
+        <div class="wu-card__body">
 
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
-        </button>
+          <div class="wu-field">
+            <label class="wu-label" for="field_minThreshold">Seuil minimum de stock</label>
+            <div class="wu-input-group">
+              <span class="wu-input-addon"><fa-icon icon="exclamation-triangle"></fa-icon></span>
+              <input
+                type="number" class="wu-input wu-input--addon" id="field_minThreshold"
+                name="minThreshold" data-cy="minThreshold" formControlName="minThreshold"
+                placeholder="0" min="0"
+              />
+            </div>
+            <div class="wu-error" *ngIf="editForm.get('minThreshold')!.invalid && (editForm.get('minThreshold')!.dirty || editForm.get('minThreshold')!.touched)">
+              <span *ngIf="editForm.get('minThreshold')?.errors?.min">Valeur minimale : 0.</span>
+            </div>
+          </div>
+
+          <div class="wu-field wu-field--toggle">
+            <div class="wu-toggle-wrap">
+              <label class="wu-toggle" for="field_isActive">
+                <input type="checkbox" id="field_isActive" name="isActive" data-cy="isActive" formControlName="isActive" />
+                <span class="wu-toggle__slider"></span>
+              </label>
+              <div class="wu-toggle-info">
+                <span class="wu-label wu-label--inline">Entrepôt actif</span>
+                <span class="wu-toggle-hint">Disponible pour les opérations de stock</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="wu-field">
+            <label class="wu-label" for="field_createdAt">Créé le</label>
+            <input
+              type="datetime-local" class="wu-input" id="field_createdAt"
+              name="createdAt" data-cy="createdAt" formControlName="createdAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+
+          <div class="wu-field">
+            <label class="wu-label" for="field_updatedAt">Mis à jour le</label>
+            <input
+              type="datetime-local" class="wu-input" id="field_updatedAt"
+              name="updatedAt" data-cy="updatedAt" formControlName="updatedAt"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+
+        </div>
       </div>
-    </form>
-  </div>
+
+    </div>
+
+    <!-- ── Actions ─────────────────────────────────────────────────── -->
+    <div class="wu-actions">
+      <button type="button" class="wu-btn wu-btn--ghost" id="cancel-save"
+        data-cy="entityCreateCancelButton" (click)="previousState()">
+        <fa-icon icon="ban"></fa-icon>
+        Annuler
+      </button>
+      <button type="submit" class="wu-btn wu-btn--primary" id="save-entity"
+        data-cy="entityCreateSaveButton" [disabled]="editForm.invalid || isSaving">
+        <fa-icon [icon]="isSaving ? 'spinner' : 'save'"></fa-icon>
+        {{ isSaving ? 'Enregistrement…' : 'Sauvegarder' }}
+      </button>
+    </div>
+
+  </form>
 </div>

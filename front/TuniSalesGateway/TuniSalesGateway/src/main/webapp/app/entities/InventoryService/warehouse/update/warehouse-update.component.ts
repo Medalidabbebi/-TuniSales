@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -12,6 +12,8 @@ import { WarehouseType } from 'app/entities/enumerations/warehouse-type.model';
 @Component({
   selector: 'jhi-warehouse-update',
   templateUrl: './warehouse-update.component.html',
+  styleUrls: ['./warehouse-update.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class WarehouseUpdateComponent implements OnInit {
   isSaving = false;
@@ -35,6 +37,10 @@ export class WarehouseUpdateComponent implements OnInit {
     });
   }
 
+  get isNew(): boolean {
+    return this.editForm.controls.id.value === null;
+  }
+
   previousState(): void {
     window.history.back();
   }
@@ -49,6 +55,17 @@ export class WarehouseUpdateComponent implements OnInit {
     }
   }
 
+  getTypeLabel(type: string): string {
+    const map: Record<string, string> = {
+      LOCAL:     'Local',
+      SITE:      'Site',
+      SWAP:      'Échange',
+      DEFECTIVE: 'Défectueux',
+      MISSING:   'Manquant',
+    };
+    return map[type] || type;
+  }
+
   protected subscribeToSaveResponse(result: Observable<HttpResponse<IWarehouse>>): void {
     result.pipe(finalize(() => this.onSaveFinalize())).subscribe({
       next: () => this.onSaveSuccess(),
@@ -60,9 +77,7 @@ export class WarehouseUpdateComponent implements OnInit {
     this.previousState();
   }
 
-  protected onSaveError(): void {
-    // Api for inheritance.
-  }
+  protected onSaveError(): void {}
 
   protected onSaveFinalize(): void {
     this.isSaving = false;

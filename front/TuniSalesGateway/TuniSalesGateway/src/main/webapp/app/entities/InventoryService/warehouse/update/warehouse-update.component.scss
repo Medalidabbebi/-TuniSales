@@ -1,0 +1,158 @@
+$wu-orange: #d97706;
+$wu-amb-l:  #fef3c7;
+$wu-blue:   #2563eb;
+$wu-blue-l: #dbeafe;
+$wu-green:  #16a34a;
+$wu-red:    #dc2626;
+$wu-gray:   #64748b;
+$wu-border: #e2e8f0;
+$wu-bg:     #f8fafc;
+$wu-white:  #ffffff;
+$wu-text:   #0f172a;
+$wu-muted:  #64748b;
+$wu-shadow: 0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$wu-radius: 12px;
+
+.wu-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// Header
+.wu-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.wu-header__left { display: flex; align-items: center; gap: .9rem; }
+.wu-header__icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, $wu-orange, darken($wu-orange, 10%));
+  color: #fff; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba($wu-orange, .28);
+}
+.wu-header__title { margin: 0; font-size: 1.45rem; font-weight: 800; color: $wu-text; }
+.wu-header__sub   { margin: .25rem 0 0; font-size: .88rem; color: $wu-muted; }
+
+.wu-back-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1.5px solid $wu-border; background: $wu-white;
+  color: $wu-muted; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: .9rem; transition: all .15s; flex-shrink: 0;
+}
+.wu-back-btn:hover { border-color: $wu-orange; color: $wu-orange; background: $wu-amb-l; }
+
+// Buttons
+.wu-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .6rem 1.25rem; border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .15s;
+  text-decoration: none;
+}
+.wu-btn--primary { background: $wu-orange; color: #fff; border-color: $wu-orange; }
+.wu-btn--primary:hover { background: darken($wu-orange, 6%); color: #fff; box-shadow: 0 3px 10px rgba($wu-orange,.3); }
+.wu-btn--primary:disabled { opacity: .6; cursor: not-allowed; }
+.wu-btn--ghost { background: $wu-white; color: $wu-gray; border-color: $wu-border; }
+.wu-btn--ghost:hover { border-color: $wu-gray; color: $wu-text; background: #f1f5f9; }
+
+// Grid
+.wu-grid { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+
+// Card
+.wu-card {
+  background: $wu-white; border: 1px solid $wu-border;
+  border-radius: $wu-radius; box-shadow: $wu-shadow;
+  overflow: hidden; flex: 1; min-width: 280px;
+}
+.wu-card__head {
+  display: flex; align-items: center; gap: .85rem;
+  padding: 1rem 1.25rem; border-bottom: 1px solid $wu-border; background: $wu-bg;
+}
+.wu-card__head-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.wu-card__head-icon--orange { background: $wu-amb-l; color: $wu-orange; }
+.wu-card__head-icon--blue   { background: $wu-blue-l; color: $wu-blue; }
+.wu-card__title { font-size: .95rem; font-weight: 700; color: $wu-text; }
+.wu-card__sub   { font-size: .78rem; color: $wu-muted; margin-top: .1rem; }
+.wu-card__body  { display: flex; flex-direction: column; padding: 1.25rem; gap: 1.1rem; }
+
+// Fields
+.wu-field { display: flex; flex-direction: column; gap: .35rem; }
+.wu-label {
+  font-size: .82rem; font-weight: 600; color: $wu-text; letter-spacing: .01em;
+}
+.wu-label--inline { margin-bottom: 0; }
+.wu-required { color: $wu-red; margin-left: .15rem; }
+
+.wu-input {
+  width: 100%; padding: .55rem .85rem;
+  border: 1.5px solid $wu-border; border-radius: 8px;
+  font-size: .9rem; color: $wu-text; background: $wu-white;
+  transition: border-color .15s, box-shadow .15s;
+  outline: none; box-sizing: border-box;
+}
+.wu-input:focus { border-color: $wu-orange; box-shadow: 0 0 0 3px rgba($wu-orange,.12); }
+
+.wu-select {
+  width: 100%; padding: .55rem .85rem;
+  border: 1.5px solid $wu-border; border-radius: 8px;
+  font-size: .9rem; color: $wu-text; background: $wu-white;
+  outline: none; cursor: pointer; transition: border-color .15s;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .85rem center;
+  padding-right: 2.5rem;
+}
+.wu-select:focus { border-color: $wu-orange; box-shadow: 0 0 0 3px rgba($wu-orange,.12); }
+
+// Input group with addon icon
+.wu-input-group {
+  display: flex; align-items: stretch;
+  border: 1.5px solid $wu-border; border-radius: 8px; overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+}
+.wu-input-group:focus-within { border-color: $wu-orange; box-shadow: 0 0 0 3px rgba($wu-orange,.12); }
+.wu-input-addon {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 .75rem; background: $wu-bg; color: $wu-muted;
+  border-right: 1.5px solid $wu-border; font-size: .9rem; flex-shrink: 0;
+}
+.wu-input--addon { border: none; border-radius: 0; box-shadow: none !important; flex: 1; }
+
+// Toggle switch
+.wu-field--toggle { padding: .25rem 0; }
+.wu-toggle-wrap { display: flex; align-items: center; gap: .85rem; }
+.wu-toggle {
+  position: relative; display: inline-block; width: 46px; height: 26px; flex-shrink: 0;
+}
+.wu-toggle input { opacity: 0; width: 0; height: 0; }
+.wu-toggle__slider {
+  position: absolute; cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #cbd5e1; border-radius: 26px; transition: .2s;
+}
+.wu-toggle__slider::before {
+  content: ''; position: absolute;
+  height: 20px; width: 20px; left: 3px; bottom: 3px;
+  background: $wu-white; border-radius: 50%; transition: .2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+.wu-toggle input:checked + .wu-toggle__slider { background: $wu-green; }
+.wu-toggle input:checked + .wu-toggle__slider::before { transform: translateX(20px); }
+.wu-toggle-info { display: flex; flex-direction: column; gap: .15rem; }
+.wu-toggle-hint { font-size: .78rem; color: $wu-muted; }
+
+// Error
+.wu-error { font-size: .78rem; color: $wu-red; margin-top: .1rem; }
+
+// Actions bar
+.wu-actions {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: .75rem; padding-top: .5rem;
+}
