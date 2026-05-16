@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -14,6 +14,7 @@ import { ClientStatus } from 'app/entities/enumerations/client-status.model';
   selector: 'jhi-client-update',
   templateUrl: './client-update.component.html',
   styleUrls: ['./client-update.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ClientUpdateComponent implements OnInit {
   isSaving = false;

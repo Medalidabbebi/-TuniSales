@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -15,6 +15,7 @@ import { PriceListDeleteDialogComponent } from '../delete/price-list-delete-dial
   selector: 'jhi-price-list',
   templateUrl: './price-list.component.html',
   styleUrls: ['./price-list.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class PriceListComponent implements OnInit {
   priceLists?: IPriceList[];

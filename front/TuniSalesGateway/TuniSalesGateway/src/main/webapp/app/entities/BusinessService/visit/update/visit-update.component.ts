@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -18,6 +18,7 @@ import { VisitStatus } from 'app/entities/enumerations/visit-status.model';
   selector: 'jhi-visit-update',
   templateUrl: './visit-update.component.html',
   styleUrls: ['./visit-update.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class VisitUpdateComponent implements OnInit {
   isSaving = false;

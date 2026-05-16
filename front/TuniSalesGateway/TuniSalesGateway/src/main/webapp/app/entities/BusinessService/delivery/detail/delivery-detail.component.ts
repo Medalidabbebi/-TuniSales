@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IDelivery } from '../delivery.model';
@@ -8,6 +8,7 @@ import { DeliveryStatus } from 'app/entities/enumerations/delivery-status.model'
   selector: 'jhi-delivery-detail',
   templateUrl: './delivery-detail.component.html',
   styleUrls: ['./delivery-detail.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class DeliveryDetailComponent implements OnInit {
   delivery: IDelivery | null = null;

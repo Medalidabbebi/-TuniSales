@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IProduct } from '../product.model';
@@ -7,6 +7,7 @@ import { IProduct } from '../product.model';
   selector: 'jhi-product-detail',
   templateUrl: './product-detail.component.html',
   styleUrls: ['./product-detail.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ProductDetailComponent implements OnInit {
   product: IProduct | null = null;

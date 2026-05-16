@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -16,6 +16,7 @@ import { InvoiceDeleteDialogComponent } from '../delete/invoice-delete-dialog.co
   selector: 'jhi-invoice',
   templateUrl: './invoice.component.html',
   styleUrls: ['./invoice.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class InvoiceComponent implements OnInit {
   invoices?: IInvoice[];

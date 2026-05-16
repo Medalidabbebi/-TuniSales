@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IClientContact } from '../client-contact.model';
@@ -7,6 +7,7 @@ import { IClientContact } from '../client-contact.model';
   selector: 'jhi-client-contact-detail',
   templateUrl: './client-contact-detail.component.html',
   styleUrls: ['./client-contact-detail.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ClientContactDetailComponent implements OnInit {
   clientContact: IClientContact | null = null;

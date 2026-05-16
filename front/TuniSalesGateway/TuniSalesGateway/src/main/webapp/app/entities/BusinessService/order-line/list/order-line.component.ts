@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -15,6 +15,7 @@ import { OrderLineDeleteDialogComponent } from '../delete/order-line-delete-dial
   selector: 'jhi-order-line',
   templateUrl: './order-line.component.html',
   styleUrls: ['./order-line.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class OrderLineComponent implements OnInit {
   orderLines?: IOrderLine[];

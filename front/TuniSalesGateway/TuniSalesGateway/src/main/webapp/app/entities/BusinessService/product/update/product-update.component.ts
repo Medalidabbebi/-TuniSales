@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -12,6 +12,7 @@ import { ProductService } from '../service/product.service';
   selector: 'jhi-product-update',
   templateUrl: './product-update.component.html',
   styleUrls: ['./product-update.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ProductUpdateComponent implements OnInit {
   isSaving = false;

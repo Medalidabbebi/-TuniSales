@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IInvoice } from '../invoice.model';
@@ -7,6 +7,7 @@ import { IInvoice } from '../invoice.model';
   selector: 'jhi-invoice-detail',
   templateUrl: './invoice-detail.component.html',
   styleUrls: ['./invoice-detail.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class InvoiceDetailComponent implements OnInit {
   invoice: IInvoice | null = null;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IWarehouse } from '../warehouse.model';
@@ -7,6 +7,7 @@ import { IWarehouse } from '../warehouse.model';
   selector: 'jhi-warehouse-detail',
   templateUrl: './warehouse-detail.component.html',
   styleUrls: ['./warehouse-detail.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class WarehouseDetailComponent implements OnInit {
   warehouse: IWarehouse | null = null;

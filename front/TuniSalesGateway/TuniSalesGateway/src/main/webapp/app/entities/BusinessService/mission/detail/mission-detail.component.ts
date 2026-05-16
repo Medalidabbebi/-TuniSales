@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IMission } from '../mission.model';
@@ -7,6 +7,7 @@ import { IMission } from '../mission.model';
   selector: 'jhi-mission-detail',
   templateUrl: './mission-detail.component.html',
   styleUrls: ['./mission-detail.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class MissionDetailComponent implements OnInit {
   mission: IMission | null = null;

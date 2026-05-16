@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -15,6 +15,7 @@ import { ContactRole } from 'app/entities/enumerations/contact-role.model';
   selector: 'jhi-client-contact-update',
   templateUrl: './client-contact-update.component.html',
   styleUrls: ['./client-contact-update.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ClientContactUpdateComponent implements OnInit {
   isSaving = false;

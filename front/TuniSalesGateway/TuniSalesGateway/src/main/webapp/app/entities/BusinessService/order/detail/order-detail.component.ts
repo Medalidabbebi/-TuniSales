@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IOrder } from '../order.model';
@@ -12,6 +12,7 @@ import { AccountService } from 'app/core/auth/account.service';
   selector: 'jhi-order-detail',
   templateUrl: './order-detail.component.html',
   styleUrls: ['./order-detail.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class OrderDetailComponent implements OnInit {
   order: IOrder | null = null;

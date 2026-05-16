@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -15,6 +15,7 @@ import { MissionDeleteDialogComponent } from '../delete/mission-delete-dialog.co
   selector: 'jhi-mission',
   templateUrl: './mission.component.html',
   styleUrls: ['./mission.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class MissionComponent implements OnInit {
   missions?: IMission[];

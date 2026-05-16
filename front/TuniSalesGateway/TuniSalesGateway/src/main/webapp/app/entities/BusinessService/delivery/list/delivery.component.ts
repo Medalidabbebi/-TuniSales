@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -16,6 +16,7 @@ import { DeliveryDeleteDialogComponent } from '../delete/delivery-delete-dialog.
   selector: 'jhi-delivery',
   templateUrl: './delivery.component.html',
   styleUrls: ['./delivery.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class DeliveryComponent implements OnInit {
   deliveries?: IDelivery[];

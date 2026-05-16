@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IPriceList } from '../price-list.model';
@@ -7,6 +7,7 @@ import { IPriceList } from '../price-list.model';
   selector: 'jhi-price-list-detail',
   templateUrl: './price-list-detail.component.html',
   styleUrls: ['./price-list-detail.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class PriceListDetailComponent implements OnInit {
   priceList: IPriceList | null = null;

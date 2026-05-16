@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -13,6 +13,7 @@ import { MissionStatus } from 'app/entities/enumerations/mission-status.model';
   selector: 'jhi-mission-update',
   templateUrl: './mission-update.component.html',
   styleUrls: ['./mission-update.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class MissionUpdateComponent implements OnInit {
   isSaving = false;

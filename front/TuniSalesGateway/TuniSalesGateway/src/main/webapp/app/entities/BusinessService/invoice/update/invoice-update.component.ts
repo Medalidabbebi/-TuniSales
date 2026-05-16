@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -17,6 +17,7 @@ import { InvoiceStatus } from 'app/entities/enumerations/invoice-status.model';
   selector: 'jhi-invoice-update',
   templateUrl: './invoice-update.component.html',
   styleUrls: ['./invoice-update.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class InvoiceUpdateComponent implements OnInit {
   isSaving = false;

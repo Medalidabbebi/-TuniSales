@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -29,6 +29,7 @@ interface LineFormGroup {
   selector: 'jhi-order-update',
   templateUrl: './order-update.component.html',
   styleUrls: ['./order-update.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class OrderUpdateComponent implements OnInit {
   isSaving = false;

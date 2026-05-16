@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -16,6 +16,7 @@ import { OrderService } from 'app/entities/BusinessService/order/service/order.s
   selector: 'jhi-order-line-update',
   templateUrl: './order-line-update.component.html',
   styleUrls: ['./order-line-update.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class OrderLineUpdateComponent implements OnInit {
   isSaving = false;

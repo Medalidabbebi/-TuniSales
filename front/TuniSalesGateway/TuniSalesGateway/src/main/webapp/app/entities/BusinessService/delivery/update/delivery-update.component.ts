@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -15,6 +15,7 @@ import { DeliveryStatus } from 'app/entities/enumerations/delivery-status.model'
   selector: 'jhi-delivery-update',
   templateUrl: './delivery-update.component.html',
   styleUrls: ['./delivery-update.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class DeliveryUpdateComponent implements OnInit {
   isSaving = false;

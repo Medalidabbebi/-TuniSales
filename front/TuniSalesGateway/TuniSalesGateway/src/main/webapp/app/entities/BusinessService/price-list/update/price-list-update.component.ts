@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -16,6 +16,7 @@ import { ClientService } from 'app/entities/BusinessService/client/service/clien
   selector: 'jhi-price-list-update',
   templateUrl: './price-list-update.component.html',
   styleUrls: ['./price-list-update.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class PriceListUpdateComponent implements OnInit {
   isSaving = false;

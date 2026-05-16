@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -15,6 +15,7 @@ import { ClientDeleteDialogComponent } from '../delete/client-delete-dialog.comp
   selector: 'jhi-client',
   templateUrl: './client.component.html',
   styleUrls: ['./client.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ClientComponent implements OnInit {
   clients?: IClient[];

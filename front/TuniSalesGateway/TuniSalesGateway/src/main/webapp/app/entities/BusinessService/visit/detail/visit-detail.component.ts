@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IVisit } from '../visit.model';
@@ -7,6 +7,7 @@ import { IVisit } from '../visit.model';
   selector: 'jhi-visit-detail',
   templateUrl: './visit-detail.component.html',
   styleUrls: ['./visit-detail.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class VisitDetailComponent implements OnInit {
   visit: IVisit | null = null;
