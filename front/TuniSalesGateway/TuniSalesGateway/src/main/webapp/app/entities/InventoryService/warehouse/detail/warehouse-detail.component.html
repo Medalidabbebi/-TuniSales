@@ -1,66 +1,141 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <div *ngIf="warehouse">
-      <h2 data-cy="warehouseDetailsHeading">
-        <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.detail.title">Warehouse</span>
-      </h2>
+<div class="wd-page" *ngIf="warehouse">
 
-      <hr />
-
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ warehouse.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.tenantId">Tenant Id</span></dt>
-        <dd>
-          <span>{{ warehouse.tenantId }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.name">Name</span></dt>
-        <dd>
-          <span>{{ warehouse.name }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.type">Type</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'tuniSalesGatewayApp.WarehouseType.' + warehouse.type }}">{{ warehouse.type }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.address">Address</span></dt>
-        <dd>
-          <span>{{ warehouse.address }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.city">City</span></dt>
-        <dd>
-          <span>{{ warehouse.city }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.minThreshold">Min Threshold</span></dt>
-        <dd>
-          <span>{{ warehouse.minThreshold }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.isActive">Is Active</span></dt>
-        <dd>
-          <span>{{ warehouse.isActive }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.createdAt">Created At</span></dt>
-        <dd>
-          <span>{{ warehouse.createdAt | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceWarehouse.updatedAt">Updated At</span></dt>
-        <dd>
-          <span>{{ warehouse.updatedAt | formatMediumDatetime }}</span>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+  <!-- ── Header ──────────────────────────────────────────────────── -->
+  <div class="wd-header">
+    <div class="wd-header__left">
+      <button class="wd-back-btn" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
       </button>
-
-      <button type="button" [routerLink]="['/warehouse', warehouse.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
+      <div class="wd-header__icon">
+        <fa-icon icon="warehouse"></fa-icon>
+      </div>
+      <div>
+        <h1 class="wd-header__title" data-cy="warehouseDetailsHeading">
+          {{ warehouse.name || ('Entrepôt #' + warehouse.id) }}
+        </h1>
+        <p class="wd-header__sub">
+          <span *ngIf="warehouse.type">{{ getTypeLabel(warehouse.type) }}</span>
+          <span *ngIf="warehouse.city"> · {{ warehouse.city }}</span>
+        </p>
+      </div>
+    </div>
+    <div class="wd-header__actions">
+      <span class="wd-status-badge" [ngClass]="warehouse.isActive ? 'wd-status--active' : 'wd-status--inactive'">
+        <span class="wd-status-badge__dot"></span>
+        {{ warehouse.isActive ? 'Actif' : 'Inactif' }}
+      </span>
+      <button type="button" [routerLink]="['/warehouse', warehouse.id, 'edit']" class="wd-btn wd-btn--primary">
+        <fa-icon icon="pencil-alt"></fa-icon>
+        Éditer
       </button>
     </div>
+  </div>
+
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── KPI Row ─────────────────────────────────────────────────── -->
+  <div class="wd-kpi-row">
+    <div class="wd-kpi wd-kpi--orange">
+      <div class="wd-kpi__icon"><fa-icon icon="warehouse"></fa-icon></div>
+      <div>
+        <div class="wd-kpi__value">{{ getTypeLabel(warehouse.type) }}</div>
+        <div class="wd-kpi__label">Type</div>
+      </div>
+    </div>
+    <div class="wd-kpi wd-kpi--blue" *ngIf="warehouse.city">
+      <div class="wd-kpi__icon"><fa-icon icon="map-marker-alt"></fa-icon></div>
+      <div>
+        <div class="wd-kpi__value">{{ warehouse.city }}</div>
+        <div class="wd-kpi__label">Ville</div>
+      </div>
+    </div>
+    <div class="wd-kpi wd-kpi--red" *ngIf="warehouse.minThreshold != null">
+      <div class="wd-kpi__icon"><fa-icon icon="exclamation-triangle"></fa-icon></div>
+      <div>
+        <div class="wd-kpi__value">{{ warehouse.minThreshold }}</div>
+        <div class="wd-kpi__label">Seuil min.</div>
+      </div>
+    </div>
+    <div class="wd-kpi" [ngClass]="warehouse.isActive ? 'wd-kpi--green' : 'wd-kpi--gray'">
+      <div class="wd-kpi__icon"><fa-icon icon="check-circle"></fa-icon></div>
+      <div>
+        <div class="wd-kpi__value">{{ warehouse.isActive ? 'Actif' : 'Inactif' }}</div>
+        <div class="wd-kpi__label">Statut</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Cards Grid ──────────────────────────────────────────────── -->
+  <div class="wd-grid">
+
+    <!-- Informations -->
+    <div class="wd-card">
+      <div class="wd-card__head">
+        <div class="wd-card__head-icon wd-card__head-icon--orange"><fa-icon icon="warehouse"></fa-icon></div>
+        <div>
+          <div class="wd-card__title">Informations</div>
+          <div class="wd-card__sub">Détails de l'entrepôt</div>
+        </div>
+      </div>
+      <div class="wd-info-list">
+        <div class="wd-info-row">
+          <span class="wd-info-row__label">Nom</span>
+          <span class="wd-info-row__value">{{ warehouse.name || '—' }}</span>
+        </div>
+        <div class="wd-info-row">
+          <span class="wd-info-row__label">Type</span>
+          <span class="wd-type-badge" [ngClass]="getTypeClass(warehouse.type)">{{ getTypeLabel(warehouse.type) }}</span>
+        </div>
+        <div class="wd-info-row" *ngIf="warehouse.address">
+          <span class="wd-info-row__label">Adresse</span>
+          <span class="wd-info-row__value">{{ warehouse.address }}</span>
+        </div>
+        <div class="wd-info-row" *ngIf="warehouse.city">
+          <span class="wd-info-row__label">Ville</span>
+          <span class="wd-info-row__value">{{ warehouse.city }}</span>
+        </div>
+        <div class="wd-info-row" *ngIf="warehouse.minThreshold != null">
+          <span class="wd-info-row__label">Seuil minimum</span>
+          <span class="wd-info-row__value">{{ warehouse.minThreshold }}</span>
+        </div>
+        <div class="wd-info-row">
+          <span class="wd-info-row__label">Actif</span>
+          <span class="wd-bool" [ngClass]="warehouse.isActive ? 'wd-bool--yes' : 'wd-bool--no'">
+            <fa-icon [icon]="warehouse.isActive ? 'check-circle' : 'times-circle'"></fa-icon>
+            {{ warehouse.isActive ? 'Oui' : 'Non' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Chronologie -->
+    <div class="wd-card">
+      <div class="wd-card__head">
+        <div class="wd-card__head-icon wd-card__head-icon--blue"><fa-icon icon="history"></fa-icon></div>
+        <div>
+          <div class="wd-card__title">Chronologie</div>
+          <div class="wd-card__sub">Dates de création et mise à jour</div>
+        </div>
+      </div>
+      <div class="wd-timeline">
+        <div class="wd-tl-item" *ngIf="warehouse.createdAt">
+          <div class="wd-tl-dot wd-tl-dot--orange"></div>
+          <div class="wd-tl-body">
+            <span class="wd-tl-label">Créé le</span>
+            <span class="wd-tl-date">{{ warehouse.createdAt | formatMediumDatetime }}</span>
+          </div>
+        </div>
+        <div class="wd-tl-line" *ngIf="warehouse.createdAt && warehouse.updatedAt"></div>
+        <div class="wd-tl-item" *ngIf="warehouse.updatedAt">
+          <div class="wd-tl-dot wd-tl-dot--gray"></div>
+          <div class="wd-tl-body">
+            <span class="wd-tl-label">Mis à jour</span>
+            <span class="wd-tl-date">{{ warehouse.updatedAt | formatMediumDatetime }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

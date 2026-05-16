@@ -6,6 +6,7 @@ import { IWarehouse } from '../warehouse.model';
 @Component({
   selector: 'jhi-warehouse-detail',
   templateUrl: './warehouse-detail.component.html',
+  styleUrls: ['./warehouse-detail.component.scss'],
 })
 export class WarehouseDetailComponent implements OnInit {
   warehouse: IWarehouse | null = null;
@@ -20,5 +21,27 @@ export class WarehouseDetailComponent implements OnInit {
 
   previousState(): void {
     window.history.back();
+  }
+
+  getTypeLabel(type: string | null | undefined): string {
+    const map: Record<string, string> = {
+      LOCAL:     'Local',
+      SITE:      'Site',
+      SWAP:      'Échange',
+      DEFECTIVE: 'Défectueux',
+      MISSING:   'Manquant',
+    };
+    return map[type ?? ''] || (type ?? '—');
+  }
+
+  getTypeClass(type: string | null | undefined): string {
+    const map: Record<string, string> = {
+      LOCAL:     'wd-type--local',
+      SITE:      'wd-type--site',
+      SWAP:      'wd-type--swap',
+      DEFECTIVE: 'wd-type--defective',
+      MISSING:   'wd-type--missing',
+    };
+    return map[type ?? ''] || '';
   }
 }
