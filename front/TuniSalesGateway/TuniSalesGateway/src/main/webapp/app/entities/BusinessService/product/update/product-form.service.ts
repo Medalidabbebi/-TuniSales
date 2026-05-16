@@ -62,9 +62,7 @@ export class ProductFormService {
           validators: [Validators.required],
         }
       ),
-      tenantId: new FormControl(productRawValue.tenantId, {
-        validators: [Validators.required],
-      }),
+      tenantId: new FormControl(productRawValue.tenantId),
       sku: new FormControl(productRawValue.sku, {
         validators: [Validators.required, Validators.minLength(3), Validators.maxLength(100)],
       }),
@@ -83,12 +81,8 @@ export class ProductFormService {
       taxRate: new FormControl(productRawValue.taxRate, {
         validators: [Validators.required, Validators.min(0), Validators.max(100)],
       }),
-      isActive: new FormControl(productRawValue.isActive, {
-        validators: [Validators.required],
-      }),
-      isDeleted: new FormControl(productRawValue.isDeleted, {
-        validators: [Validators.required],
-      }),
+      isActive: new FormControl(productRawValue.isActive),
+      isDeleted: new FormControl(productRawValue.isDeleted),
       createdAt: new FormControl(productRawValue.createdAt, {
         validators: [Validators.required],
       }),
