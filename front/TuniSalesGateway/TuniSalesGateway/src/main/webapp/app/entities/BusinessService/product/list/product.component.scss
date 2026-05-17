@@ -27,9 +27,13 @@ $pl-radius-xs: 6px;
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 28px 32px;
-  min-height: 100vh;
+  // annule le padding-24px du .tsg-content parent et remplit tout l'écran
+  margin: -24px;
+  padding: 28px 28px 32px;
+  min-height: calc(100vh - 60px);
   background: $pl-bg;
+  width: calc(100% + 48px);
+  box-sizing: border-box;
 }
 
 // ── Header ─────────────────────────────────────────────────────
