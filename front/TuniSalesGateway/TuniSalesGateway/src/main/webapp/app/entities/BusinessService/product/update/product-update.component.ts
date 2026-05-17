@@ -2,11 +2,13 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 import { ProductFormService, ProductFormGroup } from './product-form.service';
 import { IProduct } from '../product.model';
 import { ProductService } from '../service/product.service';
+import { ITenant } from 'app/entities/PlatformService/tenant/tenant.model';
+import { TenantService } from 'app/entities/PlatformService/tenant/service/tenant.service';
 
 @Component({
   selector: 'jhi-product-update',
@@ -17,12 +19,14 @@ import { ProductService } from '../service/product.service';
 export class ProductUpdateComponent implements OnInit {
   isSaving = false;
   product: IProduct | null = null;
+  tenantsCollection: ITenant[] = [];
 
   editForm: ProductFormGroup = this.productFormService.createProductFormGroup();
 
   constructor(
     protected productService: ProductService,
     protected productFormService: ProductFormService,
+    protected tenantService: TenantService,
     protected activatedRoute: ActivatedRoute
   ) {}
 
@@ -33,6 +37,11 @@ export class ProductUpdateComponent implements OnInit {
         this.updateForm(product);
       }
     });
+
+    this.tenantService
+      .query({ size: 1000 })
+      .pipe(map((res: HttpResponse<ITenant[]>) => res.body ?? []))
+      .subscribe((tenants: ITenant[]) => (this.tenantsCollection = tenants));
   }
 
   previousState(): void {

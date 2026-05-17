@@ -80,8 +80,13 @@
 
           <div class="pru-field">
             <label class="pru-label" for="field_tenantId">ID Entreprise <span class="pru-required">*</span></label>
-            <input type="number" class="pru-input" name="tenantId" id="field_tenantId" data-cy="tenantId"
-              formControlName="tenantId" placeholder="Ex: 84062" />
+            <select class="pru-input" name="tenantId" id="field_tenantId" data-cy="tenantId"
+              formControlName="tenantId">
+              <option [ngValue]="null">-- Sélectionner une entreprise --</option>
+              <option *ngFor="let t of tenantsCollection" [value]="t.id">
+                #{{ t.id }} — {{ t.name }}
+              </option>
+            </select>
             <span class="pru-error" *ngIf="editForm.get('tenantId')?.invalid && editForm.get('tenantId')?.touched">
               <span *ngIf="editForm.get('tenantId')?.errors?.required">Ce champ est obligatoire.</span>
             </span>
