@@ -12,6 +12,8 @@ import { ClientService } from 'app/entities/BusinessService/client/service/clien
 import { IOrder } from 'app/entities/BusinessService/order/order.model';
 import { OrderService } from 'app/entities/BusinessService/order/service/order.service';
 import { InvoiceStatus } from 'app/entities/enumerations/invoice-status.model';
+import { ITenant } from 'app/entities/PlatformService/tenant/tenant.model';
+import { TenantService } from 'app/entities/PlatformService/tenant/service/tenant.service';
 
 @Component({
   selector: 'jhi-invoice-update',
@@ -26,6 +28,7 @@ export class InvoiceUpdateComponent implements OnInit {
 
   clientsSharedCollection: IClient[] = [];
   ordersSharedCollection: IOrder[] = [];
+  tenantsCollection: ITenant[] = [];
 
   editForm: InvoiceFormGroup = this.invoiceFormService.createInvoiceFormGroup();
 
@@ -34,6 +37,7 @@ export class InvoiceUpdateComponent implements OnInit {
     protected invoiceFormService: InvoiceFormService,
     protected clientService: ClientService,
     protected orderService: OrderService,
+    protected tenantService: TenantService,
     protected activatedRoute: ActivatedRoute
   ) {}
 
@@ -131,5 +135,10 @@ export class InvoiceUpdateComponent implements OnInit {
       .pipe(map((res: HttpResponse<IOrder[]>) => res.body ?? []))
       .pipe(map((orders: IOrder[]) => this.orderService.addOrderToCollectionIfMissing<IOrder>(orders, this.invoice?.order)))
       .subscribe((orders: IOrder[]) => (this.ordersSharedCollection = orders));
+
+    this.tenantService
+      .query({ size: 1000 })
+      .pipe(map((res: HttpResponse<ITenant[]>) => res.body ?? []))
+      .subscribe((tenants: ITenant[]) => (this.tenantsCollection = tenants));
   }
 }

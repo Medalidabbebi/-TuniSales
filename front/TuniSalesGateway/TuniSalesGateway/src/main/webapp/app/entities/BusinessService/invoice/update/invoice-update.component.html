@@ -76,8 +76,13 @@
         <!-- ID Entreprise -->
         <div class="iu-form-group">
           <label class="iu-label" for="field_tenantId">ID Entreprise <span class="iu-required">*</span></label>
-          <input type="number" class="iu-input" name="tenantId" id="field_tenantId"
-                 data-cy="tenantId" formControlName="tenantId" placeholder="Ex: 84062" />
+          <select class="iu-input iu-select" name="tenantId" id="field_tenantId"
+                  data-cy="tenantId" formControlName="tenantId">
+            <option [ngValue]="null">-- Sélectionner une entreprise --</option>
+            <option *ngFor="let t of tenantsCollection" [value]="t.id">
+              #{{ t.id }} — {{ t.name }}
+            </option>
+          </select>
           <div *ngIf="editForm.get('tenantId')!.invalid && (editForm.get('tenantId')!.dirty || editForm.get('tenantId')!.touched)">
             <small class="iu-field-error" *ngIf="editForm.get('tenantId')?.errors?.required">Ce champ est obligatoire.</small>
           </div>
