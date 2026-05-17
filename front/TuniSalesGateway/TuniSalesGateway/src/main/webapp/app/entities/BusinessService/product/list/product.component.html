@@ -1,91 +1,146 @@
-<div class="container-fluid py-4">
+<div class="pl-page">
 
-  <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-    <div>
-      <h2 class="mb-0 fw-bold">
-        <fa-icon icon="box" class="me-2 text-primary"></fa-icon>
-        Catalogue Produits
-      </h2>
-      <small class="text-muted">Liste des produits — {{ totalItems }} produit(s) au total</small>
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Header ───────────────────────────────────────────── -->
+  <div class="pl-header">
+    <div class="pl-header__left">
+      <div class="pl-header__icon">
+        <fa-icon icon="box"></fa-icon>
+      </div>
+      <div>
+        <h1 class="pl-header__title">Catalogue Produits</h1>
+        <p class="pl-header__sub">{{ totalItems }} produit(s) au total</p>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+    <div class="pl-header__actions">
+      <button class="pl-btn pl-btn--ghost" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
-      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/product/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
+      <a class="pl-btn pl-btn--primary" [routerLink]="['/product/new']" data-cy="entityCreateButton">
+        <fa-icon icon="plus"></fa-icon>
         Nouveau Produit
       </a>
     </div>
   </div>
 
-  <jhi-alert-error></jhi-alert-error>
-  <jhi-alert></jhi-alert>
-
-  <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+  <!-- ── KPI Row ───────────────────────────────────────────── -->
+  <div class="pl-kpi-row">
+    <div class="pl-kpi-card pl-kpi-card--blue">
+      <div class="pl-kpi-card__icon"><fa-icon icon="boxes"></fa-icon></div>
+      <div>
+        <div class="pl-kpi-card__value">{{ totalItems }}</div>
+        <div class="pl-kpi-card__label">Total produits</div>
+      </div>
+    </div>
+    <div class="pl-kpi-card pl-kpi-card--green">
+      <div class="pl-kpi-card__icon"><fa-icon icon="check-circle"></fa-icon></div>
+      <div>
+        <div class="pl-kpi-card__value">{{ countProductsByActive(true) }}</div>
+        <div class="pl-kpi-card__label">Actifs</div>
+      </div>
+    </div>
+    <div class="pl-kpi-card pl-kpi-card--gray">
+      <div class="pl-kpi-card__icon"><fa-icon icon="pause-circle"></fa-icon></div>
+      <div>
+        <div class="pl-kpi-card__value">{{ countProductsByActive(false) }}</div>
+        <div class="pl-kpi-card__label">Inactifs</div>
+      </div>
+    </div>
+    <div class="pl-kpi-card pl-kpi-card--purple">
+      <div class="pl-kpi-card__icon"><fa-icon icon="percentage"></fa-icon></div>
+      <div>
+        <div class="pl-kpi-card__value">{{ getAverageTaxRate() }}%</div>
+        <div class="pl-kpi-card__label">TVA moyenne</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && products?.length === 0">
-    <fa-icon icon="box" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucun produit trouvé. Créez votre premier produit.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/product/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <!-- ── Loading ───────────────────────────────────────────── -->
+  <div class="pl-loading" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true" size="2x"></fa-icon>
+    <span>Chargement...</span>
+  </div>
+
+  <!-- ── Empty ─────────────────────────────────────────────── -->
+  <div class="pl-empty" *ngIf="!isLoading && products?.length === 0">
+    <div class="pl-empty__icon"><fa-icon icon="box" size="3x"></fa-icon></div>
+    <p class="pl-empty__text">Aucun produit trouvé.</p>
+    <a class="pl-btn pl-btn--primary" [routerLink]="['/product/new']">
+      <fa-icon icon="plus"></fa-icon> Créer un produit
     </a>
   </div>
 
-  <!-- Table -->
-  <div class="card shadow-sm" *ngIf="!isLoading && products && products.length > 0">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
-        <thead class="table-light">
+  <!-- ── Table ─────────────────────────────────────────────── -->
+  <div class="pl-table-card" *ngIf="!isLoading && products && products.length > 0">
+    <div class="pl-table-wrap">
+      <table class="pl-table" aria-describedby="page-heading">
+        <thead>
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-            <th scope="col" jhiSortBy="name">
-              <div class="d-flex align-items-center gap-1">Nom <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="sku">
-              <div class="d-flex align-items-center gap-1">SKU <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="category">
-              <div class="d-flex align-items-center gap-1">Catégorie <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="price" style="width:130px">
-              <div class="d-flex align-items-center gap-1">Prix <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="isActive" style="width:120px">
-              <div class="d-flex align-items-center gap-1">Stock actif <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" style="width:140px"></th>
+            <th jhiSortBy="name"><span>Produit</span> <fa-icon icon="sort" class="pl-sort-icon"></fa-icon></th>
+            <th jhiSortBy="sku"><span>SKU</span> <fa-icon icon="sort" class="pl-sort-icon"></fa-icon></th>
+            <th jhiSortBy="category"><span>Catégorie</span> <fa-icon icon="sort" class="pl-sort-icon"></fa-icon></th>
+            <th jhiSortBy="price"><span>Prix</span> <fa-icon icon="sort" class="pl-sort-icon"></fa-icon></th>
+            <th jhiSortBy="taxRate"><span>TVA</span> <fa-icon icon="sort" class="pl-sort-icon"></fa-icon></th>
+            <th jhiSortBy="isActive"><span>Statut</span> <fa-icon icon="sort" class="pl-sort-icon"></fa-icon></th>
+            <th class="pl-table__actions-col"></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let product of products; trackBy: trackId" data-cy="entityTable">
-            <td class="fw-semibold">{{ product.name }}</td>
-            <td><code class="text-secondary">{{ product.sku || '—' }}</code></td>
-            <td>{{ product.category || '—' }}</td>
+
+            <!-- Produit (avatar + nom) -->
             <td>
-              <span class="badge bg-primary rounded-pill">{{ product.price | number:'1.2-2' }} TND</span>
+              <div class="pl-product-cell">
+                <div class="pl-avatar">{{ getProductAvatar(product) }}</div>
+                <div>
+                  <div class="pl-product-name">{{ product.name || '—' }}</div>
+                  <div class="pl-product-brand" *ngIf="product.brand">{{ product.brand }}</div>
+                </div>
+              </div>
             </td>
+
+            <!-- SKU -->
+            <td><code class="pl-sku">{{ product.sku || '—' }}</code></td>
+
+            <!-- Catégorie -->
             <td>
-              <span class="badge rounded-pill" [ngClass]="product.isActive ? 'bg-success' : 'bg-secondary'">
+              <span class="pl-category-chip" *ngIf="product.category">{{ product.category }}</span>
+              <span class="pl-muted" *ngIf="!product.category">—</span>
+            </td>
+
+            <!-- Prix -->
+            <td>
+              <span class="pl-price">{{ product.price | number:'1.2-2' }}</span>
+              <span class="pl-price-unit">TND</span>
+            </td>
+
+            <!-- TVA -->
+            <td>
+              <span class="pl-tax">{{ product.taxRate ?? '—' }}%</span>
+            </td>
+
+            <!-- Statut -->
+            <td>
+              <span class="pl-status-badge" [ngClass]="product.isActive ? 'pl-status-badge--active' : 'pl-status-badge--inactive'">
+                <span class="pl-status-badge__dot"></span>
                 {{ product.isActive ? 'Actif' : 'Inactif' }}
               </span>
             </td>
+
+            <!-- Actions -->
             <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/product', product.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+              <div class="pl-actions">
+                <a [routerLink]="['/product', product.id, 'view']" class="pl-action-btn pl-action-btn--view" title="Voir" data-cy="entityDetailsButton">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/product', product.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                <a [routerLink]="['/product', product.id, 'edit']" class="pl-action-btn pl-action-btn--edit" title="Modifier" data-cy="entityEditButton">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(product)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
-                  <fa-icon icon="times"></fa-icon>
+                <button (click)="delete(product)" class="pl-action-btn pl-action-btn--delete" title="Supprimer" data-cy="entityDeleteButton">
+                  <fa-icon icon="trash"></fa-icon>
                 </button>
               </div>
             </td>
@@ -95,8 +150,8 @@
     </div>
   </div>
 
-  <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="products && products.length > 0">
+  <!-- ── Pagination ────────────────────────────────────────── -->
+  <div class="pl-pagination" *ngIf="products && products.length > 0">
     <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
     <ngb-pagination
       [collectionSize]="totalItems"
