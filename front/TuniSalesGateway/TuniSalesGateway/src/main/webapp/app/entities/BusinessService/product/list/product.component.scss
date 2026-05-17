@@ -22,17 +22,20 @@ $pl-radius:    12px;
 $pl-radius-sm: 8px;
 $pl-radius-xs: 6px;
 
+// Écrase le padding du conteneur parent pour ce composant uniquement
+.tsg-content:has(jhi-product) {
+  padding: 0 !important;
+}
+
 // ── Page ───────────────────────────────────────────────────────
 .pl-page {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  // annule le padding-24px du .tsg-content parent et remplit tout l'écran
-  margin: -24px;
-  padding: 28px 28px 32px;
-  min-height: calc(100vh - 60px);
+  padding: 28px 32px 36px;
+  min-height: calc(100vh - 64px); // 64px = $tsg-header-height
   background: $pl-bg;
-  width: calc(100% + 48px);
+  width: 100%;
   box-sizing: border-box;
 }
 
