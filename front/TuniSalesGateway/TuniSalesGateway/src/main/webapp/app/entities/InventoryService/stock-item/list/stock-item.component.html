@@ -1,113 +1,130 @@
-<div class="container-fluid py-4">
+<div class="si-page">
 
-  <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-    <div>
-      <h2 class="mb-0 fw-bold">
-        <fa-icon icon="boxes" class="me-2 text-primary"></fa-icon>
-        Gestion du Stock
-      </h2>
-      <small class="text-muted">Liste des articles en stock — {{ totalItems }} article(s) au total</small>
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Header ────────────────────────────────────────────── -->
+  <div class="si-header">
+    <div class="si-header__left">
+      <div class="si-header__icon">
+        <fa-icon icon="boxes"></fa-icon>
+      </div>
+      <div>
+        <h1 class="si-header__title">Gestion du Stock</h1>
+        <p class="si-header__sub">{{ totalItems }} article(s) au total</p>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+    <div class="si-header__actions">
+      <button class="si-btn si-btn--ghost" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
-      <a class="btn btn-primary" [routerLink]="['/stock-item/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
+      <a class="si-btn si-btn--primary" [routerLink]="['/stock-item/new']">
+        <fa-icon icon="plus"></fa-icon>
         Nouveau Stock Item
       </a>
     </div>
   </div>
 
-  <jhi-alert-error></jhi-alert-error>
-  <jhi-alert></jhi-alert>
-
-  <!-- Résumé par statut -->
-  <div class="row g-3 mb-4" *ngIf="stockItems && stockItems.length > 0">
-    <div class="col-6 col-md-3" *ngFor="let stat of statusSummary()">
-      <div class="card border-0 shadow-sm text-center py-2">
-        <div class="fw-bold fs-4" [ngClass]="stat.colorClass">{{ stat.count }}</div>
-        <div class="text-muted small">{{ stat.label }}</div>
+  <!-- ── KPI Row ────────────────────────────────────────────── -->
+  <div class="si-kpi-row" *ngIf="stockItems && stockItems.length > 0">
+    <div class="si-kpi-card si-kpi-card--green" *ngFor="let stat of statusSummary(); let i = index"
+         [class.si-kpi-card--green]="i === 0"
+         [class.si-kpi-card--dark]="i === 1"
+         [class.si-kpi-card--red]="i === 2"
+         [class.si-kpi-card--orange]="i === 3">
+      <div class="si-kpi-card__icon">
+        <fa-icon [icon]="i === 0 ? 'check-circle' : i === 1 ? 'shopping-cart' : i === 2 ? 'exclamation-triangle' : 'search'"></fa-icon>
+      </div>
+      <div>
+        <div class="si-kpi-card__value">{{ stat.count }}</div>
+        <div class="si-kpi-card__label">{{ stat.label }}</div>
       </div>
     </div>
   </div>
 
-  <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+  <!-- ── Loading ───────────────────────────────────────────── -->
+  <div class="si-loading" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true" size="2x"></fa-icon>
+    <span>Chargement...</span>
   </div>
 
-  <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && stockItems?.length === 0">
-    <fa-icon icon="boxes" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucun article en stock. Créez votre premier stock item.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/stock-item/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <!-- ── Empty ─────────────────────────────────────────────── -->
+  <div class="si-empty" *ngIf="!isLoading && stockItems?.length === 0">
+    <div class="si-empty__icon"><fa-icon icon="boxes" size="3x"></fa-icon></div>
+    <p class="si-empty__text">Aucun article en stock.</p>
+    <a class="si-btn si-btn--primary" [routerLink]="['/stock-item/new']">
+      <fa-icon icon="plus"></fa-icon> Ajouter un article
     </a>
   </div>
 
-  <!-- Table -->
-  <div class="card shadow-sm" *ngIf="!isLoading && stockItems && stockItems.length > 0">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0">
-        <thead class="table-light">
+  <!-- ── Table ─────────────────────────────────────────────── -->
+  <div class="si-table-card" *ngIf="!isLoading && stockItems && stockItems.length > 0">
+    <div class="si-table-wrap">
+      <table class="si-table">
+        <thead>
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-            <th scope="col" jhiSortBy="productName">
-              <div class="d-flex align-items-center gap-1">Produit <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="imei">
-              <div class="d-flex align-items-center gap-1">IMEI <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="status" style="width:130px">
-              <div class="d-flex align-items-center gap-1">Statut <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="warehouse.name">
-              <div class="d-flex align-items-center gap-1">Entrepôt <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="acquiredAt">
-              <div class="d-flex align-items-center gap-1">Acquis le <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" style="width:140px"></th>
+            <th jhiSortBy="productName"><span>Produit</span><fa-icon icon="sort" class="si-sort-icon"></fa-icon></th>
+            <th jhiSortBy="imei"><span>IMEI</span><fa-icon icon="sort" class="si-sort-icon"></fa-icon></th>
+            <th jhiSortBy="status"><span>Statut</span><fa-icon icon="sort" class="si-sort-icon"></fa-icon></th>
+            <th jhiSortBy="warehouse.name"><span>Entrepôt</span><fa-icon icon="sort" class="si-sort-icon"></fa-icon></th>
+            <th jhiSortBy="acquiredAt"><span>Acquis le</span><fa-icon icon="sort" class="si-sort-icon"></fa-icon></th>
+            <th class="si-table__actions-col"></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of stockItems; trackBy: trackId" [class.table-danger]="item.isDeleted">
+          <tr *ngFor="let item of stockItems; trackBy: trackId"
+              [class.si-row--deleted]="item.isDeleted">
+
+            <!-- Produit -->
             <td>
-              <div class="fw-semibold">{{ item.productName || '—' }}</div>
-              <small class="text-muted">ID Produit : {{ item.productId }}</small>
+              <div class="si-product-cell">
+                <div class="si-avatar">{{ (item.productName || 'S').charAt(0).toUpperCase() }}</div>
+                <div>
+                  <div class="si-product-name">{{ item.productName || 'Produit inconnu' }}</div>
+                  <div class="si-product-id">ID : {{ item.productId }}</div>
+                </div>
+              </div>
             </td>
+
+            <!-- IMEI -->
             <td>
-              <code *ngIf="item.imei" class="text-secondary">{{ item.imei }}</code>
-              <span *ngIf="!item.imei" class="text-muted fst-italic">—</span>
+              <code class="si-imei" *ngIf="item.imei">{{ item.imei }}</code>
+              <span class="si-muted" *ngIf="!item.imei">—</span>
             </td>
+
+            <!-- Statut -->
             <td>
-              <span class="badge rounded-pill" [ngClass]="getStatusClass(item.status)">
-                {{ item.status }}
+              <span class="si-status-badge" [ngClass]="'si-status-badge--' + (item.status ?? 'unknown').toLowerCase()">
+                {{ item.status ?? '—' }}
               </span>
             </td>
+
+            <!-- Entrepôt -->
             <td>
-              <a *ngIf="item.warehouse" [routerLink]="['/warehouse', item.warehouse.id, 'view']"
-                 class="text-decoration-none">
-                <fa-icon icon="warehouse" class="me-1 text-muted"></fa-icon>{{ item.warehouse.name }}
+              <a *ngIf="item.warehouse" [routerLink]="['/warehouse', item.warehouse.id, 'view']" class="si-warehouse-link">
+                <fa-icon icon="warehouse"></fa-icon>
+                {{ item.warehouse.name }}
               </a>
-              <span *ngIf="!item.warehouse" class="text-muted fst-italic">—</span>
+              <span class="si-muted" *ngIf="!item.warehouse">—</span>
             </td>
+
+            <!-- Date -->
             <td>
-              <span class="text-muted small">{{ item.acquiredAt | formatMediumDatetime }}</span>
+              <span class="si-date">{{ item.acquiredAt | formatMediumDatetime }}</span>
             </td>
+
+            <!-- Actions -->
             <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/stock-item', item.id, 'view']" class="btn btn-outline-info btn-sm" title="Voir">
+              <div class="si-actions">
+                <a [routerLink]="['/stock-item', item.id, 'view']" class="si-action-btn si-action-btn--view" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/stock-item', item.id, 'edit']" class="btn btn-outline-primary btn-sm" title="Modifier">
+                <a [routerLink]="['/stock-item', item.id, 'edit']" class="si-action-btn si-action-btn--edit" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(item)" class="btn btn-outline-danger btn-sm" title="Supprimer">
-                  <fa-icon icon="times"></fa-icon>
+                <button (click)="delete(item)" class="si-action-btn si-action-btn--delete" title="Supprimer">
+                  <fa-icon icon="trash"></fa-icon>
                 </button>
               </div>
             </td>
@@ -117,8 +134,8 @@
     </div>
   </div>
 
-  <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="stockItems && stockItems.length > 0">
+  <!-- ── Pagination ─────────────────────────────────────────── -->
+  <div class="si-pagination" *ngIf="stockItems && stockItems.length > 0">
     <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
     <ngb-pagination
       [collectionSize]="totalItems"

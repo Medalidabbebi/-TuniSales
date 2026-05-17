@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -15,6 +15,8 @@ import { StockItemDeleteDialogComponent } from '../delete/stock-item-delete-dial
 @Component({
   selector: 'jhi-stock-item',
   templateUrl: './stock-item.component.html',
+  styleUrls: ['./stock-item.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class StockItemComponent implements OnInit {
   stockItems?: IStockItem[];
