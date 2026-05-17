@@ -58,16 +58,18 @@
           <!-- Tenant ID -->
           <div class="cu-field">
             <label class="cu-field__label cu-field__label--required" for="field_tenantId">ID Entreprise</label>
-            <input
-              type="number"
+            <select
               class="cu-field__input"
               name="tenantId"
               id="field_tenantId"
               data-cy="tenantId"
               formControlName="tenantId"
-              placeholder="Ex: 84062"
-              min="1"
-            />
+            >
+              <option [ngValue]="null">-- Sélectionner une entreprise --</option>
+              <option *ngFor="let t of tenantsCollection" [value]="t.id">
+                #{{ t.id }} — {{ t.name }}
+              </option>
+            </select>
             <div *ngIf="editForm.get('tenantId')!.invalid && (editForm.get('tenantId')!.dirty || editForm.get('tenantId')!.touched)">
               <span class="cu-field__error" *ngIf="editForm.get('tenantId')?.errors?.required">Ce champ est obligatoire.</span>
             </div>

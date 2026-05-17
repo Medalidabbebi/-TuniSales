@@ -2,13 +2,15 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 import { ClientFormService, ClientFormGroup } from './client-form.service';
 import { IClient } from '../client.model';
 import { ClientService } from '../service/client.service';
 import { ClientType } from 'app/entities/enumerations/client-type.model';
 import { ClientStatus } from 'app/entities/enumerations/client-status.model';
+import { ITenant } from 'app/entities/PlatformService/tenant/tenant.model';
+import { TenantService } from 'app/entities/PlatformService/tenant/service/tenant.service';
 
 @Component({
   selector: 'jhi-client-update',
@@ -21,13 +23,15 @@ export class ClientUpdateComponent implements OnInit {
   client: IClient | null = null;
   clientTypeValues = Object.keys(ClientType);
   clientStatusValues = Object.keys(ClientStatus);
+  tenantsCollection: ITenant[] = [];
 
   editForm: ClientFormGroup = this.clientFormService.createClientFormGroup();
 
   constructor(
     protected clientService: ClientService,
     protected clientFormService: ClientFormService,
-    protected activatedRoute: ActivatedRoute,
+    protected tenantService: TenantService,
+    protected activatedRoute: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
@@ -37,6 +41,11 @@ export class ClientUpdateComponent implements OnInit {
         this.updateForm(client);
       }
     });
+
+    this.tenantService
+      .query({ size: 1000 })
+      .pipe(map((res: HttpResponse<ITenant[]>) => res.body ?? []))
+      .subscribe((tenants: ITenant[]) => (this.tenantsCollection = tenants));
   }
 
   previousState(): void {
