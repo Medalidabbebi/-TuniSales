@@ -295,7 +295,7 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
       case 0:
         return this.offerForm.controls.clientId.valid;
       case 1:
-        return this.lines.length > 0 && this.lines.valid;
+        return this.lines.length > 0 && this.lines.valid && !this.hasOutOfStockProducts();
       case 2:
         return this.offerForm.controls.globalDiscountPct.valid;
       case 3:
@@ -309,7 +309,7 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
     if (!this.offerForm.controls.clientId.valid) {
       return 0;
     }
-    if (!(this.lines.length > 0 && this.lines.valid)) {
+    if (!(this.lines.length > 0 && this.lines.valid) || this.hasOutOfStockProducts()) {
       return 1;
     }
     if (!this.offerForm.controls.globalDiscountPct.valid) {
@@ -505,8 +505,34 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
     return forkJoin(requests);
   }
 
+  hasOutOfStockProducts(): boolean {
+    return this.lines.controls.some(lineGroup => {
+      const productId = Number(lineGroup.get('productId')?.value ?? 0);
+      if (!productId) return false;
+      return (this.availableByProduct.get(productId) ?? 0) === 0;
+    });
+  }
+
   private stockQuantityValidator(): ValidatorFn {
-    return (_control: AbstractControl): ValidationErrors | null => null;
+    return (control: AbstractControl): ValidationErrors | null => {
+      const quantity = Number(control.value ?? 0);
+      if (quantity <= 0) return null;
+
+      const lineGroup = control.parent as FormGroup | null;
+      if (!lineGroup) return null;
+
+      const productId = Number(lineGroup.get('productId')?.value ?? 0);
+      if (!productId) return null;
+
+      const available = this.availableByProduct.get(productId) ?? 0;
+      if (available === 0) {
+        return { outOfStock: true };
+      }
+      if (quantity > available) {
+        return { exceedsStock: { requested: quantity, available } };
+      }
+      return null;
+    };
   }
 
   private loadOptions(): void {

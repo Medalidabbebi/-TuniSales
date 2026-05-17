@@ -486,3 +486,25 @@ $oc-radius:    12px;
   .oc-stepper { gap: 0; }
   .oc-step__label { display: none; }
 }
+
+// ── Stock error inline ──────────────────────────────────────────
+.oc-stock-error {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 6px;
+  padding: 5px 10px;
+  background: #fee2e2;
+  color: #dc2626;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid #fca5a5;
+  animation: oc-shake 0.3s ease;
+}
+
+@keyframes oc-shake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-4px); }
+  75%       { transform: translateX(4px); }
+}

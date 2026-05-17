@@ -113,6 +113,11 @@
         <fa-icon icon="exclamation-triangle"></fa-icon> {{ stockWarning }}
       </div>
 
+      <div class="oc-alert oc-alert--danger" *ngIf="hasOutOfStockProducts()">
+        <fa-icon icon="times-circle"></fa-icon>
+        <strong>Stock insuffisant :</strong> un ou plusieurs produits sélectionnés n'ont plus de stock disponible. Retirez-les ou choisissez d'autres produits.
+      </div>
+
       <div formArrayName="lines" class="oc-lines">
         <div class="oc-line-card" *ngFor="let line of lines.controls; let i = index" [formGroupName]="i">
           <div class="row g-2 align-items-start">
@@ -198,6 +203,9 @@
                   [class.oc-badge--green]="(getAvailableStock(line.controls.productId.value) ?? 0) > 0"
                   [class.oc-badge--red]="(getAvailableStock(line.controls.productId.value) ?? 0) === 0">
                   Stock : {{ getAvailableStock(line.controls.productId.value) ?? 0 }}
+                </span>
+                <span class="oc-stock-error" *ngIf="line.controls.productId.value && (getAvailableStock(line.controls.productId.value) ?? 0) === 0">
+                  <fa-icon icon="ban"></fa-icon> Rupture de stock — impossible d'ajouter
                 </span>
               </div>
             </div>
