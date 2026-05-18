@@ -1,68 +1,123 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <div *ngIf="stockItem">
-      <h2 data-cy="stockItemDetailsHeading">
-        <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.detail.title">Stock Item</span>
-      </h2>
+<div class="sid-page" *ngIf="stockItem">
 
-      <hr />
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
 
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ stockItem.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.tenantId">Tenant Id</span></dt>
-        <dd>
-          <span>{{ stockItem.tenantId }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.productId">Product Id</span></dt>
-        <dd>
-          <span>{{ stockItem.productId }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.productName">Product Name</span></dt>
-        <dd>
-          <span>{{ stockItem.productName }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.imei">Imei</span></dt>
-        <dd>
-          <span>{{ stockItem.imei }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.status">Status</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'tuniSalesGatewayApp.StockItemStatus.' + stockItem.status }}">{{ stockItem.status }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.isDeleted">Is Deleted</span></dt>
-        <dd>
-          <span>{{ stockItem.isDeleted }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.acquiredAt">Acquired At</span></dt>
-        <dd>
-          <span>{{ stockItem.acquiredAt | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.updatedAt">Updated At</span></dt>
-        <dd>
-          <span>{{ stockItem.updatedAt | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockItem.warehouse">Warehouse</span></dt>
-        <dd>
-          <div *ngIf="stockItem.warehouse">
-            <a [routerLink]="['/warehouse', stockItem.warehouse.id, 'view']">{{ stockItem.warehouse.name }}</a>
-          </div>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+  <!-- ── Header ──────────────────────────────────────────────── -->
+  <div class="sid-header">
+    <div class="sid-header__left">
+      <button class="sid-back-btn" (click)="previousState()" title="Retour">
+        <fa-icon icon="arrow-left"></fa-icon>
       </button>
-
-      <button type="button" [routerLink]="['/stock-item', stockItem.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
-      </button>
+      <div class="sid-header__icon">
+        <fa-icon icon="box"></fa-icon>
+      </div>
+      <div>
+        <h1 class="sid-header__title">Stock Item <span class="sid-header__id">#{{ stockItem.id }}</span></h1>
+        <p class="sid-header__sub">Détail de l'article en stock</p>
+      </div>
+    </div>
+    <div class="sid-header__actions">
+      <span class="sid-status-badge sid-status-badge--{{ (stockItem.status ?? 'unknown').toLowerCase() }}">
+        {{ stockItem.status ?? '—' }}
+      </span>
+      <a [routerLink]="['/stock-item', stockItem.id, 'edit']" class="sid-btn sid-btn--primary">
+        <fa-icon icon="pencil-alt"></fa-icon> Modifier
+      </a>
     </div>
   </div>
+
+  <!-- ── Content grid ───────────────────────────────────────── -->
+  <div class="sid-grid">
+
+    <!-- Produit -->
+    <div class="sid-card">
+      <div class="sid-card__header">
+        <fa-icon icon="tag" class="sid-card__header-icon"></fa-icon>
+        <span>Produit</span>
+      </div>
+      <div class="sid-card__body">
+        <div class="sid-product-avatar">{{ (stockItem.productName || 'P').charAt(0).toUpperCase() }}</div>
+        <div class="sid-field">
+          <span class="sid-field__label">Nom</span>
+          <span class="sid-field__value sid-field__value--bold">{{ stockItem.productName || '—' }}</span>
+        </div>
+        <div class="sid-field">
+          <span class="sid-field__label">ID Produit</span>
+          <span class="sid-field__value"><code class="sid-code">#{{ stockItem.productId }}</code></span>
+        </div>
+        <div class="sid-field">
+          <span class="sid-field__label">IMEI</span>
+          <span class="sid-field__value">
+            <code class="sid-imei" *ngIf="stockItem.imei">{{ stockItem.imei }}</code>
+            <span class="sid-muted" *ngIf="!stockItem.imei">Non renseigné</span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Entrepôt -->
+    <div class="sid-card">
+      <div class="sid-card__header">
+        <fa-icon icon="warehouse" class="sid-card__header-icon"></fa-icon>
+        <span>Entrepôt</span>
+      </div>
+      <div class="sid-card__body">
+        <div class="sid-field" *ngIf="stockItem.warehouse">
+          <span class="sid-field__label">Nom</span>
+          <a [routerLink]="['/warehouse', stockItem.warehouse.id, 'view']" class="sid-link">
+            <fa-icon icon="warehouse"></fa-icon>
+            {{ stockItem.warehouse.name }}
+          </a>
+        </div>
+        <div class="sid-field" *ngIf="!stockItem.warehouse">
+          <span class="sid-muted">Aucun entrepôt assigné</span>
+        </div>
+        <div class="sid-field">
+          <span class="sid-field__label">Tenant ID</span>
+          <span class="sid-field__value"><code class="sid-code">{{ stockItem.tenantId }}</code></span>
+        </div>
+        <div class="sid-field">
+          <span class="sid-field__label">Archivé</span>
+          <span class="sid-bool" [class.sid-bool--yes]="stockItem.isDeleted">
+            <fa-icon [icon]="stockItem.isDeleted ? 'check' : 'times'"></fa-icon>
+            {{ stockItem.isDeleted ? 'Oui' : 'Non' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dates -->
+    <div class="sid-card sid-card--full">
+      <div class="sid-card__header">
+        <fa-icon icon="calendar-alt" class="sid-card__header-icon"></fa-icon>
+        <span>Chronologie</span>
+      </div>
+      <div class="sid-card__body sid-timeline">
+        <div class="sid-timeline__item">
+          <div class="sid-timeline__dot sid-timeline__dot--green"></div>
+          <div>
+            <div class="sid-timeline__label">Date d'acquisition</div>
+            <div class="sid-timeline__value">{{ stockItem.acquiredAt | formatMediumDatetime }}</div>
+          </div>
+        </div>
+        <div class="sid-timeline__item" *ngIf="stockItem.updatedAt">
+          <div class="sid-timeline__dot sid-timeline__dot--blue"></div>
+          <div>
+            <div class="sid-timeline__label">Dernière mise à jour</div>
+            <div class="sid-timeline__value">{{ stockItem.updatedAt | formatMediumDatetime }}</div>
+          </div>
+        </div>
+        <div class="sid-timeline__item" *ngIf="!stockItem.updatedAt">
+          <div class="sid-timeline__dot sid-timeline__dot--muted"></div>
+          <div>
+            <div class="sid-timeline__label">Dernière mise à jour</div>
+            <div class="sid-timeline__value sid-muted">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </div>

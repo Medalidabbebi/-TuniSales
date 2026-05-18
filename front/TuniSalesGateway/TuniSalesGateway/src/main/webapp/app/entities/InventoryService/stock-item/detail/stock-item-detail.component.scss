@@ -1,0 +1,334 @@
+// ── Variables ──────────────────────────────────────────────────────
+$sid-primary:    #0891b2;
+$sid-primary-lt: #cffafe;
+$sid-green:      #16a34a;
+$sid-green-lt:   #dcfce7;
+$sid-blue:       #2563eb;
+$sid-blue-lt:    #dbeafe;
+$sid-red:        #dc2626;
+$sid-red-lt:     #fee2e2;
+$sid-text:       #0f172a;
+$sid-text-muted: #64748b;
+$sid-border:     #e2e8f0;
+$sid-surface:    #ffffff;
+$sid-bg:         #f0fafa;
+$sid-shadow:     0 1px 3px rgba(0,0,0,.07), 0 1px 2px rgba(0,0,0,.04);
+$sid-shadow-md:  0 4px 14px rgba(0,0,0,.08);
+$sid-radius:     12px;
+$sid-radius-sm:  8px;
+$sid-radius-xs:  6px;
+
+// ── Parent override ────────────────────────────────────────────────
+.tsg-content:has(jhi-stock-item-detail) {
+  padding: 0 !important;
+}
+
+// ── Page ──────────────────────────────────────────────────────────
+.sid-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 28px 32px 40px;
+  min-height: calc(100vh - 64px);
+  background: $sid-bg;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+// ── Header ────────────────────────────────────────────────────────
+.sid-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px;
+    height: 52px;
+    border-radius: $sid-radius;
+    background: $sid-primary;
+    color: #fff;
+    font-size: 22px;
+    box-shadow: 0 4px 12px rgba(8,145,178,.35);
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $sid-text;
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  &__id {
+    color: $sid-primary;
+    font-weight: 800;
+  }
+
+  &__sub {
+    color: $sid-text-muted;
+    font-size: 0.85rem;
+    margin: 3px 0 0;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+// ── Back button ───────────────────────────────────────────────────
+.sid-back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: $sid-radius-sm;
+  border: 1px solid $sid-border;
+  background: $sid-surface;
+  color: $sid-text-muted;
+  cursor: pointer;
+  transition: all .15s;
+  flex-shrink: 0;
+
+  &:hover { background: #f1f5f9; color: $sid-text; }
+}
+
+// ── Buttons ───────────────────────────────────────────────────────
+.sid-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: $sid-radius-sm;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: all .18s;
+
+  &--primary {
+    background: $sid-primary;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(8,145,178,.3);
+    &:hover { background: darken($sid-primary, 8%); color: #fff; }
+  }
+}
+
+// ── Status badges ─────────────────────────────────────────────────
+.sid-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+
+  &--available   { background: $sid-green-lt;  color: $sid-green; }
+  &--sold        { background: #1e293b;         color: #f8fafc; }
+  &--reserved    { background: $sid-primary-lt; color: $sid-primary; }
+  &--allocated   { background: $sid-blue-lt;    color: $sid-blue; }
+  &--defective   { background: $sid-red-lt;     color: $sid-red; }
+  &--missing     { background: $sid-red-lt;     color: $sid-red; }
+  &--in_transit  { background: #fef3c7;         color: #d97706; }
+  &--deployed    { background: #e2e8f0;         color: #475569; }
+  &--retired     { background: #e2e8f0;         color: #64748b; }
+  &--unknown     { background: #f1f5f9;         color: $sid-text-muted; }
+}
+
+// ── Grid ──────────────────────────────────────────────────────────
+.sid-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+
+  @media (max-width: 767px) { grid-template-columns: 1fr; }
+}
+
+// ── Cards ─────────────────────────────────────────────────────────
+.sid-card {
+  background: $sid-surface;
+  border: 1px solid $sid-border;
+  border-radius: $sid-radius;
+  box-shadow: $sid-shadow;
+  overflow: hidden;
+  transition: box-shadow .2s;
+
+  &:hover { box-shadow: $sid-shadow-md; }
+
+  &--full { grid-column: 1 / -1; }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    background: #f0fafa;
+    border-bottom: 1px solid $sid-border;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: $sid-text-muted;
+  }
+
+  &__header-icon { color: $sid-primary; font-size: 14px; }
+
+  &__body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+}
+
+// ── Product avatar ────────────────────────────────────────────────
+.sid-product-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: $sid-radius;
+  background: linear-gradient(135deg, $sid-primary, #7c3aed);
+  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+// ── Fields ────────────────────────────────────────────────────────
+.sid-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid $sid-border;
+
+  &:last-child { border-bottom: none; padding-bottom: 0; }
+
+  &__label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: $sid-text-muted;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    white-space: nowrap;
+  }
+
+  &__value {
+    font-size: 0.9rem;
+    color: $sid-text;
+    text-align: right;
+
+    &--bold { font-weight: 700; font-size: 1rem; }
+  }
+}
+
+// ── Code / IMEI ───────────────────────────────────────────────────
+.sid-code {
+  background: #f1f5f9;
+  color: $sid-primary;
+  padding: 2px 8px;
+  border-radius: $sid-radius-xs;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.sid-imei {
+  background: #f1f5f9;
+  color: $sid-primary;
+  padding: 4px 10px;
+  border-radius: $sid-radius-xs;
+  font-size: 0.82rem;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  letter-spacing: .04em;
+}
+
+// ── Link ──────────────────────────────────────────────────────────
+.sid-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: $sid-primary;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: color .15s;
+
+  &:hover { color: darken($sid-primary, 12%); }
+}
+
+// ── Boolean ───────────────────────────────────────────────────────
+.sid-bool {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: $sid-text-muted;
+
+  &--yes { color: $sid-red; }
+}
+
+// ── Timeline ──────────────────────────────────────────────────────
+.sid-timeline {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  &__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-top: 4px;
+    flex-shrink: 0;
+
+    &--green  { background: $sid-green; box-shadow: 0 0 0 3px $sid-green-lt; }
+    &--blue   { background: $sid-blue;  box-shadow: 0 0 0 3px $sid-blue-lt; }
+    &--muted  { background: $sid-border; }
+  }
+
+  &__label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: $sid-text-muted;
+    margin-bottom: 4px;
+  }
+
+  &__value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: $sid-text;
+  }
+}
+
+// ── Muted ─────────────────────────────────────────────────────────
+.sid-muted { color: $sid-text-muted; font-style: italic; font-size: 0.85rem; }
