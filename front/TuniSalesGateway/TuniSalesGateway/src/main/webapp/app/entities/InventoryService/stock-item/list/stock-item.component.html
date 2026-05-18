@@ -73,57 +73,61 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of stockItems; trackBy: trackId"
-              [class.si-row--deleted]="item.isDeleted">
+          <tr *ngFor="let g of groupedItems"
+              [class.si-row--deleted]="g.representative.isDeleted">
 
             <!-- Produit -->
             <td>
               <div class="si-product-cell">
-                <div class="si-avatar">{{ (item.productName || 'S').charAt(0).toUpperCase() }}</div>
+                <div class="si-avatar">{{ (g.representative.productName || 'S').charAt(0).toUpperCase() }}</div>
                 <div>
-                  <div class="si-product-name">{{ item.productName || 'Produit inconnu' }}</div>
-                  <div class="si-product-id">ID : {{ item.productId }}</div>
+                  <div class="si-product-name">
+                    {{ g.representative.productName || 'Produit inconnu' }}
+                    <span class="si-qty-badge" *ngIf="g.count > 1">× {{ g.count }}</span>
+                  </div>
+                  <div class="si-product-id">ID : {{ g.representative.productId }}</div>
                 </div>
               </div>
             </td>
 
             <!-- IMEI -->
             <td>
-              <code class="si-imei" *ngIf="item.imei">{{ item.imei }}</code>
-              <span class="si-muted" *ngIf="!item.imei">—</span>
+              <code class="si-imei" *ngIf="g.count === 1 && g.representative.imei">{{ g.representative.imei }}</code>
+              <span class="si-multi-imei" *ngIf="g.count > 1">{{ g.count }} IMEI différents</span>
+              <span class="si-muted" *ngIf="g.count === 1 && !g.representative.imei">—</span>
             </td>
 
             <!-- Statut -->
             <td>
-              <span class="si-status-badge" [ngClass]="'si-status-badge--' + (item.status ?? 'unknown').toLowerCase()">
-                {{ item.status ?? '—' }}
+              <span class="si-status-badge" [ngClass]="'si-status-badge--' + (g.representative.status ?? 'unknown').toLowerCase()">
+                {{ g.representative.status ?? '—' }}
               </span>
             </td>
 
             <!-- Entrepôt -->
             <td>
-              <a *ngIf="item.warehouse" [routerLink]="['/warehouse', item.warehouse.id, 'view']" class="si-warehouse-link">
+              <a *ngIf="g.representative.warehouse" [routerLink]="['/warehouse', g.representative.warehouse.id, 'view']" class="si-warehouse-link">
                 <fa-icon icon="warehouse"></fa-icon>
-                {{ item.warehouse.name }}
+                {{ g.representative.warehouse.name }}
               </a>
-              <span class="si-muted" *ngIf="!item.warehouse">—</span>
+              <span class="si-muted" *ngIf="!g.representative.warehouse">—</span>
             </td>
 
             <!-- Date -->
             <td>
-              <span class="si-date">{{ item.acquiredAt | formatMediumDatetime }}</span>
+              <span class="si-date">{{ g.representative.acquiredAt | formatMediumDatetime }}</span>
             </td>
 
             <!-- Actions -->
             <td>
               <div class="si-actions">
-                <a [routerLink]="['/stock-item', item.id, 'view']" class="si-action-btn si-action-btn--view" title="Voir">
+                <a [routerLink]="['/stock-item', g.representative.id, 'view']" class="si-action-btn si-action-btn--view" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/stock-item', item.id, 'edit']" class="si-action-btn si-action-btn--edit" title="Modifier">
+                <a *ngIf="g.count === 1" [routerLink]="['/stock-item', g.representative.id, 'edit']" class="si-action-btn si-action-btn--edit" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(item)" class="si-action-btn si-action-btn--delete" title="Supprimer">
+                <button *ngIf="g.count === 1" (click)="delete(g.representative)" class="si-action-btn si-action-btn--delete" title="Supprimer">
                   <fa-icon icon="trash"></fa-icon>
                 </button>
               </div>

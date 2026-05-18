@@ -18,8 +18,14 @@ import { StockItemDeleteDialogComponent } from '../delete/stock-item-delete-dial
   styleUrls: ['./stock-item.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
+export interface StockGroup {
+  representative: IStockItem;
+  count: number;
+}
+
 export class StockItemComponent implements OnInit {
   stockItems?: IStockItem[];
+  groupedItems: StockGroup[] = [];
   isLoading = false;
 
   predicate = 'id';
@@ -118,10 +124,29 @@ export class StockItemComponent implements OnInit {
     this.fillComponentAttributesFromResponseHeader(response.headers);
     const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
     this.stockItems = dataFromBody;
+    this.groupedItems = this.computeGroups(dataFromBody);
+  }
+
+  private computeGroups(items: IStockItem[]): StockGroup[] {
+    const map = new Map<string, StockGroup>();
+    for (const item of items) {
+      const sec = item.acquiredAt ? item.acquiredAt.format('YYYY-MM-DDTHH:mm:ss') : 'unknown';
+      const key = `${item.productId}_${sec}_${item.status ?? ''}_${item.warehouse?.id ?? 0}`;
+      if (map.has(key)) {
+        map.get(key)!.count++;
+      } else {
+        map.set(key, { representative: item, count: 1 });
+      }
+    }
+    return Array.from(map.values());
   }
 
   protected fillComponentAttributesFromResponseBody(data: IStockItem[] | null): IStockItem[] {
-    return data ?? [];
+    return (data ?? []).sort((a, b) => {
+      const da = a.acquiredAt?.valueOf() ?? 0;
+      const db = b.acquiredAt?.valueOf() ?? 0;
+      return db - da;
+    });
   }
 
   protected fillComponentAttributesFromResponseHeader(headers: HttpHeaders): void {
