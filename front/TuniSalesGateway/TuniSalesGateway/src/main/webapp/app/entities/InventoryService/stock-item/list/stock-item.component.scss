@@ -415,6 +415,197 @@ $si-radius-xs:  6px;
   font-style: italic;
 }
 
+// ════════════════════════════════════════════════════════════════
+// ── STOCK ITEM DETAIL PAGE  (sid-*) ─────────────────────────────
+// ════════════════════════════════════════════════════════════════
+.tsg-content:has(jhi-stock-item-detail) { padding: 0 !important; }
+
+.sid-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px 28px 36px;
+  min-height: calc(100vh - 64px);
+  background: $si-bg;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+// Header
+.sid-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+
+  &__left { display: flex; align-items: flex-start; gap: 12px; }
+
+  &__icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 48px; height: 48px; border-radius: $si-radius;
+    background: $si-primary; color: #fff; font-size: 20px;
+    box-shadow: 0 4px 12px rgba(8,145,178,.35); flex-shrink: 0;
+  }
+
+  &__title { font-size: 1.35rem; font-weight: 700; color: $si-text; margin: 0; line-height: 1.25; }
+  &__id    { color: $si-primary; font-weight: 800; }
+  &__sub   { color: $si-text-muted; font-size: 0.82rem; margin: 4px 0 0; }
+  &__actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+}
+
+.sid-back-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: $si-radius-sm;
+  border: 1.5px solid $si-border; background: $si-surface;
+  color: $si-text-muted; cursor: pointer; transition: all .15s;
+  flex-shrink: 0; margin-top: 2px;
+  &:hover { background: #f1f5f9; color: $si-text; }
+}
+
+.sid-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 16px; border-radius: $si-radius-sm;
+  font-size: 0.85rem; font-weight: 600; cursor: pointer;
+  border: none; text-decoration: none; transition: all .18s;
+  &--primary {
+    background: $si-primary; color: #fff;
+    box-shadow: 0 2px 8px rgba(8,145,178,.3);
+    &:hover { background: #0e7490; color: #fff; }
+  }
+}
+
+// Status badges for detail
+.sid-status-badge {
+  display: inline-flex; align-items: center;
+  padding: 5px 14px; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em;
+  &--available  { background: $si-green-lt;  color: $si-green; }
+  &--sold       { background: #1e293b;        color: #f8fafc; }
+  &--reserved   { background: $si-primary-lt; color: $si-primary; }
+  &--allocated  { background: #dbeafe;        color: #1d4ed8; }
+  &--defective  { background: $si-red-lt;     color: $si-red; }
+  &--missing    { background: $si-red-lt;     color: $si-red; }
+  &--in_transit { background: $si-orange-lt;  color: $si-orange; }
+  &--deployed   { background: $si-dark-lt;    color: $si-dark; }
+  &--retired    { background: $si-dark-lt;    color: $si-text-muted; }
+  &--unknown    { background: #f1f5f9;        color: $si-text-muted; }
+}
+
+// Grid
+.sid-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  @media (max-width: 900px) { grid-template-columns: 1fr; }
+}
+
+// Cards
+.sid-card {
+  background: $si-surface;
+  border: 2px solid $si-border;
+  border-radius: $si-radius;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08);
+  overflow: hidden;
+  &--full { grid-column: 1 / -1; }
+
+  &__header {
+    display: flex; align-items: center; gap: 9px;
+    padding: 12px 18px;
+    background: linear-gradient(90deg, rgba(8,145,178,.10) 0%, rgba(8,145,178,.03) 100%);
+    border-bottom: 2px solid $si-border;
+    font-size: 0.75rem; font-weight: 800;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: $si-primary;
+  }
+  &__header-icon { font-size: 13px; }
+  &__body { padding: 18px; display: flex; flex-direction: column; gap: 0; }
+}
+
+// Product avatar in detail
+.sid-product-avatar {
+  display: flex; align-items: center; justify-content: center;
+  width: 52px; height: 52px; border-radius: $si-radius;
+  background: linear-gradient(135deg, $si-primary, $si-purple);
+  color: #fff; font-size: 1.3rem; font-weight: 700;
+  text-transform: uppercase; margin-bottom: 14px;
+  box-shadow: 0 4px 12px rgba(8,145,178,.3);
+}
+
+// Fields
+.sid-field {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 11px 0; border-bottom: 1px solid #f1f5f9;
+  &:last-child { border-bottom: none; padding-bottom: 0; }
+
+  &__label {
+    font-size: 0.75rem; font-weight: 700; color: $si-text-muted;
+    text-transform: uppercase; letter-spacing: .06em;
+    white-space: nowrap; flex-shrink: 0;
+  }
+  &__value {
+    font-size: 0.9rem; color: $si-text; text-align: right; word-break: break-all;
+    &--bold { font-weight: 700; font-size: 1rem; }
+  }
+}
+
+// Code / IMEI in detail
+.sid-code {
+  background: $si-primary-lt; color: $si-primary;
+  padding: 2px 8px; border-radius: $si-radius-xs;
+  font-size: 0.8rem; font-weight: 700;
+}
+.sid-imei {
+  background: $si-primary-lt; color: $si-primary;
+  padding: 4px 10px; border-radius: $si-radius-xs;
+  font-size: 0.78rem; font-family: 'Courier New', monospace;
+  font-weight: 700; letter-spacing: .04em;
+  border: 1px solid rgba(8,145,178,.2);
+}
+
+.sid-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  color: $si-primary; text-decoration: none; font-weight: 600;
+  font-size: 0.9rem; transition: color .15s;
+  &:hover { color: #0e7490; }
+}
+
+.sid-bool {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 0.82rem; font-weight: 600;
+  padding: 3px 10px; border-radius: 20px;
+  background: $si-green-lt; color: $si-green;
+  &--yes { background: $si-red-lt; color: $si-red; }
+}
+
+// Timeline
+.sid-timeline {
+  display: flex; flex-direction: column; gap: 0;
+
+  &__item {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 14px 0; border-bottom: 1px solid #f1f5f9;
+    &:last-child { border-bottom: none; padding-bottom: 0; }
+  }
+
+  &__dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    margin-top: 3px; flex-shrink: 0;
+    &--green { background: $si-green;  box-shadow: 0 0 0 4px $si-green-lt; }
+    &--blue  { background: #2563eb;    box-shadow: 0 0 0 4px #dbeafe; }
+    &--muted { background: $si-border; box-shadow: 0 0 0 4px #f1f5f9; }
+  }
+
+  &__label {
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .07em; color: $si-text-muted; margin-bottom: 5px;
+  }
+  &__value { font-size: 0.95rem; font-weight: 600; color: $si-text; }
+}
+
+.sid-muted { color: $si-text-muted; font-style: italic; font-size: 0.85rem; }
+
 // ── Pagination ────────────────────────────────────────────────────
 .si-pagination {
   display: flex;
