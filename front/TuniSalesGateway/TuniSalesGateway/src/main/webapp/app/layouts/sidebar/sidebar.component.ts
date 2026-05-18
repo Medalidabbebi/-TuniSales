@@ -47,8 +47,8 @@ export class SidebarComponent implements OnInit {
       icon: 'chart-line',
       children: [
         { label: 'Clients', translateKey: 'global.menu.entities.businessServiceClient', icon: 'users', route: '/client' },
-        { label: 'Sales Offers', translateKey: 'global.menu.salesOffers', icon: 'file-signature', route: '/sales-offer' },
         { label: 'Orders', translateKey: 'global.menu.entities.businessServiceOrder', icon: 'shopping-cart', route: '/order' },
+        { label: 'Sales Offers', translateKey: 'global.menu.salesOffers', icon: 'file-signature', route: '/sales-offer' },
         { label: 'Invoices', translateKey: 'global.menu.entities.businessServiceInvoice', icon: 'file-invoice-dollar', route: '/invoice' },
         { label: 'Products', translateKey: 'global.menu.entities.businessServiceProduct', icon: 'box', route: '/product' },
         { label: 'Price Lists', translateKey: 'global.menu.entities.businessServicePriceList', icon: 'tags', route: '/price-list' },
