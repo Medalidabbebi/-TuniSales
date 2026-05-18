@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
 import dayjs from 'dayjs/esm';
 import { DATE_TIME_FORMAT } from 'app/config/input.constants';
@@ -21,6 +21,7 @@ import { ProductService } from 'app/entities/BusinessService/product/service/pro
 })
 export class StockItemUpdateComponent implements OnInit {
   isSaving = false;
+  quantity = 1;
   stockItem: IStockItem | null = null;
   stockItemStatusValues = Object.keys(StockItemStatus);
   serverError: string | null = null;
@@ -75,11 +76,25 @@ export class StockItemUpdateComponent implements OnInit {
 
   save(): void {
     this.isSaving = true;
+    this.serverError = null;
     const stockItem = this.stockItemFormService.getStockItem(this.editForm);
     if (stockItem.id !== null) {
       this.subscribeToSaveResponse(this.stockItemService.update(stockItem));
     } else {
-      this.subscribeToSaveResponse(this.stockItemService.create(stockItem));
+      const count = Math.max(1, Math.floor(this.quantity ?? 1));
+      if (count === 1) {
+        this.subscribeToSaveResponse(this.stockItemService.create(stockItem));
+      } else {
+        const requests = Array.from({ length: count }, () =>
+          this.stockItemService.create({ ...stockItem, imei: null })
+        );
+        forkJoin(requests)
+          .pipe(finalize(() => (this.isSaving = false)))
+          .subscribe({
+            next: () => { this.serverError = null; this.previousState(); },
+            error: (err: any) => this.onSaveError(err),
+          });
+      }
     }
   }
 
