@@ -93,8 +93,8 @@
               </div>
             </div>
 
-            <!-- IMEI (masqué si quantité > 1) -->
-            <div class="mb-3" *ngIf="quantity <= 1 || editForm.controls.id.value">
+            <!-- IMEI -->
+            <div class="mb-3">
               <label class="form-label fw-semibold" for="field_imei">
                 IMEI <span class="text-muted fw-normal">(optionnel)</span>
               </label>
@@ -113,10 +113,6 @@
               <div class="invalid-feedback">
                 L'IMEI doit faire exactement 15 caractères s'il est renseigné.
               </div>
-            </div>
-            <div class="alert alert-info py-2 px-3 mb-3" *ngIf="quantity > 1 && !editForm.controls.id.value" style="font-size:0.85rem">
-              <fa-icon icon="info-circle" class="me-1"></fa-icon>
-              Le champ IMEI est désactivé pour une création multiple (chaque article aura un IMEI vide).
             </div>
 
             <!-- Statut -->
