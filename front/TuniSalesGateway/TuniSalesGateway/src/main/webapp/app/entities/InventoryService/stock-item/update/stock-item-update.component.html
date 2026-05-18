@@ -85,6 +85,7 @@
                 id="field_quantity"
                 [(ngModel)]="quantity"
                 [ngModelOptions]="{standalone: true}"
+                (ngModelChange)="onQuantityChange($event)"
                 min="1"
                 max="500"
               />
@@ -96,22 +97,29 @@
             <!-- IMEI -->
             <div class="mb-3">
               <label class="form-label fw-semibold" for="field_imei">
-                IMEI <span class="text-muted fw-normal">(optionnel)</span>
+                IMEI
+                <span class="text-danger" *ngIf="quantity <= 1 || editForm.controls.id.value"> *</span>
+                <span class="text-muted fw-normal" *ngIf="quantity > 1 && !editForm.controls.id.value"> (généré automatiquement)</span>
               </label>
               <input
                 type="text"
                 class="form-control"
                 id="field_imei"
                 formControlName="imei"
-                placeholder="15 chiffres — laisser vide si non applicable"
+                [placeholder]="(quantity > 1 && !editForm.controls.id.value) ? 'Sera généré automatiquement pour chaque article' : '15 chiffres exactement'"
                 [class.is-invalid]="editForm.get('imei')!.invalid && editForm.get('imei')!.touched"
+                [readonly]="quantity > 1 && !editForm.controls.id.value"
                 maxlength="15"
               />
-              <div class="form-text text-muted">
-                Chaque IMEI doit être unique. Laissez vide pour les produits sans numéro de série.
+              <div class="form-text text-info" *ngIf="quantity > 1 && !editForm.controls.id.value">
+                <fa-icon icon="info-circle" class="me-1"></fa-icon>
+                Un IMEI unique à 15 chiffres sera généré automatiquement pour chaque article créé.
+              </div>
+              <div class="form-text text-muted" *ngIf="quantity <= 1 || editForm.controls.id.value">
+                Exactement 15 caractères. Chaque IMEI doit être unique.
               </div>
               <div class="invalid-feedback">
-                L'IMEI doit faire exactement 15 caractères s'il est renseigné.
+                L'IMEI est obligatoire et doit faire exactement 15 caractères.
               </div>
             </div>
 

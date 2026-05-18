@@ -68,7 +68,7 @@ export class StockItemFormService {
         validators: [Validators.maxLength(255)],
       }),
       imei: new FormControl(stockItemRawValue.imei, {
-        validators: [Validators.minLength(15), Validators.maxLength(15)],
+        validators: [Validators.required, Validators.minLength(15), Validators.maxLength(15)],
       }),
       status: new FormControl(stockItemRawValue.status, {
         validators: [Validators.required],

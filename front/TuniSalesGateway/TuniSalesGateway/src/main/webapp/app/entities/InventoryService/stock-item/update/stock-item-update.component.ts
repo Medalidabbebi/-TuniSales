@@ -3,6 +3,7 @@ import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
+import { Validators } from '@angular/forms';
 import dayjs from 'dayjs/esm';
 import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 
@@ -45,10 +46,26 @@ export class StockItemUpdateComponent implements OnInit {
 
   onProductChange(productId: string): void {
     const id = Number(productId);
+    this.editForm.patchValue({ productId: id });
     const selected = this.productsCollection.find(p => p.id === id);
     if (selected) {
       this.editForm.patchValue({ productName: selected.name ?? null });
     }
+  }
+
+  onQuantityChange(value: number): void {
+    const imeiCtrl = this.editForm.get('imei')!;
+    if (value > 1) {
+      imeiCtrl.clearValidators();
+      imeiCtrl.patchValue(null);
+    } else {
+      imeiCtrl.setValidators([Validators.required, Validators.minLength(15), Validators.maxLength(15)]);
+    }
+    imeiCtrl.updateValueAndValidity();
+  }
+
+  private generateImei(): string {
+    return Array.from({ length: 15 }, () => Math.floor(Math.random() * 10)).join('');
   }
 
   ngOnInit(): void {
@@ -86,7 +103,7 @@ export class StockItemUpdateComponent implements OnInit {
         this.subscribeToSaveResponse(this.stockItemService.create(stockItem));
       } else {
         const requests = Array.from({ length: count }, () =>
-          this.stockItemService.create({ ...stockItem, imei: null })
+          this.stockItemService.create({ ...stockItem, imei: this.generateImei() })
         );
         forkJoin(requests)
           .pipe(finalize(() => (this.isSaving = false)))
