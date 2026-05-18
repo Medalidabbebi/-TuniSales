@@ -390,19 +390,23 @@ $si-radius-xs:  6px;
                &:hover { background: $si-red; color: #fff; } }
 }
 
-// ── Quantity badge (grouped rows) ─────────────────────────────────
-.si-qty-badge {
+// ── Quantity column badge ─────────────────────────────────────────
+.si-qty-col-badge {
   display: inline-flex;
   align-items: center;
-  margin-left: 8px;
-  background: $si-primary;
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  padding: 2px 8px;
+  justify-content: center;
+  min-width: 32px;
+  padding: 3px 10px;
   border-radius: 20px;
-  letter-spacing: .04em;
-  vertical-align: middle;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: $si-dark-lt;
+  color: $si-text-muted;
+
+  &--multi {
+    background: $si-primary;
+    color: #fff;
+  }
 }
 
 .si-multi-imei {

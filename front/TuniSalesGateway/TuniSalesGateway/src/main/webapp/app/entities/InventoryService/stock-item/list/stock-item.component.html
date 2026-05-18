@@ -66,6 +66,7 @@
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
             <th jhiSortBy="productName"><span>Produit</span><fa-icon icon="sort" class="si-sort-icon"></fa-icon></th>
             <th jhiSortBy="imei"><span>IMEI</span><fa-icon icon="sort" class="si-sort-icon"></fa-icon></th>
+            <th><span>Quantité</span></th>
             <th jhiSortBy="status"><span>Statut</span><fa-icon icon="sort" class="si-sort-icon"></fa-icon></th>
             <th jhiSortBy="warehouse.name"><span>Entrepôt</span><fa-icon icon="sort" class="si-sort-icon"></fa-icon></th>
             <th jhiSortBy="acquiredAt"><span>Acquis le</span><fa-icon icon="sort" class="si-sort-icon"></fa-icon></th>
@@ -81,10 +82,7 @@
               <div class="si-product-cell">
                 <div class="si-avatar">{{ (g.representative.productName || 'S').charAt(0).toUpperCase() }}</div>
                 <div>
-                  <div class="si-product-name">
-                    {{ g.representative.productName || 'Produit inconnu' }}
-                    <span class="si-qty-badge" *ngIf="g.count > 1">× {{ g.count }}</span>
-                  </div>
+                  <div class="si-product-name">{{ g.representative.productName || 'Produit inconnu' }}</div>
                   <div class="si-product-id">ID : {{ g.representative.productId }}</div>
                 </div>
               </div>
@@ -95,6 +93,11 @@
               <code class="si-imei" *ngIf="g.count === 1 && g.representative.imei">{{ g.representative.imei }}</code>
               <span class="si-multi-imei" *ngIf="g.count > 1">{{ g.count }} IMEI différents</span>
               <span class="si-muted" *ngIf="g.count === 1 && !g.representative.imei">—</span>
+            </td>
+
+            <!-- Quantité -->
+            <td>
+              <span class="si-qty-col-badge" [class.si-qty-col-badge--multi]="g.count > 1">{{ g.count }}</span>
             </td>
 
             <!-- Statut -->
