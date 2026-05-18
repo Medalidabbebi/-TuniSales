@@ -127,10 +127,10 @@
                 <a [routerLink]="['/stock-item', g.representative.id, 'view']" class="si-action-btn si-action-btn--view" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a *ngIf="g.count === 1" [routerLink]="['/stock-item', g.representative.id, 'edit']" class="si-action-btn si-action-btn--edit" title="Modifier">
+                <a [routerLink]="['/stock-item', g.representative.id, 'edit']" class="si-action-btn si-action-btn--edit" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button *ngIf="g.count === 1" (click)="delete(g.representative)" class="si-action-btn si-action-btn--delete" title="Supprimer">
+                <button (click)="delete(g.representative)" class="si-action-btn si-action-btn--delete" title="Supprimer">
                   <fa-icon icon="trash"></fa-icon>
                 </button>
               </div>
