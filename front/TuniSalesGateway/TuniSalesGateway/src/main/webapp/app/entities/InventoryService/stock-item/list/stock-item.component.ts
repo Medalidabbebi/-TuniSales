@@ -12,17 +12,17 @@ import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/conf
 import { EntityArrayResponseType, StockItemService } from '../service/stock-item.service';
 import { StockItemDeleteDialogComponent } from '../delete/stock-item-delete-dialog.component';
 
+export interface StockGroup {
+  representative: IStockItem;
+  count: number;
+}
+
 @Component({
   selector: 'jhi-stock-item',
   templateUrl: './stock-item.component.html',
   styleUrls: ['./stock-item.component.scss'],
   encapsulation: ViewEncapsulation.None,
 })
-export interface StockGroup {
-  representative: IStockItem;
-  count: number;
-}
-
 export class StockItemComponent implements OnInit {
   stockItems?: IStockItem[];
   groupedItems: StockGroup[] = [];
