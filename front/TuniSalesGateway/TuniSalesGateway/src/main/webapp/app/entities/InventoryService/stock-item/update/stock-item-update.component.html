@@ -140,6 +140,24 @@
               <div class="invalid-feedback">Le statut est obligatoire.</div>
             </div>
 
+            <!-- Date d'acquisition -->
+            <div class="mb-3">
+              <label class="form-label fw-semibold" for="field_acquiredAt">
+                Date d'acquisition <span class="text-danger">*</span>
+              </label>
+              <input
+                type="datetime-local"
+                class="form-control"
+                id="field_acquiredAt"
+                formControlName="acquiredAt"
+                [class.is-invalid]="editForm.get('acquiredAt')!.invalid && editForm.get('acquiredAt')!.touched"
+              />
+              <div class="form-text text-muted" *ngIf="quantity > 1 && !editForm.controls.id.value">
+                Cette date sera appliquée à tous les {{ quantity }} articles créés.
+              </div>
+              <div class="invalid-feedback">La date d'acquisition est obligatoire.</div>
+            </div>
+
           </div>
         </div>
 
