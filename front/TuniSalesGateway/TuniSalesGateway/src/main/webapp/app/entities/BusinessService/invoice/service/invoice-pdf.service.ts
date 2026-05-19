@@ -341,9 +341,9 @@ export class InvoicePdfService {
     const stampX = ML, stampY = totY0, stampW = 82, stampH = y - totY0;
     doc.setDrawColor(...C.primary);
     doc.setLineWidth(0.6);
-    doc.setLineDash([2, 2]);
+    doc.setLineDashPattern([2, 2], 0);
     doc.rect(stampX, stampY, stampW, stampH, 'S');
-    doc.setLineDash([]);
+    doc.setLineDashPattern([], 0);
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(8);
