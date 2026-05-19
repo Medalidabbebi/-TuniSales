@@ -87,6 +87,9 @@
             <td><span class="text-muted small">{{ invoice.dueDate | formatMediumDatetime }}</span></td>
             <td>
               <div class="d-flex gap-1 justify-content-end">
+                <button (click)="downloadPdf(invoice)" class="btn btn-outline-danger btn-sm" title="Télécharger PDF">
+                  <fa-icon icon="file-pdf"></fa-icon>
+                </button>
                 <a [routerLink]="['/invoice', invoice.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>

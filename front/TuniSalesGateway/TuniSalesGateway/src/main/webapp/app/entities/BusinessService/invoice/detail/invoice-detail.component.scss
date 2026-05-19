@@ -71,6 +71,10 @@ $id-radius: 12px;
     background: $id-purple; color: #fff; border-color: $id-purple;
     &:hover { background: darken($id-purple, 6%); box-shadow: 0 3px 10px rgba($id-purple,.3); }
   }
+  &--pdf {
+    background: #dc2626; color: #fff; border-color: #dc2626;
+    &:hover { background: #b91c1c; box-shadow: 0 3px 10px rgba(220,38,38,.3); }
+  }
 }
 
 // ── Status Badge ──────────────────────────────────────────────────

@@ -30,6 +30,10 @@
         <span class="id-status-badge__dot"></span>
         {{ getStatusLabel(invoice.status) }}
       </span>
+      <button type="button" (click)="downloadPdf()" class="id-btn id-btn--pdf">
+        <fa-icon icon="file-pdf"></fa-icon>
+        Télécharger PDF
+      </button>
       <button type="button" [routerLink]="['/invoice', invoice.id, 'edit']" class="id-btn id-btn--primary">
         <fa-icon icon="pencil-alt"></fa-icon>
         Éditer

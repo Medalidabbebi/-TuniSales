@@ -2,6 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IInvoice } from '../invoice.model';
+import { InvoicePdfService } from '../service/invoice-pdf.service';
 
 @Component({
   selector: 'jhi-invoice-detail',
@@ -12,7 +13,7 @@ import { IInvoice } from '../invoice.model';
 export class InvoiceDetailComponent implements OnInit {
   invoice: IInvoice | null = null;
 
-  constructor(protected activatedRoute: ActivatedRoute) {}
+  constructor(protected activatedRoute: ActivatedRoute, private pdfService: InvoicePdfService) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ invoice }) => {
@@ -22,6 +23,12 @@ export class InvoiceDetailComponent implements OnInit {
 
   previousState(): void {
     window.history.back();
+  }
+
+  downloadPdf(): void {
+    if (this.invoice) {
+      this.pdfService.generate(this.invoice);
+    }
   }
 
   getStatusClass(status: string | null | undefined): string {
