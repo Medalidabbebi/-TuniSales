@@ -1,8 +1,8 @@
 package com.tunisales.gateway.web.rest;
 
+import com.tunisales.gateway.config.ApplicationProperties;
 import java.util.Base64;
 import java.util.Map;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,18 +14,11 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/sms")
 public class SmsResource {
 
-    @Value("${application.twilio.account-sid:}")
-    private String accountSid;
-
-    @Value("${application.twilio.auth-token:}")
-    private String authToken;
-
-    @Value("${application.twilio.from-number:}")
-    private String fromNumber;
-
+    private final ApplicationProperties.Twilio twilioProps;
     private final WebClient webClient;
 
-    public SmsResource(WebClient.Builder builder) {
+    public SmsResource(ApplicationProperties appProps, WebClient.Builder builder) {
+        this.twilioProps = appProps.getTwilio();
         this.webClient = builder.baseUrl("https://api.twilio.com").build();
     }
 
@@ -36,20 +29,21 @@ public class SmsResource {
 
     @PostMapping("/send")
     public Mono<ResponseEntity<Map<String, Object>>> send(@RequestBody SmsRequest req) {
-        if (accountSid == null || accountSid.isBlank()) {
+        String sid = twilioProps.getAccountSid();
+        if (sid == null || sid.isBlank()) {
             return Mono.just(ResponseEntity.badRequest()
                 .body(Map.of("success", false, "error", "Twilio non configuré sur le serveur.")));
         }
 
         String credentials = Base64.getEncoder()
-            .encodeToString((accountSid + ":" + authToken).getBytes());
+            .encodeToString((sid + ":" + twilioProps.getAuthToken()).getBytes());
 
         return webClient.post()
-            .uri("/2010-04-01/Accounts/{sid}/Messages.json", accountSid)
+            .uri("/2010-04-01/Accounts/{sid}/Messages.json", sid)
             .header("Authorization", "Basic " + credentials)
             .contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .body(BodyInserters.fromFormData("To", req.to)
-                .with("From", fromNumber)
+                .with("From", twilioProps.getFromNumber())
                 .with("Body", req.body))
             .retrieve()
             .bodyToMono(Map.class)
