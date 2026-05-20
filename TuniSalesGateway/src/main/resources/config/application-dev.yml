@@ -109,7 +109,7 @@ jhipster:
     authentication:
       jwt:
         # This token must be encoded using Base64 and be at least 256 bits long (you can type `openssl rand -base64 64` on your command line to generate a 512 bits one)
-        base64-secret: YzZlMjY1MDA0ZTEwNzE3NWU0ZWVjY2E4ODQyMTdkZGYzNjZkMmY2ZDVlMDVlYjE5ZTY5OTcxZDljYTI2ZTkyMDFmYzc0ZWI5ZjZkMDEzNGRlOGI4ZGU5YWEwYTZiYTViMTNkZjA5Zjg5ZWE4MDUyYzVmZDljNmQ5YThhOWE3Mzk=
+        base64-secret: YzZlMjY1MDA0ZTEwNzE3NWU0ZWVjY2E4ODQyMTdkZGYzNjZkMmY2ZDVlMDVlYjE5ZTY5OTcxZDljYTI2ZTkyMDFmYzc0ZWI5ZjZkMDEzNGRlOGI4ZGU5YWEwYTZiYTViMTNkZjA5Zjg5ZWE4MDUyYzVmZDljNmQ5YThhOWE3Mzk =
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000
@@ -131,4 +131,8 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
-# application:
+application:
+  twilio:
+    account-sid: 5c5602b1
+    auth-token: W0gTMUKB3SvaKNu0
+    from-number: TuniSales
