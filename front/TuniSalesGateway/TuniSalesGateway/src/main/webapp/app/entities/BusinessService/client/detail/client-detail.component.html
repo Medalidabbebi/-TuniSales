@@ -27,6 +27,9 @@
         <fa-icon icon="pencil-alt"></fa-icon>
         Modifier
       </a>
+      <button type="button" class="cd-btn cd-btn--ai" (click)="openEmailModal()">
+        <fa-icon icon="envelope"></fa-icon> Générer email
+      </button>
     </div>
   </div>
 
@@ -77,6 +80,20 @@
         <div class="cd-kpi-card__label">Statut</div>
       </div>
     </div>
+  </div>
+
+  <!-- Risk Score -->
+  <div class="cd-risk-card" *ngIf="riskScore">
+    <div class="cd-risk-card__header">
+      <span class="cd-risk-card__title">
+        <fa-icon icon="chart-bar"></fa-icon> Score de risque client
+      </span>
+      <span class="cd-risk-badge" [ngClass]="riskScore.colorClass">{{ riskScore.label }}</span>
+    </div>
+    <div class="cd-risk-bar-track">
+      <div class="cd-risk-bar" [ngClass]="riskScore.bar" [style.width.%]="riskScore.score"></div>
+    </div>
+    <div class="cd-risk-score-val">{{ riskScore.score | number:'1.0-0' }} / 100</div>
   </div>
 
   <!-- Grid: Informations + Statut & Crédit -->
@@ -177,6 +194,34 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- AI Summary -->
+  <div class="cd-ai-summary" *ngIf="aiSummary || isLoadingAi">
+    <div class="cd-ai-summary__badge"><fa-icon icon="star"></fa-icon> Analyse IA</div>
+    <div *ngIf="isLoadingAi" class="cd-ai-summary__loading"><fa-icon icon="spinner" [spin]="true"></fa-icon> Analyse en cours…</div>
+    <p *ngIf="!isLoadingAi && aiSummary" class="cd-ai-summary__text">{{ aiSummary }}</p>
+  </div>
+
+  <!-- Email Modal -->
+  <div class="cd-modal-overlay" *ngIf="emailModal" (click)="emailModal = false">
+    <div class="cd-modal" (click)="$event.stopPropagation()">
+      <div class="cd-modal__header">
+        <span><fa-icon icon="envelope"></fa-icon> Email généré par IA</span>
+        <button class="cd-modal__close" (click)="emailModal = false"><fa-icon icon="times"></fa-icon></button>
+      </div>
+      <div class="cd-modal__body">
+        <div *ngIf="isGeneratingEmail" class="cd-modal__loading"><fa-icon icon="spinner" [spin]="true"></fa-icon> Génération en cours…</div>
+        <textarea *ngIf="!isGeneratingEmail" class="cd-modal__textarea" [value]="emailContent" readonly rows="14"></textarea>
+      </div>
+      <div class="cd-modal__footer">
+        <button class="cd-btn cd-btn--outline" (click)="emailModal = false">Fermer</button>
+        <button class="cd-btn cd-btn--primary" (click)="copyEmail()" [disabled]="!emailContent">
+          <fa-icon [icon]="emailCopied ? 'check' : 'copy'"></fa-icon>
+          {{ emailCopied ? 'Copié !' : 'Copier' }}
+        </button>
+      </div>
+    </div>
   </div>
 
 </div>
