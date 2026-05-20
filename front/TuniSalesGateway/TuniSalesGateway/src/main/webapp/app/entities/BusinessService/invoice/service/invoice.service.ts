@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import dayjs from 'dayjs/esm';
@@ -7,6 +7,7 @@ import dayjs from 'dayjs/esm';
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
+import { SKIP_ERROR_HANDLER } from 'app/core/interceptor/error-handler.interceptor';
 import { IInvoice, NewInvoice } from '../invoice.model';
 
 export type PartialUpdateInvoice = Partial<IInvoice> & Pick<IInvoice, 'id'>;
@@ -38,6 +39,15 @@ export class InvoiceService {
     const copy = this.convertDateFromClient(invoice);
     return this.http
       .post<RestInvoice>(this.resourceUrl, copy, { observe: 'response' })
+      .pipe(map(res => this.convertResponseFromServer(res)));
+  }
+
+  /** Create without broadcasting HTTP errors globally (used for auto-creation flows). */
+  createSilent(invoice: NewInvoice): Observable<EntityResponseType> {
+    const copy = this.convertDateFromClient(invoice);
+    const context = new HttpContext().set(SKIP_ERROR_HANDLER, true);
+    return this.http
+      .post<RestInvoice>(this.resourceUrl, copy, { observe: 'response', context })
       .pipe(map(res => this.convertResponseFromServer(res)));
   }
 

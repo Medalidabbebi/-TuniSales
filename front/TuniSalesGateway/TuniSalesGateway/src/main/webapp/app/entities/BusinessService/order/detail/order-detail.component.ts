@@ -1,15 +1,12 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import dayjs from 'dayjs/esm';
 
 import { IOrder } from '../order.model';
 import { IOrderLine } from 'app/entities/BusinessService/order-line/order-line.model';
 import { OrderStatus } from 'app/entities/enumerations/order-status.model';
-import { InvoiceStatus } from 'app/entities/enumerations/invoice-status.model';
-import { IInvoice } from 'app/entities/BusinessService/invoice/invoice.model';
 import { OrderService } from '../service/order.service';
 import { OrderLineService } from 'app/entities/BusinessService/order-line/service/order-line.service';
-import { InvoiceService } from 'app/entities/BusinessService/invoice/service/invoice.service';
 import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
@@ -23,8 +20,6 @@ export class OrderDetailComponent implements OnInit {
   orderLines: IOrderLine[] = [];
   isActionLoading = false;
   isLoadingLines = false;
-  createdInvoice: IInvoice | null = null;
-  invoiceError: string | null = null;
 
   pipelineSteps = [
     { key: OrderStatus.DRAFT,          label: 'Brouillon' },
@@ -62,8 +57,8 @@ export class OrderDetailComponent implements OnInit {
     protected activatedRoute: ActivatedRoute,
     protected orderService: OrderService,
     protected orderLineService: OrderLineService,
-    protected invoiceService: InvoiceService,
-    protected accountService: AccountService
+    protected accountService: AccountService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -111,49 +106,39 @@ export class OrderDetailComponent implements OnInit {
     const next = this.getNextStatus();
     if (!this.order?.id || !next) return;
     this.isActionLoading = true;
-    this.createdInvoice = null;
-    this.invoiceError = null;
 
     this.orderService.validate(this.order.id, next).subscribe({
       next: res => {
         this.order = res.body;
         this.isActionLoading = false;
         if (res.body?.status === OrderStatus.INVOICED) {
-          this.autoCreateInvoice(res.body);
+          this.redirectToNewInvoice(res.body);
         }
       },
       error: () => { this.isActionLoading = false; }
     });
   }
 
-  private autoCreateInvoice(order: IOrder): void {
+  private redirectToNewInvoice(order: IOrder): void {
     const today = dayjs();
     const dueDate = today.add(order.paymentTermsDays ?? 30, 'day');
     const pad = (n: number): string => String(n).padStart(2, '0');
-    const invoiceNumber = `FAC-${today.year()}${pad(today.month() + 1)}${pad(today.date())}-${order.id}`;
+    const subtotal = order.subtotal ?? 0;
+    const discount = order.discountAmount ?? 0;
 
-    const subtotal  = order.subtotal ?? 0;
-    const discount  = order.discountAmount ?? 0;
-    const tax       = order.taxAmount ?? 0;
-    const total     = order.totalAmount ?? Math.max(0, subtotal - discount + tax);
-    const amountHt  = Math.max(0, subtotal - discount);
-
-    this.invoiceService.create({
-      id: null,
-      invoiceNumber,
-      amountHt,
-      taxAmount: tax,
-      amountTtc: total > 0 ? total : amountHt + tax,
-      status: InvoiceStatus.ISSUED,
-      issueDate: today,
-      dueDate,
-      client: order.client ? { id: order.client.id, name: order.client.name } : null,
-      order: { id: order.id, orderNumber: order.orderNumber ?? null },
-    }).subscribe({
-      next: inv => { this.createdInvoice = inv.body; },
-      error: () => {
-        this.invoiceError = 'La facture n\'a pas pu être créée automatiquement. Vous pouvez la créer manuellement.';
-      }
+    this.router.navigate(['/invoice/new'], {
+      queryParams: {
+        fromOrder:     'true',
+        orderId:       order.id,
+        orderNumber:   order.orderNumber ?? '',
+        clientId:      order.client?.id ?? '',
+        amountHt:      Math.max(0, subtotal - discount),
+        taxAmount:     order.taxAmount ?? 0,
+        amountTtc:     order.totalAmount ?? 0,
+        invoiceNumber: `FAC-${today.year()}${pad(today.month() + 1)}${pad(today.date())}-${order.id}`,
+        issueDate:     today.format('YYYY-MM-DDTHH:mm'),
+        dueDate:       dueDate.format('YYYY-MM-DDTHH:mm'),
+      },
     });
   }
 

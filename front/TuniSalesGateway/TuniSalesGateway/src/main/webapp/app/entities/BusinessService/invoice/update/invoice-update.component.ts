@@ -3,6 +3,7 @@ import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
+import dayjs from 'dayjs/esm';
 
 import { InvoiceFormService, InvoiceFormGroup } from './invoice-form.service';
 import { IInvoice } from '../invoice.model';
@@ -31,6 +32,18 @@ export class InvoiceUpdateComponent implements OnInit {
   tenantsCollection: ITenant[] = [];
 
   editForm: InvoiceFormGroup = this.invoiceFormService.createInvoiceFormGroup();
+
+  /** Non-null when navigated from order detail "Facturer" button */
+  fromOrderData: {
+    orderId: number | null;
+    clientId: number | null;
+    amountHt: number;
+    taxAmount: number;
+    amountTtc: number;
+    invoiceNumber: string;
+    issueDate: string;
+    dueDate: string;
+  } | null = null;
 
   constructor(
     protected invoiceService: InvoiceService,
@@ -72,12 +85,36 @@ export class InvoiceUpdateComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Detect pre-fill from order detail
+    const qp = this.activatedRoute.snapshot.queryParamMap;
+    if (qp.get('fromOrder') === 'true') {
+      this.fromOrderData = {
+        orderId:       qp.get('orderId')       ? +qp.get('orderId')!       : null,
+        clientId:      qp.get('clientId')      ? +qp.get('clientId')!      : null,
+        amountHt:      qp.get('amountHt')      ? +qp.get('amountHt')!      : 0,
+        taxAmount:     qp.get('taxAmount')     ? +qp.get('taxAmount')!     : 0,
+        amountTtc:     qp.get('amountTtc')     ? +qp.get('amountTtc')!     : 0,
+        invoiceNumber: qp.get('invoiceNumber') ?? '',
+        issueDate:     qp.get('issueDate')     ?? dayjs().format('YYYY-MM-DDTHH:mm'),
+        dueDate:       qp.get('dueDate')       ?? dayjs().add(30, 'day').format('YYYY-MM-DDTHH:mm'),
+      };
+      // Pre-fill scalar fields immediately
+      this.editForm.patchValue({
+        invoiceNumber: this.fromOrderData.invoiceNumber,
+        amountHt:      this.fromOrderData.amountHt,
+        taxAmount:     this.fromOrderData.taxAmount,
+        amountTtc:     this.fromOrderData.amountTtc,
+        status:        InvoiceStatus.ISSUED,
+        issueDate:     this.fromOrderData.issueDate,
+        dueDate:       this.fromOrderData.dueDate,
+      });
+    }
+
     this.activatedRoute.data.subscribe(({ invoice }) => {
       this.invoice = invoice;
       if (invoice) {
         this.updateForm(invoice);
       }
-
       this.loadRelationshipsOptions();
     });
   }
@@ -128,17 +165,37 @@ export class InvoiceUpdateComponent implements OnInit {
       .query()
       .pipe(map((res: HttpResponse<IClient[]>) => res.body ?? []))
       .pipe(map((clients: IClient[]) => this.clientService.addClientToCollectionIfMissing<IClient>(clients, this.invoice?.client)))
-      .subscribe((clients: IClient[]) => (this.clientsSharedCollection = clients));
+      .subscribe((clients: IClient[]) => {
+        this.clientsSharedCollection = clients;
+        // Auto-select client when coming from order
+        if (this.fromOrderData?.clientId) {
+          const match = clients.find(c => c.id === this.fromOrderData!.clientId);
+          if (match) this.editForm.patchValue({ client: match });
+        }
+      });
 
     this.orderService
       .query()
       .pipe(map((res: HttpResponse<IOrder[]>) => res.body ?? []))
       .pipe(map((orders: IOrder[]) => this.orderService.addOrderToCollectionIfMissing<IOrder>(orders, this.invoice?.order)))
-      .subscribe((orders: IOrder[]) => (this.ordersSharedCollection = orders));
+      .subscribe((orders: IOrder[]) => {
+        this.ordersSharedCollection = orders;
+        // Auto-select order when coming from order detail
+        if (this.fromOrderData?.orderId) {
+          const match = orders.find(o => o.id === this.fromOrderData!.orderId);
+          if (match) this.editForm.patchValue({ order: match });
+        }
+      });
 
     this.tenantService
       .query({ size: 1000 })
       .pipe(map((res: HttpResponse<ITenant[]>) => res.body ?? []))
-      .subscribe((tenants: ITenant[]) => (this.tenantsCollection = tenants));
+      .subscribe((tenants: ITenant[]) => {
+        this.tenantsCollection = tenants;
+        // Auto-select first (and usually only) tenant when coming from order
+        if (this.fromOrderData && tenants.length === 1) {
+          this.editForm.patchValue({ tenantId: tenants[0].id });
+        }
+      });
   }
 }

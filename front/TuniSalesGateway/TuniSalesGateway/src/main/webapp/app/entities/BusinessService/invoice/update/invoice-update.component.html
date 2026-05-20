@@ -32,6 +32,12 @@
 
     <jhi-alert-error></jhi-alert-error>
 
+    <!-- ===== Banner : pré-rempli depuis commande ===== -->
+    <div *ngIf="fromOrderData" class="iu-prefill-banner">
+      <fa-icon icon="check-circle" class="iu-prefill-banner__icon"></fa-icon>
+      <span>Formulaire pré-rempli depuis la commande <strong>#{{ fromOrderData.orderId }}</strong> — vérifiez les montants et le tenant avant d'enregistrer.</span>
+    </div>
+
     <!-- ===== STATUS STRIP ===== -->
     <div class="iu-strip">
       <div class="iu-strip__item">

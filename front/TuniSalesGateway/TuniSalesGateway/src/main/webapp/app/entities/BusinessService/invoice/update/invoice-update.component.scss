@@ -362,3 +362,23 @@
   font-size: 0.78rem;
   margin-top: 2px;
 }
+
+// ── Pre-fill from order banner ────────────────────────────────────
+.iu-prefill-banner {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: .8rem 1.2rem;
+  margin-bottom: 1.25rem;
+  font-size: .875rem;
+  color: #1d4ed8;
+
+  &__icon {
+    color: #2563eb;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+}

@@ -42,29 +42,6 @@
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
-  <!-- ── Invoice auto-created banner ───────────────────────────────── -->
-  <div *ngIf="createdInvoice" class="tsg-invoice-banner tsg-invoice-banner--success">
-    <fa-icon icon="check-circle" class="tsg-invoice-banner__icon"></fa-icon>
-    <div class="tsg-invoice-banner__body">
-      <strong>Facture créée automatiquement</strong>
-      <span>N° {{ createdInvoice.invoiceNumber }} — {{ createdInvoice.amountTtc | number:'1.2-2' }} TND</span>
-    </div>
-    <a [routerLink]="['/invoice', createdInvoice.id, 'view']" class="tsg-invoice-banner__link">
-      <fa-icon icon="eye"></fa-icon> Voir la facture
-    </a>
-  </div>
-
-  <div *ngIf="invoiceError" class="tsg-invoice-banner tsg-invoice-banner--error">
-    <fa-icon icon="exclamation-triangle" class="tsg-invoice-banner__icon"></fa-icon>
-    <div class="tsg-invoice-banner__body">
-      <strong>Création de facture échouée</strong>
-      <span>{{ invoiceError }}</span>
-    </div>
-    <a routerLink="/invoice/new" class="tsg-invoice-banner__link tsg-invoice-banner__link--danger">
-      <fa-icon icon="plus"></fa-icon> Créer manuellement
-    </a>
-  </div>
-
   <!-- ── Status Pipeline ─────────────────────────────────────────── -->
   <div class="tsg-detail-section" *ngIf="!isTerminalStatus()">
     <div class="tsg-detail-section__title">Progression de l'ordre</div>
