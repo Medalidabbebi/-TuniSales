@@ -1,0 +1,217 @@
+import { Injectable } from '@angular/core';
+import * as XLSX from 'xlsx';
+import { IOrder } from 'app/entities/BusinessService/order/order.model';
+import { IInvoice } from 'app/entities/BusinessService/invoice/invoice.model';
+
+@Injectable({ providedIn: 'root' })
+export class SalesExcelService {
+
+  private fmtDate(d: any): string {
+    if (!d) return '';
+    try { return d.format ? d.format('DD/MM/YYYY') : String(d).slice(0, 10); }
+    catch { return ''; }
+  }
+
+  private fmtNum(v: number | null | undefined): number | string {
+    return v != null ? v : '';
+  }
+
+  private autoWidth(ws: XLSX.WorkSheet, data: any[][]): void {
+    const colWidths = data[0].map((_: any, ci: number) =>
+      Math.max(...data.map(row => String(row[ci] ?? '').length), 10) + 2
+    );
+    ws['!cols'] = colWidths.map(w => ({ wch: Math.min(w, 40) }));
+  }
+
+  private applyHeaderStyle(ws: XLSX.WorkSheet, colCount: number): void {
+    for (let c = 0; c < colCount; c++) {
+      const addr = XLSX.utils.encode_cell({ r: 0, c });
+      if (!ws[addr]) continue;
+      ws[addr].s = {
+        font:      { bold: true, color: { rgb: 'FFFFFF' }, sz: 11 },
+        fill:      { fgColor: { rgb: '006699' } },
+        alignment: { horizontal: 'center', vertical: 'center', wrapText: true },
+        border: {
+          bottom: { style: 'medium', color: { rgb: '004466' } },
+        },
+      };
+    }
+  }
+
+  exportOrders(orders: IOrder[], filename = 'commandes-ventes'): void {
+    const STATUS_FR: Record<string, string> = {
+      DRAFT: 'Brouillon', SUBMITTED: 'Soumis', UNDER_REVIEW: 'En révision',
+      APPROVED: 'Approuvé', IN_PREPARATION: 'En préparation', SHIPPED: 'Expédié',
+      DELIVERED: 'Livré', INVOICED: 'Facturé', PAID: 'Payé',
+      REJECTED: 'Rejeté', CANCELLED: 'Annulé',
+    };
+
+    const PAYMENT_FR: Record<string, string> = {
+      CASH: 'Espèces', BANK_TRANSFER: 'Virement', CHECK: 'Chèque',
+      CREDIT_CARD: 'Carte', DEFERRED: 'Différé',
+    };
+
+    const headers = [
+      'N° Ordre', 'Client', 'Statut', 'Mode de paiement',
+      'Sous-total (TND)', 'Remise %', 'Remise (TND)', 'TVA (TND)', 'Total (TND)',
+      'Délai paiement (j)', 'Date échéance', 'Soumis le', 'Validé le', 'Créé le',
+    ];
+
+    const rows = orders.map(o => [
+      o.orderNumber ?? '',
+      o.client?.name ?? '',
+      STATUS_FR[o.status ?? ''] ?? o.status ?? '',
+      PAYMENT_FR[o.paymentMethod ?? ''] ?? o.paymentMethod ?? '',
+      this.fmtNum(o.subtotal),
+      this.fmtNum(o.discountPercent),
+      this.fmtNum(o.discountAmount),
+      this.fmtNum(o.taxAmount),
+      this.fmtNum(o.totalAmount),
+      this.fmtNum(o.paymentTermsDays),
+      this.fmtDate(o.dueDate),
+      this.fmtDate(o.submittedAt),
+      this.fmtDate(o.validatedAt),
+      this.fmtDate(o.createdAt),
+    ]);
+
+    const data = [headers, ...rows];
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    this.autoWidth(ws, data);
+    this.applyHeaderStyle(ws, headers.length);
+
+    // Summary row
+    if (rows.length > 0) {
+      const summaryRow = Array(headers.length).fill('');
+      summaryRow[0] = `TOTAL (${rows.length} commandes)`;
+      summaryRow[8] = orders.reduce((s, o) => s + (o.totalAmount ?? 0), 0);
+      XLSX.utils.sheet_add_aoa(ws, [summaryRow], { origin: -1 });
+      const lastRow = rows.length + 1;
+      ws[XLSX.utils.encode_cell({ r: lastRow, c: 0 })].s = {
+        font: { bold: true, color: { rgb: '006699' } },
+        fill: { fgColor: { rgb: 'EFF8FF' } },
+      };
+    }
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Commandes');
+
+    // Stats sheet
+    this.addOrderStats(wb, orders, STATUS_FR);
+
+    const date = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(wb, `${filename}-${date}.xlsx`);
+  }
+
+  private addOrderStats(wb: XLSX.WorkBook, orders: IOrder[], statusFr: Record<string, string>): void {
+    const totalTtc = orders.reduce((s, o) => s + (o.totalAmount ?? 0), 0);
+    const totalHt  = orders.reduce((s, o) => s + (o.subtotal ?? 0), 0);
+    const totalTva = orders.reduce((s, o) => s + (o.taxAmount ?? 0), 0);
+
+    const byStatus: Record<string, number> = {};
+    orders.forEach(o => {
+      const k = statusFr[o.status ?? ''] ?? o.status ?? 'Inconnu';
+      byStatus[k] = (byStatus[k] ?? 0) + 1;
+    });
+
+    const statsData: any[][] = [
+      ['SYNTHÈSE DES VENTES', ''],
+      ['', ''],
+      ['Indicateur', 'Valeur'],
+      ['Nombre de commandes', orders.length],
+      ['Montant HT total (TND)', totalHt],
+      ['TVA totale (TND)', totalTva],
+      ['Montant TTC total (TND)', totalTtc],
+      ['Montant moyen/commande (TND)', orders.length ? totalTtc / orders.length : 0],
+      ['', ''],
+      ['RÉPARTITION PAR STATUT', ''],
+      ['Statut', 'Nombre'],
+      ...Object.entries(byStatus).map(([k, v]) => [k, v]),
+    ];
+
+    const ws2 = XLSX.utils.aoa_to_sheet(statsData);
+    ws2['!cols'] = [{ wch: 35 }, { wch: 22 }];
+    XLSX.utils.book_append_sheet(wb, ws2, 'Synthèse');
+  }
+
+  exportInvoices(invoices: IInvoice[], filename = 'factures-ventes'): void {
+    const STATUS_FR: Record<string, string> = {
+      DRAFT: 'Brouillon', ISSUED: 'Émise', PARTIALLY_PAID: 'Part. payée',
+      PAID: 'Payée', OVERDUE: 'En retard', CANCELLED: 'Annulée',
+    };
+
+    const headers = [
+      'N° Facture', 'Client', 'Commande liée', 'Statut',
+      'Montant HT (TND)', 'TVA (TND)', 'Montant TTC (TND)',
+      "Date d'émission", "Date d'échéance", 'Payée le', 'Créée le',
+    ];
+
+    const rows = invoices.map(inv => [
+      inv.invoiceNumber ?? '',
+      inv.client?.name ?? '',
+      inv.order?.orderNumber ?? '',
+      STATUS_FR[inv.status ?? ''] ?? inv.status ?? '',
+      this.fmtNum(inv.amountHt),
+      this.fmtNum(inv.taxAmount),
+      this.fmtNum(inv.amountTtc),
+      this.fmtDate(inv.issueDate),
+      this.fmtDate(inv.dueDate),
+      this.fmtDate(inv.paidAt),
+      this.fmtDate(inv.createdAt),
+    ]);
+
+    const data = [headers, ...rows];
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    this.autoWidth(ws, data);
+    this.applyHeaderStyle(ws, headers.length);
+
+    if (rows.length > 0) {
+      const summaryRow = Array(headers.length).fill('');
+      summaryRow[0] = `TOTAL (${rows.length} factures)`;
+      summaryRow[4] = invoices.reduce((s, i) => s + (i.amountHt  ?? 0), 0);
+      summaryRow[5] = invoices.reduce((s, i) => s + (i.taxAmount ?? 0), 0);
+      summaryRow[6] = invoices.reduce((s, i) => s + (i.amountTtc ?? 0), 0);
+      XLSX.utils.sheet_add_aoa(ws, [summaryRow], { origin: -1 });
+    }
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Factures');
+    this.addInvoiceStats(wb, invoices, STATUS_FR);
+
+    const date = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(wb, `${filename}-${date}.xlsx`);
+  }
+
+  private addInvoiceStats(wb: XLSX.WorkBook, invoices: IInvoice[], statusFr: Record<string, string>): void {
+    const totalHt  = invoices.reduce((s, i) => s + (i.amountHt  ?? 0), 0);
+    const totalTva = invoices.reduce((s, i) => s + (i.taxAmount ?? 0), 0);
+    const totalTtc = invoices.reduce((s, i) => s + (i.amountTtc ?? 0), 0);
+    const paid     = invoices.filter(i => i.status === 'PAID').reduce((s, i) => s + (i.amountTtc ?? 0), 0);
+    const unpaid   = totalTtc - paid;
+
+    const byStatus: Record<string, number> = {};
+    invoices.forEach(i => {
+      const k = statusFr[i.status ?? ''] ?? i.status ?? 'Inconnu';
+      byStatus[k] = (byStatus[k] ?? 0) + 1;
+    });
+
+    const statsData: any[][] = [
+      ['SYNTHÈSE DES FACTURES', ''],
+      ['', ''],
+      ['Indicateur', 'Valeur'],
+      ['Nombre de factures', invoices.length],
+      ['Total HT (TND)', totalHt],
+      ['Total TVA (TND)', totalTva],
+      ['Total TTC (TND)', totalTtc],
+      ['Montant encaissé (TND)', paid],
+      ['Montant restant dû (TND)', unpaid],
+      ['', ''],
+      ['RÉPARTITION PAR STATUT', ''],
+      ['Statut', 'Nombre'],
+      ...Object.entries(byStatus).map(([k, v]) => [k, v]),
+    ];
+
+    const ws2 = XLSX.utils.aoa_to_sheet(statsData);
+    ws2['!cols'] = [{ wch: 32 }, { wch: 22 }];
+    XLSX.utils.book_append_sheet(wb, ws2, 'Synthèse');
+  }
+}

@@ -14,6 +14,10 @@
         <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
         Actualiser
       </button>
+      <button class="btn btn-success" (click)="exportExcel()" [disabled]="!invoices?.length" title="Exporter en Excel">
+        <fa-icon icon="file-excel" class="me-1"></fa-icon>
+        Excel
+      </button>
       <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/invoice/new']">
         <fa-icon icon="plus" class="me-1"></fa-icon>
         Nouvelle Facture

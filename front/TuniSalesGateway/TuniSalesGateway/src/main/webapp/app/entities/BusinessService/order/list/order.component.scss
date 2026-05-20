@@ -85,6 +85,10 @@ $ol-radius:  12px;
     background: $ol-white; color: $ol-text; border-color: $ol-border;
     &:hover:not([disabled]) { background: $ol-bg; }
   }
+  &--excel {
+    background: #1d6f42; color: #fff; border-color: #1d6f42;
+    &:hover:not([disabled]) { background: #155232; box-shadow: 0 3px 10px rgba(29,111,66,.3); }
+  }
   &[disabled] { opacity: .45; cursor: not-allowed; }
 }
 

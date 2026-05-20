@@ -7,6 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IInvoice } from '../invoice.model';
 import { InvoiceStatus } from 'app/entities/enumerations/invoice-status.model';
 import { InvoicePdfService } from '../service/invoice-pdf.service';
+import { SalesExcelService } from 'app/shared/service/sales-excel.service';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
@@ -37,13 +38,18 @@ export class InvoiceComponent implements OnInit {
     protected activatedRoute: ActivatedRoute,
     public router: Router,
     protected modalService: NgbModal,
-    private pdfService: InvoicePdfService
+    private pdfService: InvoicePdfService,
+    private excelService: SalesExcelService
   ) {}
 
   trackId = (_index: number, item: IInvoice): number => this.invoiceService.getInvoiceIdentifier(item);
 
   downloadPdf(invoice: IInvoice): void {
     this.pdfService.generate(invoice);
+  }
+
+  exportExcel(): void {
+    this.excelService.exportInvoices(this.invoices ?? []);
   }
 
   ngOnInit(): void {

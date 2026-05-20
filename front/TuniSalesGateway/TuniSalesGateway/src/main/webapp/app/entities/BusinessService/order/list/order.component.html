@@ -16,6 +16,10 @@
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         <span>Actualiser</span>
       </button>
+      <button class="ol-btn ol-btn--excel" (click)="exportExcel()" [disabled]="!orders?.length" title="Exporter en Excel">
+        <fa-icon icon="file-excel"></fa-icon>
+        <span>Excel</span>
+      </button>
       <button class="ol-btn ol-btn--primary" [routerLink]="['/sales-offer']">
         <fa-icon icon="plus"></fa-icon>
         <span>Nouvel Ordre</span>

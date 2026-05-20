@@ -6,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { IOrder } from '../order.model';
 import { OrderStatus } from 'app/entities/enumerations/order-status.model';
+import { SalesExcelService } from 'app/shared/service/sales-excel.service';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
@@ -33,10 +34,15 @@ export class OrderComponent implements OnInit {
     protected orderService: OrderService,
     protected activatedRoute: ActivatedRoute,
     public router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    private excelService: SalesExcelService
   ) {}
 
   trackId = (_index: number, item: IOrder): number => this.orderService.getOrderIdentifier(item);
+
+  exportExcel(): void {
+    this.excelService.exportOrders(this.orders ?? []);
+  }
 
   readonly orderStatus = OrderStatus;
 
