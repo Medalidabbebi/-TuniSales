@@ -465,22 +465,30 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
     const subject = subjectLine
       ? subjectLine.replace(/^objet\s*:\s*/i, '').trim()
       : 'Confirmation de commande';
-    window.open(
-      `mailto:${this.notifEmailAddr}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(this.notifEmailContent)}`,
-      '_blank'
+    this.openLink(
+      `mailto:${this.notifEmailAddr}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(this.notifEmailContent)}`
     );
   }
 
   sendBySms(): void {
     if (!this.notifSmsContent || !this.notifPhoneNumber) return;
     const phone = this.notifPhoneNumber.replace(/\s+/g, '');
-    window.open(`sms:${phone}?body=${encodeURIComponent(this.notifSmsContent)}`, '_blank');
+    this.openLink(`sms:${phone}?body=${encodeURIComponent(this.notifSmsContent)}`);
   }
 
   sendByWhatsApp(): void {
     if (!this.notifSmsContent || !this.notifPhoneNumber) return;
     const phone = this.notifPhoneNumber.replace(/[\s\-\(\)\+]/g, '');
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(this.notifSmsContent)}`, '_blank');
+    this.openLink(`https://wa.me/${phone}?text=${encodeURIComponent(this.notifSmsContent)}`);
+  }
+
+  private openLink(url: string): void {
+    const a = document.createElement('a');
+    a.href = url;
+    a.rel = 'noopener';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 
   closeNotifModal(): void {
