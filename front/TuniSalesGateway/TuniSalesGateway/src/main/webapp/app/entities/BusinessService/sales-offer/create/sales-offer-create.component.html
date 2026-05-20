@@ -506,13 +506,20 @@
       </button>
       <ng-container *ngIf="notifTab === 'email'">
         <button type="button" class="oc-notif-btn oc-notif-btn--send-email" (click)="sendByEmail()" [disabled]="!notifEmailContent || !notifEmailAddr">
-          <fa-icon icon="paper-plane"></fa-icon> Envoyer par email
+          <fa-icon icon="paper-plane"></fa-icon> Ouvrir Gmail
         </button>
       </ng-container>
       <ng-container *ngIf="notifTab === 'sms'">
+        <div class="oc-notif-sms-feedback" *ngIf="smsSent">
+          <fa-icon icon="check-circle"></fa-icon> SMS envoyé avec succès !
+        </div>
+        <div class="oc-notif-sms-feedback oc-notif-sms-feedback--error" *ngIf="smsSendError">
+          <fa-icon icon="times-circle"></fa-icon> {{ smsSendError }}
+        </div>
         <button type="button" class="oc-notif-btn oc-notif-btn--send-sms" (click)="sendBySms()"
-          [disabled]="!notifSmsContent || !notifPhoneNumber">
-          <fa-icon icon="comment"></fa-icon> SMS
+          [disabled]="!notifSmsContent || !notifPhoneNumber || isSendingSms">
+          <fa-icon [icon]="isSendingSms ? 'spinner' : 'comment'"></fa-icon>
+          {{ isSendingSms ? 'Envoi…' : 'Envoyer SMS' }}
         </button>
         <button type="button" class="oc-notif-btn oc-notif-btn--send-whatsapp" (click)="sendByWhatsApp()"
           [disabled]="!notifSmsContent || !notifPhoneNumber">

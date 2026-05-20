@@ -669,6 +669,13 @@ $notif-muted:  #94a3b8;
   &--over { color: $oc-danger; font-weight: 600; }
 }
 
+.oc-notif-sms-feedback {
+  display: flex; align-items: center; gap: .4rem;
+  font-size: .82rem; font-weight: 600;
+  color: #10b981;
+  &--error { color: $oc-danger; }
+}
+
 .oc-notif-footer {
   display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
   padding: 1rem 1.5rem;

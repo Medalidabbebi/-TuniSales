@@ -237,7 +237,8 @@ export class OrderUpdateComponent implements OnInit {
       ? subjectLine.replace(/^objet\s*:\s*/i, '').trim()
       : 'Confirmation de commande';
     const emailAddr = this.clientContact?.email ?? '';
-    this.openLink(`mailto:${emailAddr}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(this.notifEmailContent)}`);
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(emailAddr)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(this.notifEmailContent)}`;
+    window.open(gmailUrl, '_blank');
   }
 
   sendBySms(): void {

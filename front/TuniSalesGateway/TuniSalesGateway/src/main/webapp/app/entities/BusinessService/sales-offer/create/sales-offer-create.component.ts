@@ -20,6 +20,7 @@ import { OrderStatus } from 'app/entities/enumerations/order-status.model';
 import { AiSummaryService } from 'app/shared/service/ai-summary.service';
 import { ClientContactService } from 'app/entities/BusinessService/client-contact/service/client-contact.service';
 import { IClientContact } from 'app/entities/BusinessService/client-contact/client-contact.model';
+import { TwilioSmsService } from 'app/shared/service/twilio-sms.service';
 
 interface Step {
   title: string;
@@ -64,6 +65,9 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
   notifPhoneNumber = '';
   isGeneratingEmail = false;
   isGeneratingSms = false;
+  isSendingSms = false;
+  smsSent = false;
+  smsSendError = '';
   emailCopied = false;
   smsCopied = false;
   clientContact: IClientContact | null = null;
@@ -98,6 +102,7 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
     private router: Router,
     private aiSummaryService: AiSummaryService,
     private clientContactService: ClientContactService,
+    private twilioSmsService: TwilioSmsService,
   ) {}
 
   /**
@@ -465,15 +470,27 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
     const subject = subjectLine
       ? subjectLine.replace(/^objet\s*:\s*/i, '').trim()
       : 'Confirmation de commande';
-    this.openLink(
-      `mailto:${this.notifEmailAddr}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(this.notifEmailContent)}`
-    );
+    // Gmail compose URL — works directly in the browser without a native email client
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(this.notifEmailAddr)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(this.notifEmailContent)}`;
+    window.open(gmailUrl, '_blank');
   }
 
   sendBySms(): void {
-    if (!this.notifSmsContent || !this.notifPhoneNumber) return;
-    const phone = this.notifPhoneNumber.replace(/\s+/g, '');
-    this.openLink(`sms:${phone}?body=${encodeURIComponent(this.notifSmsContent)}`);
+    if (!this.notifSmsContent || !this.notifPhoneNumber || this.isSendingSms) return;
+    this.isSendingSms = true;
+    this.smsSent = false;
+    this.smsSendError = '';
+
+    this.twilioSmsService.sendSms(this.notifPhoneNumber, this.notifSmsContent).subscribe(res => {
+      this.isSendingSms = false;
+      if (res.success) {
+        this.smsSent = true;
+        setTimeout(() => (this.smsSent = false), 4000);
+      } else {
+        this.smsSendError = res.error ?? 'Échec de l\'envoi SMS.';
+        setTimeout(() => (this.smsSendError = ''), 5000);
+      }
+    });
   }
 
   sendByWhatsApp(): void {
@@ -507,6 +524,9 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
     this.isGeneratingEmail = true;
     this.isGeneratingSms = true;
     this.isLoadingContact = true;
+    this.isSendingSms = false;
+    this.smsSent = false;
+    this.smsSendError = '';
     this.emailCopied = false;
     this.smsCopied = false;
 
