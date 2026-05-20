@@ -3,246 +3,320 @@
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
-  <!-- Header -->
-  <div class="cd-header">
-    <div class="cd-header__left">
-      <div class="cd-header__icon">
-        <fa-icon icon="building"></fa-icon>
+  <!-- ═══ HERO BANNER ══════════════════════════════════════════════════════ -->
+  <div class="cd-hero">
+    <div class="cd-hero__inner">
+      <div class="cd-hero__left">
+        <div class="cd-avatar">{{ clientInitials }}</div>
+        <div class="cd-hero__info">
+          <h1 class="cd-hero__name">{{ client.name }}</h1>
+          <div class="cd-hero__meta">
+            <span class="cd-hero__tag">{{ getTypeLabel(client.clientType) }}</span>
+            <span class="cd-hero__sep">·</span>
+            <span class="cd-hero__sub">{{ client.taxId || 'Sans matricule' }}</span>
+            <span class="cd-hero__sep">·</span>
+            <span class="cd-hero__sub">
+              Client depuis {{ client.createdAt ? (client.createdAt | formatMediumDate) : '—' }}
+            </span>
+          </div>
+        </div>
       </div>
-      <div>
-        <h2 class="cd-header__title">{{ client.name }}</h2>
-        <p class="cd-header__subtitle">{{ getTypeLabel(client.clientType) }}</p>
+      <div class="cd-hero__right">
+        <span class="cd-status-badge" [ngClass]="getStatusClass(client.status)">
+          <span class="cd-status-badge__dot"></span>
+          {{ getStatusLabel(client.status) }}
+        </span>
+        <button type="button" class="cd-hero__btn cd-hero__btn--ghost" (click)="previousState()" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon> Retour
+        </button>
+        <a [routerLink]="['/client', client.id, 'edit']" class="cd-hero__btn cd-hero__btn--white">
+          <fa-icon icon="pencil-alt"></fa-icon> Modifier
+        </a>
+        <button type="button" class="cd-hero__btn cd-hero__btn--accent" (click)="openEmailModal()">
+          <fa-icon icon="envelope"></fa-icon> Générer email
+        </button>
       </div>
-    </div>
-    <div class="cd-header__actions">
-      <span class="cd-status-badge" [ngClass]="getStatusClass(client.status)">
-        <span class="cd-status-badge__dot"></span>
-        {{ getStatusLabel(client.status) }}
-      </span>
-      <button type="button" class="cd-btn cd-btn--outline" (click)="previousState()" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>
-        Retour
-      </button>
-      <a [routerLink]="['/client', client.id, 'edit']" class="cd-btn cd-btn--primary">
-        <fa-icon icon="pencil-alt"></fa-icon>
-        Modifier
-      </a>
-      <button type="button" class="cd-btn cd-btn--ai" (click)="openEmailModal()">
-        <fa-icon icon="envelope"></fa-icon> Générer email
-      </button>
     </div>
   </div>
 
-  <!-- KPI Row -->
-  <div class="cd-kpi-row">
-    <div class="cd-kpi-card cd-kpi-card--blue">
-      <div class="cd-kpi-card__icon cd-kpi-card__icon--blue">
-        <fa-icon icon="credit-card"></fa-icon>
-      </div>
-      <div>
-        <div class="cd-kpi-card__value">
+  <!-- ═══ METRICS STRIP ════════════════════════════════════════════════════ -->
+  <div class="cd-metrics">
+
+    <div class="cd-metric">
+      <div class="cd-metric__icon cd-metric__icon--blue"><fa-icon icon="credit-card"></fa-icon></div>
+      <div class="cd-metric__body">
+        <div class="cd-metric__val">
           {{ client.creditLimit !== null && client.creditLimit !== undefined ? (client.creditLimit | number:'1.0-0') + ' TND' : '—' }}
         </div>
-        <div class="cd-kpi-card__label">Limite crédit</div>
+        <div class="cd-metric__lbl">Limite de crédit</div>
       </div>
     </div>
 
-    <div class="cd-kpi-card cd-kpi-card--orange">
-      <div class="cd-kpi-card__icon cd-kpi-card__icon--orange">
-        <fa-icon icon="credit-card"></fa-icon>
-      </div>
-      <div>
-        <div class="cd-kpi-card__value">
+    <div class="cd-metric">
+      <div class="cd-metric__icon cd-metric__icon--amber"><fa-icon icon="credit-card"></fa-icon></div>
+      <div class="cd-metric__body">
+        <div class="cd-metric__val">
           {{ client.creditUsed !== null && client.creditUsed !== undefined ? (client.creditUsed | number:'1.0-0') + ' TND' : '—' }}
         </div>
-        <div class="cd-kpi-card__label">Crédit utilisé</div>
+        <div class="cd-metric__lbl">Crédit utilisé · {{ creditUsagePercent }}%</div>
+        <div class="cd-metric__minibar" *ngIf="client.creditLimit">
+          <div class="cd-metric__minibar-fill"
+               [class.cd-metric__minibar-fill--warn]="creditUsagePercent > 60 && creditUsagePercent <= 80"
+               [class.cd-metric__minibar-fill--danger]="creditUsagePercent > 80"
+               [style.width.%]="creditUsagePercent"></div>
+        </div>
       </div>
     </div>
 
-    <div class="cd-kpi-card cd-kpi-card--teal">
-      <div class="cd-kpi-card__icon cd-kpi-card__icon--teal">
-        <fa-icon icon="calendar-alt"></fa-icon>
-      </div>
-      <div>
-        <div class="cd-kpi-card__value">
+    <div class="cd-metric">
+      <div class="cd-metric__icon cd-metric__icon--teal"><fa-icon icon="calendar-alt"></fa-icon></div>
+      <div class="cd-metric__body">
+        <div class="cd-metric__val">
           {{ client.paymentTermsDays !== null && client.paymentTermsDays !== undefined ? client.paymentTermsDays + ' j' : '—' }}
         </div>
-        <div class="cd-kpi-card__label">Jours paiement</div>
+        <div class="cd-metric__lbl">Délai de paiement</div>
       </div>
     </div>
 
-    <div class="cd-kpi-card" [ngClass]="getKpiStatusClass(client.status)">
-      <div class="cd-kpi-card__icon" [ngClass]="getKpiStatusIconClass(client.status)">
-        <fa-icon icon="check-circle"></fa-icon>
-      </div>
-      <div>
-        <div class="cd-kpi-card__value">{{ getStatusLabel(client.status) }}</div>
-        <div class="cd-kpi-card__label">Statut</div>
+    <div class="cd-metric">
+      <div class="cd-metric__icon cd-metric__icon--indigo"><fa-icon icon="shopping-cart"></fa-icon></div>
+      <div class="cd-metric__body">
+        <div class="cd-metric__val">{{ orders.length }}</div>
+        <div class="cd-metric__lbl">Commandes totales</div>
       </div>
     </div>
+
+    <div class="cd-metric">
+      <div class="cd-metric__icon cd-metric__icon--green"><fa-icon icon="money-bill-wave"></fa-icon></div>
+      <div class="cd-metric__body">
+        <div class="cd-metric__val">{{ totalOrdersAmount | number:'1.0-0' }} <span class="cd-metric__unit">TND</span></div>
+        <div class="cd-metric__lbl">Volume d'achats</div>
+      </div>
+    </div>
+
+    <div class="cd-metric" *ngIf="riskScore">
+      <div class="cd-metric__icon"
+           [class.cd-metric__icon--green]="riskScore.score >= 80"
+           [class.cd-metric__icon--amber]="riskScore.score >= 60 && riskScore.score < 80"
+           [class.cd-metric__icon--red]="riskScore.score < 60">
+        <fa-icon icon="chart-bar"></fa-icon>
+      </div>
+      <div class="cd-metric__body">
+        <div class="cd-metric__val">{{ riskScore.score | number:'1.0-0' }}<span class="cd-metric__unit">/100</span></div>
+        <div class="cd-metric__lbl">Score de risque</div>
+      </div>
+    </div>
+
   </div>
 
-  <!-- Risk Score -->
-  <div class="cd-risk-card" *ngIf="riskScore">
-    <div class="cd-risk-card__header">
-      <span class="cd-risk-card__title">
-        <fa-icon icon="chart-bar"></fa-icon> Score de risque client
-      </span>
-      <span class="cd-risk-badge" [ngClass]="riskScore.colorClass">{{ riskScore.label }}</span>
-    </div>
-    <div class="cd-risk-bar-track">
-      <div class="cd-risk-bar" [ngClass]="riskScore.bar" [style.width.%]="riskScore.score"></div>
-    </div>
-    <div class="cd-risk-score-val">{{ riskScore.score | number:'1.0-0' }} / 100</div>
-  </div>
+  <!-- ═══ MAIN GRID ═════════════════════════════════════════════════════════ -->
+  <div class="cd-main-grid">
 
-  <!-- Grid: Informations + Statut & Crédit -->
-  <div class="cd-grid">
+    <!-- ── Left column: details ── -->
+    <div class="cd-col cd-col--left">
 
-    <!-- Informations -->
-    <div class="cd-card">
-      <div class="cd-card__header">
-        <div class="cd-card__header-icon">
-          <fa-icon icon="building"></fa-icon>
+      <!-- Informations -->
+      <div class="cd-card">
+        <div class="cd-card__head">
+          <div class="cd-card__head-icon"><fa-icon icon="building"></fa-icon></div>
+          <span class="cd-card__head-title">Informations générales</span>
         </div>
-        <h3 class="cd-card__title">Informations</h3>
-      </div>
-      <div class="cd-card__body">
-        <div class="cd-info-row">
-          <span class="cd-info-row__label">Nom</span>
-          <span class="cd-info-row__value">{{ client.name }}</span>
-        </div>
-        <div class="cd-info-row">
-          <span class="cd-info-row__label">Matricule fiscal</span>
-          <span class="cd-info-row__value">{{ client.taxId || '—' }}</span>
-        </div>
-        <div class="cd-info-row">
-          <span class="cd-info-row__label">Type</span>
-          <span class="cd-info-row__value">{{ getTypeLabel(client.clientType) }}</span>
-        </div>
-        <div class="cd-info-row">
-          <span class="cd-info-row__label">Jours de paiement</span>
-          <span class="cd-info-row__value">
-            {{ client.paymentTermsDays !== null && client.paymentTermsDays !== undefined ? client.paymentTermsDays + ' jours' : '—' }}
-          </span>
-        </div>
-        <div class="cd-info-row">
-          <span class="cd-info-row__label">Dernière commande</span>
-          <span class="cd-info-row__value">{{ client.lastOrderAt ? (client.lastOrderAt | formatMediumDatetime) : '—' }}</span>
-        </div>
-        <div class="cd-info-row">
-          <span class="cd-info-row__label">Créé le</span>
-          <span class="cd-info-row__value">{{ client.createdAt ? (client.createdAt | formatMediumDatetime) : '—' }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Statut & Crédit -->
-    <div class="cd-card">
-      <div class="cd-card__header">
-        <div class="cd-card__header-icon">
-          <fa-icon icon="credit-card"></fa-icon>
-        </div>
-        <h3 class="cd-card__title">Statut &amp; Crédit</h3>
-      </div>
-      <div class="cd-card__body">
-        <div class="cd-info-row">
-          <span class="cd-info-row__label">Statut</span>
-          <span class="cd-info-row__value">
-            <span class="cd-status-badge" [ngClass]="getStatusClass(client.status)">
-              <span class="cd-status-badge__dot"></span>
-              {{ getStatusLabel(client.status) }}
+        <div class="cd-card__body">
+          <div class="cd-field">
+            <span class="cd-field__lbl">Raison sociale</span>
+            <span class="cd-field__val cd-field__val--strong">{{ client.name }}</span>
+          </div>
+          <div class="cd-field">
+            <span class="cd-field__lbl">Matricule fiscal</span>
+            <span class="cd-field__val">{{ client.taxId || '—' }}</span>
+          </div>
+          <div class="cd-field">
+            <span class="cd-field__lbl">Type de client</span>
+            <span class="cd-field__val">
+              <span class="cd-chip">{{ getTypeLabel(client.clientType) }}</span>
             </span>
-          </span>
-        </div>
-        <div class="cd-info-row">
-          <span class="cd-info-row__label">Limite crédit</span>
-          <span class="cd-info-row__value">
-            {{ client.creditLimit !== null && client.creditLimit !== undefined ? (client.creditLimit | number:'1.0-0') + ' TND' : '—' }}
-          </span>
-        </div>
-        <div class="cd-info-row">
-          <span class="cd-info-row__label">Crédit utilisé</span>
-          <span class="cd-info-row__value">
-            {{ client.creditUsed !== null && client.creditUsed !== undefined ? (client.creditUsed | number:'1.0-0') + ' TND' : '—' }}
-          </span>
-        </div>
-        <div class="cd-info-row">
-          <span class="cd-info-row__label">Supprimé</span>
-          <span class="cd-info-row__value">{{ client.isDeleted ? 'Oui' : 'Non' }}</span>
-        </div>
-        <div class="cd-info-row">
-          <span class="cd-info-row__label">Mis à jour le</span>
-          <span class="cd-info-row__value">{{ client.updatedAt ? (client.updatedAt | formatMediumDatetime) : '—' }}</span>
+          </div>
+          <div class="cd-field">
+            <span class="cd-field__lbl">Délai de paiement</span>
+            <span class="cd-field__val">
+              {{ client.paymentTermsDays !== null && client.paymentTermsDays !== undefined ? client.paymentTermsDays + ' jours' : '—' }}
+            </span>
+          </div>
+          <div class="cd-field">
+            <span class="cd-field__lbl">Dernière commande</span>
+            <span class="cd-field__val">{{ client.lastOrderAt ? (client.lastOrderAt | formatMediumDatetime) : '—' }}</span>
+          </div>
+          <div class="cd-field">
+            <span class="cd-field__lbl">Créé le</span>
+            <span class="cd-field__val">{{ client.createdAt ? (client.createdAt | formatMediumDatetime) : '—' }}</span>
+          </div>
+          <div class="cd-field">
+            <span class="cd-field__lbl">Mis à jour le</span>
+            <span class="cd-field__val">{{ client.updatedAt ? (client.updatedAt | formatMediumDatetime) : '—' }}</span>
+          </div>
         </div>
       </div>
+
+      <!-- Statut & Crédit -->
+      <div class="cd-card">
+        <div class="cd-card__head">
+          <div class="cd-card__head-icon cd-card__head-icon--amber"><fa-icon icon="credit-card"></fa-icon></div>
+          <span class="cd-card__head-title">Statut &amp; Crédit</span>
+        </div>
+        <div class="cd-card__body">
+          <div class="cd-field">
+            <span class="cd-field__lbl">Statut actuel</span>
+            <span class="cd-field__val">
+              <span class="cd-status-badge" [ngClass]="getStatusClass(client.status)">
+                <span class="cd-status-badge__dot"></span>{{ getStatusLabel(client.status) }}
+              </span>
+            </span>
+          </div>
+          <div class="cd-field">
+            <span class="cd-field__lbl">Limite de crédit</span>
+            <span class="cd-field__val">
+              {{ client.creditLimit !== null && client.creditLimit !== undefined ? (client.creditLimit | number:'1.0-0') + ' TND' : '—' }}
+            </span>
+          </div>
+          <div class="cd-field">
+            <span class="cd-field__lbl">Crédit utilisé</span>
+            <span class="cd-field__val">
+              {{ client.creditUsed !== null && client.creditUsed !== undefined ? (client.creditUsed | number:'1.0-0') + ' TND' : '—' }}
+            </span>
+          </div>
+          <div class="cd-field cd-field--stack" *ngIf="client.creditLimit">
+            <span class="cd-field__lbl">Utilisation crédit</span>
+            <div class="cd-credit-track">
+              <div class="cd-credit-fill"
+                   [class.cd-credit-fill--warn]="creditUsagePercent > 60 && creditUsagePercent <= 80"
+                   [class.cd-credit-fill--danger]="creditUsagePercent > 80"
+                   [style.width.%]="creditUsagePercent"></div>
+            </div>
+            <span class="cd-credit-pct"
+                  [class.cd-credit-pct--warn]="creditUsagePercent > 60 && creditUsagePercent <= 80"
+                  [class.cd-credit-pct--danger]="creditUsagePercent > 80">{{ creditUsagePercent }}%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contacts -->
+      <div class="cd-card">
+        <div class="cd-card__head">
+          <div class="cd-card__head-icon cd-card__head-icon--indigo"><fa-icon icon="users"></fa-icon></div>
+          <span class="cd-card__head-title">Contacts</span>
+        </div>
+        <div class="cd-card__body">
+          <div class="cd-empty">
+            <fa-icon icon="users"></fa-icon>
+            <span>Aucun contact associé</span>
+          </div>
+        </div>
+      </div>
+
     </div>
 
-    <!-- Contacts placeholder -->
-    <div class="cd-card cd-card--full">
-      <div class="cd-card__header">
-        <div class="cd-card__header-icon">
-          <fa-icon icon="users"></fa-icon>
-        </div>
-        <h3 class="cd-card__title">Contacts</h3>
-      </div>
-      <div class="cd-card__body">
-        <div class="cd-placeholder">
-          <fa-icon icon="users" size="2x" style="margin-bottom:.5rem; display:block;"></fa-icon>
-          Aucun contact associé pour le moment.
-        </div>
-      </div>
-    </div>
+    <!-- ── Right column: scores ── -->
+    <div class="cd-col cd-col--right">
 
+      <!-- Loyalty Score -->
+      <div class="cd-card cd-loyalty-card" *ngIf="loyaltyScore">
+        <div class="cd-card__head">
+          <div class="cd-card__head-icon cd-card__head-icon--star"><fa-icon icon="star"></fa-icon></div>
+          <span class="cd-card__head-title">Score de fidélité</span>
+          <span class="cd-loyalty-pill" [ngClass]="loyaltyScore.colorClass">{{ loyaltyScore.label }}</span>
+        </div>
+        <div class="cd-card__body cd-loyalty-body">
+
+          <!-- SVG Ring gauge -->
+          <div class="cd-ring-wrap">
+            <svg class="cd-ring" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+              <circle class="cd-ring__track" cx="60" cy="60" r="48"/>
+              <circle class="cd-ring__fill"
+                      cx="60" cy="60" r="48"
+                      [attr.stroke]="loyaltyScore.ringColor"
+                      [attr.stroke-dasharray]="(loyaltyScore.score / 100 * 301.6).toFixed(1) + ' 301.6'"
+                      transform="rotate(-90 60 60)"/>
+              <text x="60" y="52" class="cd-ring__grade" text-anchor="middle"
+                    [attr.fill]="loyaltyScore.ringColor">{{ loyaltyScore.grade }}</text>
+              <text x="60" y="68" class="cd-ring__score" text-anchor="middle">{{ loyaltyScore.score }}/100</text>
+            </svg>
+            <!-- Grade scale -->
+            <div class="cd-grade-scale">
+              <span class="cd-grade-dot" [class.cd-grade-dot--on]="loyaltyScore.grade === 'A'" style="color:#10b981">A</span>
+              <span class="cd-grade-dot" [class.cd-grade-dot--on]="loyaltyScore.grade === 'B'" style="color:#3b82f6">B</span>
+              <span class="cd-grade-dot" [class.cd-grade-dot--on]="loyaltyScore.grade === 'C'" style="color:#f59e0b">C</span>
+              <span class="cd-grade-dot" [class.cd-grade-dot--on]="loyaltyScore.grade === 'D'" style="color:#ef4444">D</span>
+            </div>
+          </div>
+
+          <!-- Stats row -->
+          <div class="cd-loyalty-stats">
+            <div class="cd-loyalty-stat">
+              <div class="cd-loyalty-stat__val">{{ orders.length }}</div>
+              <div class="cd-loyalty-stat__lbl">Commandes</div>
+            </div>
+            <div class="cd-loyalty-stat">
+              <div class="cd-loyalty-stat__val">{{ totalOrdersAmount | number:'1.0-0' }}</div>
+              <div class="cd-loyalty-stat__lbl">TND total</div>
+            </div>
+            <div class="cd-loyalty-stat">
+              <div class="cd-loyalty-stat__val">
+                {{ client.lastOrderAt ? (client.lastOrderAt | formatMediumDate) : '—' }}
+              </div>
+              <div class="cd-loyalty-stat__lbl">Dernière commande</div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Risk Score -->
+      <div class="cd-card" *ngIf="riskScore">
+        <div class="cd-card__head">
+          <div class="cd-card__head-icon"><fa-icon icon="chart-bar"></fa-icon></div>
+          <span class="cd-card__head-title">Score de risque</span>
+          <span class="cd-risk-pill" [ngClass]="riskScore.colorClass">{{ riskScore.label }}</span>
+        </div>
+        <div class="cd-card__body">
+          <div class="cd-risk-track">
+            <div class="cd-risk-fill" [ngClass]="riskScore.bar" [style.width.%]="riskScore.score"></div>
+          </div>
+          <div class="cd-risk-val">{{ riskScore.score | number:'1.0-0' }} / 100</div>
+        </div>
+      </div>
+
+      <!-- AI Summary -->
+      <div class="cd-card cd-ai-card" *ngIf="aiSummary || isLoadingAi">
+        <div class="cd-card__head">
+          <div class="cd-card__head-icon cd-card__head-icon--ai"><fa-icon icon="star"></fa-icon></div>
+          <span class="cd-card__head-title">Analyse IA</span>
+          <span class="cd-ai-badge">Généré par IA</span>
+        </div>
+        <div class="cd-card__body">
+          <div *ngIf="isLoadingAi" class="cd-loading">
+            <fa-icon icon="spinner" [spin]="true"></fa-icon> Analyse en cours…
+          </div>
+          <p *ngIf="!isLoadingAi && aiSummary" class="cd-ai-text">{{ aiSummary }}</p>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <!-- Loyalty Score -->
-  <div class="cd-loyalty-card" *ngIf="loyaltyScore">
-    <div class="cd-loyalty-card__header">
-      <span class="cd-loyalty-card__title">
-        <fa-icon icon="star"></fa-icon> Score de fidélité
-      </span>
-      <div class="cd-loyalty-grade" [ngClass]="loyaltyScore.colorClass">{{ loyaltyScore.grade }}</div>
+  <!-- ═══ PURCHASE HISTORY ══════════════════════════════════════════════════ -->
+  <div class="cd-table-card" *ngIf="orders.length > 0 || isLoadingData">
+    <div class="cd-table-card__head">
+      <div class="cd-card__head-icon"><fa-icon icon="history"></fa-icon></div>
+      <span class="cd-table-card__title">Historique des achats</span>
+      <span class="cd-table-badge">{{ orders.length }} commande{{ orders.length !== 1 ? 's' : '' }}</span>
     </div>
-    <div class="cd-loyalty-body">
-      <div class="cd-loyalty-bar-track">
-        <div class="cd-loyalty-bar" [ngClass]="loyaltyScore.barClass" [style.width.%]="loyaltyScore.score"></div>
-      </div>
-      <div class="cd-loyalty-meta">
-        <span class="cd-loyalty-label" [ngClass]="loyaltyScore.colorClass">{{ loyaltyScore.label }}</span>
-        <span class="cd-loyalty-score-val">{{ loyaltyScore.score | number:'1.0-0' }} / 100</span>
-      </div>
-      <div class="cd-loyalty-kpis">
-        <div class="cd-loyalty-kpi">
-          <span class="cd-loyalty-kpi__val">{{ orders.length }}</span>
-          <span class="cd-loyalty-kpi__lbl">Commandes</span>
-        </div>
-        <div class="cd-loyalty-kpi">
-          <span class="cd-loyalty-kpi__val">{{ totalOrdersAmount | number:'1.0-0' }} TND</span>
-          <span class="cd-loyalty-kpi__lbl">Volume total</span>
-        </div>
-        <div class="cd-loyalty-kpi">
-          <span class="cd-loyalty-kpi__val">{{ client.lastOrderAt ? (client.lastOrderAt | formatMediumDate) : '—' }}</span>
-          <span class="cd-loyalty-kpi__lbl">Dernière commande</span>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Purchase History -->
-  <div class="cd-card cd-card--full cd-history-card" *ngIf="orders.length > 0 || isLoadingData">
-    <div class="cd-card__header">
-      <div class="cd-card__header-icon">
-        <fa-icon icon="history"></fa-icon>
-      </div>
-      <h3 class="cd-card__title">Historique des achats</h3>
-      <span class="cd-history-count">{{ orders.length }} commande{{ orders.length !== 1 ? 's' : '' }}</span>
+    <div *ngIf="isLoadingData" class="cd-loading cd-loading--center">
+      <fa-icon icon="spinner" [spin]="true"></fa-icon> Chargement…
     </div>
-    <div class="cd-card__body cd-history-body">
-      <div *ngIf="isLoadingData" class="cd-placeholder">
-        <fa-icon icon="spinner" [spin]="true"></fa-icon> Chargement…
-      </div>
-      <table class="cd-history-table" *ngIf="!isLoadingData && orders.length > 0">
+
+    <div class="cd-table-wrap" *ngIf="!isLoadingData && orders.length > 0">
+      <table class="cd-table">
         <thead>
           <tr>
             <th>N° Commande</th>
@@ -250,61 +324,60 @@
             <th>Statut</th>
             <th>Montant HT</th>
             <th>Remise</th>
-            <th>Total TTC</th>
+            <th class="cd-table__th--right">Total TTC</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let order of historyOrders">
-            <td class="cd-history-num">{{ order.orderNumber || '—' }}</td>
+          <tr *ngFor="let order of historyOrders; let i = index" [class.cd-table__row--alt]="i % 2 === 1">
+            <td><span class="cd-order-num">{{ order.orderNumber || '—' }}</span></td>
             <td>{{ order.submittedAt ? (order.submittedAt | formatMediumDate) : (order.createdAt ? (order.createdAt | formatMediumDate) : '—') }}</td>
             <td>
               <span class="cd-order-badge" [ngClass]="getOrderStatusClass(order.status)">
                 {{ getOrderStatusLabel(order.status) }}
               </span>
             </td>
-            <td class="cd-history-amount">{{ order.subtotal !== null && order.subtotal !== undefined ? (order.subtotal | number:'1.0-2') + ' TND' : '—' }}</td>
-            <td>{{ order.discountPercent ? order.discountPercent + ' %' : '—' }}</td>
-            <td class="cd-history-total">{{ order.totalAmount !== null && order.totalAmount !== undefined ? (order.totalAmount | number:'1.0-2') + ' TND' : '—' }}</td>
+            <td class="cd-table__muted">
+              {{ order.subtotal !== null && order.subtotal !== undefined ? (order.subtotal | number:'1.0-2') + ' TND' : '—' }}
+            </td>
+            <td class="cd-table__muted">{{ order.discountPercent ? order.discountPercent + ' %' : '—' }}</td>
+            <td class="cd-table__total">
+              {{ order.totalAmount !== null && order.totalAmount !== undefined ? (order.totalAmount | number:'1.0-2') + ' TND' : '—' }}
+            </td>
           </tr>
         </tbody>
       </table>
-      <div *ngIf="!isLoadingData && orders.length === 0" class="cd-placeholder">
-        <fa-icon icon="shopping-cart" size="2x" style="margin-bottom:.5rem;display:block;"></fa-icon>
-        Aucune commande pour ce client.
-      </div>
+    </div>
 
-      <!-- Pagination -->
-      <div class="cd-history-pagination" *ngIf="historyTotalPages > 1">
-        <button class="cd-btn cd-btn--outline cd-btn--sm" [disabled]="historyPage === 1" (click)="historyPage = historyPage - 1">
-          <fa-icon icon="chevron-left"></fa-icon>
-        </button>
-        <span class="cd-history-page-info">{{ historyPage }} / {{ historyTotalPages }}</span>
-        <button class="cd-btn cd-btn--outline cd-btn--sm" [disabled]="historyPage === historyTotalPages" (click)="historyPage = historyPage + 1">
-          <fa-icon icon="chevron-right"></fa-icon>
-        </button>
-      </div>
+    <div *ngIf="!isLoadingData && orders.length === 0" class="cd-empty cd-empty--lg">
+      <fa-icon icon="shopping-cart"></fa-icon>
+      <span>Aucune commande pour ce client</span>
+    </div>
+
+    <div class="cd-table-foot" *ngIf="historyTotalPages > 1">
+      <button class="cd-pg-btn" [disabled]="historyPage === 1" (click)="historyPage = historyPage - 1">
+        <fa-icon icon="chevron-left"></fa-icon>
+      </button>
+      <span class="cd-pg-info">Page {{ historyPage }} sur {{ historyTotalPages }}</span>
+      <button class="cd-pg-btn" [disabled]="historyPage === historyTotalPages" (click)="historyPage = historyPage + 1">
+        <fa-icon icon="chevron-right"></fa-icon>
+      </button>
     </div>
   </div>
 
-  <!-- AI Summary -->
-  <div class="cd-ai-summary" *ngIf="aiSummary || isLoadingAi">
-    <div class="cd-ai-summary__badge"><fa-icon icon="star"></fa-icon> Analyse IA</div>
-    <div *ngIf="isLoadingAi" class="cd-ai-summary__loading"><fa-icon icon="spinner" [spin]="true"></fa-icon> Analyse en cours…</div>
-    <p *ngIf="!isLoadingAi && aiSummary" class="cd-ai-summary__text">{{ aiSummary }}</p>
-  </div>
-
-  <!-- Email Modal -->
+  <!-- ═══ EMAIL MODAL ═══════════════════════════════════════════════════════ -->
   <div class="cd-modal-overlay" *ngIf="emailModal" (click)="emailModal = false">
     <div class="cd-modal" (click)="$event.stopPropagation()">
-      <div class="cd-modal__header">
-        <span><fa-icon icon="envelope"></fa-icon> Email généré par IA</span>
+      <div class="cd-modal__head">
+        <span class="cd-modal__title"><fa-icon icon="envelope"></fa-icon> Email généré par IA</span>
         <button class="cd-modal__close" (click)="emailModal = false"><fa-icon icon="times"></fa-icon></button>
       </div>
       <div class="cd-modal__body">
-        <div *ngIf="isGeneratingEmail" class="cd-modal__loading"><fa-icon icon="spinner" [spin]="true"></fa-icon> Génération en cours…</div>
+        <div *ngIf="isGeneratingEmail" class="cd-loading cd-loading--center">
+          <fa-icon icon="spinner" [spin]="true"></fa-icon> Génération en cours…
+        </div>
         <textarea *ngIf="!isGeneratingEmail" class="cd-modal__textarea" [value]="emailContent" readonly rows="14"></textarea>
       </div>
-      <div class="cd-modal__footer">
+      <div class="cd-modal__foot">
         <button class="cd-btn cd-btn--outline" (click)="emailModal = false">Fermer</button>
         <button class="cd-btn cd-btn--primary" (click)="copyEmail()" [disabled]="!emailContent">
           <fa-icon [icon]="emailCopied ? 'check' : 'copy'"></fa-icon>

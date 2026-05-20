@@ -27,7 +27,7 @@ export class ClientDetailComponent implements OnInit {
 
   riskScore: { score: number; label: string; colorClass: string; bar: string } | null = null;
 
-  loyaltyScore: { score: number; grade: string; label: string; colorClass: string; barClass: string } | null = null;
+  loyaltyScore: { score: number; grade: string; label: string; colorClass: string; barClass: string; ringColor: string } | null = null;
 
   historyPage = 1;
   historyPageSize = 5;
@@ -195,6 +195,18 @@ export class ClientDetailComponent implements OnInit {
     this.riskScore = { score, label, colorClass, bar };
   }
 
+  get clientInitials(): string {
+    return (this.client?.name || '')
+      .trim().split(/\s+/).slice(0, 2)
+      .map(w => w[0]?.toUpperCase() || '').join('');
+  }
+
+  get creditUsagePercent(): number {
+    const limit = this.client?.creditLimit ?? 0;
+    const used  = this.client?.creditUsed  ?? 0;
+    return limit ? Math.min(100, Math.round((used / limit) * 100)) : 0;
+  }
+
   get totalOrdersAmount(): number {
     return this.orders.reduce((sum, o) => sum + (o.totalAmount ?? 0), 0);
   }
@@ -272,17 +284,18 @@ export class ClientDetailComponent implements OnInit {
     let colorClass: string;
     let barClass: string;
 
+    let ringColor: string;
     if (score >= 80) {
-      grade = 'A'; label = 'Excellent client'; colorClass = 'loyalty--a'; barClass = 'loyalty-bar--green';
+      grade = 'A'; label = 'Excellent client'; colorClass = 'loyalty--a'; barClass = 'loyalty-bar--green'; ringColor = '#10b981';
     } else if (score >= 60) {
-      grade = 'B'; label = 'Bon client'; colorClass = 'loyalty--b'; barClass = 'loyalty-bar--blue';
+      grade = 'B'; label = 'Bon client'; colorClass = 'loyalty--b'; barClass = 'loyalty-bar--blue'; ringColor = '#3b82f6';
     } else if (score >= 40) {
-      grade = 'C'; label = 'Client moyen'; colorClass = 'loyalty--c'; barClass = 'loyalty-bar--orange';
+      grade = 'C'; label = 'Client moyen'; colorClass = 'loyalty--c'; barClass = 'loyalty-bar--orange'; ringColor = '#f59e0b';
     } else {
-      grade = 'D'; label = 'Client inactif'; colorClass = 'loyalty--d'; barClass = 'loyalty-bar--red';
+      grade = 'D'; label = 'Client inactif'; colorClass = 'loyalty--d'; barClass = 'loyalty-bar--red'; ringColor = '#ef4444';
     }
 
-    this.loyaltyScore = { score, grade, label, colorClass, barClass };
+    this.loyaltyScore = { score, grade, label, colorClass, barClass, ringColor };
   }
 
   private loadAiSummary(): void {
