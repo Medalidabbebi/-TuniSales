@@ -143,6 +143,13 @@
             <!-- Actions -->
             <td>
               <div class="cl-actions">
+                <button (click)="exportClientExcel(client)"
+                        class="cl-action-btn cl-action-btn--excel"
+                        [disabled]="exportingClientId === client.id"
+                        title="Exporter ventes Excel">
+                  <fa-icon [icon]="exportingClientId === client.id ? 'spinner' : 'file-excel'"
+                           [spin]="exportingClientId === client.id"></fa-icon>
+                </button>
                 <a [routerLink]="['/client', client.id, 'view']"
                    class="cl-action-btn cl-action-btn--view"
                    data-cy="entityDetailsButton" title="Voir">

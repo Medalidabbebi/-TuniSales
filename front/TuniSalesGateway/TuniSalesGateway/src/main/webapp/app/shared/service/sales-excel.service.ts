@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
 import { IOrder } from 'app/entities/BusinessService/order/order.model';
 import { IInvoice } from 'app/entities/BusinessService/invoice/invoice.model';
+import { IClient } from 'app/entities/BusinessService/client/client.model';
 
 @Injectable({ providedIn: 'root' })
 export class SalesExcelService {
@@ -179,6 +180,121 @@ export class SalesExcelService {
 
     const date = new Date().toISOString().slice(0, 10);
     XLSX.writeFile(wb, `${filename}-${date}.xlsx`);
+  }
+
+  exportByClient(client: IClient, orders: IOrder[], invoices: IInvoice[]): void {
+    const ORDER_STATUS: Record<string, string> = {
+      DRAFT: 'Brouillon', SUBMITTED: 'Soumis', UNDER_REVIEW: 'En révision',
+      APPROVED: 'Approuvé', IN_PREPARATION: 'En préparation', SHIPPED: 'Expédié',
+      DELIVERED: 'Livré', INVOICED: 'Facturé', PAID: 'Payé',
+      REJECTED: 'Rejeté', CANCELLED: 'Annulé',
+    };
+    const INV_STATUS: Record<string, string> = {
+      DRAFT: 'Brouillon', ISSUED: 'Émise', PARTIALLY_PAID: 'Part. payée',
+      PAID: 'Payée', OVERDUE: 'En retard', CANCELLED: 'Annulée',
+    };
+    const TYPE_FR: Record<string, string> = {
+      NATIONAL_DISTRIBUTOR: 'Distributeur national', REGIONAL_WHOLESALER: 'Grossiste régional',
+      INDEPENDENT_POS: 'PDV indépendant', TELECOM_OPERATOR: 'Opérateur télécom',
+    };
+    const STATUS_FR: Record<string, string> = {
+      ACTIVE: 'Actif', INACTIVE: 'Inactif', SUSPENDED: 'Suspendu', CHURN_RISK: 'À risque',
+    };
+
+    const wb = XLSX.utils.book_new();
+
+    // ── Sheet 1 : Fiche client ────────────────────────────────────────
+    const clientData: any[][] = [
+      ['FICHE CLIENT', ''],
+      ['', ''],
+      ['Champ', 'Valeur'],
+      ['ID', client.id],
+      ['Nom', client.name ?? ''],
+      ['Type', TYPE_FR[client.clientType ?? ''] ?? client.clientType ?? ''],
+      ['Statut', STATUS_FR[client.status ?? ''] ?? client.status ?? ''],
+      ['Matricule fiscal', client.taxId ?? ''],
+      ['Limite crédit (TND)', this.fmtNum(client.creditLimit)],
+      ['Crédit utilisé (TND)', this.fmtNum(client.creditUsed)],
+      ['Délai paiement (j)', this.fmtNum(client.paymentTermsDays)],
+      ['Dernière commande', this.fmtDate(client.lastOrderAt)],
+      ['Créé le', this.fmtDate(client.createdAt)],
+      ['', ''],
+      ['RÉSUMÉ VENTES', ''],
+      ['Nombre de commandes', orders.length],
+      ['Nombre de factures', invoices.length],
+      ['CA total commandes (TND)', orders.reduce((s, o) => s + (o.totalAmount ?? 0), 0)],
+      ['CA total facturé (TND)', invoices.reduce((s, i) => s + (i.amountTtc ?? 0), 0)],
+      ['Montant encaissé (TND)', invoices.filter(i => i.status === 'PAID').reduce((s, i) => s + (i.amountTtc ?? 0), 0)],
+    ];
+    const ws1 = XLSX.utils.aoa_to_sheet(clientData);
+    ws1['!cols'] = [{ wch: 28 }, { wch: 30 }];
+    XLSX.utils.book_append_sheet(wb, ws1, 'Fiche client');
+
+    // ── Sheet 2 : Commandes ───────────────────────────────────────────
+    const orderHeaders = [
+      'N° Ordre', 'Statut', 'Mode paiement',
+      'Sous-total HT (TND)', 'Remise %', 'Remise (TND)', 'TVA (TND)', 'Total TTC (TND)',
+      'Date échéance', 'Soumis le', 'Validé le',
+    ];
+    const orderRows = orders.map(o => [
+      o.orderNumber ?? '',
+      ORDER_STATUS[o.status ?? ''] ?? o.status ?? '',
+      o.paymentMethod ?? '',
+      this.fmtNum(o.subtotal),
+      this.fmtNum(o.discountPercent),
+      this.fmtNum(o.discountAmount),
+      this.fmtNum(o.taxAmount),
+      this.fmtNum(o.totalAmount),
+      this.fmtDate(o.dueDate),
+      this.fmtDate(o.submittedAt),
+      this.fmtDate(o.validatedAt),
+    ]);
+    if (orderRows.length > 0) {
+      const totalRow = Array(orderHeaders.length).fill('');
+      totalRow[0] = `TOTAL (${orderRows.length})`;
+      totalRow[7] = orders.reduce((s, o) => s + (o.totalAmount ?? 0), 0);
+      orderRows.push(totalRow);
+    }
+    const ordData = [orderHeaders, ...orderRows];
+    const ws2 = XLSX.utils.aoa_to_sheet(ordData);
+    this.autoWidth(ws2, ordData);
+    this.applyHeaderStyle(ws2, orderHeaders.length);
+    XLSX.utils.book_append_sheet(wb, ws2, 'Commandes');
+
+    // ── Sheet 3 : Factures ────────────────────────────────────────────
+    const invHeaders = [
+      'N° Facture', 'Commande liée', 'Statut',
+      'Montant HT (TND)', 'TVA (TND)', 'Montant TTC (TND)',
+      "Date d'émission", "Date d'échéance", 'Payée le',
+    ];
+    const invRows = invoices.map(inv => [
+      inv.invoiceNumber ?? '',
+      inv.order?.orderNumber ?? '',
+      INV_STATUS[inv.status ?? ''] ?? inv.status ?? '',
+      this.fmtNum(inv.amountHt),
+      this.fmtNum(inv.taxAmount),
+      this.fmtNum(inv.amountTtc),
+      this.fmtDate(inv.issueDate),
+      this.fmtDate(inv.dueDate),
+      this.fmtDate(inv.paidAt),
+    ]);
+    if (invRows.length > 0) {
+      const totalRow = Array(invHeaders.length).fill('');
+      totalRow[0] = `TOTAL (${invRows.length})`;
+      totalRow[3] = invoices.reduce((s, i) => s + (i.amountHt  ?? 0), 0);
+      totalRow[4] = invoices.reduce((s, i) => s + (i.taxAmount ?? 0), 0);
+      totalRow[5] = invoices.reduce((s, i) => s + (i.amountTtc ?? 0), 0);
+      invRows.push(totalRow);
+    }
+    const invData = [invHeaders, ...invRows];
+    const ws3 = XLSX.utils.aoa_to_sheet(invData);
+    this.autoWidth(ws3, invData);
+    this.applyHeaderStyle(ws3, invHeaders.length);
+    XLSX.utils.book_append_sheet(wb, ws3, 'Factures');
+
+    const date = new Date().toISOString().slice(0, 10);
+    const safeName = (client.name ?? 'client').replace(/[^a-zA-Z0-9_-]/g, '_');
+    XLSX.writeFile(wb, `ventes-${safeName}-${date}.xlsx`);
   }
 
   private addInvoiceStats(wb: XLSX.WorkBook, invoices: IInvoice[], statusFr: Record<string, string>): void {

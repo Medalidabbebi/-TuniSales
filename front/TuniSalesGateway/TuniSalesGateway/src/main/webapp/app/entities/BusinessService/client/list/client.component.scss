@@ -321,6 +321,14 @@ table.cl-table {
     border-color: #fecaca;
     &:hover { background: $cl-red; color: $cl-white; }
   }
+
+  &--excel {
+    background: #dcfce7;
+    color: #16a34a;
+    border-color: #bbf7d0;
+    &:hover:not([disabled]) { background: #16a34a; color: #fff; }
+    &[disabled] { opacity: .5; cursor: not-allowed; }
+  }
 }
 
 // ── Empty state

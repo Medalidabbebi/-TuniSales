@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
-import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
+import { combineLatest, filter, forkJoin, Observable, switchMap, tap } from 'rxjs';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { IClient } from '../client.model';
@@ -10,6 +10,9 @@ import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/co
 import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
 import { EntityArrayResponseType, ClientService } from '../service/client.service';
 import { ClientDeleteDialogComponent } from '../delete/client-delete-dialog.component';
+import { OrderService } from 'app/entities/BusinessService/order/service/order.service';
+import { InvoiceService } from 'app/entities/BusinessService/invoice/service/invoice.service';
+import { SalesExcelService } from 'app/shared/service/sales-excel.service';
 
 @Component({
   selector: 'jhi-client',
@@ -21,6 +24,7 @@ export class ClientComponent implements OnInit {
   clients?: IClient[];
   isLoading = false;
   searchText = '';
+  exportingClientId: number | null = null;
 
   predicate = 'id';
   ascending = true;
@@ -33,10 +37,28 @@ export class ClientComponent implements OnInit {
     protected clientService: ClientService,
     protected activatedRoute: ActivatedRoute,
     public router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    private orderService: OrderService,
+    private invoiceService: InvoiceService,
+    private excelService: SalesExcelService
   ) {}
 
   trackId = (_index: number, item: IClient): number => this.clientService.getClientIdentifier(item);
+
+  exportClientExcel(client: IClient): void {
+    this.exportingClientId = client.id;
+    const opts = { 'clientId.equals': client.id, size: 1000, eagerload: true };
+    forkJoin([
+      this.orderService.query(opts),
+      this.invoiceService.query(opts),
+    ]).subscribe({
+      next: ([ordRes, invRes]) => {
+        this.excelService.exportByClient(client, ordRes.body ?? [], invRes.body ?? []);
+        this.exportingClientId = null;
+      },
+      error: () => { this.exportingClientId = null; },
+    });
+  }
 
   ngOnInit(): void {
     this.load();
