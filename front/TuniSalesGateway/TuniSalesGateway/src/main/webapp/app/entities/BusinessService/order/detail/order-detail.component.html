@@ -42,6 +42,18 @@
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
+  <!-- ── Invoice auto-created banner ───────────────────────────────── -->
+  <div *ngIf="createdInvoice" class="tsg-invoice-banner">
+    <fa-icon icon="check-circle" class="tsg-invoice-banner__icon"></fa-icon>
+    <div class="tsg-invoice-banner__body">
+      <strong>Facture créée automatiquement</strong>
+      <span>N° {{ createdInvoice.invoiceNumber }} — {{ createdInvoice.amountTtc | number:'1.2-2' }} TND</span>
+    </div>
+    <a [routerLink]="['/invoice', createdInvoice.id, 'view']" class="tsg-invoice-banner__link">
+      <fa-icon icon="eye"></fa-icon> Voir la facture
+    </a>
+  </div>
+
   <!-- ── Status Pipeline ─────────────────────────────────────────── -->
   <div class="tsg-detail-section" *ngIf="!isTerminalStatus()">
     <div class="tsg-detail-section__title">Progression de l'ordre</div>

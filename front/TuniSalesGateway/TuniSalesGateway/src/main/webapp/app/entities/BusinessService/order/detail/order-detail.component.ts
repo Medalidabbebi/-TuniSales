@@ -1,11 +1,17 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import dayjs from 'dayjs/esm';
 
 import { IOrder } from '../order.model';
 import { IOrderLine } from 'app/entities/BusinessService/order-line/order-line.model';
 import { OrderStatus } from 'app/entities/enumerations/order-status.model';
+import { InvoiceStatus } from 'app/entities/enumerations/invoice-status.model';
+import { IInvoice } from 'app/entities/BusinessService/invoice/invoice.model';
 import { OrderService } from '../service/order.service';
 import { OrderLineService } from 'app/entities/BusinessService/order-line/service/order-line.service';
+import { InvoiceService } from 'app/entities/BusinessService/invoice/service/invoice.service';
 import { AccountService } from 'app/core/auth/account.service';
 
 @Component({
@@ -19,6 +25,8 @@ export class OrderDetailComponent implements OnInit {
   orderLines: IOrderLine[] = [];
   isActionLoading = false;
   isLoadingLines = false;
+  createdInvoice: IInvoice | null = null;
+  invoiceError: string | null = null;
 
   pipelineSteps = [
     { key: OrderStatus.DRAFT,          label: 'Brouillon' },
@@ -56,6 +64,7 @@ export class OrderDetailComponent implements OnInit {
     protected activatedRoute: ActivatedRoute,
     protected orderService: OrderService,
     protected orderLineService: OrderLineService,
+    protected invoiceService: InvoiceService,
     protected accountService: AccountService
   ) {}
 
@@ -104,9 +113,46 @@ export class OrderDetailComponent implements OnInit {
     const next = this.getNextStatus();
     if (!this.order?.id || !next) return;
     this.isActionLoading = true;
-    this.orderService.validate(this.order.id, next).subscribe({
-      next: res => { this.order = res.body; this.isActionLoading = false; },
+    this.createdInvoice = null;
+    this.invoiceError = null;
+
+    this.orderService.validate(this.order.id, next).pipe(
+      switchMap(res => {
+        this.order = res.body;
+        // Auto-create invoice when order reaches INVOICED status
+        if (res.body?.status === OrderStatus.INVOICED) {
+          return this.createInvoiceFromOrder(res.body);
+        }
+        return of(null);
+      })
+    ).subscribe({
+      next: inv => {
+        if (inv) this.createdInvoice = inv.body;
+        this.isActionLoading = false;
+      },
       error: () => { this.isActionLoading = false; }
+    });
+  }
+
+  private createInvoiceFromOrder(order: IOrder) {
+    const today = dayjs();
+    const dueDate = today.add(order.paymentTermsDays ?? 30, 'day');
+    const pad = (n: number): string => String(n).padStart(2, '0');
+    const invoiceNumber = `FAC-${today.year()}${pad(today.month() + 1)}${pad(today.date())}-${order.id}`;
+
+    const amountHt = (order.subtotal ?? 0) - (order.discountAmount ?? 0);
+
+    return this.invoiceService.create({
+      id: null,
+      invoiceNumber,
+      amountHt,
+      taxAmount: order.taxAmount ?? 0,
+      amountTtc: order.totalAmount ?? 0,
+      status: InvoiceStatus.ISSUED,
+      issueDate: today,
+      dueDate,
+      client: order.client ? { id: order.client.id, name: order.client.name } : null,
+      order: { id: order.id, orderNumber: order.orderNumber ?? null },
     });
   }
 
