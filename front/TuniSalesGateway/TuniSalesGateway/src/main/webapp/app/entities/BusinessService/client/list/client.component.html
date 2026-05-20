@@ -19,6 +19,10 @@
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
+      <button class="cl-btn cl-btn--excel" (click)="exportAllExcel()" [disabled]="!clients?.length">
+        <fa-icon icon="file-excel"></fa-icon>
+        Exporter Excel
+      </button>
       <a class="cl-btn cl-btn--primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/client/new']">
         <fa-icon icon="plus"></fa-icon>
         Nouveau Client

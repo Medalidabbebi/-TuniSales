@@ -182,6 +182,41 @@ export class SalesExcelService {
     XLSX.writeFile(wb, `${filename}-${date}.xlsx`);
   }
 
+  exportClients(clients: IClient[]): void {
+    const TYPE_FR: Record<string, string> = {
+      NATIONAL_DISTRIBUTOR: 'Distributeur national', REGIONAL_WHOLESALER: 'Grossiste régional',
+      INDEPENDENT_POS: 'PDV indépendant', TELECOM_OPERATOR: 'Opérateur télécom',
+    };
+    const STATUS_FR: Record<string, string> = {
+      ACTIVE: 'Actif', INACTIVE: 'Inactif', SUSPENDED: 'Suspendu', CHURN_RISK: 'À risque',
+    };
+    const headers = [
+      'ID', 'Nom', 'Type', 'Statut', 'Matricule fiscal',
+      'Limite crédit (TND)', 'Crédit utilisé (TND)', 'Délai paiement (j)',
+      'Dernière commande', 'Créé le',
+    ];
+    const rows = clients.map(c => [
+      c.id,
+      c.name ?? '',
+      TYPE_FR[c.clientType ?? ''] ?? c.clientType ?? '',
+      STATUS_FR[c.status ?? ''] ?? c.status ?? '',
+      c.taxId ?? '',
+      this.fmtNum(c.creditLimit),
+      this.fmtNum(c.creditUsed),
+      this.fmtNum(c.paymentTermsDays),
+      this.fmtDate(c.lastOrderAt),
+      this.fmtDate(c.createdAt),
+    ]);
+    const data = [headers, ...rows];
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    this.autoWidth(ws, data);
+    this.applyHeaderStyle(ws, headers.length);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Clients');
+    const date = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(wb, `clients-${date}.xlsx`);
+  }
+
   exportByClient(client: IClient, orders: IOrder[], invoices: IInvoice[]): void {
     const ORDER_STATUS: Record<string, string> = {
       DRAFT: 'Brouillon', SUBMITTED: 'Soumis', UNDER_REVIEW: 'En révision',

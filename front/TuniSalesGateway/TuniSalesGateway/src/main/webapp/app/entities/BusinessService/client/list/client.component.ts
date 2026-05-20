@@ -45,6 +45,10 @@ export class ClientComponent implements OnInit {
 
   trackId = (_index: number, item: IClient): number => this.clientService.getClientIdentifier(item);
 
+  exportAllExcel(): void {
+    this.excelService.exportClients(this.clients ?? []);
+  }
+
   exportClientExcel(client: IClient): void {
     this.exportingClientId = client.id;
     const opts = { 'clientId.equals': client.id, size: 1000, eagerload: true };

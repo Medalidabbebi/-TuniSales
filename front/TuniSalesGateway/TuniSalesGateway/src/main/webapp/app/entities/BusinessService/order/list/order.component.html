@@ -16,6 +16,10 @@
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         <span>Actualiser</span>
       </button>
+      <button class="ol-btn ol-btn--excel" (click)="exportExcel()" [disabled]="!filteredOrders.length">
+        <fa-icon icon="file-excel"></fa-icon>
+        <span>Exporter Excel</span>
+      </button>
       <button class="ol-btn ol-btn--primary" [routerLink]="['/sales-offer']">
         <fa-icon icon="plus"></fa-icon>
         <span>Nouvel Ordre</span>
@@ -61,10 +65,6 @@
               title="Réinitialiser les filtres">
         <fa-icon icon="times"></fa-icon>
         <span>Effacer</span>
-      </button>
-      <button class="ol-btn ol-btn--excel" (click)="exportExcel()" [disabled]="!filteredOrders.length">
-        <fa-icon icon="file-excel"></fa-icon>
-        <span>Exporter Excel</span>
       </button>
     </div>
   </div>
