@@ -2,6 +2,7 @@ package com.tunisales.gateway.web.rest;
 
 import com.tunisales.gateway.config.ApplicationProperties;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +32,10 @@ public class SmsResource {
     public Mono<ResponseEntity<Map<String, Object>>> send(@RequestBody SmsRequest req) {
         String sid = twilioProps.getAccountSid();
         if (sid == null || sid.isBlank()) {
-            return Mono.just(ResponseEntity.badRequest()
-                .body(Map.of("success", false, "error", "Twilio non configuré sur le serveur.")));
+            Map<String, Object> err = new HashMap<>();
+            err.put("success", false);
+            err.put("error", "Twilio non configuré sur le serveur.");
+            return Mono.just(ResponseEntity.badRequest().body(err));
         }
 
         String credentials = Base64.getEncoder()
@@ -47,9 +50,17 @@ public class SmsResource {
                 .with("Body", req.body))
             .retrieve()
             .bodyToMono(Map.class)
-            .map(res -> ResponseEntity.ok(
-                Map.<String, Object>of("success", true, "sid", res.getOrDefault("sid", ""))))
-            .onErrorResume(e -> Mono.just(ResponseEntity.status(500)
-                .body(Map.of("success", false, "error", e.getMessage() != null ? e.getMessage() : "Erreur Twilio"))));
+            .map(res -> {
+                Map<String, Object> ok = new HashMap<>();
+                ok.put("success", true);
+                ok.put("sid", res.getOrDefault("sid", ""));
+                return ResponseEntity.ok(ok);
+            })
+            .onErrorResume(e -> {
+                Map<String, Object> errMap = new HashMap<>();
+                errMap.put("success", false);
+                errMap.put("error", e.getMessage() != null ? e.getMessage() : "Erreur Twilio");
+                return Mono.just(ResponseEntity.status(500).body(errMap));
+            });
     }
 }
