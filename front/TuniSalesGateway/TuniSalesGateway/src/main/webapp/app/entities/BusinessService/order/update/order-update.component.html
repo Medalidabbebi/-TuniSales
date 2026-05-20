@@ -287,3 +287,152 @@
 
   </div><!-- /ou-shell -->
 </div>
+
+<!-- ═══ NOTIFICATION MODAL ══════════════════════════════════════════════════ -->
+<div class="ou-notif-overlay" *ngIf="notifModal" (click)="closeNotifModal()">
+  <div class="ou-notif-modal" (click)="$event.stopPropagation()">
+
+    <!-- ── Header success banner ── -->
+    <div class="ou-notif-modal__head">
+      <div class="ou-notif-modal__success-icon">
+        <fa-icon icon="check-circle"></fa-icon>
+      </div>
+      <div class="ou-notif-modal__head-text">
+        <div class="ou-notif-modal__head-title">Commande créée avec succès !</div>
+        <div class="ou-notif-modal__head-sub">Notifiez votre client par email ou SMS en 1 clic.</div>
+      </div>
+      <button class="ou-notif-modal__close" (click)="closeNotifModal()" title="Fermer">
+        <fa-icon icon="times"></fa-icon>
+      </button>
+    </div>
+
+    <!-- ── Contact client ── -->
+    <div class="ou-notif-contact">
+      <div class="ou-notif-contact__icon"><fa-icon icon="user"></fa-icon></div>
+      <div class="ou-notif-contact__info" *ngIf="!isLoadingContact">
+        <div class="ou-notif-contact__name">
+          {{ clientContact?.fullName || editForm.controls.client.value?.name || 'Client' }}
+        </div>
+        <div class="ou-notif-contact__row">
+          <span class="ou-notif-contact__item" *ngIf="clientContact?.email">
+            <fa-icon icon="envelope"></fa-icon> {{ clientContact!.email }}
+          </span>
+          <span class="ou-notif-contact__item ou-notif-contact__item--no-contact" *ngIf="!clientContact?.email">
+            <fa-icon icon="envelope"></fa-icon> Aucun email enregistré
+          </span>
+          <span class="ou-notif-contact__sep" *ngIf="clientContact?.email && clientContact?.phone">·</span>
+          <span class="ou-notif-contact__item" *ngIf="clientContact?.phone">
+            <fa-icon icon="comments"></fa-icon> {{ clientContact!.phone }}
+          </span>
+          <span class="ou-notif-contact__item ou-notif-contact__item--no-contact" *ngIf="!clientContact?.phone">
+            <fa-icon icon="comments"></fa-icon> Aucun téléphone enregistré
+          </span>
+        </div>
+      </div>
+      <div class="ou-notif-contact__loading" *ngIf="isLoadingContact">
+        <fa-icon icon="spinner" [spin]="true"></fa-icon> Chargement du contact…
+      </div>
+    </div>
+
+    <!-- ── Tab switcher ── -->
+    <div class="ou-notif-tabs">
+      <button class="ou-notif-tab" [class.ou-notif-tab--active]="notifTab === 'email'"
+              (click)="switchNotifTab('email')">
+        <fa-icon icon="envelope"></fa-icon>
+        <span>Email</span>
+        <span class="ou-notif-tab__dot" *ngIf="!isGeneratingEmail && notifEmailContent"></span>
+      </button>
+      <button class="ou-notif-tab" [class.ou-notif-tab--active]="notifTab === 'sms'"
+              (click)="switchNotifTab('sms')">
+        <fa-icon icon="comments"></fa-icon>
+        <span>SMS / WhatsApp</span>
+        <span class="ou-notif-tab__dot ou-notif-tab__dot--green" *ngIf="!isGeneratingSms && notifSmsContent"></span>
+      </button>
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="ou-notif-modal__body">
+
+      <!-- Email panel -->
+      <ng-container *ngIf="notifTab === 'email'">
+        <div class="ou-notif-generating" *ngIf="isGeneratingEmail">
+          <fa-icon icon="spinner" [spin]="true"></fa-icon>
+          <span>Génération de l'email par IA…</span>
+        </div>
+        <ng-container *ngIf="!isGeneratingEmail">
+          <div class="ou-notif-content-label">
+            <fa-icon icon="star"></fa-icon> Contenu généré par IA
+          </div>
+          <textarea class="ou-notif-textarea" [value]="notifEmailContent" readonly rows="10"></textarea>
+        </ng-container>
+      </ng-container>
+
+      <!-- SMS panel -->
+      <ng-container *ngIf="notifTab === 'sms'">
+        <div class="ou-notif-generating" *ngIf="isGeneratingSms">
+          <fa-icon icon="spinner" [spin]="true"></fa-icon>
+          <span>Génération du SMS par IA…</span>
+        </div>
+        <ng-container *ngIf="!isGeneratingSms">
+          <div class="ou-notif-content-label">
+            <fa-icon icon="star"></fa-icon> Message généré par IA
+          </div>
+          <textarea class="ou-notif-textarea ou-notif-textarea--sms" [value]="notifSmsContent" readonly rows="5"></textarea>
+          <div class="ou-notif-sms-counter" [class.ou-notif-sms-counter--warn]="notifSmsContent.length > 140">
+            <fa-icon icon="check-circle" *ngIf="notifSmsContent.length <= 160"></fa-icon>
+            {{ notifSmsContent.length }} / 160 caractères
+          </div>
+        </ng-container>
+      </ng-container>
+
+    </div>
+
+    <!-- ── Footer ── -->
+    <div class="ou-notif-modal__foot">
+
+      <!-- Skip -->
+      <button class="ou-notif-btn ou-notif-btn--ghost" (click)="closeNotifModal()">
+        <fa-icon icon="arrow-right"></fa-icon> Ignorer
+      </button>
+
+      <!-- Copy -->
+      <button class="ou-notif-btn ou-notif-btn--copy"
+              [disabled]="(notifTab === 'email' && (isGeneratingEmail || !notifEmailContent)) ||
+                          (notifTab === 'sms'   && (isGeneratingSms   || !notifSmsContent))"
+              (click)="copyNotifContent()">
+        <fa-icon [icon]="(notifTab === 'email' ? emailCopied : smsCopied) ? 'check' : 'copy'"></fa-icon>
+        <span>{{ (notifTab === 'email' ? emailCopied : smsCopied) ? 'Copié !' : 'Copier' }}</span>
+      </button>
+
+      <!-- Email send button -->
+      <ng-container *ngIf="notifTab === 'email'">
+        <button class="ou-notif-btn ou-notif-btn--send-email"
+                [disabled]="isGeneratingEmail || !notifEmailContent"
+                (click)="sendByEmail()">
+          <fa-icon icon="envelope"></fa-icon>
+          <span>{{ clientContact?.email ? 'Ouvrir messagerie' : 'Ouvrir messagerie vide' }}</span>
+        </button>
+      </ng-container>
+
+      <!-- SMS / WhatsApp send buttons -->
+      <ng-container *ngIf="notifTab === 'sms'">
+        <button class="ou-notif-btn ou-notif-btn--send-sms"
+                [disabled]="isGeneratingSms || !notifSmsContent || !clientContact?.phone"
+                [title]="!clientContact?.phone ? 'Aucun téléphone enregistré pour ce contact' : ''"
+                (click)="sendBySms()">
+          <fa-icon icon="comments"></fa-icon>
+          <span>Envoyer SMS</span>
+        </button>
+        <button class="ou-notif-btn ou-notif-btn--send-whatsapp"
+                [disabled]="isGeneratingSms || !notifSmsContent || !clientContact?.phone"
+                [title]="!clientContact?.phone ? 'Aucun téléphone enregistré pour ce contact' : ''"
+                (click)="sendByWhatsApp()">
+          <fa-icon icon="comments"></fa-icon>
+          <span>WhatsApp</span>
+        </button>
+      </ng-container>
+
+    </div>
+
+  </div>
+</div>

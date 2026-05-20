@@ -43,63 +43,6 @@
     </div>
   </div>
 
-  <!-- ── AI Stock Analytics ───────────────────────────────────── -->
-  <div class="tsg-ai-analytics" *ngIf="stockItems && stockItems.length > 0">
-    <div class="tsg-ai-analytics__header">
-      <span class="tsg-ai-analytics__badge">
-        <fa-icon icon="star"></fa-icon> Analyse IA — Stock
-      </span>
-      <button type="button" class="tsg-ai-analytics__refresh" (click)="refreshInsights()" [disabled]="isLoadingInsight" title="Actualiser l'analyse">
-        <fa-icon icon="sync" [spin]="isLoadingInsight"></fa-icon>
-      </button>
-    </div>
-
-    <div class="tsg-ai-analytics__body">
-
-      <!-- Insight paragraph -->
-      <div class="tsg-ai-analytics__insight">
-        <div *ngIf="isLoadingInsight" class="tsg-ai-analytics__loading">
-          <fa-icon icon="spinner" [spin]="true"></fa-icon>
-          <span>Analyse du stock en cours…</span>
-        </div>
-        <p *ngIf="!isLoadingInsight && stockInsight" class="tsg-ai-analytics__text">
-          {{ stockInsight }}
-        </p>
-      </div>
-
-      <!-- Mini chat -->
-      <div class="tsg-ai-analytics__chat">
-        <div class="tsg-ai-analytics__chat-messages">
-          <div *ngIf="stockChatMessages.length === 0" class="tsg-ai-analytics__chat-placeholder">
-            <fa-icon icon="comments" style="opacity:.35;font-size:1.4rem;"></fa-icon>
-            <span>Ex : "Quels produits réapprovisionner ?"</span>
-          </div>
-          <div *ngFor="let m of stockChatMessages"
-               class="tsg-ai-analytics__msg"
-               [ngClass]="m.role === 'user' ? 'tsg-ai-analytics__msg--user' : 'tsg-ai-analytics__msg--ai'">
-            {{ m.content }}
-          </div>
-          <div *ngIf="isChatLoading" class="tsg-ai-analytics__msg tsg-ai-analytics__msg--ai tsg-ai-analytics__msg--typing">
-            <span></span><span></span><span></span>
-          </div>
-        </div>
-        <div class="tsg-ai-analytics__chat-input">
-          <input
-            type="text"
-            [(ngModel)]="chatInput"
-            (keydown)="onChatKeydown($event)"
-            placeholder="Poser une question sur le stock…"
-            [disabled]="isChatLoading"
-          />
-          <button type="button" (click)="sendChat()" [disabled]="isChatLoading || !chatInput.trim()" class="tsg-ai-analytics__send">
-            <fa-icon [icon]="isChatLoading ? 'spinner' : 'arrow-right'" [spin]="isChatLoading"></fa-icon>
-          </button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
   <!-- ── Loading ───────────────────────────────────────────── -->
   <div class="si-loading" *ngIf="isLoading">
     <fa-icon icon="spinner" [spin]="true" size="2x"></fa-icon>

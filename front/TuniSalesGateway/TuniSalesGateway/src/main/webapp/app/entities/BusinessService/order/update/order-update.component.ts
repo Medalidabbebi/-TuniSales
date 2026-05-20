@@ -2,7 +2,7 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
 import { finalize, map, switchMap } from 'rxjs/operators';
 
 import { OrderFormService, OrderFormGroup } from './order-form.service';
@@ -16,6 +16,9 @@ import { OrderLineService } from 'app/entities/BusinessService/order-line/servic
 import { NewOrderLine } from 'app/entities/BusinessService/order-line/order-line.model';
 import { OrderStatus } from 'app/entities/enumerations/order-status.model';
 import { PaymentMethod } from 'app/entities/enumerations/payment-method.model';
+import { AiSummaryService } from 'app/shared/service/ai-summary.service';
+import { ClientContactService } from 'app/entities/BusinessService/client-contact/service/client-contact.service';
+import { IClientContact } from 'app/entities/BusinessService/client-contact/client-contact.model';
 
 interface LineFormGroup {
   product: FormControl<IProduct | null>;
@@ -40,6 +43,18 @@ export class OrderUpdateComponent implements OnInit {
   paymentMethodValues = Object.values(PaymentMethod);
   orderStatusValues = Object.values(OrderStatus);
 
+  // ── Notification modal ────────────────────────────────────────────────────
+  notifModal = false;
+  notifTab: 'email' | 'sms' = 'email';
+  notifEmailContent = '';
+  notifSmsContent = '';
+  isGeneratingEmail = false;
+  isGeneratingSms = false;
+  emailCopied = false;
+  smsCopied = false;
+  clientContact: IClientContact | null = null;
+  isLoadingContact = false;
+
   editForm: OrderFormGroup = this.orderFormService.createOrderFormGroup();
 
   linesArray = new FormArray<FormGroup<LineFormGroup>>([]);
@@ -51,7 +66,9 @@ export class OrderUpdateComponent implements OnInit {
     protected clientService: ClientService,
     protected productService: ProductService,
     protected activatedRoute: ActivatedRoute,
-    protected router: Router
+    protected router: Router,
+    private aiSummaryService: AiSummaryService,
+    private clientContactService: ClientContactService,
   ) {}
 
   get isNewOrder(): boolean {
@@ -147,11 +164,22 @@ export class OrderUpdateComponent implements OnInit {
     if (this.isNewOrder) {
       order.status = OrderStatus.PENDING;
 
+      // Capture notification data before async operations
+      const notifData = {
+        clientName: (order.client as IClient)?.name ?? 'Client',
+        orderNumber: '',
+        totalAmount: this.totalAmount.toFixed(2),
+        paymentTermsDays: order.paymentTermsDays ?? 30,
+      };
+
+      let createdOrder: IOrder;
+
       this.orderService
         .create(order)
         .pipe(
           switchMap(res => {
-            const created = res.body!;
+            createdOrder = res.body!;
+            notifData.orderNumber = createdOrder.orderNumber ?? '#' + createdOrder.id;
             const lineRequests = this.linesArray.controls.map(ctrl => {
               const v = ctrl.getRawValue();
               const newLine: NewOrderLine = {
@@ -161,7 +189,7 @@ export class OrderUpdateComponent implements OnInit {
                 discountPct: v.discountPct,
                 lineTotal: v.lineTotal,
                 product: v.product ? { id: v.product.id, name: v.product.name ?? '' } : null,
-                order: { id: created.id, orderNumber: created.orderNumber ?? '' },
+                order: { id: createdOrder.id, orderNumber: createdOrder.orderNumber ?? '' },
               };
               return this.orderLineService.create(newLine);
             });
@@ -170,7 +198,7 @@ export class OrderUpdateComponent implements OnInit {
           finalize(() => (this.isSaving = false))
         )
         .subscribe({
-          next: () => this.router.navigate(['/order']),
+          next: () => this.openNotifModal(notifData),
           error: () => (this.isSaving = false),
         });
     } else {
@@ -179,6 +207,94 @@ export class OrderUpdateComponent implements OnInit {
         .pipe(finalize(() => (this.isSaving = false)))
         .subscribe({ next: () => this.previousState() });
     }
+  }
+
+  // ── Notification modal methods ────────────────────────────────────────────
+
+  switchNotifTab(tab: 'email' | 'sms'): void {
+    this.notifTab = tab;
+  }
+
+  copyNotifContent(): void {
+    const text = this.notifTab === 'email' ? this.notifEmailContent : this.notifSmsContent;
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      if (this.notifTab === 'email') {
+        this.emailCopied = true;
+        setTimeout(() => (this.emailCopied = false), 2500);
+      } else {
+        this.smsCopied = true;
+        setTimeout(() => (this.smsCopied = false), 2500);
+      }
+    });
+  }
+
+  sendByEmail(): void {
+    if (!this.notifEmailContent) return;
+    const lines = this.notifEmailContent.split('\n');
+    const subjectLine = lines.find(l => /^objet\s*:/i.test(l.trim()));
+    const subject = subjectLine
+      ? subjectLine.replace(/^objet\s*:\s*/i, '').trim()
+      : 'Confirmation de commande';
+    const emailAddr = this.clientContact?.email ?? '';
+    const mailto = `mailto:${emailAddr}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(this.notifEmailContent)}`;
+    window.open(mailto, '_blank');
+  }
+
+  sendBySms(): void {
+    if (!this.notifSmsContent || !this.clientContact?.phone) return;
+    const phone = this.clientContact.phone.replace(/\s+/g, '');
+    window.open(`sms:${phone}?body=${encodeURIComponent(this.notifSmsContent)}`, '_blank');
+  }
+
+  sendByWhatsApp(): void {
+    if (!this.notifSmsContent || !this.clientContact?.phone) return;
+    const phone = this.clientContact.phone.replace(/[\s\-\(\)\+]/g, '');
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(this.notifSmsContent)}`, '_blank');
+  }
+
+  closeNotifModal(): void {
+    this.notifModal = false;
+    this.router.navigate(['/order']);
+  }
+
+  private openNotifModal(data: { clientName: string; orderNumber: string; totalAmount: string; paymentTermsDays: number }): void {
+    this.notifModal = true;
+    this.notifTab = 'email';
+    this.notifEmailContent = '';
+    this.notifSmsContent = '';
+    this.clientContact = null;
+    this.isGeneratingEmail = true;
+    this.isGeneratingSms = true;
+    this.isLoadingContact = true;
+    this.emailCopied = false;
+    this.smsCopied = false;
+
+    const clientId = this.editForm.controls.client.value?.id;
+    const contactQuery$ = clientId
+      ? this.clientContactService.query({ 'clientId.equals': clientId, size: 20 })
+      : of({ body: [] as IClientContact[] } as any);
+
+    forkJoin([
+      this.aiSummaryService.generateEmail('order_confirm', data),
+      this.aiSummaryService.generateSms(data),
+      contactQuery$,
+    ]).subscribe({
+      next: ([email, sms, contactsRes]) => {
+        this.notifEmailContent = email;
+        this.notifSmsContent = sms;
+        const contacts: IClientContact[] = contactsRes.body ?? [];
+        this.clientContact = contacts.find(c => c.isPrimary) ?? contacts[0] ?? null;
+        this.isGeneratingEmail = false;
+        this.isGeneratingSms = false;
+        this.isLoadingContact = false;
+      },
+      error: () => {
+        this.isGeneratingEmail = false;
+        this.isGeneratingSms = false;
+        this.isLoadingContact = false;
+      },
+    });
   }
 
   /** Returns the ou-status--* CSS class for the given OrderStatus */

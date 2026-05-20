@@ -165,6 +165,46 @@ Génère uniquement l'email complet (objet + corps), sans commentaires suppléme
     );
   }
 
+  // ─── New: SMS Generator ──────────────────────────────────────────────────
+
+  generateSms(data: { clientName: string; orderNumber: string; totalAmount: string; paymentTermsDays?: number }): Observable<string> {
+    const apiKey = localStorage.getItem('anthropic_api_key') || DEFAULT_API_KEY;
+    const fallback = this.localSmsFallback(data);
+    if (!apiKey) return of(fallback);
+
+    const prompt = `Génère un SMS de confirmation de commande en français, professionnel et concis (maximum 160 caractères).
+Client : ${data.clientName}
+Commande : ${data.orderNumber}
+Montant : ${data.totalAmount} TND
+Délai de paiement : ${data.paymentTermsDays ?? 30} jours
+Expéditeur : TuniSalesGateway
+
+Génère uniquement le texte du SMS, sans guillemets, sans commentaires.`;
+
+    const context = new HttpContext().set(SKIP_ERROR_HANDLER, true);
+
+    return this.http.post<any>(
+      this.apiUrl,
+      {
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 100,
+        messages: [{ role: 'user', content: prompt }],
+      },
+      {
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        context,
+      }
+    ).pipe(
+      map((res: any) => (res?.content?.[0]?.text as string) ?? fallback),
+      catchError(() => of(fallback))
+    );
+  }
+
   // ─── New: Chat ────────────────────────────────────────────────────────────
 
   chat(messages: Array<{ role: 'user' | 'assistant'; content: string }>, context: string): Observable<string> {
@@ -245,132 +285,7 @@ Génère uniquement l'email complet (objet + corps), sans commentaires suppléme
         : `Voici les données disponibles : ${context}`;
     }
 
-    // Stock-specific keywords
-    if (/stock|article|disponible|inventaire/.test(msg)) {
-      const total = extract(/Stock: (\d+) articles/);
-      const avail = extract(/Disponibles: (\d+)/);
-      return total
-        ? `Le stock compte ${total} articles au total dont ${avail ?? '?'} disponibles. ${context}`
-        : `Voici les données de stock : ${context}`;
-    }
-
-    if (/defectueux|manquant|probleme|risque/.test(msg)) {
-      const def = extract(/Defectueux: (\d+)/);
-      const miss = extract(/Manquants: (\d+)/);
-      const defN = Number(def ?? 0);
-      const missN = Number(miss ?? 0);
-      if (defN + missN === 0) return `Aucun article défectueux ni manquant détecté — le stock est en bon état.`;
-      return `Il y a ${def ?? 0} article(s) défectueux et ${miss ?? 0} article(s) manquants. Une vérification et action corrective sont recommandées.`;
-    }
-
-    if (/reapprovisionner|rupture|commander|achat/.test(msg)) {
-      const avail = extract(/Disponibles: (\d+)/);
-      const total = extract(/Stock: (\d+) articles/);
-      const pct = total && avail ? Math.round((Number(avail) / Number(total)) * 100) : 0;
-      return pct < 30
-        ? `Le taux de disponibilité est de ${pct}% — un réapprovisionnement urgent est conseillé.`
-        : `Le taux de disponibilité est de ${pct}% — le stock est suffisant pour le moment.`;
-    }
-
-    if (/produit|top produit|plus stocke/.test(msg)) {
-      const prod = extract(/Produit principal: ([^(]+)\(/);
-      const cnt  = extract(/Produit principal: [^(]+\((\d+) unites\)/);
-      return prod
-        ? `Le produit le plus présent en stock est "${prod.trim()}" avec ${cnt ?? '?'} unités.`
-        : `Voici les données disponibles : ${context}`;
-    }
-
-    if (/entrepot|warehouse/.test(msg)) {
-      const wh = extract(/Entrepots: (\d+)/);
-      return wh
-        ? `Le stock est réparti sur ${wh} entrepôt(s) actifs.`
-        : `Voici les données disponibles : ${context}`;
-    }
-
     return `Voici un résumé de vos données actuelles : ${context} — Pour des analyses plus poussées, configurez votre clé API Anthropic dans le localStorage (clé : "anthropic_api_key").`;
-  }
-
-  // ─── New: Stock Insights ─────────────────────────────────────────────────
-
-  generateStockInsights(stats: {
-    total: number;
-    available: number;
-    sold: number;
-    defective: number;
-    missing: number;
-    inTransit: number;
-    reserved: number;
-    topProduct: string;
-    topProductCount: number;
-    warehouseCount: number;
-  }): Observable<string> {
-    const apiKey = localStorage.getItem('anthropic_api_key') || DEFAULT_API_KEY;
-    const fallback = this.localStockInsights(stats);
-    if (!apiKey) return of(fallback);
-
-    const availPct = stats.total > 0 ? Math.round((stats.available / stats.total) * 100) : 0;
-
-    const prompt = `Tu es un analyste d'inventaire expert pour TuniSalesGateway (Tunisie). Génère une analyse concise (3-4 phrases en français) sur la situation du stock actuel. Identifie les risques (ruptures, articles défectueux, manquants), les opportunités et donne une recommandation opérationnelle.
-
-Données du stock :
-- Total articles : ${stats.total}
-- Disponibles : ${stats.available} (${availPct}%)
-- Vendus : ${stats.sold}
-- En transit : ${stats.inTransit}
-- Réservés : ${stats.reserved}
-- Défectueux : ${stats.defective}
-- Manquants : ${stats.missing}
-- Produit le plus stocké : ${stats.topProduct} (${stats.topProductCount} unités)
-- Entrepôts actifs : ${stats.warehouseCount}
-
-Génère uniquement l'analyse, sans titre, sans liste, sans mise en forme markdown.`;
-
-    const context = new HttpContext().set(SKIP_ERROR_HANDLER, true);
-
-    return this.http.post<any>(
-      this.apiUrl,
-      {
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 320,
-        messages: [{ role: 'user', content: prompt }],
-      },
-      {
-        headers: {
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-          'content-type': 'application/json',
-          'anthropic-dangerous-direct-browser-access': 'true',
-        },
-        context,
-      }
-    ).pipe(
-      map((res: any) => (res?.content?.[0]?.text as string) ?? fallback),
-      catchError(() => of(fallback))
-    );
-  }
-
-  private localStockInsights(stats: {
-    total: number; available: number; sold: number;
-    defective: number; missing: number; inTransit: number;
-    reserved: number; topProduct: string; topProductCount: number; warehouseCount: number;
-  }): string {
-    const availPct = stats.total > 0 ? Math.round((stats.available / stats.total) * 100) : 0;
-    let text = `Le stock total compte ${stats.total} articles répartis sur ${stats.warehouseCount} entrepôt(s), dont ${stats.available} disponibles (${availPct}%).`;
-    if (stats.topProduct && stats.topProduct !== '—') {
-      text += ` Le produit le plus représenté est "${stats.topProduct}" avec ${stats.topProductCount} unités.`;
-    }
-    if (stats.defective > 0 || stats.missing > 0) {
-      text += ` Attention : ${stats.defective} article(s) défectueux et ${stats.missing} article(s) manquants nécessitent une intervention.`;
-    }
-    if (stats.inTransit > 0) {
-      text += ` ${stats.inTransit} article(s) sont actuellement en transit.`;
-    }
-    if (availPct < 30) {
-      text += ` Le taux de disponibilité est faible — un réapprovisionnement urgent est recommandé.`;
-    } else if (availPct >= 70) {
-      text += ` Le stock est bien approvisionné.`;
-    }
-    return text;
   }
 
   // ─── New: Dashboard Insights ─────────────────────────────────────────────
@@ -516,6 +431,10 @@ Génère uniquement le paragraphe, sans titre, sans liste, sans mise en forme.`;
       text += ` Le client principal est ${stats.topClient} avec un CA de ${stats.topClientCa.toFixed(0)} TND.`;
     }
     return text;
+  }
+
+  private localSmsFallback(data: { clientName: string; orderNumber: string; totalAmount: string; paymentTermsDays?: number }): string {
+    return `TuniSales: Cmd ${data.orderNumber} confirmée pour ${data.clientName}. Montant: ${data.totalAmount} TND. Règlement sous ${data.paymentTermsDays ?? 30}j. Merci.`;
   }
 
   private localEmailFallback(type: string, data: any): string {

@@ -389,4 +389,138 @@
     </div>
 
   </form>
+
+  <!-- ── Notification modal ─────────────────────────────────────── -->
+  <div class="oc-notif-overlay" *ngIf="notifModal" (click)="closeNotifModal()"></div>
+  <div class="oc-notif-modal" *ngIf="notifModal" role="dialog" aria-modal="true">
+
+    <!-- Head -->
+    <div class="oc-notif-head">
+      <div class="oc-notif-head__icon"><fa-icon icon="check-circle"></fa-icon></div>
+      <div class="oc-notif-head__text">
+        <strong>Ordre créé avec succès</strong>
+        <span>Notifiez votre client par email ou SMS.</span>
+      </div>
+      <button type="button" class="oc-notif-head__close" (click)="closeNotifModal()">
+        <fa-icon icon="times"></fa-icon>
+      </button>
+    </div>
+
+    <!-- Contact info -->
+    <div class="oc-notif-contact" *ngIf="!isLoadingContact">
+      <ng-container *ngIf="clientContact; else noContact">
+        <fa-icon icon="address-card" class="oc-notif-contact__icon"></fa-icon>
+        <div class="oc-notif-contact__info">
+          <span class="oc-notif-contact__name">{{ clientContact.fullName || '—' }}</span>
+          <span class="oc-notif-contact__detail" *ngIf="clientContact.email">
+            <fa-icon icon="envelope"></fa-icon> {{ clientContact.email }}
+          </span>
+          <span class="oc-notif-contact__detail" *ngIf="clientContact.phone">
+            <fa-icon icon="phone"></fa-icon> {{ clientContact.phone }}
+          </span>
+        </div>
+      </ng-container>
+      <ng-template #noContact>
+        <span class="oc-notif-contact__empty">
+          <fa-icon icon="exclamation-circle"></fa-icon> Aucun contact trouvé pour ce client.
+        </span>
+      </ng-template>
+    </div>
+    <div class="oc-notif-contact oc-notif-contact--loading" *ngIf="isLoadingContact">
+      <span class="oc-spinner"></span> Chargement du contact…
+    </div>
+
+    <!-- Tab switcher -->
+    <div class="oc-notif-tabs">
+      <button type="button" class="oc-notif-tab" [class.oc-notif-tab--active]="notifTab === 'email'" (click)="switchNotifTab('email')">
+        <fa-icon icon="envelope"></fa-icon> Email
+      </button>
+      <button type="button" class="oc-notif-tab" [class.oc-notif-tab--active]="notifTab === 'sms'" (click)="switchNotifTab('sms')">
+        <fa-icon icon="comment"></fa-icon> SMS / WhatsApp
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="oc-notif-body">
+
+      <!-- Email tab -->
+      <ng-container *ngIf="notifTab === 'email'">
+        <div class="oc-notif-generating" *ngIf="isGeneratingEmail">
+          <span class="oc-spinner"></span> Génération par IA en cours…
+        </div>
+        <div class="oc-notif-content-wrap" *ngIf="!isGeneratingEmail">
+          <div class="oc-notif-recipient-row">
+            <label class="oc-notif-recipient-label">
+              <fa-icon icon="envelope"></fa-icon> À :
+            </label>
+            <input
+              type="email"
+              class="oc-notif-recipient-input"
+              [(ngModel)]="notifEmailAddr"
+              placeholder="adresse@email.com"
+              autocomplete="off"
+            />
+          </div>
+          <div class="oc-notif-ai-label"><fa-icon icon="robot"></fa-icon> Rédigé par IA</div>
+          <textarea class="oc-notif-textarea" [(ngModel)]="notifEmailContent" rows="9"></textarea>
+        </div>
+      </ng-container>
+
+      <!-- SMS/WhatsApp tab -->
+      <ng-container *ngIf="notifTab === 'sms'">
+        <div class="oc-notif-generating" *ngIf="isGeneratingSms">
+          <span class="oc-spinner"></span> Génération par IA en cours…
+        </div>
+        <div class="oc-notif-content-wrap" *ngIf="!isGeneratingSms">
+          <div class="oc-notif-recipient-row">
+            <label class="oc-notif-recipient-label">
+              <fa-icon icon="phone"></fa-icon> Tél :
+            </label>
+            <input
+              type="tel"
+              class="oc-notif-recipient-input"
+              [(ngModel)]="notifPhoneNumber"
+              placeholder="+216 XX XXX XXX"
+              autocomplete="off"
+            />
+          </div>
+          <div class="oc-notif-ai-label"><fa-icon icon="robot"></fa-icon> Rédigé par IA · max 160 car.</div>
+          <textarea class="oc-notif-textarea oc-notif-textarea--sms" [(ngModel)]="notifSmsContent" rows="4"></textarea>
+          <div class="oc-notif-charcount" [class.oc-notif-charcount--over]="notifSmsContent.length > 160">
+            {{ notifSmsContent.length }} / 160
+          </div>
+        </div>
+      </ng-container>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="oc-notif-footer">
+      <button type="button" class="oc-notif-btn oc-notif-btn--ghost" (click)="closeNotifModal()">
+        Ignorer
+      </button>
+      <button type="button" class="oc-notif-btn oc-notif-btn--copy" (click)="copyNotifContent()"
+        [disabled]="(notifTab === 'email' && !notifEmailContent) || (notifTab === 'sms' && !notifSmsContent)">
+        <fa-icon [icon]="(notifTab === 'email' && emailCopied) || (notifTab === 'sms' && smsCopied) ? 'check' : 'copy'"></fa-icon>
+        {{ (notifTab === 'email' && emailCopied) || (notifTab === 'sms' && smsCopied) ? 'Copié !' : 'Copier' }}
+      </button>
+      <ng-container *ngIf="notifTab === 'email'">
+        <button type="button" class="oc-notif-btn oc-notif-btn--send-email" (click)="sendByEmail()" [disabled]="!notifEmailContent || !notifEmailAddr">
+          <fa-icon icon="paper-plane"></fa-icon> Envoyer par email
+        </button>
+      </ng-container>
+      <ng-container *ngIf="notifTab === 'sms'">
+        <button type="button" class="oc-notif-btn oc-notif-btn--send-sms" (click)="sendBySms()"
+          [disabled]="!notifSmsContent || !notifPhoneNumber">
+          <fa-icon icon="comment"></fa-icon> SMS
+        </button>
+        <button type="button" class="oc-notif-btn oc-notif-btn--send-whatsapp" (click)="sendByWhatsApp()"
+          [disabled]="!notifSmsContent || !notifPhoneNumber">
+          <fa-icon icon="paper-plane"></fa-icon> WhatsApp
+        </button>
+      </ng-container>
+    </div>
+
+  </div>
+
 </section>

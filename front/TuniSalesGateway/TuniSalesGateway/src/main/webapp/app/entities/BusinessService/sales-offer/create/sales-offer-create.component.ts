@@ -17,6 +17,9 @@ import { OrderService } from 'app/entities/BusinessService/order/service/order.s
 import { NewOrderLine } from 'app/entities/BusinessService/order-line/order-line.model';
 import { OrderLineService } from 'app/entities/BusinessService/order-line/service/order-line.service';
 import { OrderStatus } from 'app/entities/enumerations/order-status.model';
+import { AiSummaryService } from 'app/shared/service/ai-summary.service';
+import { ClientContactService } from 'app/entities/BusinessService/client-contact/service/client-contact.service';
+import { IClientContact } from 'app/entities/BusinessService/client-contact/client-contact.model';
 
 interface Step {
   title: string;
@@ -52,6 +55,20 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
   submitErrorMessage = '';
   stockInsufficient = false;
 
+  // ── Notification modal ────────────────────────────────────────────────────
+  notifModal = false;
+  notifTab: 'email' | 'sms' = 'email';
+  notifEmailContent = '';
+  notifSmsContent = '';
+  notifEmailAddr = '';
+  notifPhoneNumber = '';
+  isGeneratingEmail = false;
+  isGeneratingSms = false;
+  emailCopied = false;
+  smsCopied = false;
+  clientContact: IClientContact | null = null;
+  isLoadingContact = false;
+
   clients: IClient[] = [];
   products: IProduct[] = [];
   availableByProduct = new Map<number, number>();
@@ -78,7 +95,9 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
     private orderService: OrderService,
     private orderLineService: OrderLineService,
     private stockItemService: StockItemService,
-    private router: Router
+    private router: Router,
+    private aiSummaryService: AiSummaryService,
+    private clientContactService: ClientContactService,
   ) {}
 
   /**
@@ -334,11 +353,19 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
 
     const paymentMode = this.offerForm.controls.paymentMode.value as PaymentMode;
     const paymentTermsDays = this.getPaymentTermsDays(paymentMode);
+    const generatedOrderNumber = this.generateOrderNumber();
+
+    const notifData = {
+      clientName: this.selectedClient?.name ?? 'Client',
+      orderNumber: generatedOrderNumber,
+      totalAmount: this.roundTo2(this.totalAmount).toFixed(2),
+      paymentTermsDays,
+    };
 
     const orderPayload: NewOrder = {
       id: null,
       tenantId: 1, // TODO: Get actual tenant ID from account service  
-      orderNumber: this.generateOrderNumber(),
+      orderNumber: generatedOrderNumber,
       status: OrderStatus.DRAFT,
       subtotal: this.roundTo2(this.subtotal),
       discountAmount: this.roundTo2(this.discountAmount),
@@ -406,9 +433,102 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
       )
       .subscribe(result => {
         if (result === null && !this.submitErrorMessage) {
-          void this.router.navigate(['/order']);
+          this.openNotifModal(notifData);
         }
       });
+  }
+
+  // ── Notification modal methods ────────────────────────────────────────────
+
+  switchNotifTab(tab: 'email' | 'sms'): void {
+    this.notifTab = tab;
+  }
+
+  copyNotifContent(): void {
+    const text = this.notifTab === 'email' ? this.notifEmailContent : this.notifSmsContent;
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      if (this.notifTab === 'email') {
+        this.emailCopied = true;
+        setTimeout(() => (this.emailCopied = false), 2500);
+      } else {
+        this.smsCopied = true;
+        setTimeout(() => (this.smsCopied = false), 2500);
+      }
+    });
+  }
+
+  sendByEmail(): void {
+    if (!this.notifEmailContent || !this.notifEmailAddr) return;
+    const lines = this.notifEmailContent.split('\n');
+    const subjectLine = lines.find(l => /^objet\s*:/i.test(l.trim()));
+    const subject = subjectLine
+      ? subjectLine.replace(/^objet\s*:\s*/i, '').trim()
+      : 'Confirmation de commande';
+    window.open(
+      `mailto:${this.notifEmailAddr}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(this.notifEmailContent)}`,
+      '_blank'
+    );
+  }
+
+  sendBySms(): void {
+    if (!this.notifSmsContent || !this.notifPhoneNumber) return;
+    const phone = this.notifPhoneNumber.replace(/\s+/g, '');
+    window.open(`sms:${phone}?body=${encodeURIComponent(this.notifSmsContent)}`, '_blank');
+  }
+
+  sendByWhatsApp(): void {
+    if (!this.notifSmsContent || !this.notifPhoneNumber) return;
+    const phone = this.notifPhoneNumber.replace(/[\s\-\(\)\+]/g, '');
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(this.notifSmsContent)}`, '_blank');
+  }
+
+  closeNotifModal(): void {
+    this.notifModal = false;
+    void this.router.navigate(['/order']);
+  }
+
+  private openNotifModal(data: { clientName: string; orderNumber: string; totalAmount: string; paymentTermsDays: number }): void {
+    this.notifModal = true;
+    this.notifTab = 'email';
+    this.notifEmailContent = '';
+    this.notifSmsContent = '';
+    this.notifEmailAddr = '';
+    this.notifPhoneNumber = '';
+    this.clientContact = null;
+    this.isGeneratingEmail = true;
+    this.isGeneratingSms = true;
+    this.isLoadingContact = true;
+    this.emailCopied = false;
+    this.smsCopied = false;
+
+    const clientId = this.offerForm.controls.clientId.value;
+    const contactQuery$ = clientId
+      ? this.clientContactService.query({ 'clientId.equals': clientId, size: 20 })
+      : of({ body: [] as IClientContact[] } as any);
+
+    forkJoin([
+      this.aiSummaryService.generateEmail('order_confirm', data),
+      this.aiSummaryService.generateSms(data),
+      contactQuery$,
+    ]).subscribe({
+      next: ([email, sms, contactsRes]) => {
+        this.notifEmailContent = email;
+        this.notifSmsContent = sms;
+        const contacts: IClientContact[] = contactsRes.body ?? [];
+        this.clientContact = contacts.find(c => c.isPrimary) ?? contacts[0] ?? null;
+        this.notifEmailAddr = this.clientContact?.email ?? '';
+        this.notifPhoneNumber = this.clientContact?.phone ?? '';
+        this.isGeneratingEmail = false;
+        this.isGeneratingSms = false;
+        this.isLoadingContact = false;
+      },
+      error: () => {
+        this.isGeneratingEmail = false;
+        this.isGeneratingSms = false;
+        this.isLoadingContact = false;
+      },
+    });
   }
 
   private checkStockForLines() {
