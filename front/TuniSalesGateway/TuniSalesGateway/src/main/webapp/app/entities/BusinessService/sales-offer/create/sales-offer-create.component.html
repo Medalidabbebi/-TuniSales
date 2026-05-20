@@ -505,8 +505,16 @@
         {{ (notifTab === 'email' && emailCopied) || (notifTab === 'sms' && smsCopied) ? 'Copié !' : 'Copier' }}
       </button>
       <ng-container *ngIf="notifTab === 'email'">
-        <button type="button" class="oc-notif-btn oc-notif-btn--send-email" (click)="sendByEmail()" [disabled]="!notifEmailContent || !notifEmailAddr">
-          <fa-icon icon="paper-plane"></fa-icon> Ouvrir Gmail
+        <div class="oc-notif-sms-feedback" *ngIf="emailSent">
+          <fa-icon icon="check-circle"></fa-icon> Email envoyé avec succès !
+        </div>
+        <div class="oc-notif-sms-feedback oc-notif-sms-feedback--error" *ngIf="emailSendError">
+          <fa-icon icon="times-circle"></fa-icon> {{ emailSendError }}
+        </div>
+        <button type="button" class="oc-notif-btn oc-notif-btn--send-email" (click)="sendByEmail()"
+          [disabled]="!notifEmailContent || !notifEmailAddr || isSendingEmail">
+          <fa-icon [icon]="isSendingEmail ? 'spinner' : 'paper-plane'"></fa-icon>
+          {{ isSendingEmail ? 'Envoi…' : 'Envoyer par email' }}
         </button>
       </ng-container>
       <ng-container *ngIf="notifTab === 'sms'">
