@@ -14,10 +14,6 @@
         <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
         Actualiser
       </button>
-      <button class="btn btn-success" (click)="exportExcel()" [disabled]="!invoices?.length" title="Exporter en Excel">
-        <fa-icon icon="file-excel" class="me-1"></fa-icon>
-        Excel
-      </button>
       <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/invoice/new']">
         <fa-icon icon="plus" class="me-1"></fa-icon>
         Nouvelle Facture
@@ -28,10 +24,59 @@
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
 
+  <!-- ── Barre de filtres ──────────────────────────────────────────── -->
+  <div class="inv-filter-bar">
+    <div class="inv-filter-bar__fields">
+      <div class="inv-filter-field">
+        <fa-icon icon="user" class="inv-filter-field__icon"></fa-icon>
+        <input type="text" class="inv-filter-input" placeholder="Rechercher un client…"
+               [(ngModel)]="filterClient" [ngModelOptions]="{standalone:true}">
+      </div>
+      <div class="inv-filter-field">
+        <fa-icon icon="tag" class="inv-filter-field__icon"></fa-icon>
+        <select class="inv-filter-select" [(ngModel)]="filterStatus" [ngModelOptions]="{standalone:true}">
+          <option value="">Tous les statuts</option>
+          <option *ngFor="let s of INV_STATUS_LABELS" [value]="s.value">{{ s.label }}</option>
+        </select>
+      </div>
+      <div class="inv-filter-field">
+        <fa-icon icon="calendar-alt" class="inv-filter-field__icon"></fa-icon>
+        <input type="date" class="inv-filter-input inv-filter-input--date"
+               [(ngModel)]="filterDateFrom" [ngModelOptions]="{standalone:true}">
+      </div>
+      <div class="inv-filter-field">
+        <fa-icon icon="calendar-alt" class="inv-filter-field__icon"></fa-icon>
+        <input type="date" class="inv-filter-input inv-filter-input--date"
+               [(ngModel)]="filterDateTo" [ngModelOptions]="{standalone:true}">
+      </div>
+    </div>
+    <div class="inv-filter-bar__actions">
+      <span class="inv-filter-count" *ngIf="invoices?.length">
+        {{ filteredInvoices.length }} / {{ invoices!.length }} résultat(s)
+      </span>
+      <button class="btn btn-outline-secondary btn-sm" (click)="resetFilters()"
+              [disabled]="!filterClient && !filterStatus && !filterDateFrom && !filterDateTo">
+        <fa-icon icon="times" class="me-1"></fa-icon>Effacer
+      </button>
+      <button class="btn btn-success" (click)="exportExcel()" [disabled]="!filteredInvoices.length">
+        <fa-icon icon="file-excel" class="me-1"></fa-icon>Exporter Excel
+      </button>
+    </div>
+  </div>
+
   <!-- Chargement -->
   <div class="text-center py-5" *ngIf="isLoading">
     <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
     <p class="text-muted mt-2">Chargement...</p>
+  </div>
+
+  <!-- Filtre sans résultat -->
+  <div class="card shadow-sm text-center py-4" *ngIf="!isLoading && invoices && invoices.length > 0 && filteredInvoices.length === 0">
+    <fa-icon icon="filter" size="2x" class="text-muted mb-2"></fa-icon>
+    <p class="text-muted mb-2">Aucune facture ne correspond aux filtres sélectionnés.</p>
+    <button class="btn btn-outline-secondary btn-sm" (click)="resetFilters()">
+      <fa-icon icon="times" class="me-1"></fa-icon>Effacer les filtres
+    </button>
   </div>
 
   <!-- Aucun résultat -->
@@ -68,7 +113,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let invoice of invoices; trackBy: trackId" data-cy="entityTable">
+          <tr *ngFor="let invoice of filteredInvoices; trackBy: trackId" data-cy="entityTable">
             <td class="fw-semibold">{{ invoice.invoiceNumber || '—' }}</td>
             <td>
               <a *ngIf="invoice.client" [routerLink]="['/client', invoice.client.id, 'view']" class="text-decoration-none">{{ invoice.client.name }}</a>

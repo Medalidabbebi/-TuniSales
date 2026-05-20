@@ -44,12 +44,53 @@ export class InvoiceComponent implements OnInit {
 
   trackId = (_index: number, item: IInvoice): number => this.invoiceService.getInvoiceIdentifier(item);
 
+  filterClient   = '';
+  filterStatus   = '';
+  filterDateFrom = '';
+  filterDateTo   = '';
+
+  readonly INV_STATUS_LABELS: { value: string; label: string }[] = [
+    { value: 'DRAFT',          label: 'Brouillon' },
+    { value: 'ISSUED',         label: 'Émise' },
+    { value: 'PARTIALLY_PAID', label: 'Partiellement payée' },
+    { value: 'PAID',           label: 'Payée' },
+    { value: 'OVERDUE',        label: 'En retard' },
+    { value: 'CANCELLED',      label: 'Annulée' },
+  ];
+
+  get filteredInvoices(): IInvoice[] {
+    const cl = this.filterClient.trim().toLowerCase();
+    const st = this.filterStatus;
+    const df = this.filterDateFrom ? new Date(this.filterDateFrom).getTime() : null;
+    const dt = this.filterDateTo   ? new Date(this.filterDateTo + 'T23:59:59').getTime() : null;
+    return (this.invoices ?? []).filter(inv => {
+      if (cl && !(inv.client?.name ?? '').toLowerCase().includes(cl)) return false;
+      if (st && inv.status !== st) return false;
+      if (df != null) {
+        const v = inv.issueDate?.valueOf() ?? inv.createdAt?.valueOf() ?? 0;
+        if (v < df) return false;
+      }
+      if (dt != null) {
+        const v = inv.issueDate?.valueOf() ?? inv.createdAt?.valueOf() ?? 0;
+        if (v > dt) return false;
+      }
+      return true;
+    });
+  }
+
+  resetFilters(): void {
+    this.filterClient   = '';
+    this.filterStatus   = '';
+    this.filterDateFrom = '';
+    this.filterDateTo   = '';
+  }
+
   downloadPdf(invoice: IInvoice): void {
     this.pdfService.generate(invoice);
   }
 
   exportExcel(): void {
-    this.excelService.exportInvoices(this.invoices ?? []);
+    this.excelService.exportInvoices(this.filteredInvoices);
   }
 
   ngOnInit(): void {

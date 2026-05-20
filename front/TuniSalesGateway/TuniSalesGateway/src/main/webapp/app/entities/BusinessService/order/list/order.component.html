@@ -16,10 +16,6 @@
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         <span>Actualiser</span>
       </button>
-      <button class="ol-btn ol-btn--excel" (click)="exportExcel()" [disabled]="!orders?.length" title="Exporter en Excel">
-        <fa-icon icon="file-excel"></fa-icon>
-        <span>Excel</span>
-      </button>
       <button class="ol-btn ol-btn--primary" [routerLink]="['/sales-offer']">
         <fa-icon icon="plus"></fa-icon>
         <span>Nouvel Ordre</span>
@@ -29,6 +25,49 @@
 
   <jhi-alert-error></jhi-alert-error>
   <jhi-alert></jhi-alert>
+
+  <!-- ── Filter bar ──────────────────────────────────────────────────── -->
+  <div class="ol-filter-bar">
+    <div class="ol-filter-bar__fields">
+      <div class="ol-filter-field">
+        <fa-icon icon="user" class="ol-filter-field__icon"></fa-icon>
+        <input type="text" class="ol-filter-input" placeholder="Rechercher un client…"
+               [(ngModel)]="filterClient" [ngModelOptions]="{standalone:true}">
+      </div>
+      <div class="ol-filter-field">
+        <fa-icon icon="tag" class="ol-filter-field__icon"></fa-icon>
+        <select class="ol-filter-select" [(ngModel)]="filterStatus" [ngModelOptions]="{standalone:true}">
+          <option value="">Tous les statuts</option>
+          <option *ngFor="let s of ORDER_STATUS_LABELS" [value]="s.value">{{ s.label }}</option>
+        </select>
+      </div>
+      <div class="ol-filter-field">
+        <fa-icon icon="calendar-alt" class="ol-filter-field__icon"></fa-icon>
+        <input type="date" class="ol-filter-input ol-filter-input--date" placeholder="Du"
+               [(ngModel)]="filterDateFrom" [ngModelOptions]="{standalone:true}">
+      </div>
+      <div class="ol-filter-field">
+        <fa-icon icon="calendar-alt" class="ol-filter-field__icon"></fa-icon>
+        <input type="date" class="ol-filter-input ol-filter-input--date" placeholder="Au"
+               [(ngModel)]="filterDateTo" [ngModelOptions]="{standalone:true}">
+      </div>
+    </div>
+    <div class="ol-filter-bar__actions">
+      <span class="ol-filter-count" *ngIf="orders?.length">
+        {{ filteredOrders.length }} / {{ orders!.length }} résultat(s)
+      </span>
+      <button class="ol-btn ol-btn--ghost ol-btn--sm" (click)="resetFilters()"
+              [disabled]="!filterClient && !filterStatus && !filterDateFrom && !filterDateTo"
+              title="Réinitialiser les filtres">
+        <fa-icon icon="times"></fa-icon>
+        <span>Effacer</span>
+      </button>
+      <button class="ol-btn ol-btn--excel" (click)="exportExcel()" [disabled]="!filteredOrders.length">
+        <fa-icon icon="file-excel"></fa-icon>
+        <span>Exporter Excel</span>
+      </button>
+    </div>
+  </div>
 
   <!-- ── KPI Cards ────────────────────────────────────────────────── -->
   <div class="ol-kpi-grid" *ngIf="orders && orders.length > 0">
@@ -60,6 +99,16 @@
         <div class="ol-kpi__label">Terminées</div>
       </div>
     </div>
+  </div>
+
+  <!-- ── Empty (filtre actif sans résultat) ─────────────────────────── -->
+  <div class="ol-empty" *ngIf="!isLoading && orders && orders.length > 0 && filteredOrders.length === 0">
+    <div class="ol-empty__icon"><fa-icon icon="filter"></fa-icon></div>
+    <div class="ol-empty__title">Aucun résultat</div>
+    <div class="ol-empty__sub">Aucune commande ne correspond aux filtres sélectionnés.</div>
+    <button class="ol-btn ol-btn--ghost" (click)="resetFilters()">
+      <fa-icon icon="times"></fa-icon> Effacer les filtres
+    </button>
   </div>
 
   <!-- ── Empty State ──────────────────────────────────────────────── -->
@@ -100,7 +149,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let order of orders; trackBy: trackId" data-cy="entityTable">
+          <tr *ngFor="let order of filteredOrders; trackBy: trackId" data-cy="entityTable">
 
             <!-- N° Ordre -->
             <td>

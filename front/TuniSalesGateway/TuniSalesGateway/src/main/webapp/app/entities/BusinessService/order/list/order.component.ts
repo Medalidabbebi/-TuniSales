@@ -40,8 +40,54 @@ export class OrderComponent implements OnInit {
 
   trackId = (_index: number, item: IOrder): number => this.orderService.getOrderIdentifier(item);
 
+  filterClient = '';
+  filterStatus = '';
+  filterDateFrom = '';
+  filterDateTo   = '';
+
+  readonly ORDER_STATUS_LABELS: { value: string; label: string }[] = [
+    { value: 'DRAFT',          label: 'Brouillon' },
+    { value: 'SUBMITTED',      label: 'Soumis' },
+    { value: 'UNDER_REVIEW',   label: 'En révision' },
+    { value: 'APPROVED',       label: 'Approuvé' },
+    { value: 'IN_PREPARATION', label: 'En préparation' },
+    { value: 'SHIPPED',        label: 'Expédié' },
+    { value: 'DELIVERED',      label: 'Livré' },
+    { value: 'INVOICED',       label: 'Facturé' },
+    { value: 'PAID',           label: 'Payé' },
+    { value: 'REJECTED',       label: 'Rejeté' },
+    { value: 'CANCELLED',      label: 'Annulé' },
+  ];
+
+  get filteredOrders(): IOrder[] {
+    const cl  = this.filterClient.trim().toLowerCase();
+    const st  = this.filterStatus;
+    const df  = this.filterDateFrom ? new Date(this.filterDateFrom).getTime() : null;
+    const dt  = this.filterDateTo   ? new Date(this.filterDateTo + 'T23:59:59').getTime() : null;
+    return (this.orders ?? []).filter(o => {
+      if (cl && !(o.client?.name ?? '').toLowerCase().includes(cl)) return false;
+      if (st && o.status !== st) return false;
+      if (df != null) {
+        const v = o.submittedAt?.valueOf() ?? o.createdAt?.valueOf() ?? 0;
+        if (v < df) return false;
+      }
+      if (dt != null) {
+        const v = o.submittedAt?.valueOf() ?? o.createdAt?.valueOf() ?? 0;
+        if (v > dt) return false;
+      }
+      return true;
+    });
+  }
+
+  resetFilters(): void {
+    this.filterClient = '';
+    this.filterStatus = '';
+    this.filterDateFrom = '';
+    this.filterDateTo   = '';
+  }
+
   exportExcel(): void {
-    this.excelService.exportOrders(this.orders ?? []);
+    this.excelService.exportOrders(this.filteredOrders);
   }
 
   readonly orderStatus = OrderStatus;
