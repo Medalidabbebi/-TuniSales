@@ -198,6 +198,59 @@ Génère uniquement l'email complet (objet + corps), sans commentaires suppléme
     );
   }
 
+  // ─── New: Dashboard Insights ─────────────────────────────────────────────
+
+  generateDashboardInsights(stats: {
+    caTtc: number;
+    totalOrders: number;
+    toValidate: number;
+    deliveryRate: number;
+    unpaidAmount: number;
+    overdueCount: number;
+    activeOrders: number;
+    topClient: string;
+    topClientCa: number;
+    issuedCount: number;
+  }): Observable<string> {
+    const apiKey = localStorage.getItem('anthropic_api_key') || DEFAULT_API_KEY;
+    const fallback = this.localDashboardInsights(stats);
+    if (!apiKey) return of(fallback);
+
+    const prompt = `Tu es un analyste commercial expert pour TuniSalesGateway (entreprise tunisienne). Génère un rapport analytique concis (3-5 phrases en français) sur la performance commerciale actuelle. Identifie les points clés, les risques et donne une recommandation concrète.
+
+Données du tableau de bord :
+- Chiffre d'affaires total TTC : ${stats.caTtc.toFixed(0)} TND
+- Total commandes : ${stats.totalOrders} (${stats.activeOrders} actives, ${stats.toValidate} en attente de validation)
+- Taux de livraison : ${stats.deliveryRate}%
+- Montant impayé : ${stats.unpaidAmount.toFixed(0)} TND (${stats.overdueCount} facture(s) en retard, ${stats.issuedCount} facture(s) émises)
+- Meilleur client : ${stats.topClient} (CA: ${stats.topClientCa.toFixed(0)} TND)
+
+Génère uniquement le rapport analytique, sans titre, sans liste, sans mise en forme markdown.`;
+
+    const context = new HttpContext().set(SKIP_ERROR_HANDLER, true);
+
+    return this.http.post<any>(
+      this.apiUrl,
+      {
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 350,
+        messages: [{ role: 'user', content: prompt }],
+      },
+      {
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        context,
+      }
+    ).pipe(
+      map((res: any) => (res?.content?.[0]?.text as string) ?? fallback),
+      catchError(() => of(fallback))
+    );
+  }
+
   // ─── Private helpers ──────────────────────────────────────────────────────
 
   private buildPrompt(order: IOrder, lines: IOrderLine[]): string {
@@ -268,6 +321,25 @@ Génère uniquement le paragraphe, sans titre, sans liste, sans mise en forme.`;
       text += ` Attention : ${overdueCount} facture(s) en retard de paiement.`;
     }
 
+    return text;
+  }
+
+  private localDashboardInsights(stats: {
+    caTtc: number; totalOrders: number; toValidate: number;
+    deliveryRate: number; unpaidAmount: number; overdueCount: number;
+    activeOrders: number; topClient: string; topClientCa: number; issuedCount: number;
+  }): string {
+    let text = `Le chiffre d'affaires total TTC s'élève à ${stats.caTtc.toFixed(0)} TND sur l'ensemble du portefeuille, avec ${stats.totalOrders} commandes dont ${stats.activeOrders} en cours de traitement.`;
+    if (stats.toValidate > 0) {
+      text += ` Attention : ${stats.toValidate} commande(s) sont en attente de validation et nécessitent une action rapide.`;
+    }
+    text += ` Le taux de livraison est de ${stats.deliveryRate}%${stats.deliveryRate >= 70 ? ', ce qui reflète une bonne performance opérationnelle' : ', ce qui indique des marges d\'amélioration dans la chaîne de livraison'}.`;
+    if (stats.unpaidAmount > 0) {
+      text += ` Le montant impayé s'élève à ${stats.unpaidAmount.toFixed(0)} TND${stats.overdueCount > 0 ? ` dont ${stats.overdueCount} facture(s) en retard — une relance urgente est recommandée` : ''}.`;
+    }
+    if (stats.topClient) {
+      text += ` Le client principal est ${stats.topClient} avec un CA de ${stats.topClientCa.toFixed(0)} TND.`;
+    }
     return text;
   }
 

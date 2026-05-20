@@ -134,6 +134,63 @@
     </div>
   </div>
 
+  <!-- ── AI Analytics ─────────────────────────────────────────────────────── -->
+  <div class="tsg-ai-analytics" *ngIf="!isLoadingDashboard">
+    <div class="tsg-ai-analytics__header">
+      <span class="tsg-ai-analytics__badge">
+        <fa-icon icon="star"></fa-icon> Analyse IA
+      </span>
+      <button type="button" class="tsg-ai-analytics__refresh" (click)="refreshInsights()" [disabled]="isLoadingInsight" title="Actualiser l'analyse">
+        <fa-icon icon="sync" [spin]="isLoadingInsight"></fa-icon>
+      </button>
+    </div>
+
+    <div class="tsg-ai-analytics__body">
+
+      <!-- Insight paragraph -->
+      <div class="tsg-ai-analytics__insight">
+        <div *ngIf="isLoadingInsight" class="tsg-ai-analytics__loading">
+          <fa-icon icon="spinner" [spin]="true"></fa-icon>
+          <span>Génération de l'analyse en cours…</span>
+        </div>
+        <p *ngIf="!isLoadingInsight && dashboardInsight" class="tsg-ai-analytics__text">
+          {{ dashboardInsight }}
+        </p>
+      </div>
+
+      <!-- Mini chat -->
+      <div class="tsg-ai-analytics__chat">
+        <div class="tsg-ai-analytics__chat-messages" #chatScroll>
+          <div *ngIf="chatMessages.length === 0" class="tsg-ai-analytics__chat-placeholder">
+            <fa-icon icon="comments" style="opacity:.35;font-size:1.4rem;"></fa-icon>
+            <span>Posez une question sur vos données…</span>
+          </div>
+          <div *ngFor="let m of chatMessages"
+               class="tsg-ai-analytics__msg"
+               [ngClass]="m.role === 'user' ? 'tsg-ai-analytics__msg--user' : 'tsg-ai-analytics__msg--ai'">
+            {{ m.content }}
+          </div>
+          <div *ngIf="isChatLoading" class="tsg-ai-analytics__msg tsg-ai-analytics__msg--ai tsg-ai-analytics__msg--typing">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="tsg-ai-analytics__chat-input">
+          <input
+            type="text"
+            [(ngModel)]="chatInput"
+            (keydown)="onChatKeydown($event)"
+            placeholder="Poser une question à l'IA…"
+            [disabled]="isChatLoading"
+          />
+          <button type="button" (click)="sendChat()" [disabled]="isChatLoading || !chatInput.trim()" class="tsg-ai-analytics__send">
+            <fa-icon [icon]="isChatLoading ? 'spinner' : 'arrow-right'" [spin]="isChatLoading"></fa-icon>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <!-- ── Charts Row ─────────────────────────────────────────────────────────── -->
   <div class="tsg-dashboard__charts">
 

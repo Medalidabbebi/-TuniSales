@@ -9,6 +9,7 @@ import { Account } from 'app/core/auth/account.model';
 import { OrderService } from 'app/entities/BusinessService/order/service/order.service';
 import { InvoiceService } from 'app/entities/BusinessService/invoice/service/invoice.service';
 import { ClientService } from 'app/entities/BusinessService/client/service/client.service';
+import { AiSummaryService } from 'app/shared/service/ai-summary.service';
 import { IOrder } from 'app/entities/BusinessService/order/order.model';
 import { IInvoice } from 'app/entities/BusinessService/invoice/invoice.model';
 import { IClient } from 'app/entities/BusinessService/client/client.model';
@@ -72,6 +73,16 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   selectedSalesPeriod: 7 | 30 | 90 = 30;
 
+  // ── AI Analytics ──────────────────────────────────────────────────────────
+  dashboardInsight: string | null = null;
+  isLoadingInsight = false;
+  chatMessages: Array<{ role: 'user' | 'assistant'; content: string }> = [];
+  chatInput = '';
+  isChatLoading = false;
+  private dashboardContext = '';
+  private _rawOrders: IOrder[] = [];
+  private _rawInvoices: IInvoice[] = [];
+
   kpis: Array<{
     label: string; value: string; sub: string;
     trendDir: 'up' | 'down' | 'neutral'; icon: IconProp; color: string;
@@ -97,6 +108,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private orderService: OrderService,
     private invoiceService: InvoiceService,
     private clientService: ClientService,
+    private aiSummaryService: AiSummaryService,
   ) {}
 
   ngOnInit(): void {
@@ -125,9 +137,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: ([ordRes, invRes, cliRes]) => {
-          const orders: IOrder[]   = ordRes.body ?? [];
+          const orders: IOrder[]     = ordRes.body ?? [];
           const invoices: IInvoice[] = invRes.body ?? [];
-          const clients: IClient[] = cliRes.body ?? [];
+          const clients: IClient[]   = cliRes.body ?? [];
+          this._rawOrders   = orders;
+          this._rawInvoices = invoices;
           this.buildKpis(orders, invoices, clients);
           this.buildRecentOrders(orders);
           this.buildOrdersByStatus(orders);
@@ -136,6 +150,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.buildRecentActivity(orders, invoices);
           this.buildAlerts(orders, invoices);
           this.isLoadingDashboard = false;
+          this.loadDashboardInsights(orders, invoices);
         },
         error: () => { this.isLoadingDashboard = false; },
       });
@@ -386,6 +401,72 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (dd < 30) return `il y a ${dd}j`;
     return d.format('DD/MM/YYYY');
   }
+
+  // ─── AI Analytics ─────────────────────────────────────────────────────────
+
+  private loadDashboardInsights(orders: IOrder[], invoices: IInvoice[]): void {
+    const caTtc        = invoices.reduce((s, i) => s + (i.amountTtc ?? 0), 0);
+    const toValidate   = orders.filter(o => o.status && PENDING_VALIDATE.has(o.status)).length;
+    const activeOrders = orders.filter(o => o.status && ACTIVE_STATUSES.has(o.status)).length;
+    const delivered    = orders.filter(o => o.status === 'DELIVERED').length;
+    const deliveryRate = orders.length > 0 ? Math.round((delivered / orders.length) * 100) : 0;
+    const unpaidAmount = invoices.filter(i => i.status === 'ISSUED' || i.status === 'OVERDUE')
+                                 .reduce((s, i) => s + (i.amountTtc ?? 0), 0);
+    const overdueCount = invoices.filter(i => i.status === 'OVERDUE').length;
+    const issuedCount  = invoices.filter(i => i.status === 'ISSUED').length;
+    const topClientEntry = this.topClients[0];
+
+    this.dashboardContext =
+      `CA TTC total: ${caTtc.toFixed(0)} TND. ` +
+      `${orders.length} commandes dont ${activeOrders} actives et ${toValidate} à valider. ` +
+      `Taux de livraison: ${deliveryRate}%. ` +
+      `Impayés: ${unpaidAmount.toFixed(0)} TND (${overdueCount} en retard, ${issuedCount} émises). ` +
+      (topClientEntry ? `Meilleur client: ${topClientEntry.name} (${topClientEntry.ca} TND).` : '');
+
+    this.isLoadingInsight = true;
+    this.aiSummaryService.generateDashboardInsights({
+      caTtc, totalOrders: orders.length, toValidate, deliveryRate,
+      unpaidAmount, overdueCount, activeOrders, issuedCount,
+      topClient: topClientEntry?.name ?? '',
+      topClientCa: topClientEntry ? parseFloat(topClientEntry.ca.replace(/\s/g, '').replace(',', '.')) : 0,
+    }).subscribe({
+      next: text => { this.dashboardInsight = text; this.isLoadingInsight = false; },
+      error: ()   => { this.isLoadingInsight = false; },
+    });
+  }
+
+  refreshInsights(): void {
+    this.dashboardInsight = null;
+    this.loadDashboardInsights(this._rawOrders, this._rawInvoices);
+  }
+
+  sendChat(): void {
+    const msg = this.chatInput.trim();
+    if (!msg || this.isChatLoading) return;
+    this.chatInput = '';
+    this.chatMessages.push({ role: 'user', content: msg });
+    this.isChatLoading = true;
+
+    this.aiSummaryService.chat([...this.chatMessages], this.dashboardContext).subscribe({
+      next: reply => {
+        this.chatMessages.push({ role: 'assistant', content: reply });
+        this.isChatLoading = false;
+      },
+      error: () => {
+        this.chatMessages.push({ role: 'assistant', content: 'Service IA non disponible.' });
+        this.isChatLoading = false;
+      },
+    });
+  }
+
+  onChatKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.sendChat();
+    }
+  }
+
+  // ──────────────────────────────────────────────────────────────────────────
 
   ngOnDestroy(): void {
     this.destroy$.next();
