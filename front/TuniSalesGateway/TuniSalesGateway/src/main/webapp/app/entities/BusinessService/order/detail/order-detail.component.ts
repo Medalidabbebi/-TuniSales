@@ -8,6 +8,7 @@ import { OrderStatus } from 'app/entities/enumerations/order-status.model';
 import { OrderService } from '../service/order.service';
 import { OrderLineService } from 'app/entities/BusinessService/order-line/service/order-line.service';
 import { AccountService } from 'app/core/auth/account.service';
+import { AiSummaryService } from 'app/shared/service/ai-summary.service';
 
 @Component({
   selector: 'jhi-order-detail',
@@ -20,6 +21,8 @@ export class OrderDetailComponent implements OnInit {
   orderLines: IOrderLine[] = [];
   isActionLoading = false;
   isLoadingLines = false;
+  aiSummary: string | null = null;
+  isLoadingAi = false;
 
   pipelineSteps = [
     { key: OrderStatus.DRAFT,          label: 'Brouillon' },
@@ -59,6 +62,7 @@ export class OrderDetailComponent implements OnInit {
     protected orderLineService: OrderLineService,
     protected accountService: AccountService,
     private router: Router,
+    private aiSummaryService: AiSummaryService,
   ) {}
 
   ngOnInit(): void {
@@ -73,8 +77,23 @@ export class OrderDetailComponent implements OnInit {
   private loadOrderLines(orderId: number): void {
     this.isLoadingLines = true;
     this.orderLineService.query({ 'orderId.equals': orderId, size: 200 }).subscribe({
-      next: res => { this.orderLines = res.body ?? []; this.isLoadingLines = false; },
+      next: res => {
+        this.orderLines = res.body ?? [];
+        this.isLoadingLines = false;
+        if (this.order) {
+          this.loadAiSummary();
+        }
+      },
       error: () => { this.isLoadingLines = false; },
+    });
+  }
+
+  private loadAiSummary(): void {
+    if (!this.order) return;
+    this.isLoadingAi = true;
+    this.aiSummaryService.generateOrderSummary(this.order, this.orderLines).subscribe({
+      next: text => { this.aiSummary = text; this.isLoadingAi = false; },
+      error: () => { this.isLoadingAi = false; },
     });
   }
 

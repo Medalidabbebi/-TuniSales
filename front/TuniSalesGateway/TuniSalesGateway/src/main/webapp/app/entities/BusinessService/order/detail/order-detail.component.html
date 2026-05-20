@@ -198,6 +198,20 @@
     <div class="tsg-detail-section__title">
       <fa-icon icon="history" class="me-1"></fa-icon> Historique
     </div>
+
+    <!-- AI summary paragraph -->
+    <div class="tsg-ai-summary" *ngIf="aiSummary || isLoadingAi">
+      <div class="tsg-ai-summary__header">
+        <span class="tsg-ai-summary__badge">
+          <fa-icon icon="star"></fa-icon> Résumé IA
+        </span>
+      </div>
+      <div *ngIf="isLoadingAi" class="tsg-ai-summary__loading">
+        <fa-icon icon="spinner" [spin]="true"></fa-icon> Génération en cours…
+      </div>
+      <p *ngIf="!isLoadingAi && aiSummary" class="tsg-ai-summary__text">{{ aiSummary }}</p>
+    </div>
+
     <div class="tsg-timeline">
       <div class="tsg-timeline__item" *ngIf="order.createdAt">
         <div class="tsg-timeline__dot tsg-timeline__dot--created"></div>
