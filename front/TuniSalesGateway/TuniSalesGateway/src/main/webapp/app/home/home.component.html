@@ -110,8 +110,11 @@
         Dashboard
       </h1>
       <p class="tsg-page-header__subtitle">
-        Welcome back, {{ account.firstName || account.login }}
+        Bienvenue, {{ account.firstName || account.login }}
       </p>
+    </div>
+    <div *ngIf="isLoadingDashboard" style="color:#6b7280;font-size:.85rem;">
+      <fa-icon icon="sync" [spin]="true"></fa-icon> Chargement des données…
     </div>
   </div>
 
@@ -198,10 +201,16 @@
         <tbody>
           <tr *ngFor="let order of recentOrders">
             <td><a routerLink="/order">{{ order.id }}</a></td>
-            <td>{{ order.client }}</td>
+            <td>
+              <a *ngIf="order.clientId" [routerLink]="['/client', order.clientId, 'view']" class="text-decoration-none">{{ order.client }}</a>
+              <span *ngIf="!order.clientId">{{ order.client }}</span>
+            </td>
             <td class="text-secondary">{{ order.amount }}</td>
             <td><span class="tsg-badge tsg-badge--{{ getStatusClass(order.status) }}">{{ order.status }}</span></td>
             <td class="text-secondary">{{ order.date }}</td>
+          </tr>
+          <tr *ngIf="recentOrders.length === 0 && !isLoadingDashboard">
+            <td colspan="5" class="text-center text-muted py-3">Aucune commande</td>
           </tr>
         </tbody>
       </table>
@@ -234,7 +243,7 @@
           </h3>
         </div>
         <div *ngFor="let alert of alerts" class="tsg-alert-item tsg-alert-item--{{ alert.type }}">
-          <fa-icon [icon]="alert.type === 'danger' ? 'times' : 'exclamation-triangle'" class="tsg-alert-item__icon"></fa-icon>
+          <fa-icon [icon]="alert.type === 'danger' ? 'times' : alert.type === 'success' ? 'check-circle' : 'exclamation-triangle'" class="tsg-alert-item__icon"></fa-icon>
           <span>{{ alert.text }}</span>
         </div>
       </div>
