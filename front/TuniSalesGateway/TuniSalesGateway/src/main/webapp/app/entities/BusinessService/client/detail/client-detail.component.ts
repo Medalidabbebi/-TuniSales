@@ -27,6 +27,11 @@ export class ClientDetailComponent implements OnInit {
 
   riskScore: { score: number; label: string; colorClass: string; bar: string } | null = null;
 
+  loyaltyScore: { score: number; grade: string; label: string; colorClass: string; barClass: string } | null = null;
+
+  historyPage = 1;
+  historyPageSize = 5;
+
   emailModal = false;
   emailContent = '';
   isGeneratingEmail = false;
@@ -139,6 +144,7 @@ export class ClientDetailComponent implements OnInit {
         this.invoices = invRes.body ?? [];
         this.isLoadingData = false;
         this.computeRiskScore();
+        this.computeLoyaltyScore();
         this.loadAiSummary();
       },
       error: () => { this.isLoadingData = false; },
@@ -187,6 +193,96 @@ export class ClientDetailComponent implements OnInit {
     }
 
     this.riskScore = { score, label, colorClass, bar };
+  }
+
+  get totalOrdersAmount(): number {
+    return this.orders.reduce((sum, o) => sum + (o.totalAmount ?? 0), 0);
+  }
+
+  get historyOrders(): IOrder[] {
+    const start = (this.historyPage - 1) * this.historyPageSize;
+    return this.orders.slice(start, start + this.historyPageSize);
+  }
+
+  get historyTotalPages(): number {
+    return Math.ceil(this.orders.length / this.historyPageSize);
+  }
+
+  getOrderStatusClass(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      DRAFT:     'cd-order-badge--draft',
+      SUBMITTED: 'cd-order-badge--submitted',
+      VALIDATED: 'cd-order-badge--validated',
+      DELIVERED: 'cd-order-badge--delivered',
+      CANCELLED: 'cd-order-badge--cancelled',
+      REJECTED:  'cd-order-badge--rejected',
+    };
+    return map[status || ''] || 'cd-order-badge--draft';
+  }
+
+  getOrderStatusLabel(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      DRAFT:     'Brouillon',
+      SUBMITTED: 'Soumise',
+      VALIDATED: 'Validée',
+      DELIVERED: 'Livrée',
+      CANCELLED: 'Annulée',
+      REJECTED:  'Rejetée',
+    };
+    return map[status || ''] || (status || '—');
+  }
+
+  private computeLoyaltyScore(): void {
+    const count = this.orders.length;
+    const totalSpend = this.orders.reduce((sum, o) => sum + (o.totalAmount ?? 0), 0);
+    const successStatuses = new Set(['VALIDATED', 'DELIVERED']);
+    const successCount = this.orders.filter(o => successStatuses.has(o.status ?? '')).length;
+
+    // Recency: days since last order
+    let recencyScore = 0;
+    const lastOrder = this.client?.lastOrderAt;
+    if (lastOrder) {
+      const days = Math.abs(Math.round(new Date().valueOf() / 86400000 - lastOrder.valueOf() / 86400000));
+      if (days < 30)       recencyScore = 20;
+      else if (days < 90)  recencyScore = 15;
+      else if (days < 180) recencyScore = 10;
+      else                 recencyScore = 5;
+    }
+
+    // Order count score (0-30)
+    let countScore = 0;
+    if (count >= 6)      countScore = 30;
+    else if (count >= 3) countScore = 20;
+    else if (count >= 1) countScore = 10;
+
+    // Spend score (0-40)
+    let spendScore = 0;
+    if (totalSpend > 50000)       spendScore = 40;
+    else if (totalSpend > 20000)  spendScore = 30;
+    else if (totalSpend > 5000)   spendScore = 20;
+    else if (totalSpend > 0)      spendScore = 10;
+
+    // Success rate (0-10)
+    const successScore = count > 0 ? Math.round((successCount / count) * 10) : 0;
+
+    const score = Math.min(100, countScore + spendScore + recencyScore + successScore);
+
+    let grade: string;
+    let label: string;
+    let colorClass: string;
+    let barClass: string;
+
+    if (score >= 80) {
+      grade = 'A'; label = 'Excellent client'; colorClass = 'loyalty--a'; barClass = 'loyalty-bar--green';
+    } else if (score >= 60) {
+      grade = 'B'; label = 'Bon client'; colorClass = 'loyalty--b'; barClass = 'loyalty-bar--blue';
+    } else if (score >= 40) {
+      grade = 'C'; label = 'Client moyen'; colorClass = 'loyalty--c'; barClass = 'loyalty-bar--orange';
+    } else {
+      grade = 'D'; label = 'Client inactif'; colorClass = 'loyalty--d'; barClass = 'loyalty-bar--red';
+    }
+
+    this.loyaltyScore = { score, grade, label, colorClass, barClass };
   }
 
   private loadAiSummary(): void {

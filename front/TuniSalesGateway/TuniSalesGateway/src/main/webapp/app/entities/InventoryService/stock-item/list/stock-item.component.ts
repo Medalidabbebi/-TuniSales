@@ -6,6 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { IStockItem } from '../stock-item.model';
 import { StockItemStatus } from 'app/entities/enumerations/stock-item-status.model';
+import { AiSummaryService } from 'app/shared/service/ai-summary.service';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
@@ -35,11 +36,20 @@ export class StockItemComponent implements OnInit {
   totalItems = 0;
   page = 1;
 
+  // ── AI Analytics ──────────────────────────────────────────────────────────
+  stockInsight: string | null = null;
+  isLoadingInsight = false;
+  stockChatMessages: Array<{ role: 'user' | 'assistant'; content: string }> = [];
+  chatInput = '';
+  isChatLoading = false;
+  private stockContext = '';
+
   constructor(
     protected stockItemService: StockItemService,
     protected activatedRoute: ActivatedRoute,
     public router: Router,
-    protected modalService: NgbModal
+    protected modalService: NgbModal,
+    private aiSummaryService: AiSummaryService,
   ) {}
 
   trackId = (_index: number, item: IStockItem): number => this.stockItemService.getStockItemIdentifier(item);
@@ -125,6 +135,9 @@ export class StockItemComponent implements OnInit {
     const dataFromBody = this.fillComponentAttributesFromResponseBody(response.body);
     this.stockItems = dataFromBody;
     this.groupedItems = this.computeGroups(dataFromBody);
+    if (dataFromBody.length > 0) {
+      this.loadStockInsights(dataFromBody);
+    }
   }
 
   private computeGroups(items: IStockItem[]): StockGroup[] {
@@ -184,6 +197,76 @@ export class StockItemComponent implements OnInit {
       return [];
     } else {
       return [predicate + ',' + ascendingQueryParam];
+    }
+  }
+
+  // ─── AI Analytics ─────────────────────────────────────────────────────────
+
+  private loadStockInsights(items: IStockItem[]): void {
+    const count = (s: StockItemStatus) => items.filter(i => i.status === s).length;
+    const available  = count(StockItemStatus.AVAILABLE);
+    const sold       = count(StockItemStatus.SOLD);
+    const defective  = count(StockItemStatus.DEFECTIVE);
+    const missing    = count(StockItemStatus.MISSING);
+    const inTransit  = count(StockItemStatus.IN_TRANSIT);
+    const reserved   = count(StockItemStatus.RESERVED);
+
+    const productCounts: Record<string, number> = {};
+    const warehouseIds = new Set<number>();
+    for (const item of items) {
+      const p = item.productName ?? 'Inconnu';
+      productCounts[p] = (productCounts[p] ?? 0) + 1;
+      if (item.warehouse?.id) warehouseIds.add(item.warehouse.id);
+    }
+    const topEntry = Object.entries(productCounts).sort(([,a],[,b]) => b - a)[0];
+    const topProduct = topEntry?.[0] ?? '—';
+    const topProductCount = topEntry?.[1] ?? 0;
+
+    this.stockContext =
+      `Stock: ${items.length} articles. Disponibles: ${available}, Vendus: ${sold}, ` +
+      `Défectueux: ${defective}, Manquants: ${missing}, En transit: ${inTransit}, Réservés: ${reserved}. ` +
+      `Entrepôts: ${warehouseIds.size}. Produit principal: ${topProduct} (${topProductCount} unités).`;
+
+    this.isLoadingInsight = true;
+    this.aiSummaryService.generateStockInsights({
+      total: items.length, available, sold, defective, missing,
+      inTransit, reserved, topProduct, topProductCount, warehouseCount: warehouseIds.size,
+    }).subscribe({
+      next: text => { this.stockInsight = text; this.isLoadingInsight = false; },
+      error: ()   => { this.isLoadingInsight = false; },
+    });
+  }
+
+  refreshInsights(): void {
+    this.stockInsight = null;
+    if (this.stockItems?.length) {
+      this.loadStockInsights(this.stockItems);
+    }
+  }
+
+  sendChat(): void {
+    const msg = this.chatInput.trim();
+    if (!msg || this.isChatLoading) return;
+    this.chatInput = '';
+    this.stockChatMessages.push({ role: 'user', content: msg });
+    this.isChatLoading = true;
+
+    this.aiSummaryService.chat([...this.stockChatMessages], this.stockContext).subscribe({
+      next: reply => {
+        this.stockChatMessages.push({ role: 'assistant', content: reply });
+        this.isChatLoading = false;
+      },
+      error: () => {
+        this.stockChatMessages.push({ role: 'assistant', content: 'Service IA non disponible.' });
+        this.isChatLoading = false;
+      },
+    });
+  }
+
+  onChatKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      this.sendChat();
     }
   }
 }

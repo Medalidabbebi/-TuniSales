@@ -373,6 +373,226 @@ $cd-text-muted:   #6b7280;
   }
 }
 
+// ── Loyalty Score ─────────────────────────────────────────────────
+.cd-loyalty-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid $cd-border;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: .85rem;
+  }
+
+  &__title {
+    font-size: .875rem;
+    font-weight: 600;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+}
+
+.cd-loyalty-grade {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  font-weight: 800;
+  flex-shrink: 0;
+
+  &.loyalty--a { background: #dcfce7; color: #15803d; }
+  &.loyalty--b { background: $cd-primary-light; color: $cd-primary; }
+  &.loyalty--c { background: #fef9c3; color: #854d0e; }
+  &.loyalty--d { background: #fee2e2; color: #b91c1c; }
+}
+
+.cd-loyalty-bar-track {
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: .5rem;
+}
+
+.cd-loyalty-bar {
+  height: 100%;
+  border-radius: 99px;
+  transition: width .6s ease;
+  &--green  { background: linear-gradient(90deg, #22c55e, #16a34a); }
+  &--blue   { background: linear-gradient(90deg, #60a5fa, #2563eb); }
+  &--orange { background: linear-gradient(90deg, #fbbf24, #d97706); }
+  &--red    { background: linear-gradient(90deg, #f87171, #dc2626); }
+}
+
+.cd-loyalty-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.cd-loyalty-label {
+  font-size: .78rem;
+  font-weight: 700;
+  padding: .15rem .55rem;
+  border-radius: 20px;
+  &.loyalty--a { background: #dcfce7; color: #15803d; }
+  &.loyalty--b { background: $cd-primary-light; color: $cd-primary; }
+  &.loyalty--c { background: #fef9c3; color: #854d0e; }
+  &.loyalty--d { background: #fee2e2; color: #b91c1c; }
+}
+
+.cd-loyalty-score-val {
+  font-size: .78rem;
+  color: $cd-text-muted;
+}
+
+.cd-loyalty-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .75rem;
+  border-top: 1px solid #f3f4f6;
+  padding-top: .85rem;
+
+  @media (max-width: 500px) { grid-template-columns: 1fr 1fr; }
+}
+
+.cd-loyalty-kpi {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .2rem;
+
+  &__val {
+    font-size: .95rem;
+    font-weight: 700;
+    color: $cd-text;
+  }
+
+  &__lbl {
+    font-size: .72rem;
+    color: $cd-text-muted;
+    text-align: center;
+  }
+}
+
+// ── Purchase History ───────────────────────────────────────────────
+.cd-history-card {
+  margin-bottom: 1.25rem;
+}
+
+.cd-history-count {
+  margin-left: auto;
+  font-size: .75rem;
+  font-weight: 600;
+  color: $cd-text-muted;
+  background: #f3f4f6;
+  padding: .15rem .6rem;
+  border-radius: 20px;
+}
+
+.cd-history-body {
+  padding: 0;
+}
+
+.cd-history-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .82rem;
+
+  thead {
+    background: #f9fafb;
+    border-bottom: 1px solid $cd-border;
+
+    th {
+      padding: .65rem 1rem;
+      text-align: left;
+      font-weight: 600;
+      color: $cd-text-muted;
+      font-size: .75rem;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+      white-space: nowrap;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background .12s;
+
+    &:last-child { border-bottom: none; }
+    &:hover { background: #f9fafb; }
+
+    td {
+      padding: .65rem 1rem;
+      color: $cd-text;
+      vertical-align: middle;
+    }
+  }
+}
+
+.cd-history-num {
+  font-weight: 600;
+  color: $cd-primary;
+  font-family: monospace;
+}
+
+.cd-history-amount {
+  color: $cd-text-muted;
+}
+
+.cd-history-total {
+  font-weight: 700;
+  color: $cd-text;
+}
+
+.cd-order-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: .15rem .55rem;
+  border-radius: 20px;
+  font-size: .72rem;
+  font-weight: 700;
+  white-space: nowrap;
+
+  &--draft     { background: #f3f4f6; color: #6b7280; }
+  &--submitted { background: #dbeafe; color: #1d4ed8; }
+  &--validated { background: #dcfce7; color: #15803d; }
+  &--delivered { background: #ccfbf1; color: #0f766e; }
+  &--cancelled { background: #fee2e2; color: #b91c1c; }
+  &--rejected  { background: #ffedd5; color: #c2410c; }
+}
+
+.cd-history-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .75rem;
+  padding: .75rem 1rem;
+  border-top: 1px solid $cd-border;
+}
+
+.cd-history-page-info {
+  font-size: .82rem;
+  color: $cd-text-muted;
+  font-weight: 500;
+}
+
+.cd-btn--sm {
+  padding: .3rem .65rem;
+  font-size: .78rem;
+}
+
 // ── AI button ─────────────────────────────────────────────────────
 .cd-btn--ai {
   background: linear-gradient(135deg, #8b5cf6, #6d28d9);
