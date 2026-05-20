@@ -434,7 +434,71 @@
 
   &--warning { background: $tsg-warning-bg; color: darken($tsg-warning, 15%); }
   &--danger  { background: $tsg-danger-bg; color: $tsg-danger; }
+  &--success { background: #dcfce7; color: #15803d; }
   &__icon    { margin-top: 2px; flex-shrink: 0; }
+}
+
+// ── Top Clients ──────────────────────────────────────────────────────────────
+.tsg-top-clients {
+  padding: 0 $space-4 $space-3;
+}
+
+.tsg-top-client {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-2 0;
+  border-bottom: 1px solid #f1f5f9;
+
+  &:last-child { border-bottom: none; }
+
+  &__rank {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .78rem;
+    font-weight: 700;
+    flex-shrink: 0;
+
+    &--1 { background: #fef3c7; color: #d97706; }
+    &--2 { background: #f1f5f9; color: #64748b; }
+    &--3 { background: #fff7ed; color: #c2410c; }
+    &--other { background: #f8fafc; color: #94a3b8; }
+  }
+
+  &__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  &__name {
+    font-size: .875rem;
+    font-weight: 600;
+    color: #1e293b;
+    text-decoration: none;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    &:hover { color: #2563eb; }
+  }
+
+  &__sub {
+    font-size: .75rem;
+    color: #94a3b8;
+  }
+
+  &__ca {
+    font-size: .875rem;
+    font-weight: 700;
+    color: #2563eb;
+    white-space: nowrap;
+  }
 }
 
 @media (max-width: 1024px) {
