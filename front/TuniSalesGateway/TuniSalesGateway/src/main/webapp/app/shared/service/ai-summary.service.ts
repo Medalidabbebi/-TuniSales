@@ -170,7 +170,8 @@ Génère uniquement l'email complet (objet + corps), sans commentaires suppléme
   chat(messages: Array<{ role: 'user' | 'assistant'; content: string }>, context: string): Observable<string> {
     const apiKey = localStorage.getItem('anthropic_api_key') || DEFAULT_API_KEY;
     if (!apiKey) {
-      return of('Service IA non disponible.');
+      const lastMsg = messages[messages.length - 1]?.content ?? '';
+      return of(this.localChatResponse(lastMsg, context));
     }
 
     const httpContext = new HttpContext().set(SKIP_ERROR_HANDLER, true);
@@ -193,9 +194,58 @@ Génère uniquement l'email complet (objet + corps), sans commentaires suppléme
         context: httpContext,
       }
     ).pipe(
-      map((res: any) => (res?.content?.[0]?.text as string) ?? 'Service IA non disponible.'),
-      catchError(() => of('Service IA non disponible.'))
+      map((res: any) => (res?.content?.[0]?.text as string) ?? this.localChatResponse(messages[messages.length - 1]?.content ?? '', context)),
+      catchError(() => of(this.localChatResponse(messages[messages.length - 1]?.content ?? '', context)))
     );
+  }
+
+  private localChatResponse(message: string, context: string): string {
+    const msg = message.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+    const extract = (pattern: RegExp): string | null => {
+      const m = context.match(pattern);
+      return m ? m[1] : null;
+    };
+
+    if (/ca|chiffre|affaires|revenu|total/.test(msg)) {
+      const ca = extract(/CA TTC total: ([\d\s.,]+) TND/);
+      return ca
+        ? `Le chiffre d'affaires total TTC est de ${ca} TND, calculé sur l'ensemble des factures enregistrées.`
+        : `Voici les données disponibles : ${context}`;
+    }
+
+    if (/commande|valider|validation|attente/.test(msg)) {
+      const total = extract(/(\d+) commandes dont/);
+      const actives = extract(/dont (\d+) actives/);
+      const toVal = extract(/et (\d+) a valider/);
+      return `Il y a ${total ?? '?'} commandes au total, dont ${actives ?? '?'} actives et ${toVal ?? '?'} en attente de validation.`;
+    }
+
+    if (/facture|impaye|retard|payer|paiement/.test(msg)) {
+      const unpaid = extract(/Impayes: ([\d\s.,]+) TND/);
+      const overdue = extract(/\((\d+) en retard/);
+      const issued = extract(/(\d+) emises\)/);
+      return unpaid
+        ? `Le montant impayé est de ${unpaid} TND — ${overdue ?? '0'} facture(s) en retard et ${issued ?? '0'} factures émises non réglées.`
+        : `Voici les données disponibles : ${context}`;
+    }
+
+    if (/livraison|taux|delivr/.test(msg)) {
+      const rate = extract(/Taux de livraison: (\d+)%/);
+      return rate
+        ? `Le taux de livraison actuel est de ${rate}%${Number(rate) >= 70 ? ', ce qui est une bonne performance.' : '. Des améliorations sont possibles dans la chaîne de livraison.'}`
+        : `Voici les données disponibles : ${context}`;
+    }
+
+    if (/client|top|meilleur/.test(msg)) {
+      const cli = extract(/Meilleur client: ([^(]+)\(/);
+      const cliCa = extract(/Meilleur client: [^(]+\(([\d\s.,]+) TND\)/);
+      return cli
+        ? `Le meilleur client est ${cli.trim()} avec un chiffre d'affaires de ${cliCa ?? '?'} TND.`
+        : `Voici les données disponibles : ${context}`;
+    }
+
+    return `Voici un résumé de vos données actuelles : ${context} — Pour des analyses plus poussées, configurez votre clé API Anthropic dans le localStorage (clé : "anthropic_api_key").`;
   }
 
   // ─── New: Dashboard Insights ─────────────────────────────────────────────
