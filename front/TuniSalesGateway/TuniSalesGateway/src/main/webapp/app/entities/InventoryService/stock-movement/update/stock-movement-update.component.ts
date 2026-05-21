@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize, map } from 'rxjs/operators';
+import dayjs from 'dayjs/esm';
 
 import { StockMovementFormService, StockMovementFormGroup } from './stock-movement-form.service';
 import { IStockMovement } from '../stock-movement.model';
@@ -16,6 +17,8 @@ import { MovementType } from 'app/entities/enumerations/movement-type.model';
 @Component({
   selector: 'jhi-stock-movement-update',
   templateUrl: './stock-movement-update.component.html',
+  styleUrls: ['./stock-movement-update.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class StockMovementUpdateComponent implements OnInit {
   isSaving = false;
@@ -39,6 +42,19 @@ export class StockMovementUpdateComponent implements OnInit {
 
   compareStockItem = (o1: IStockItem | null, o2: IStockItem | null): boolean => this.stockItemService.compareStockItem(o1, o2);
 
+  getTypeLabel(type: string): string {
+    const map: Record<string, string> = {
+      INBOUND:              'Entrée',
+      OUTBOUND:             'Sortie',
+      TRANSFER:             'Transfert',
+      RETURN:               'Retour',
+      SWAP_OUT:             'Échange sortant',
+      SWAP_IN:              'Échange entrant',
+      INVENTORY_ADJUSTMENT: 'Ajustement inventaire',
+    };
+    return map[type] || type;
+  }
+
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ stockMovement }) => {
       this.stockMovement = stockMovement;
@@ -60,6 +76,9 @@ export class StockMovementUpdateComponent implements OnInit {
     if (stockMovement.id !== null) {
       this.subscribeToSaveResponse(this.stockMovementService.update(stockMovement));
     } else {
+      if (!(stockMovement as any).createdAt || !(stockMovement as any).createdAt.isValid?.()) {
+        (stockMovement as any).createdAt = dayjs();
+      }
       this.subscribeToSaveResponse(this.stockMovementService.create(stockMovement));
     }
   }
@@ -76,7 +95,7 @@ export class StockMovementUpdateComponent implements OnInit {
   }
 
   protected onSaveError(): void {
-    // Api for inheritance.
+    // error displayed via jhi-alert-error
   }
 
   protected onSaveFinalize(): void {
