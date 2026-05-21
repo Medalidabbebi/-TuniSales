@@ -131,7 +131,7 @@ export class StockItemComponent implements OnInit {
     const map = new Map<string, StockGroup>();
     for (const item of items) {
       const sec = item.acquiredAt ? item.acquiredAt.format('YYYY-MM-DDTHH:mm:ss') : 'unknown';
-      const key = `${item.productId}_${sec}_${item.status ?? ''}_${item.warehouse?.id ?? 0}`;
+      const key = `${item.productId}_${sec}_${item.status ?? ''}_${item.warehouse?.id ?? 0}_${item.imei ?? ''}`;
       if (map.has(key)) {
         map.get(key)!.count++;
       } else {
