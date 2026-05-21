@@ -336,9 +336,7 @@
   }
 
   &__charts {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: $space-5;
+    display: block;
     margin-bottom: $space-6;
   }
 

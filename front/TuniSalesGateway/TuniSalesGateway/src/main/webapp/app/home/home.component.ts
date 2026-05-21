@@ -308,7 +308,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         const el = document.querySelector('#apex-area-chart') as HTMLElement | null;
         if (!el) return;
         this._areaChart = new ApexCharts(el, {
-          chart: { type: 'area', height: 240, toolbar: { show: false }, fontFamily: 'Inter, sans-serif', background: 'transparent', animations: { enabled: true, speed: 600 } },
+          chart: { type: 'area', height: 300, toolbar: { show: false }, fontFamily: 'Inter, sans-serif', background: 'transparent', animations: { enabled: true, speed: 600 } },
           series: [{ name: 'CA TTC (TND)', data: seriesData }],
           xaxis: { categories: labels, labels: { style: { colors: '#94a3b8', fontSize: '11px' } }, axisBorder: { show: false }, axisTicks: { show: false } },
           stroke: { curve: 'smooth', width: 2.5, colors: ['#6366f1'] },
