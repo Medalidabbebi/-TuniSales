@@ -1,0 +1,175 @@
+$swl-orange: #d97706;
+$swl-amb-l:  #fef3c7;
+$swl-blue:   #2563eb;
+$swl-blue-l: #dbeafe;
+$swl-green:  #16a34a;
+$swl-green-l:#dcfce7;
+$swl-red:    #dc2626;
+$swl-red-l:  #fee2e2;
+$swl-gray:   #64748b;
+$swl-border: #e2e8f0;
+$swl-bg:     #f8fafc;
+$swl-white:  #ffffff;
+$swl-text:   #0f172a;
+$swl-muted:  #64748b;
+$swl-shadow: 0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$swl-radius: 12px;
+
+.swl-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: $swl-text;
+}
+
+// ── Header ─────────────────────────────────────────────────────────
+.swl-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.swl-header__left { display: flex; align-items: center; gap: .9rem; }
+.swl-header__icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, $swl-orange, darken($swl-orange, 10%));
+  color: #fff; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba($swl-orange, .28);
+}
+.swl-header__title { margin: 0; font-size: 1.45rem; font-weight: 800; color: $swl-text; }
+.swl-header__sub   { margin: .25rem 0 0; font-size: .88rem; color: $swl-muted; }
+.swl-header__actions { display: flex; gap: .65rem; flex-wrap: wrap; }
+
+// ── Buttons ────────────────────────────────────────────────────────
+.swl-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .55rem 1.1rem; border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .875rem; font-weight: 600; cursor: pointer; transition: all .15s;
+  text-decoration: none;
+}
+.swl-btn--primary { background: $swl-orange; color: #fff !important; border-color: $swl-orange; }
+.swl-btn--primary:hover { background: darken($swl-orange, 6%); box-shadow: 0 3px 10px rgba($swl-orange,.3); }
+.swl-btn--ghost { background: $swl-white; color: $swl-gray !important; border-color: $swl-border; }
+.swl-btn--ghost:hover { border-color: $swl-gray; color: $swl-text !important; background: #f1f5f9; }
+.swl-btn--ghost:disabled { opacity: .5; cursor: not-allowed; }
+
+// ── KPI Strip ──────────────────────────────────────────────────────
+.swl-kpi-strip { display: flex; gap: 1rem; flex-wrap: wrap; }
+.swl-kpi {
+  flex: 1; min-width: 130px;
+  display: flex; align-items: center; gap: .85rem;
+  padding: 1rem 1.25rem; border-radius: $swl-radius;
+  background: $swl-white; border: 1px solid $swl-border;
+  box-shadow: $swl-shadow;
+}
+.swl-kpi__icon {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+}
+.swl-kpi__val   { font-size: 1.35rem; font-weight: 800; color: $swl-text !important; line-height: 1; }
+.swl-kpi__label { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: $swl-muted !important; margin-top: .2rem; }
+
+.swl-kpi--total .swl-kpi__icon { background: #f1f5f9;   color: $swl-gray   !important; }
+.swl-kpi--amber .swl-kpi__icon { background: $swl-amb-l;  color: $swl-orange !important; }
+.swl-kpi--blue  .swl-kpi__icon { background: $swl-blue-l; color: $swl-blue   !important; }
+.swl-kpi--green .swl-kpi__icon { background: $swl-green-l; color: $swl-green  !important; }
+.swl-kpi--red   .swl-kpi__icon { background: $swl-red-l;  color: $swl-red    !important; }
+
+// ── States ─────────────────────────────────────────────────────────
+.swl-loading {
+  display: flex; align-items: center; gap: .75rem;
+  justify-content: center; padding: 3rem;
+  font-size: .95rem; color: $swl-muted !important;
+}
+.swl-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1rem; padding: 4rem 2rem; text-align: center;
+  background: $swl-white; border: 1px solid $swl-border;
+  border-radius: $swl-radius; box-shadow: $swl-shadow;
+  .swl-empty__icon { font-size: 3rem; color: #cbd5e1 !important; }
+  .swl-empty__text { color: $swl-muted !important; margin: 0; font-size: .95rem; }
+}
+
+// ── Card / Table ───────────────────────────────────────────────────
+.swl-card {
+  background: $swl-white; border: 1px solid $swl-border;
+  border-radius: $swl-radius; box-shadow: $swl-shadow; overflow: hidden;
+}
+.swl-table-wrap { overflow-x: auto; }
+.swl-table {
+  width: 100%; border-collapse: collapse; color: $swl-text !important;
+  thead tr {
+    background: $swl-bg; border-bottom: 2px solid $swl-border;
+  }
+  th {
+    padding: .75rem 1rem; font-size: .78rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; color: $swl-muted !important;
+    white-space: nowrap; text-align: left;
+  }
+  .swl-th--status  { width: 140px; }
+  .swl-th--actions { width: 110px; }
+  tbody tr {
+    border-bottom: 1px solid $swl-border; transition: background .1s;
+    &:last-child { border-bottom: none; }
+    &:hover { background: #f9fafb; }
+  }
+  td { padding: .85rem 1rem; vertical-align: middle; color: $swl-text !important; }
+}
+.swl-sort-icon { margin-left: .3rem; opacity: .4; font-size: .7rem; }
+
+// ── Status Badges ──────────────────────────────────────────────────
+.swl-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .75rem; border-radius: 999px;
+  font-size: .75rem; font-weight: 700; letter-spacing: .02em; white-space: nowrap;
+  fa-icon { font-size: .7rem; }
+}
+.swl-badge--amber { background: $swl-amb-l;  color: $swl-orange !important; }
+.swl-badge--blue  { background: $swl-blue-l; color: $swl-blue   !important; }
+.swl-badge--green { background: $swl-green-l; color: $swl-green  !important; }
+.swl-badge--red   { background: $swl-red-l;  color: $swl-red    !important; }
+.swl-badge--gray  { background: #f1f5f9;     color: $swl-gray   !important; }
+
+// ── Item links ─────────────────────────────────────────────────────
+.swl-item-link {
+  display: inline-flex; align-items: center; gap: .4rem;
+  text-decoration: none; font-size: .85rem;
+  code { font-size: .82rem; font-family: monospace; }
+  &--out { color: $swl-red   !important; }
+  &--in  { color: $swl-green !important; }
+  &:hover code { text-decoration: underline; }
+}
+.swl-nil { color: #cbd5e1 !important; font-style: italic; font-size: .82rem; }
+
+// ── Client ─────────────────────────────────────────────────────────
+.swl-client {
+  display: inline-flex; align-items: center; gap: .5rem;
+  &__avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: $swl-blue-l; color: $swl-blue !important;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; font-weight: 700; flex-shrink: 0;
+  }
+  &__name { font-size: .85rem; color: $swl-text !important; }
+}
+
+// ── Date ───────────────────────────────────────────────────────────
+.swl-date { font-size: .78rem; color: $swl-muted !important; white-space: nowrap; }
+
+// ── Actions ────────────────────────────────────────────────────────
+.swl-actions { display: flex; gap: .35rem; justify-content: flex-end; }
+.swl-act {
+  width: 30px; height: 30px; border-radius: 7px; border: 1.5px solid $swl-border;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; cursor: pointer; transition: all .15s;
+  background: $swl-white; text-decoration: none; color: $swl-muted !important;
+}
+.swl-act--view:hover { border-color: $swl-blue;   color: $swl-blue   !important; background: $swl-blue-l; }
+.swl-act--edit:hover { border-color: $swl-orange;  color: $swl-orange !important; background: $swl-amb-l; }
+.swl-act--del:hover  { border-color: $swl-red;     color: $swl-red    !important; background: $swl-red-l; }
+
+// ── Pagination ─────────────────────────────────────────────────────
+.swl-pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: .75rem; font-size: .85rem; color: $swl-muted !important;
+}

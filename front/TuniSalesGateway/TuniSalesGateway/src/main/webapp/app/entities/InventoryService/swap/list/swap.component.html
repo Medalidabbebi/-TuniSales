@@ -1,101 +1,167 @@
-<div class="container-fluid py-4">
+<div class="swl-page">
 
-  <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-    <div>
-      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="SwapHeading">
-        <fa-icon icon="retweet" class="me-2 text-primary"></fa-icon>
-        Gestion des Échanges (Swap)
-      </h2>
-      <small class="text-muted">Liste des échanges — {{ totalItems }} échange(s) au total</small>
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Header ─────────────────────────────────────────────────────── -->
+  <div class="swl-header">
+    <div class="swl-header__left">
+      <div class="swl-header__icon">
+        <fa-icon icon="retweet"></fa-icon>
+      </div>
+      <div>
+        <h1 class="swl-header__title" id="page-heading" data-cy="SwapHeading">Gestion des Échanges</h1>
+        <p class="swl-header__sub">{{ totalItems }} échange(s) au total</p>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+    <div class="swl-header__actions">
+      <button class="swl-btn swl-btn--ghost" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
-      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/swap/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
+      <a class="swl-btn swl-btn--primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/swap/new']">
+        <fa-icon icon="plus"></fa-icon>
         Nouvel Échange
       </a>
     </div>
   </div>
 
-  <jhi-alert-error></jhi-alert-error>
-  <jhi-alert></jhi-alert>
-
-  <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+  <!-- ── KPI Strip ──────────────────────────────────────────────────── -->
+  <div class="swl-kpi-strip" *ngIf="!isLoading && swaps && swaps.length > 0">
+    <div class="swl-kpi swl-kpi--total">
+      <div class="swl-kpi__icon"><fa-icon icon="retweet"></fa-icon></div>
+      <div>
+        <div class="swl-kpi__val">{{ totalItems }}</div>
+        <div class="swl-kpi__label">Total</div>
+      </div>
+    </div>
+    <div class="swl-kpi swl-kpi--amber">
+      <div class="swl-kpi__icon"><fa-icon icon="clock"></fa-icon></div>
+      <div>
+        <div class="swl-kpi__val">{{ pendingCount }}</div>
+        <div class="swl-kpi__label">En attente</div>
+      </div>
+    </div>
+    <div class="swl-kpi swl-kpi--blue">
+      <div class="swl-kpi__icon"><fa-icon icon="spinner"></fa-icon></div>
+      <div>
+        <div class="swl-kpi__val">{{ inProgressCount }}</div>
+        <div class="swl-kpi__label">En cours</div>
+      </div>
+    </div>
+    <div class="swl-kpi swl-kpi--green">
+      <div class="swl-kpi__icon"><fa-icon icon="check-circle"></fa-icon></div>
+      <div>
+        <div class="swl-kpi__val">{{ resolvedCount }}</div>
+        <div class="swl-kpi__label">Résolus</div>
+      </div>
+    </div>
+    <div class="swl-kpi swl-kpi--red">
+      <div class="swl-kpi__icon"><fa-icon icon="times-circle"></fa-icon></div>
+      <div>
+        <div class="swl-kpi__val">{{ cancelledCount }}</div>
+        <div class="swl-kpi__label">Annulés</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && swaps?.length === 0">
-    <fa-icon icon="retweet" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucun échange trouvé. Créez votre premier échange.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/swap/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <!-- ── Loading ────────────────────────────────────────────────────── -->
+  <div class="swl-loading" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true"></fa-icon>
+    <span>Chargement des échanges…</span>
+  </div>
+
+  <!-- ── Empty ──────────────────────────────────────────────────────── -->
+  <div class="swl-empty" *ngIf="!isLoading && swaps?.length === 0">
+    <fa-icon icon="retweet" class="swl-empty__icon"></fa-icon>
+    <p class="swl-empty__text">Aucun échange trouvé. Créez votre premier échange.</p>
+    <a class="swl-btn swl-btn--primary" [routerLink]="['/swap/new']">
+      <fa-icon icon="plus"></fa-icon> Ajouter
     </a>
   </div>
 
-  <!-- Table -->
-  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && swaps && swaps.length > 0">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
-        <thead class="table-light">
+  <!-- ── Table ──────────────────────────────────────────────────────── -->
+  <div class="swl-card" id="entities" *ngIf="!isLoading && swaps && swaps.length > 0">
+    <div class="swl-table-wrap">
+      <table class="swl-table" aria-describedby="page-heading">
+        <thead>
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-            <th scope="col" jhiSortBy="outgoingItem.imei">
-              <div class="d-flex align-items-center gap-1">Item sortant <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th jhiSortBy="outgoingItem.imei">
+              Item sortant <fa-icon icon="sort" class="swl-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="incomingItem.imei">
-              <div class="d-flex align-items-center gap-1">Item entrant <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th jhiSortBy="incomingItem.imei">
+              Item entrant <fa-icon icon="sort" class="swl-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="status" style="width:130px">
-              <div class="d-flex align-items-center gap-1">Statut <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th jhiSortBy="status" class="swl-th--status">
+              Statut <fa-icon icon="sort" class="swl-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="createdAt">
-              <div class="d-flex align-items-center gap-1">Date <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th jhiSortBy="clientName">
+              Client <fa-icon icon="sort" class="swl-sort-icon"></fa-icon>
             </th>
-            <th scope="col" style="width:140px"></th>
+            <th jhiSortBy="createdAt">
+              Date <fa-icon icon="sort" class="swl-sort-icon"></fa-icon>
+            </th>
+            <th class="swl-th--actions"></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let swap of swaps; trackBy: trackId" data-cy="entityTable">
+
+            <!-- Item sortant -->
             <td>
-              <a *ngIf="swap.outgoingItem" [routerLink]="['/stock-item', swap.outgoingItem.id, 'view']" class="text-decoration-none">
-                <code class="text-secondary">{{ swap.outgoingItem.imei }}</code>
+              <a *ngIf="swap.outgoingItem"
+                 [routerLink]="['/stock-item', swap.outgoingItem.id, 'view']"
+                 class="swl-item-link swl-item-link--out">
+                <fa-icon icon="sign-out-alt"></fa-icon>
+                <code>{{ swap.outgoingItem.imei }}</code>
               </a>
-              <span *ngIf="!swap.outgoingItem" class="text-muted fst-italic">—</span>
+              <span *ngIf="!swap.outgoingItem" class="swl-nil">—</span>
             </td>
+
+            <!-- Item entrant -->
             <td>
-              <a *ngIf="swap.incomingItem" [routerLink]="['/stock-item', swap.incomingItem.id, 'view']" class="text-decoration-none">
-                <code class="text-secondary">{{ swap.incomingItem.imei }}</code>
+              <a *ngIf="swap.incomingItem"
+                 [routerLink]="['/stock-item', swap.incomingItem.id, 'view']"
+                 class="swl-item-link swl-item-link--in">
+                <fa-icon icon="sign-in-alt"></fa-icon>
+                <code>{{ swap.incomingItem.imei }}</code>
               </a>
-              <span *ngIf="!swap.incomingItem" class="text-muted fst-italic">—</span>
+              <span *ngIf="!swap.incomingItem" class="swl-nil">—</span>
             </td>
+
+            <!-- Statut -->
             <td>
-              <span class="badge rounded-pill"
-                [ngClass]="{
-                  'bg-success': swap.status === 'RESOLVED',
-                  'bg-info text-dark': swap.status === 'IN_PROGRESS',
-                  'bg-warning text-dark': swap.status === 'PENDING',
-                  'bg-danger': swap.status === 'CANCELLED',
-                  'bg-secondary': !swap.status
-                }">
-                {{ swap.status }}
+              <span class="swl-badge" [ngClass]="getStatusClass(swap.status)">
+                <fa-icon [icon]="getStatusIcon(swap.status)"></fa-icon>
+                {{ getStatusLabel(swap.status) }}
               </span>
             </td>
-            <td><span class="text-muted small">{{ swap.createdAt | formatMediumDatetime }}</span></td>
+
+            <!-- Client -->
             <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/swap', swap.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+              <span *ngIf="swap.clientName" class="swl-client">
+                <span class="swl-client__avatar">{{ swap.clientName.charAt(0).toUpperCase() }}</span>
+                <span class="swl-client__name">{{ swap.clientName }}</span>
+              </span>
+              <span *ngIf="!swap.clientName" class="swl-nil">—</span>
+            </td>
+
+            <!-- Date -->
+            <td class="swl-date">{{ swap.createdAt | formatMediumDatetime }}</td>
+
+            <!-- Actions -->
+            <td>
+              <div class="swl-actions">
+                <a [routerLink]="['/swap', swap.id, 'view']"
+                   class="swl-act swl-act--view" data-cy="entityDetailsButton" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/swap', swap.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                <a [routerLink]="['/swap', swap.id, 'edit']"
+                   class="swl-act swl-act--edit" data-cy="entityEditButton" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(swap)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
+                <button (click)="delete(swap)"
+                        class="swl-act swl-act--del" data-cy="entityDeleteButton" title="Supprimer">
                   <fa-icon icon="times"></fa-icon>
                 </button>
               </div>
@@ -106,8 +172,8 @@
     </div>
   </div>
 
-  <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="swaps && swaps.length > 0">
+  <!-- ── Pagination ─────────────────────────────────────────────────── -->
+  <div class="swl-pagination" *ngIf="swaps && swaps.length > 0">
     <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
     <ngb-pagination
       [collectionSize]="totalItems"

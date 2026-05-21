@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -14,6 +14,8 @@ import { SwapDeleteDialogComponent } from '../delete/swap-delete-dialog.componen
 @Component({
   selector: 'jhi-swap',
   templateUrl: './swap.component.html',
+  styleUrls: ['./swap.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class SwapComponent implements OnInit {
   swaps?: ISwap[];
@@ -35,6 +37,41 @@ export class SwapComponent implements OnInit {
 
   trackId = (_index: number, item: ISwap): number => this.swapService.getSwapIdentifier(item);
 
+  get pendingCount(): number   { return (this.swaps ?? []).filter(s => s.status === 'PENDING').length; }
+  get inProgressCount(): number { return (this.swaps ?? []).filter(s => s.status === 'IN_PROGRESS').length; }
+  get resolvedCount(): number  { return (this.swaps ?? []).filter(s => s.status === 'RESOLVED').length; }
+  get cancelledCount(): number { return (this.swaps ?? []).filter(s => s.status === 'CANCELLED').length; }
+
+  getStatusLabel(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      PENDING:     'En attente',
+      IN_PROGRESS: 'En cours',
+      RESOLVED:    'Résolu',
+      CANCELLED:   'Annulé',
+    };
+    return status ? (map[status] || status) : '—';
+  }
+
+  getStatusClass(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      PENDING:     'swl-badge--amber',
+      IN_PROGRESS: 'swl-badge--blue',
+      RESOLVED:    'swl-badge--green',
+      CANCELLED:   'swl-badge--red',
+    };
+    return status ? (map[status] || 'swl-badge--gray') : 'swl-badge--gray';
+  }
+
+  getStatusIcon(status: string | null | undefined): any {
+    const map: Record<string, string> = {
+      PENDING:     'clock',
+      IN_PROGRESS: 'spinner',
+      RESOLVED:    'check-circle',
+      CANCELLED:   'times-circle',
+    };
+    return status ? (map[status] || 'question-circle') : 'question-circle';
+  }
+
   ngOnInit(): void {
     this.load();
   }
@@ -42,24 +79,19 @@ export class SwapComponent implements OnInit {
   delete(swap: ISwap): void {
     const modalRef = this.modalService.open(SwapDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.swap = swap;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
         switchMap(() => this.loadFromBackendWithRouteInformations())
       )
       .subscribe({
-        next: (res: EntityArrayResponseType) => {
-          this.onResponseSuccess(res);
-        },
+        next: (res: EntityArrayResponseType) => { this.onResponseSuccess(res); },
       });
   }
 
   load(): void {
     this.loadFromBackendWithRouteInformations().subscribe({
-      next: (res: EntityArrayResponseType) => {
-        this.onResponseSuccess(res);
-      },
+      next: (res: EntityArrayResponseType) => { this.onResponseSuccess(res); },
     });
   }
 
@@ -118,7 +150,6 @@ export class SwapComponent implements OnInit {
       size: this.itemsPerPage,
       sort: this.getSortQueryParam(predicate, ascending),
     };
-
     this.router.navigate(['./'], {
       relativeTo: this.activatedRoute,
       queryParams: queryParamsObj,
