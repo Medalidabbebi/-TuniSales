@@ -194,7 +194,7 @@
   <!-- ── Charts Row ─────────────────────────────────────────────────────────── -->
   <div class="tsg-dashboard__charts">
 
-    <!-- Sales Over Time -->
+    <!-- Sales Over Time — ApexCharts Area -->
     <div class="tsg-chart">
       <div class="tsg-chart__header">
         <span class="tsg-chart__title">Chiffre d'affaires</span>
@@ -210,48 +210,41 @@
                   (click)="setSalesPeriod(90)">90 j</button>
         </div>
       </div>
-      <div class="tsg-chart__body tsg-chart__body--line">
-        <svg class="tsg-line-chart" viewBox="0 0 840 260" preserveAspectRatio="none"
-             role="img" aria-label="Graphique CA dans le temps">
-          <defs>
-            <linearGradient id="salesAreaFill" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.35"></stop>
-              <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.02"></stop>
-            </linearGradient>
-          </defs>
-          <path [attr.d]="getSalesAreaPath()" fill="url(#salesAreaFill)"></path>
-          <path [attr.d]="getSalesPath()" class="tsg-line-chart__line"></path>
-        </svg>
-        <!-- Empty state for chart -->
-        <div *ngIf="!getSalesPath()" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#9ca3af;font-size:.875rem;">
-          Aucune donnée sur cette période
-        </div>
+      <div class="tsg-chart__body">
+        <apx-chart
+          [series]="areaChartSeries"
+          [chart]="areaChartOptions"
+          [stroke]="areaChartStroke"
+          [fill]="areaChartFill"
+          [grid]="areaChartGrid"
+          [xaxis]="areaChartXAxis"
+          [tooltip]="areaChartTooltip"
+          [dataLabels]="areaChartDataLabels"
+          [colors]="areaChartColors"
+        ></apx-chart>
       </div>
     </div>
 
-    <!-- Orders by Status -->
+    <!-- Orders by Status — ApexCharts Donut -->
     <div class="tsg-chart">
       <div class="tsg-chart__header">
         <span class="tsg-chart__title">Commandes par statut</span>
       </div>
-      <div class="tsg-chart__body tsg-chart__body--bars">
-        <div class="tsg-orders-chart">
-          <div class="tsg-orders-chart__item" *ngFor="let st of ordersByStatus">
-            <div class="tsg-orders-chart__head">
-              <span>{{ st.label }}</span>
-              <strong>{{ st.value }}</strong>
-            </div>
-            <div class="tsg-orders-chart__track">
-              <div class="tsg-orders-chart__fill"
-                   [style.width.%]="getStatusWidth(st.value)"
-                   [style.background]="st.color">
-              </div>
-            </div>
-          </div>
-          <div *ngIf="ordersByStatus.length === 0 && !isLoadingDashboard"
-               style="text-align:center;color:#9ca3af;padding:1.5rem;font-size:.875rem;">
-            Aucune commande
-          </div>
+      <div class="tsg-chart__body">
+        <apx-chart
+          *ngIf="donutSeries.length > 0"
+          [series]="donutSeries"
+          [chart]="donutChartOptions"
+          [labels]="donutLabels"
+          [colors]="donutColors"
+          [plotOptions]="donutPlotOptions"
+          [legend]="donutLegend"
+          [dataLabels]="donutDataLabels"
+          [responsive]="donutResponsive"
+        ></apx-chart>
+        <div *ngIf="donutSeries.length === 0 && !isLoadingDashboard"
+             style="text-align:center;color:#9ca3af;padding:2rem;font-size:.875rem;">
+          Aucune commande
         </div>
       </div>
     </div>

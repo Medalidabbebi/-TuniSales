@@ -4,6 +4,9 @@ import { forkJoin, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
+import { ApexAxisChartSeries, ApexChart, ApexXAxis, ApexStroke, ApexFill,
+         ApexTooltip, ApexGrid, ApexDataLabels, ApexNonAxisChartSeries,
+         ApexPlotOptions, ApexLegend, ApexResponsive } from 'ng-apexcharts';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 import { OrderService } from 'app/entities/BusinessService/order/service/order.service';
@@ -103,6 +106,30 @@ export class HomeComponent implements OnInit, OnDestroy {
   salesSeriesByPeriod: Record<7 | 30 | 90, number[]> = { 7: [], 30: [], 90: [] };
   ordersByStatus: Array<{ label: string; value: number; color: string }> = [];
 
+  // ── ApexCharts options ────────────────────────────────────────────────────
+  areaChartSeries: ApexAxisChartSeries = [{ name: 'CA TTC', data: [] }];
+  areaChartOptions: ApexChart = {
+    type: 'area', height: 240, toolbar: { show: false }, sparkline: { enabled: false },
+    fontFamily: 'Inter, sans-serif', background: 'transparent',
+    animations: { enabled: true, easing: 'easeinout', speed: 600 },
+  };
+  areaChartStroke: ApexStroke  = { curve: 'smooth', width: 2.5, colors: ['#6366f1'] };
+  areaChartFill: ApexFill      = { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: .35, opacityTo: .02, stops: [0, 95] } };
+  areaChartGrid: ApexGrid      = { borderColor: '#f1f5f9', strokeDashArray: 4, xaxis: { lines: { show: false } } };
+  areaChartXAxis: ApexXAxis    = { categories: [], labels: { style: { colors: '#94a3b8', fontSize: '11px' } }, axisBorder: { show: false }, axisTicks: { show: false } };
+  areaChartTooltip: ApexTooltip = { y: { formatter: (v: number) => this.fmtAmount(v) + ' TND' }, theme: 'light' };
+  areaChartDataLabels: ApexDataLabels = { enabled: false };
+  areaChartColors: string[] = ['#6366f1'];
+
+  donutSeries: ApexNonAxisChartSeries = [];
+  donutLabels: string[] = [];
+  donutColors: string[] = [];
+  donutChartOptions: ApexChart   = { type: 'donut', height: 300, toolbar: { show: false }, fontFamily: 'Inter, sans-serif', animations: { enabled: true, speed: 500 } };
+  donutPlotOptions: ApexPlotOptions = { pie: { donut: { size: '68%', labels: { show: true, total: { show: true, label: 'Total', fontSize: '13px', color: '#64748b', formatter: (w: any) => w.globals.seriesTotals.reduce((a: number, b: number) => a + b, 0) } } } } };
+  donutLegend: ApexLegend        = { position: 'bottom', fontSize: '12px', offsetY: 6, markers: { width: 10, height: 10 }, itemMargin: { horizontal: 8, vertical: 4 } };
+  donutDataLabels: ApexDataLabels = { enabled: false };
+  donutResponsive: ApexResponsive[] = [{ breakpoint: 600, options: { chart: { height: 250 }, legend: { position: 'bottom' } } }];
+
   private readonly destroy$ = new Subject<void>();
 
   constructor(
@@ -127,7 +154,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   login(): void { this.router.navigate(['/login']); }
 
-  setSalesPeriod(period: 7 | 30 | 90): void { this.selectedSalesPeriod = period; }
+  setSalesPeriod(period: 7 | 30 | 90): void {
+    this.selectedSalesPeriod = period;
+    this.updateAreaChart();
+  }
 
   // ─── Data loading ────────────────────────────────────────────────────────────
 
@@ -240,15 +270,20 @@ export class HomeComponent implements OnInit, OnDestroy {
     for (const o of orders) {
       if (o.status) counts[o.status] = (counts[o.status] ?? 0) + 1;
     }
-    this.ordersByStatus = Object.entries(counts)
+    const sorted = Object.entries(counts)
       .filter(([, v]) => v > 0)
       .sort(([, a], [, b]) => b - a)
-      .slice(0, 8)
-      .map(([key, value]) => ({
-        label: ORDER_STATUS_LABELS[key] ?? key,
-        value,
-        color: ORDER_STATUS_COLORS[key] ?? '#94a3b8',
-      }));
+      .slice(0, 8);
+
+    this.ordersByStatus = sorted.map(([key, value]) => ({
+      label: ORDER_STATUS_LABELS[key] ?? key,
+      value,
+      color: ORDER_STATUS_COLORS[key] ?? '#94a3b8',
+    }));
+
+    this.donutSeries  = sorted.map(([, v]) => v);
+    this.donutLabels  = sorted.map(([k]) => ORDER_STATUS_LABELS[k] ?? k);
+    this.donutColors  = sorted.map(([k]) => ORDER_STATUS_COLORS[k] ?? '#94a3b8');
   }
 
   // ─── Sales series ─────────────────────────────────────────────────────────────
@@ -269,6 +304,20 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
       this.salesSeriesByPeriod[days] = series;
     });
+    this.updateAreaChart();
+  }
+
+  private updateAreaChart(): void {
+    const days    = this.selectedSalesPeriod;
+    const data    = this.salesSeriesByPeriod[days];
+    const buckets = data.length;
+    const now     = dayjs();
+    const labels  = Array.from({ length: buckets }, (_, i) => {
+      const d = now.subtract(Math.round((buckets - 1 - i) * (days / buckets)), 'day');
+      return days <= 7 ? d.format('ddd') : d.format('DD/MM');
+    });
+    this.areaChartSeries  = [{ name: 'CA TTC (TND)', data: data.map(v => Math.round(v)) }];
+    this.areaChartXAxis   = { ...this.areaChartXAxis, categories: labels };
   }
 
   // ─── Top clients by revenue ───────────────────────────────────────────────────
