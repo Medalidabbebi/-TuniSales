@@ -29,6 +29,9 @@ export class ClientDetailComponent implements OnInit {
 
   loyaltyScore: { score: number; grade: string; label: string; colorClass: string; barClass: string; ringColor: string } | null = null;
 
+  historyInsight: string | null = null;
+  isLoadingHistoryInsight = false;
+
   historyPage = 1;
   historyPageSize = 5;
 
@@ -146,6 +149,7 @@ export class ClientDetailComponent implements OnInit {
         this.computeRiskScore();
         this.computeLoyaltyScore();
         this.loadAiSummary();
+        this.loadHistoryInsight();
       },
       error: () => { this.isLoadingData = false; },
     });
@@ -304,6 +308,16 @@ export class ClientDetailComponent implements OnInit {
       .subscribe({
         next: t => { this.aiSummary = t; this.isLoadingAi = false; },
         error: () => { this.isLoadingAi = false; },
+      });
+  }
+
+  private loadHistoryInsight(): void {
+    if (this.orders.length === 0) return;
+    this.isLoadingHistoryInsight = true;
+    this.aiSummaryService.generateOrderHistoryInsight(this.client!, this.orders)
+      .subscribe({
+        next: t => { this.historyInsight = t; this.isLoadingHistoryInsight = false; },
+        error: () => { this.isLoadingHistoryInsight = false; },
       });
   }
 }

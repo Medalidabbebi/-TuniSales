@@ -933,6 +933,47 @@ $shadow-lg: 0 12px 30px rgba(0,0,0,.12), 0 4px 10px rgba(0,0,0,.06);
   }
 }
 
+// ─── AI History Insight ───────────────────────────────────────────────────────
+.cd-history-ai {
+  margin: 0 1.5rem 1rem;
+  padding: 14px 18px;
+  background: linear-gradient(135deg, #f0f1ff 0%, #faf5ff 100%);
+  border: 1px solid #e0e2ff;
+  border-left: 4px solid #6366f1;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    color: #6366f1;
+
+    fa-icon { font-size: .75rem; }
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6366f1;
+    font-size: .85rem;
+  }
+
+  &__text {
+    margin: 0;
+    font-size: .875rem;
+    line-height: 1.65;
+    color: $slate-700;
+  }
+}
+
 // ─── Responsive ───────────────────────────────────────────────────────────────
 @media (max-width: 768px) {
   .cd-hero { padding: 1.5rem 1rem 2rem; }

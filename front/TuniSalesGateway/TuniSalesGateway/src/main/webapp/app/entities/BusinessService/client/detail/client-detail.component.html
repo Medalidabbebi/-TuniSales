@@ -315,6 +315,19 @@
       <fa-icon icon="spinner" [spin]="true"></fa-icon> Chargement…
     </div>
 
+    <!-- AI History Insight -->
+    <div class="cd-history-ai" *ngIf="!isLoadingData && (historyInsight || isLoadingHistoryInsight)">
+      <div class="cd-history-ai__label">
+        <fa-icon icon="star"></fa-icon>
+        <span>Analyse IA de l'historique</span>
+      </div>
+      <div *ngIf="isLoadingHistoryInsight" class="cd-history-ai__loading">
+        <fa-icon icon="spinner" [spin]="true"></fa-icon>
+        <span>Analyse en cours…</span>
+      </div>
+      <p *ngIf="!isLoadingHistoryInsight && historyInsight" class="cd-history-ai__text">{{ historyInsight }}</p>
+    </div>
+
     <div class="cd-table-wrap" *ngIf="!isLoadingData && orders.length > 0">
       <table class="cd-table">
         <thead>

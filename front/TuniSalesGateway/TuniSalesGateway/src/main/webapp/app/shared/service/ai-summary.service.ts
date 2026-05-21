@@ -341,6 +341,62 @@ Génère uniquement le rapport analytique, sans titre, sans liste, sans mise en 
     );
   }
 
+  // ─── New: Order History Insight ──────────────────────────────────────────
+
+  generateOrderHistoryInsight(client: IClient, orders: IOrder[]): Observable<string> {
+    const apiKey = localStorage.getItem('anthropic_api_key') || DEFAULT_API_KEY;
+    const fallback = this.localOrderHistoryInsight(client, orders);
+    if (!apiKey) return of(fallback);
+
+    const totalSpend = orders.reduce((sum, o) => sum + (o.totalAmount ?? 0), 0);
+    const avgOrder   = orders.length > 0 ? totalSpend / orders.length : 0;
+
+    const statusCounts: Record<string, number> = {};
+    for (const o of orders) { if (o.status) statusCounts[o.status] = (statusCounts[o.status] ?? 0) + 1; }
+    const statusSummary = Object.entries(statusCounts)
+      .sort(([, a], [, b]) => b - a)
+      .map(([s, n]) => `${STATUS_FR[s] ?? s}: ${n}`)
+      .join(', ');
+
+    const deliveredCount  = orders.filter(o => o.status === 'DELIVERED' || o.status === 'INVOICED' || o.status === 'PAID').length;
+    const cancelledCount  = orders.filter(o => o.status === 'CANCELLED' || o.status === 'REJECTED' || o.status === 'REFUSED').length;
+
+    const prompt = `Tu es un analyste commercial pour TuniSalesGateway. Génère une analyse concise (3-4 phrases en français) de l'historique d'achats de ce client. Identifie les tendances, la régularité, les points positifs et les signaux d'alerte éventuels.
+
+Client : ${client.name ?? '—'}
+Nombre total de commandes : ${orders.length}
+Montant total TTC : ${totalSpend.toFixed(0)} TND
+Panier moyen : ${avgOrder.toFixed(0)} TND
+Répartition par statut : ${statusSummary}
+Commandes abouties (livré/facturé/payé) : ${deliveredCount}
+Commandes annulées/rejetées : ${cancelledCount}
+
+Génère uniquement l'analyse, sans titre, sans liste, sans mise en forme markdown.`;
+
+    const context = new HttpContext().set(SKIP_ERROR_HANDLER, true);
+
+    return this.http.post<any>(
+      this.apiUrl,
+      {
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 300,
+        messages: [{ role: 'user', content: prompt }],
+      },
+      {
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+          'anthropic-dangerous-direct-browser-access': 'true',
+        },
+        context,
+      }
+    ).pipe(
+      map((res: any) => (res?.content?.[0]?.text as string) ?? fallback),
+      catchError(() => of(fallback))
+    );
+  }
+
   // ─── Private helpers ──────────────────────────────────────────────────────
 
   private buildPrompt(order: IOrder, lines: IOrderLine[]): string {
@@ -391,6 +447,26 @@ Génère uniquement le paragraphe, sans titre, sans liste, sans mise en forme.`;
       text += ` Le traitement de cette commande est en cours.`;
     }
 
+    return text;
+  }
+
+  private localOrderHistoryInsight(client: IClient, orders: IOrder[]): string {
+    if (orders.length === 0) return `Aucune commande enregistrée pour ${client.name ?? 'ce client'}.`;
+    const totalSpend = orders.reduce((sum, o) => sum + (o.totalAmount ?? 0), 0);
+    const avgOrder   = totalSpend / orders.length;
+    const delivered  = orders.filter(o => ['DELIVERED', 'INVOICED', 'PAID'].includes(o.status ?? '')).length;
+    const cancelled  = orders.filter(o => ['CANCELLED', 'REJECTED', 'REFUSED'].includes(o.status ?? '')).length;
+    const successRate = Math.round((delivered / orders.length) * 100);
+
+    let text = `${client.name ?? 'Ce client'} totalise ${orders.length} commande(s) pour un montant global de ${totalSpend.toFixed(0)} TND TTC, soit un panier moyen de ${avgOrder.toFixed(0)} TND.`;
+    text += ` ${delivered} commande(s) ont abouti avec succès (${successRate}% de taux de réussite)`;
+    if (cancelled > 0) text += `, tandis que ${cancelled} ont été annulées ou rejetées`;
+    text += '.';
+    if (successRate >= 70) {
+      text += ` Le profil d'achat de ce client est positif avec une bonne régularité et un taux de réussite élevé.`;
+    } else if (cancelled > delivered) {
+      text += ` Le taux d'annulation élevé mérite une attention particulière : vérifiez les motifs de refus récurrents.`;
+    }
     return text;
   }
 
