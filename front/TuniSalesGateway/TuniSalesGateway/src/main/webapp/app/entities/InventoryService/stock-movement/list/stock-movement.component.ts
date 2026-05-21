@@ -76,7 +76,7 @@ export class StockMovementComponent implements OnInit {
     return type ? (map[type] || 'sml-badge--gray') : 'sml-badge--gray';
   }
 
-  getTypeIcon(type: string | null | undefined): string {
+  getTypeIcon(type: string | null | undefined): any {
     const map: Record<string, string> = {
       INBOUND:              'arrow-down',
       OUTBOUND:             'arrow-up',
