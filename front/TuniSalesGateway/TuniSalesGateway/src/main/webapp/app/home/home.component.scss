@@ -336,7 +336,9 @@
   }
 
   &__charts {
-    display: block;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: $space-5;
     margin-bottom: $space-6;
   }
 
@@ -372,6 +374,19 @@
   display: block;
   min-height: 250px;
   padding: $space-4;
+}
+
+// Override placeholder styles for ApexCharts containers
+.tsg-chart__body {
+  display: block !important;
+  border: none !important;
+  min-height: unset !important;
+  padding: 0 !important;
+
+  #apex-area-chart,
+  #apex-donut-chart {
+    width: 100%;
+  }
 }
 
 .tsg-line-chart {
