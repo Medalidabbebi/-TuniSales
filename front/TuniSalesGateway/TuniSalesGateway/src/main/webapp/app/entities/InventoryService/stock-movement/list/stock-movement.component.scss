@@ -70,10 +70,11 @@ $sml-radius: 12px;
 .sml-kpi__val   { font-size: 1.35rem; font-weight: 800; color: $sml-text; line-height: 1; }
 .sml-kpi__label { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: $sml-muted; margin-top: .2rem; }
 
-.sml-kpi--blue   .sml-kpi__icon { background: $sml-blue-l;  color: $sml-blue; }
-.sml-kpi--green  .sml-kpi__icon { background: $sml-green-l; color: $sml-green; }
-.sml-kpi--red    .sml-kpi__icon { background: $sml-red-l;   color: $sml-red; }
-.sml-kpi--orange .sml-kpi__icon { background: $sml-amb-l;   color: $sml-orange; }
+.sml-kpi--blue   .sml-kpi__icon { background: $sml-blue-l;  color: $sml-blue  !important; }
+.sml-kpi--green  .sml-kpi__icon { background: $sml-green-l; color: $sml-green !important; }
+.sml-kpi--red    .sml-kpi__icon { background: $sml-red-l;   color: $sml-red   !important; }
+.sml-kpi--orange .sml-kpi__icon { background: $sml-amb-l;   color: $sml-orange !important; }
+.sml-kpi__icon svg { fill: currentColor; }
 
 // ── States ─────────────────────────────────────────────────────────
 .sml-loading {
@@ -97,7 +98,7 @@ $sml-radius: 12px;
 }
 .sml-table-wrap { overflow-x: auto; }
 .sml-table {
-  width: 100%; border-collapse: collapse;
+  width: 100%; border-collapse: collapse; color: $sml-text;
   thead tr {
     background: $sml-bg; border-bottom: 2px solid $sml-border;
   }
@@ -112,7 +113,7 @@ $sml-radius: 12px;
     &:last-child { border-bottom: none; }
     &:hover { background: #f9fafb; }
   }
-  td { padding: .85rem 1rem; vertical-align: middle; }
+  td { padding: .85rem 1rem; vertical-align: middle; color: $sml-text; }
 }
 .sml-sort-icon { margin-left: .3rem; opacity: .4; font-size: .7rem; }
 
@@ -123,14 +124,14 @@ $sml-radius: 12px;
   font-size: .72rem; font-weight: 700; letter-spacing: .02em; white-space: nowrap;
   fa-icon { font-size: .7rem; }
 }
-.sml-badge--green  { background: $sml-green-l; color: $sml-green; }
-.sml-badge--red    { background: $sml-red-l;   color: $sml-red; }
-.sml-badge--blue   { background: $sml-blue-l;  color: $sml-blue; }
-.sml-badge--navy   { background: #e0e7ff; color: #3730a3; }
-.sml-badge--purple { background: #f3e8ff; color: #7c3aed; }
-.sml-badge--teal   { background: #ccfbf1; color: #0f766e; }
-.sml-badge--orange { background: $sml-amb-l;   color: $sml-orange; }
-.sml-badge--gray   { background: #f1f5f9;      color: $sml-gray; }
+.sml-badge--green  { background: $sml-green-l; color: $sml-green  !important; }
+.sml-badge--red    { background: $sml-red-l;   color: $sml-red    !important; }
+.sml-badge--blue   { background: $sml-blue-l;  color: $sml-blue   !important; }
+.sml-badge--navy   { background: #e0e7ff; color: #3730a3 !important; }
+.sml-badge--purple { background: #f3e8ff; color: #7c3aed !important; }
+.sml-badge--teal   { background: #ccfbf1; color: #0f766e !important; }
+.sml-badge--orange { background: $sml-amb-l;   color: $sml-orange !important; }
+.sml-badge--gray   { background: #f1f5f9;      color: $sml-gray   !important; }
 
 // ── Qty ────────────────────────────────────────────────────────────
 .sml-qty {
