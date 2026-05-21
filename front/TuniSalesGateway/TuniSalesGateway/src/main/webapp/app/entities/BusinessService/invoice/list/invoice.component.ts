@@ -93,6 +93,61 @@ export class InvoiceComponent implements OnInit {
     this.excelService.exportInvoices(this.filteredInvoices);
   }
 
+  exportCsv(): void {
+    const headers = ['N° Facture', 'Client', 'Montant HT', 'TVA', 'Montant TTC', 'Statut', 'Date échéance'];
+    const rows = this.filteredInvoices.map(inv => [
+      inv.invoiceNumber ?? '',
+      inv.client?.name ?? '',
+      inv.amountHt ?? 0,
+      inv.taxAmount ?? 0,
+      inv.amountTtc ?? 0,
+      inv.status ?? '',
+      inv.dueDate ? inv.dueDate.format('DD/MM/YYYY') : '',
+    ]);
+    const csvContent = [headers, ...rows]
+      .map(row => row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';'))
+      .join('\n');
+    const blob = new Blob(['﻿' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `factures-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  exportPdf(): void {
+    if (!this.filteredInvoices.length) return;
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+    const rows = this.filteredInvoices.map(inv => `
+      <tr>
+        <td>${inv.invoiceNumber ?? ''}</td>
+        <td>${inv.client?.name ?? ''}</td>
+        <td style="text-align:right">${(inv.amountTtc ?? 0).toFixed(2)} TND</td>
+        <td>${inv.status ?? ''}</td>
+        <td>${inv.dueDate ? inv.dueDate.format('DD/MM/YYYY') : ''}</td>
+      </tr>`).join('');
+    printWindow.document.write(`
+      <html><head><title>Factures</title>
+      <style>
+        body{font-family:Arial,sans-serif;font-size:12px;padding:20px}
+        h2{color:#1e3a5f}
+        table{width:100%;border-collapse:collapse;margin-top:16px}
+        th{background:#1e3a5f;color:white;padding:8px;text-align:left}
+        td{padding:6px 8px;border-bottom:1px solid #e2e8f0}
+        tr:nth-child(even){background:#f8fafc}
+      </style></head><body>
+      <h2>Gestion des Factures</h2>
+      <p>Exporté le ${new Date().toLocaleDateString('fr-FR')} — ${this.filteredInvoices.length} facture(s)</p>
+      <table><thead><tr>
+        <th>N° Facture</th><th>Client</th><th>Montant TTC</th><th>Statut</th><th>Échéance</th>
+      </tr></thead><tbody>${rows}</tbody></table>
+      </body></html>`);
+    printWindow.document.close();
+    printWindow.print();
+  }
+
   ngOnInit(): void {
     this.load();
   }

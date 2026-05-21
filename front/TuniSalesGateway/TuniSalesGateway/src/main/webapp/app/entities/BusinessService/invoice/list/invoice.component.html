@@ -14,10 +14,33 @@
         <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
         Actualiser
       </button>
-      <button class="btn btn-success" (click)="exportExcel()" [disabled]="!filteredInvoices.length">
-        <fa-icon icon="file-excel" class="me-1"></fa-icon>
-        Exporter Excel
-      </button>
+      <div class="dropdown">
+        <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" [disabled]="!filteredInvoices.length">
+          <fa-icon icon="file-excel" class="me-1"></fa-icon>
+          Exporter
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li>
+            <button class="dropdown-item" (click)="exportExcel()">
+              <fa-icon icon="file-excel" class="me-2 text-success"></fa-icon>
+              Exporter Excel (.xlsx)
+            </button>
+          </li>
+          <li>
+            <button class="dropdown-item" (click)="exportPdf()">
+              <fa-icon icon="file-pdf" class="me-2 text-danger"></fa-icon>
+              Exporter PDF
+            </button>
+          </li>
+          <li><hr class="dropdown-divider"></li>
+          <li>
+            <button class="dropdown-item" (click)="exportCsv()">
+              <fa-icon icon="file-excel" class="me-2 text-secondary"></fa-icon>
+              Exporter CSV
+            </button>
+          </li>
+        </ul>
+      </div>
       <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/invoice/new']">
         <fa-icon icon="plus" class="me-1"></fa-icon>
         Nouvelle Facture
