@@ -9,10 +9,12 @@ import { Account } from 'app/core/auth/account.model';
 import { OrderService } from 'app/entities/BusinessService/order/service/order.service';
 import { InvoiceService } from 'app/entities/BusinessService/invoice/service/invoice.service';
 import { ClientService } from 'app/entities/BusinessService/client/service/client.service';
+import { DeliveryService } from 'app/entities/BusinessService/delivery/service/delivery.service';
 import { AiSummaryService } from 'app/shared/service/ai-summary.service';
 import { IOrder } from 'app/entities/BusinessService/order/order.model';
 import { IInvoice } from 'app/entities/BusinessService/invoice/invoice.model';
 import { IClient } from 'app/entities/BusinessService/client/client.model';
+import { IDelivery } from 'app/entities/BusinessService/delivery/delivery.model';
 import dayjs from 'dayjs/esm';
 
 // All order status labels in French
@@ -108,6 +110,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private orderService: OrderService,
     private invoiceService: InvoiceService,
     private clientService: ClientService,
+    private deliveryService: DeliveryService,
     private aiSummaryService: AiSummaryService,
   ) {}
 
@@ -133,16 +136,18 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.orderService.query({ size: 1000, sort: ['createdAt,desc'], eagerload: true }),
       this.invoiceService.query({ size: 1000, sort: ['createdAt,desc'], eagerload: true }),
       this.clientService.query({ size: 1000 }),
+      this.deliveryService.query({ size: 1000 }),
     ])
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: ([ordRes, invRes, cliRes]) => {
-          const orders: IOrder[]     = ordRes.body ?? [];
-          const invoices: IInvoice[] = invRes.body ?? [];
-          const clients: IClient[]   = cliRes.body ?? [];
+        next: ([ordRes, invRes, cliRes, delRes]) => {
+          const orders: IOrder[]       = ordRes.body ?? [];
+          const invoices: IInvoice[]   = invRes.body ?? [];
+          const clients: IClient[]     = cliRes.body ?? [];
+          const deliveries: IDelivery[] = delRes.body ?? [];
           this._rawOrders   = orders;
           this._rawInvoices = invoices;
-          this.buildKpis(orders, invoices, clients);
+          this.buildKpis(orders, invoices, clients, deliveries);
           this.buildRecentOrders(orders);
           this.buildOrdersByStatus(orders);
           this.buildSalesSeries(invoices);
@@ -150,7 +155,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.buildRecentActivity(orders, invoices);
           this.buildAlerts(orders, invoices);
           this.isLoadingDashboard = false;
-          this.loadDashboardInsights(orders, invoices);
+          this.loadDashboardInsights(orders, invoices, deliveries);
         },
         error: () => { this.isLoadingDashboard = false; },
       });
@@ -158,7 +163,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   // ─── KPI cards ───────────────────────────────────────────────────────────────
 
-  private buildKpis(orders: IOrder[], invoices: IInvoice[], clients: IClient[]): void {
+  private buildKpis(orders: IOrder[], invoices: IInvoice[], clients: IClient[], deliveries: IDelivery[]): void {
     // 1. CA TTC — sum of all invoice amounts
     const caTtc = invoices.reduce((s, i) => s + (i.amountTtc ?? 0), 0);
 
@@ -166,9 +171,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     const toValidate = orders.filter(o => o.status && PENDING_VALIDATE.has(o.status)).length;
     const totalActive = orders.filter(o => o.status && ACTIVE_STATUSES.has(o.status)).length;
 
-    // 3. Taux de livraison
-    const delivered = orders.filter(o => o.status === 'DELIVERED').length;
-    const deliveryRate = orders.length > 0 ? Math.round((delivered / orders.length) * 100) : 0;
+    // 3. Taux de livraison — basé sur les statuts réels des livraisons
+    const totalDeliveries = deliveries.length;
+    const deliveredCount  = deliveries.filter(d => d.status === 'DELIVERED').length;
+    const deliveryRate    = totalDeliveries > 0 ? Math.round((deliveredCount / totalDeliveries) * 100) : 0;
 
     // 4. Montant impayé — sum of amountTtc for ISSUED + OVERDUE
     const unpaidAmount = invoices
@@ -196,7 +202,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       {
         label: 'Taux de livraison',
         value: deliveryRate + ' %',
-        sub: delivered + ' livrées sur ' + orders.length,
+        sub: deliveredCount + ' livrées sur ' + totalDeliveries + ' livraison(s)',
         trendDir: deliveryRate >= 70 ? 'up' : 'down',
         icon: 'truck' as IconProp,
         color: deliveryRate >= 70 ? 'green' : 'orange',
@@ -404,12 +410,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   // ─── AI Analytics ─────────────────────────────────────────────────────────
 
-  private loadDashboardInsights(orders: IOrder[], invoices: IInvoice[]): void {
-    const caTtc        = invoices.reduce((s, i) => s + (i.amountTtc ?? 0), 0);
-    const toValidate   = orders.filter(o => o.status && PENDING_VALIDATE.has(o.status)).length;
-    const activeOrders = orders.filter(o => o.status && ACTIVE_STATUSES.has(o.status)).length;
-    const delivered    = orders.filter(o => o.status === 'DELIVERED').length;
-    const deliveryRate = orders.length > 0 ? Math.round((delivered / orders.length) * 100) : 0;
+  private loadDashboardInsights(orders: IOrder[], invoices: IInvoice[], deliveries: IDelivery[]): void {
+    const caTtc           = invoices.reduce((s, i) => s + (i.amountTtc ?? 0), 0);
+    const toValidate      = orders.filter(o => o.status && PENDING_VALIDATE.has(o.status)).length;
+    const activeOrders    = orders.filter(o => o.status && ACTIVE_STATUSES.has(o.status)).length;
+    const delivered       = deliveries.filter(d => d.status === 'DELIVERED').length;
+    const totalDeliveries = deliveries.length;
+    const deliveryRate    = totalDeliveries > 0 ? Math.round((delivered / totalDeliveries) * 100) : 0;
     const unpaidAmount = invoices.filter(i => i.status === 'ISSUED' || i.status === 'OVERDUE')
                                  .reduce((s, i) => s + (i.amountTtc ?? 0), 0);
     const overdueCount = invoices.filter(i => i.status === 'OVERDUE').length;
@@ -419,7 +426,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.dashboardContext =
       `CA TTC total: ${caTtc.toFixed(0)} TND. ` +
       `${orders.length} commandes dont ${activeOrders} actives et ${toValidate} à valider. ` +
-      `Taux de livraison: ${deliveryRate}%. ` +
+      `Taux de livraison: ${deliveryRate}% (${delivered}/${totalDeliveries} livraisons). ` +
       `Impayés: ${unpaidAmount.toFixed(0)} TND (${overdueCount} en retard, ${issuedCount} émises). ` +
       (topClientEntry ? `Meilleur client: ${topClientEntry.name} (${topClientEntry.ca} TND).` : '');
 
