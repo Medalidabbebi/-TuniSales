@@ -61,9 +61,7 @@ export class StockAuditFormService {
           validators: [Validators.required],
         }
       ),
-      tenantId: new FormControl(stockAuditRawValue.tenantId, {
-        validators: [Validators.required],
-      }),
+      tenantId: new FormControl(stockAuditRawValue.tenantId ?? 1),
       status: new FormControl(stockAuditRawValue.status, {
         validators: [Validators.required],
       }),

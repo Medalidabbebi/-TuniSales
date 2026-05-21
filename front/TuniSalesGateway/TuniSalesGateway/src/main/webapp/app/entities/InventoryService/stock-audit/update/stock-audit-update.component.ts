@@ -65,6 +65,7 @@ export class StockAuditUpdateComponent implements OnInit {
     if (stockAudit.id !== null) {
       this.subscribeToSaveResponse(this.stockAuditService.update(stockAudit));
     } else {
+      (stockAudit as any).tenantId = (stockAudit as any).tenantId ?? 1;
       this.subscribeToSaveResponse(this.stockAuditService.create(stockAudit));
     }
   }
