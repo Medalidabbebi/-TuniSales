@@ -211,17 +211,7 @@
         </div>
       </div>
       <div class="tsg-chart__body">
-        <apx-chart
-          [series]="areaChartSeries"
-          [chart]="areaChartOptions"
-          [stroke]="areaChartStroke"
-          [fill]="areaChartFill"
-          [grid]="areaChartGrid"
-          [xaxis]="areaChartXAxis"
-          [tooltip]="areaChartTooltip"
-          [dataLabels]="areaChartDataLabels"
-          [colors]="areaChartColors"
-        ></apx-chart>
+        <div id="apex-area-chart"></div>
       </div>
     </div>
 
@@ -231,17 +221,7 @@
         <span class="tsg-chart__title">Commandes par statut</span>
       </div>
       <div class="tsg-chart__body">
-        <apx-chart
-          *ngIf="donutSeries.length > 0"
-          [series]="donutSeries"
-          [chart]="donutChartOptions"
-          [labels]="donutLabels"
-          [colors]="donutColors"
-          [plotOptions]="donutPlotOptions"
-          [legend]="donutLegend"
-          [dataLabels]="donutDataLabels"
-          [responsive]="donutResponsive"
-        ></apx-chart>
+        <div id="apex-donut-chart"></div>
         <div *ngIf="donutSeries.length === 0 && !isLoadingDashboard"
              style="text-align:center;color:#9ca3af;padding:2rem;font-size:.875rem;">
           Aucune commande

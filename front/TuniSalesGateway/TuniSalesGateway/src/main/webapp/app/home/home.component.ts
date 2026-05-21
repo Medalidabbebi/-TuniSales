@@ -4,9 +4,7 @@ import { forkJoin, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { IconProp } from '@fortawesome/fontawesome-svg-core';
-import { ApexAxisChartSeries, ApexChart, ApexXAxis, ApexStroke, ApexFill,
-         ApexTooltip, ApexGrid, ApexDataLabels, ApexNonAxisChartSeries,
-         ApexPlotOptions, ApexLegend, ApexResponsive } from 'ng-apexcharts';
+import ApexCharts from 'apexcharts';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/auth/account.model';
 import { OrderService } from 'app/entities/BusinessService/order/service/order.service';
@@ -106,29 +104,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   salesSeriesByPeriod: Record<7 | 30 | 90, number[]> = { 7: [], 30: [], 90: [] };
   ordersByStatus: Array<{ label: string; value: number; color: string }> = [];
 
-  // ── ApexCharts options ────────────────────────────────────────────────────
-  areaChartSeries: ApexAxisChartSeries = [{ name: 'CA TTC', data: [] }];
-  areaChartOptions: ApexChart = {
-    type: 'area', height: 240, toolbar: { show: false }, sparkline: { enabled: false },
-    fontFamily: 'Inter, sans-serif', background: 'transparent',
-    animations: { enabled: true, easing: 'easeinout', speed: 600 },
-  };
-  areaChartStroke: ApexStroke  = { curve: 'smooth', width: 2.5, colors: ['#6366f1'] };
-  areaChartFill: ApexFill      = { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: .35, opacityTo: .02, stops: [0, 95] } };
-  areaChartGrid: ApexGrid      = { borderColor: '#f1f5f9', strokeDashArray: 4, xaxis: { lines: { show: false } } };
-  areaChartXAxis: ApexXAxis    = { categories: [], labels: { style: { colors: '#94a3b8', fontSize: '11px' } }, axisBorder: { show: false }, axisTicks: { show: false } };
-  areaChartTooltip: ApexTooltip = { y: { formatter: (v: number) => this.fmtAmount(v) + ' TND' }, theme: 'light' };
-  areaChartDataLabels: ApexDataLabels = { enabled: false };
-  areaChartColors: string[] = ['#6366f1'];
-
-  donutSeries: ApexNonAxisChartSeries = [];
+  donutSeries: number[] = [];
   donutLabels: string[] = [];
   donutColors: string[] = [];
-  donutChartOptions: ApexChart   = { type: 'donut', height: 300, toolbar: { show: false }, fontFamily: 'Inter, sans-serif', animations: { enabled: true, speed: 500 } };
-  donutPlotOptions: ApexPlotOptions = { pie: { donut: { size: '68%', labels: { show: true, total: { show: true, label: 'Total', fontSize: '13px', color: '#64748b', formatter: (w: any) => w.globals.seriesTotals.reduce((a: number, b: number) => a + b, 0) } } } } };
-  donutLegend: ApexLegend        = { position: 'bottom', fontSize: '12px', offsetY: 6, markers: { width: 10, height: 10 }, itemMargin: { horizontal: 8, vertical: 4 } };
-  donutDataLabels: ApexDataLabels = { enabled: false };
-  donutResponsive: ApexResponsive[] = [{ breakpoint: 600, options: { chart: { height: 250 }, legend: { position: 'bottom' } } }];
+
+  private _areaChart: ApexCharts | null = null;
+  private _donutChart: ApexCharts | null = null;
 
   private readonly destroy$ = new Subject<void>();
 
@@ -284,6 +265,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.donutSeries  = sorted.map(([, v]) => v);
     this.donutLabels  = sorted.map(([k]) => ORDER_STATUS_LABELS[k] ?? k);
     this.donutColors  = sorted.map(([k]) => ORDER_STATUS_COLORS[k] ?? '#94a3b8');
+    this.updateDonutChart();
   }
 
   // ─── Sales series ─────────────────────────────────────────────────────────────
@@ -316,8 +298,52 @@ export class HomeComponent implements OnInit, OnDestroy {
       const d = now.subtract(Math.round((buckets - 1 - i) * (days / buckets)), 'day');
       return days <= 7 ? d.format('ddd') : d.format('DD/MM');
     });
-    this.areaChartSeries  = [{ name: 'CA TTC (TND)', data: data.map(v => Math.round(v)) }];
-    this.areaChartXAxis   = { ...this.areaChartXAxis, categories: labels };
+    const seriesData = data.map(v => Math.round(v));
+
+    if (this._areaChart) {
+      this._areaChart.updateOptions({ xaxis: { categories: labels } }, false, false);
+      this._areaChart.updateSeries([{ name: 'CA TTC (TND)', data: seriesData }]);
+    } else {
+      setTimeout(() => {
+        const el = document.querySelector('#apex-area-chart') as HTMLElement | null;
+        if (!el) return;
+        this._areaChart = new ApexCharts(el, {
+          chart: { type: 'area', height: 240, toolbar: { show: false }, fontFamily: 'Inter, sans-serif', background: 'transparent', animations: { enabled: true, speed: 600 } },
+          series: [{ name: 'CA TTC (TND)', data: seriesData }],
+          xaxis: { categories: labels, labels: { style: { colors: '#94a3b8', fontSize: '11px' } }, axisBorder: { show: false }, axisTicks: { show: false } },
+          stroke: { curve: 'smooth', width: 2.5, colors: ['#6366f1'] },
+          fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.02, stops: [0, 95] } },
+          grid: { borderColor: '#f1f5f9', strokeDashArray: 4, xaxis: { lines: { show: false } } },
+          tooltip: { y: { formatter: (v: number) => this.fmtAmount(v) + ' TND' }, theme: 'light' },
+          dataLabels: { enabled: false },
+          colors: ['#6366f1'],
+        });
+        this._areaChart.render();
+      }, 0);
+    }
+  }
+
+  private updateDonutChart(): void {
+    if (this._donutChart) {
+      this._donutChart.updateOptions({ labels: this.donutLabels, colors: this.donutColors }, false, false);
+      this._donutChart.updateSeries(this.donutSeries);
+    } else {
+      setTimeout(() => {
+        const el = document.querySelector('#apex-donut-chart') as HTMLElement | null;
+        if (!el || this.donutSeries.length === 0) return;
+        this._donutChart = new ApexCharts(el, {
+          chart: { type: 'donut', height: 300, toolbar: { show: false }, fontFamily: 'Inter, sans-serif', animations: { enabled: true, speed: 500 } },
+          series: this.donutSeries,
+          labels: this.donutLabels,
+          colors: this.donutColors,
+          plotOptions: { pie: { donut: { size: '68%', labels: { show: true, total: { show: true, label: 'Total', fontSize: '13px', color: '#64748b', formatter: (w: any) => w.globals.seriesTotals.reduce((a: number, b: number) => a + b, 0) } } } } },
+          legend: { position: 'bottom', fontSize: '12px', offsetY: 6, markers: { size: 10 }, itemMargin: { horizontal: 8, vertical: 4 } },
+          dataLabels: { enabled: false },
+          responsive: [{ breakpoint: 600, options: { chart: { height: 250 }, legend: { position: 'bottom' } } }],
+        });
+        this._donutChart.render();
+      }, 0);
+    }
   }
 
   // ─── Top clients by revenue ───────────────────────────────────────────────────
@@ -389,41 +415,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.alerts.length === 0) {
       this.alerts.push({ text: 'Aucune alerte — tout est en ordre.', type: 'success' });
     }
-  }
-
-  // ─── Chart helpers ────────────────────────────────────────────────────────────
-
-  getSalesPath(): string {
-    const data = this.salesSeriesByPeriod[this.selectedSalesPeriod];
-    if (!data?.length) return '';
-    const { pts } = this.chartPoints(data);
-    return pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x} ${p.y}`).join(' ');
-  }
-
-  getSalesAreaPath(): string {
-    const data = this.salesSeriesByPeriod[this.selectedSalesPeriod];
-    if (!data?.length) return '';
-    const { pts, padX, height, padY } = this.chartPoints(data);
-    const line = pts.map(p => `${p.x} ${p.y}`).join(' L ');
-    const endX  = pts[pts.length - 1].x;
-    return `M ${padX} ${height - padY} L ${line} L ${endX} ${height - padY} Z`;
-  }
-
-  private chartPoints(data: number[]): { pts: { x: number; y: number }[]; padX: number; padY: number; width: number; height: number } {
-    const width = 820; const height = 240; const padX = 18; const padY = 18;
-    const max = Math.max(...data); const min = Math.min(...data);
-    const range = Math.max(max - min, 1);
-    const step  = (width - padX * 2) / Math.max(data.length - 1, 1);
-    const pts   = data.map((v, i) => ({
-      x: padX + i * step,
-      y: height - padY - ((v - min) / range) * (height - padY * 2),
-    }));
-    return { pts, padX, padY, width, height };
-  }
-
-  getStatusWidth(value: number): number {
-    const max = Math.max(...this.ordersByStatus.map(s => s.value), 1);
-    return (value / max) * 100;
   }
 
   getStatusClass(status: string): string {
@@ -527,6 +518,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   // ──────────────────────────────────────────────────────────────────────────
 
   ngOnDestroy(): void {
+    this._areaChart?.destroy();
+    this._donutChart?.destroy();
     this.destroy$.next();
     this.destroy$.complete();
   }
