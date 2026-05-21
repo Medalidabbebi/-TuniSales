@@ -1,0 +1,204 @@
+$sml-orange: #d97706;
+$sml-amb-l:  #fef3c7;
+$sml-blue:   #2563eb;
+$sml-blue-l: #dbeafe;
+$sml-green:  #16a34a;
+$sml-green-l:#dcfce7;
+$sml-red:    #dc2626;
+$sml-red-l:  #fee2e2;
+$sml-gray:   #64748b;
+$sml-border: #e2e8f0;
+$sml-bg:     #f8fafc;
+$sml-white:  #ffffff;
+$sml-text:   #0f172a;
+$sml-muted:  #64748b;
+$sml-shadow: 0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$sml-radius: 12px;
+
+.sml-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// ── Header ─────────────────────────────────────────────────────────
+.sml-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.sml-header__left { display: flex; align-items: center; gap: .9rem; }
+.sml-header__icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, $sml-orange, darken($sml-orange, 10%));
+  color: #fff; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba($sml-orange, .28);
+}
+.sml-header__title { margin: 0; font-size: 1.45rem; font-weight: 800; color: $sml-text; }
+.sml-header__sub   { margin: .25rem 0 0; font-size: .88rem; color: $sml-muted; }
+.sml-header__actions { display: flex; gap: .65rem; flex-wrap: wrap; }
+
+// ── Buttons ────────────────────────────────────────────────────────
+.sml-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .55rem 1.1rem; border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .875rem; font-weight: 600; cursor: pointer; transition: all .15s;
+  text-decoration: none;
+}
+.sml-btn--primary { background: $sml-orange; color: #fff; border-color: $sml-orange; }
+.sml-btn--primary:hover { background: darken($sml-orange, 6%); color: #fff; box-shadow: 0 3px 10px rgba($sml-orange,.3); }
+.sml-btn--ghost { background: $sml-white; color: $sml-gray; border-color: $sml-border; }
+.sml-btn--ghost:hover { border-color: $sml-gray; color: $sml-text; background: #f1f5f9; }
+.sml-btn--ghost:disabled { opacity: .5; cursor: not-allowed; }
+
+// ── KPI Strip ──────────────────────────────────────────────────────
+.sml-kpi-strip {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+}
+.sml-kpi {
+  flex: 1; min-width: 140px;
+  display: flex; align-items: center; gap: .85rem;
+  padding: 1rem 1.25rem; border-radius: $sml-radius;
+  background: $sml-white; border: 1px solid $sml-border;
+  box-shadow: $sml-shadow;
+}
+.sml-kpi__icon {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+}
+.sml-kpi__val   { font-size: 1.35rem; font-weight: 800; color: $sml-text; line-height: 1; }
+.sml-kpi__label { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: $sml-muted; margin-top: .2rem; }
+
+.sml-kpi--blue   .sml-kpi__icon { background: $sml-blue-l;  color: $sml-blue; }
+.sml-kpi--green  .sml-kpi__icon { background: $sml-green-l; color: $sml-green; }
+.sml-kpi--red    .sml-kpi__icon { background: $sml-red-l;   color: $sml-red; }
+.sml-kpi--orange .sml-kpi__icon { background: $sml-amb-l;   color: $sml-orange; }
+
+// ── States ─────────────────────────────────────────────────────────
+.sml-loading {
+  display: flex; align-items: center; gap: .75rem;
+  justify-content: center; padding: 3rem;
+  font-size: .95rem; color: $sml-muted;
+}
+.sml-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1rem; padding: 4rem 2rem; text-align: center;
+  background: $sml-white; border: 1px solid $sml-border;
+  border-radius: $sml-radius; box-shadow: $sml-shadow;
+  .sml-empty__icon { font-size: 3rem; color: #cbd5e1; }
+  .sml-empty__text { color: $sml-muted; margin: 0; font-size: .95rem; }
+}
+
+// ── Card / Table ───────────────────────────────────────────────────
+.sml-card {
+  background: $sml-white; border: 1px solid $sml-border;
+  border-radius: $sml-radius; box-shadow: $sml-shadow; overflow: hidden;
+}
+.sml-table-wrap { overflow-x: auto; }
+.sml-table {
+  width: 100%; border-collapse: collapse;
+  thead tr {
+    background: $sml-bg; border-bottom: 2px solid $sml-border;
+  }
+  th {
+    padding: .75rem 1rem; font-size: .78rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; color: $sml-muted;
+    white-space: nowrap; text-align: left;
+  }
+  .sml-th--actions { width: 110px; }
+  tbody tr {
+    border-bottom: 1px solid $sml-border; transition: background .1s;
+    &:last-child { border-bottom: none; }
+    &:hover { background: #f9fafb; }
+  }
+  td { padding: .85rem 1rem; vertical-align: middle; }
+}
+.sml-sort-icon { margin-left: .3rem; opacity: .4; font-size: .7rem; }
+
+// ── Type Badges ────────────────────────────────────────────────────
+.sml-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .7rem; border-radius: 999px;
+  font-size: .72rem; font-weight: 700; letter-spacing: .02em; white-space: nowrap;
+  fa-icon { font-size: .7rem; }
+}
+.sml-badge--green  { background: $sml-green-l; color: $sml-green; }
+.sml-badge--red    { background: $sml-red-l;   color: $sml-red; }
+.sml-badge--blue   { background: $sml-blue-l;  color: $sml-blue; }
+.sml-badge--navy   { background: #e0e7ff; color: #3730a3; }
+.sml-badge--purple { background: #f3e8ff; color: #7c3aed; }
+.sml-badge--teal   { background: #ccfbf1; color: #0f766e; }
+.sml-badge--orange { background: $sml-amb-l;   color: $sml-orange; }
+.sml-badge--gray   { background: #f1f5f9;      color: $sml-gray; }
+
+// ── Qty ────────────────────────────────────────────────────────────
+.sml-qty {
+  display: inline-block;
+  padding: .2rem .55rem; border-radius: 6px;
+  font-size: .82rem; font-weight: 700;
+  &.sml-badge--green  { background: $sml-green-l; color: $sml-green; }
+  &.sml-badge--red    { background: $sml-red-l;   color: $sml-red; }
+  &.sml-badge--blue   { background: $sml-blue-l;  color: $sml-blue; }
+  &.sml-badge--navy   { background: #e0e7ff; color: #3730a3; }
+  &.sml-badge--purple { background: #f3e8ff; color: #7c3aed; }
+  &.sml-badge--teal   { background: #ccfbf1; color: #0f766e; }
+  &.sml-badge--orange { background: $sml-amb-l;   color: $sml-orange; }
+  &.sml-badge--gray   { background: #f1f5f9;      color: $sml-gray; }
+}
+
+// ── Article link ───────────────────────────────────────────────────
+.sml-link {
+  display: inline-flex; align-items: center; gap: .4rem;
+  text-decoration: none; color: $sml-blue;
+  &:hover .sml-link__code { text-decoration: underline; }
+  .sml-link__icon { color: $sml-muted; font-size: .8rem; }
+  .sml-link__code { font-size: .82rem; font-family: monospace; }
+}
+.sml-nil { color: #cbd5e1; font-style: italic; font-size: .82rem; }
+
+// ── Flux ───────────────────────────────────────────────────────────
+.sml-flux {
+  display: flex; align-items: center; gap: .4rem; flex-wrap: nowrap;
+}
+.sml-flux__wh {
+  font-size: .78rem; font-weight: 500; display: inline-flex; align-items: center; gap: .25rem;
+  max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-decoration: none;
+  &--from { color: $sml-red; }
+  &--to   { color: $sml-green; }
+  &--nil  { color: #cbd5e1; font-style: italic; }
+}
+.sml-flux__arrow { color: #94a3b8; font-size: .8rem; flex-shrink: 0; }
+
+// ── Operator ───────────────────────────────────────────────────────
+.sml-operator {
+  display: flex; align-items: center; gap: .5rem;
+  .sml-operator__avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: $sml-blue-l; color: $sml-blue;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; font-weight: 700; flex-shrink: 0;
+  }
+  .sml-operator__name { font-size: .82rem; color: $sml-text; }
+}
+
+// ── Date ───────────────────────────────────────────────────────────
+.sml-date { font-size: .78rem; color: $sml-muted; white-space: nowrap; }
+
+// ── Actions ────────────────────────────────────────────────────────
+.sml-actions { display: flex; gap: .35rem; justify-content: flex-end; }
+.sml-act {
+  width: 30px; height: 30px; border-radius: 7px; border: 1.5px solid $sml-border;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; cursor: pointer; transition: all .15s;
+  background: $sml-white; text-decoration: none; color: $sml-muted;
+}
+.sml-act--view:hover { border-color: $sml-blue;  color: $sml-blue;  background: $sml-blue-l; }
+.sml-act--edit:hover { border-color: $sml-orange; color: $sml-orange; background: $sml-amb-l; }
+.sml-act--del:hover  { border-color: $sml-red;   color: $sml-red;   background: $sml-red-l; }
+
+// ── Pagination ─────────────────────────────────────────────────────
+.sml-pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: .75rem; font-size: .85rem; color: $sml-muted;
+}

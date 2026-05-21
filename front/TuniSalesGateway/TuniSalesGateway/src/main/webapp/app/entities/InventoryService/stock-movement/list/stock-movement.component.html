@@ -1,123 +1,172 @@
-<div class="container-fluid py-4">
+<div class="sml-page">
 
-  <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-    <div>
-      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="StockMovementHeading">
-        <fa-icon icon="exchange-alt" class="me-2 text-primary"></fa-icon>
-        Mouvements de Stock
-      </h2>
-      <small class="text-muted">Liste des mouvements — {{ totalItems }} mouvement(s) au total</small>
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Header ─────────────────────────────────────────────────────── -->
+  <div class="sml-header">
+    <div class="sml-header__left">
+      <div class="sml-header__icon">
+        <fa-icon icon="exchange-alt"></fa-icon>
+      </div>
+      <div>
+        <h1 class="sml-header__title" id="page-heading" data-cy="StockMovementHeading">Mouvements de Stock</h1>
+        <p class="sml-header__sub">{{ totalItems }} mouvement(s) enregistré(s)</p>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+    <div class="sml-header__actions">
+      <button class="sml-btn sml-btn--ghost" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
-      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/stock-movement/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
+      <a class="sml-btn sml-btn--primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/stock-movement/new']">
+        <fa-icon icon="plus"></fa-icon>
         Nouveau Mouvement
       </a>
     </div>
   </div>
 
-  <jhi-alert-error></jhi-alert-error>
-  <jhi-alert></jhi-alert>
-
-  <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+  <!-- ── KPI Strip ──────────────────────────────────────────────────── -->
+  <div class="sml-kpi-strip">
+    <div class="sml-kpi sml-kpi--blue">
+      <div class="sml-kpi__icon"><fa-icon icon="exchange-alt"></fa-icon></div>
+      <div class="sml-kpi__body">
+        <div class="sml-kpi__val">{{ totalItems }}</div>
+        <div class="sml-kpi__label">Total</div>
+      </div>
+    </div>
+    <div class="sml-kpi sml-kpi--green">
+      <div class="sml-kpi__icon"><fa-icon icon="arrow-down"></fa-icon></div>
+      <div class="sml-kpi__body">
+        <div class="sml-kpi__val">{{ inboundCount }}</div>
+        <div class="sml-kpi__label">Entrées</div>
+      </div>
+    </div>
+    <div class="sml-kpi sml-kpi--red">
+      <div class="sml-kpi__icon"><fa-icon icon="arrow-up"></fa-icon></div>
+      <div class="sml-kpi__body">
+        <div class="sml-kpi__val">{{ outboundCount }}</div>
+        <div class="sml-kpi__label">Sorties</div>
+      </div>
+    </div>
+    <div class="sml-kpi sml-kpi--orange">
+      <div class="sml-kpi__icon"><fa-icon icon="cubes"></fa-icon></div>
+      <div class="sml-kpi__body">
+        <div class="sml-kpi__val">{{ totalQty | number }}</div>
+        <div class="sml-kpi__label">Qté totale (page)</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && stockMovements?.length === 0">
-    <fa-icon icon="exchange-alt" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucun mouvement de stock trouvé.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/stock-movement/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <!-- ── Loading ───────────────────────────────────────────────────── -->
+  <div class="sml-loading" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true"></fa-icon>
+    <span>Chargement…</span>
+  </div>
+
+  <!-- ── Empty ─────────────────────────────────────────────────────── -->
+  <div class="sml-empty" *ngIf="!isLoading && stockMovements?.length === 0">
+    <fa-icon icon="exchange-alt" class="sml-empty__icon"></fa-icon>
+    <p class="sml-empty__text">Aucun mouvement de stock trouvé.</p>
+    <a class="sml-btn sml-btn--primary" [routerLink]="['/stock-movement/new']">
+      <fa-icon icon="plus"></fa-icon> Créer
     </a>
   </div>
 
-  <!-- Table -->
-  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && stockMovements && stockMovements.length > 0">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
-        <thead class="table-light">
+  <!-- ── Table ─────────────────────────────────────────────────────── -->
+  <div class="sml-card" id="entities" *ngIf="!isLoading && stockMovements && stockMovements.length > 0">
+    <div class="sml-table-wrap">
+      <table class="sml-table" aria-describedby="page-heading">
+        <thead>
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-            <th scope="col" jhiSortBy="movementType">
-              <div class="d-flex align-items-center gap-1">Type mouvement <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="stockItem.imei">
-              <div class="d-flex align-items-center gap-1">Stock Item <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="fromWarehouse.name">
-              <div class="d-flex align-items-center gap-1">De <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="toWarehouse.name">
-              <div class="d-flex align-items-center gap-1">Vers <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="quantity">
-              <div class="d-flex align-items-center gap-1">Quantité <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" jhiSortBy="createdAt">
-              <div class="d-flex align-items-center gap-1">Date <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" style="width:140px"></th>
+            <th jhiSortBy="movementType">Type <fa-icon icon="sort" class="sml-sort-icon"></fa-icon></th>
+            <th jhiSortBy="stockItem.imei">Article <fa-icon icon="sort" class="sml-sort-icon"></fa-icon></th>
+            <th>Flux (De → Vers)</th>
+            <th jhiSortBy="quantity">Quantité <fa-icon icon="sort" class="sml-sort-icon"></fa-icon></th>
+            <th jhiSortBy="performedByLogin">Opérateur <fa-icon icon="sort" class="sml-sort-icon"></fa-icon></th>
+            <th jhiSortBy="createdAt">Date <fa-icon icon="sort" class="sml-sort-icon"></fa-icon></th>
+            <th class="sml-th--actions"></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let stockMovement of stockMovements; trackBy: trackId" data-cy="entityTable">
+          <tr *ngFor="let m of stockMovements; trackBy: trackId" data-cy="entityTable">
+
+            <!-- Type badge -->
             <td>
-              <span class="badge rounded-pill"
-                [ngClass]="{
-                  'bg-success': stockMovement.movementType === 'INBOUND',
-                  'bg-danger': stockMovement.movementType === 'OUTBOUND',
-                  'bg-info text-dark': stockMovement.movementType === 'TRANSFER',
-                  'bg-warning text-dark': stockMovement.movementType === 'INVENTORY_ADJUSTMENT',
-                  'bg-primary': stockMovement.movementType === 'RETURN',
-                  'bg-secondary': !stockMovement.movementType
-                }">
-                {{ stockMovement.movementType }}
+              <span class="sml-badge" [ngClass]="getTypeClass(m.movementType)">
+                <fa-icon [icon]="getTypeIcon(m.movementType)"></fa-icon>
+                {{ getTypeLabel(m.movementType) }}
               </span>
             </td>
+
+            <!-- Article -->
             <td>
-              <a *ngIf="stockMovement.stockItem" [routerLink]="['/stock-item', stockMovement.stockItem.id, 'view']" class="text-decoration-none">
-                <code class="text-secondary">{{ stockMovement.stockItem.imei }}</code>
+              <a *ngIf="m.stockItem" [routerLink]="['/stock-item', m.stockItem.id, 'view']" class="sml-link">
+                <fa-icon icon="barcode" class="sml-link__icon"></fa-icon>
+                <code class="sml-link__code">{{ m.stockItem.imei }}</code>
               </a>
-              <span *ngIf="!stockMovement.stockItem" class="text-muted fst-italic">—</span>
+              <span *ngIf="!m.stockItem" class="sml-nil">—</span>
             </td>
+
+            <!-- Flux -->
             <td>
-              <a *ngIf="stockMovement.fromWarehouse" [routerLink]="['/warehouse', stockMovement.fromWarehouse.id, 'view']" class="text-decoration-none">{{ stockMovement.fromWarehouse.name }}</a>
-              <span *ngIf="!stockMovement.fromWarehouse" class="text-muted fst-italic">—</span>
+              <div class="sml-flux">
+                <a *ngIf="m.fromWarehouse" [routerLink]="['/warehouse', m.fromWarehouse.id, 'view']" class="sml-flux__wh sml-flux__wh--from">
+                  <fa-icon icon="sign-out-alt"></fa-icon>{{ m.fromWarehouse.name }}
+                </a>
+                <span *ngIf="!m.fromWarehouse" class="sml-flux__wh sml-flux__wh--nil">—</span>
+                <fa-icon icon="long-arrow-alt-right" class="sml-flux__arrow"></fa-icon>
+                <a *ngIf="m.toWarehouse" [routerLink]="['/warehouse', m.toWarehouse.id, 'view']" class="sml-flux__wh sml-flux__wh--to">
+                  <fa-icon icon="sign-in-alt"></fa-icon>{{ m.toWarehouse.name }}
+                </a>
+                <span *ngIf="!m.toWarehouse" class="sml-flux__wh sml-flux__wh--nil">—</span>
+              </div>
             </td>
+
+            <!-- Quantité -->
             <td>
-              <a *ngIf="stockMovement.toWarehouse" [routerLink]="['/warehouse', stockMovement.toWarehouse.id, 'view']" class="text-decoration-none">{{ stockMovement.toWarehouse.name }}</a>
-              <span *ngIf="!stockMovement.toWarehouse" class="text-muted fst-italic">—</span>
+              <span class="sml-qty" [ngClass]="getTypeClass(m.movementType)">
+                {{ m.quantity | number }}
+              </span>
             </td>
-            <td>{{ stockMovement.quantity }}</td>
-            <td><span class="text-muted small">{{ stockMovement.createdAt | formatMediumDatetime }}</span></td>
+
+            <!-- Opérateur -->
             <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/stock-movement', stockMovement.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+              <div *ngIf="m.performedByLogin" class="sml-operator">
+                <div class="sml-operator__avatar">{{ m.performedByLogin.charAt(0).toUpperCase() }}</div>
+                <span class="sml-operator__name">{{ m.performedByLogin }}</span>
+              </div>
+              <span *ngIf="!m.performedByLogin" class="sml-nil">—</span>
+            </td>
+
+            <!-- Date -->
+            <td>
+              <span class="sml-date">{{ m.createdAt | formatMediumDatetime }}</span>
+            </td>
+
+            <!-- Actions -->
+            <td>
+              <div class="sml-actions">
+                <a [routerLink]="['/stock-movement', m.id, 'view']" class="sml-act sml-act--view" data-cy="entityDetailsButton" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/stock-movement', stockMovement.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                <a [routerLink]="['/stock-movement', m.id, 'edit']" class="sml-act sml-act--edit" data-cy="entityEditButton" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(stockMovement)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
+                <button (click)="delete(m)" class="sml-act sml-act--del" data-cy="entityDeleteButton" title="Supprimer">
                   <fa-icon icon="times"></fa-icon>
                 </button>
               </div>
             </td>
+
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="stockMovements && stockMovements.length > 0">
+  <!-- ── Pagination ─────────────────────────────────────────────────── -->
+  <div class="sml-pagination" *ngIf="stockMovements && stockMovements.length > 0">
     <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
     <ngb-pagination
       [collectionSize]="totalItems"

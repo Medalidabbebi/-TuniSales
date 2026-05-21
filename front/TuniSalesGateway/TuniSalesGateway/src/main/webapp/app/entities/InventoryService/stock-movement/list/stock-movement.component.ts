@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -14,6 +14,8 @@ import { StockMovementDeleteDialogComponent } from '../delete/stock-movement-del
 @Component({
   selector: 'jhi-stock-movement',
   templateUrl: './stock-movement.component.html',
+  styleUrls: ['./stock-movement.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class StockMovementComponent implements OnInit {
   stockMovements?: IStockMovement[];
@@ -35,6 +37,58 @@ export class StockMovementComponent implements OnInit {
 
   trackId = (_index: number, item: IStockMovement): number => this.stockMovementService.getStockMovementIdentifier(item);
 
+  get inboundCount(): number {
+    return this.stockMovements?.filter(m => m.movementType === 'INBOUND').length ?? 0;
+  }
+  get outboundCount(): number {
+    return this.stockMovements?.filter(m => m.movementType === 'OUTBOUND').length ?? 0;
+  }
+  get transferCount(): number {
+    return this.stockMovements?.filter(m => m.movementType === 'TRANSFER').length ?? 0;
+  }
+  get totalQty(): number {
+    return this.stockMovements?.reduce((s, m) => s + (m.quantity ?? 0), 0) ?? 0;
+  }
+
+  getTypeLabel(type: string | null | undefined): string {
+    const map: Record<string, string> = {
+      INBOUND:              'Entrée',
+      OUTBOUND:             'Sortie',
+      TRANSFER:             'Transfert',
+      RETURN:               'Retour',
+      SWAP_OUT:             'Échange ↑',
+      SWAP_IN:              'Échange ↓',
+      INVENTORY_ADJUSTMENT: 'Ajustement',
+    };
+    return type ? (map[type] || type) : '—';
+  }
+
+  getTypeClass(type: string | null | undefined): string {
+    const map: Record<string, string> = {
+      INBOUND:              'sml-badge--green',
+      OUTBOUND:             'sml-badge--red',
+      TRANSFER:             'sml-badge--blue',
+      RETURN:               'sml-badge--navy',
+      SWAP_OUT:             'sml-badge--purple',
+      SWAP_IN:              'sml-badge--teal',
+      INVENTORY_ADJUSTMENT: 'sml-badge--orange',
+    };
+    return type ? (map[type] || 'sml-badge--gray') : 'sml-badge--gray';
+  }
+
+  getTypeIcon(type: string | null | undefined): string {
+    const map: Record<string, string> = {
+      INBOUND:              'arrow-down',
+      OUTBOUND:             'arrow-up',
+      TRANSFER:             'exchange-alt',
+      RETURN:               'undo',
+      SWAP_OUT:             'minus-circle',
+      SWAP_IN:              'plus-circle',
+      INVENTORY_ADJUSTMENT: 'sliders-h',
+    };
+    return type ? (map[type] || 'circle') : 'circle';
+  }
+
   ngOnInit(): void {
     this.load();
   }
@@ -42,7 +96,6 @@ export class StockMovementComponent implements OnInit {
   delete(stockMovement: IStockMovement): void {
     const modalRef = this.modalService.open(StockMovementDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.stockMovement = stockMovement;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
