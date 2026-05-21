@@ -92,6 +92,44 @@
             </div>
           </div>
 
+          <!-- ── Map picker ─────────────────────────────────────────── -->
+          <div class="wu-map-section">
+            <div class="wu-map-label">
+              <fa-icon icon="map-marked-alt"></fa-icon>
+              <span>Choisir sur la carte</span>
+              <span class="wu-map-hint">Cliquez pour définir l'emplacement</span>
+            </div>
+
+            <!-- Search bar -->
+            <div class="wu-map-search">
+              <fa-icon icon="search" class="wu-map-search__icon"></fa-icon>
+              <input
+                type="text"
+                class="wu-map-search__input"
+                [(ngModel)]="mapSearchQuery"
+                [ngModelOptions]="{standalone: true}"
+                placeholder="Rechercher une adresse…"
+                (keydown.enter)="$event.preventDefault(); searchAddress()"
+              />
+              <button type="button" class="wu-map-search__btn" (click)="searchAddress()" [disabled]="isGeocoding">
+                <fa-icon [icon]="isGeocoding ? 'spinner' : 'arrow-right'" [spin]="isGeocoding"></fa-icon>
+              </button>
+            </div>
+
+            <div class="wu-map-container" id="wu-leaflet-map"></div>
+
+            <div class="wu-map-result" *ngIf="mapAddress">
+              <fa-icon icon="check-circle" class="wu-map-result__icon"></fa-icon>
+              <div>
+                <div class="wu-map-result__addr">{{ mapAddress }}</div>
+                <div class="wu-map-result__city" *ngIf="mapCity">{{ mapCity }}</div>
+              </div>
+              <button type="button" class="wu-map-result__apply" (click)="applyMapLocation()">
+                Appliquer
+              </button>
+            </div>
+          </div>
+
         </div>
       </div>
 
