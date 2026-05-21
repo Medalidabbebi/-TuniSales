@@ -1,72 +1,189 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <div *ngIf="swap">
-      <h2 data-cy="swapDetailsHeading"><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.detail.title">Swap</span></h2>
+<div class="swd-page" *ngIf="swap">
 
-      <hr />
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
 
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ swap.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.tenantId">Tenant Id</span></dt>
-        <dd>
-          <span>{{ swap.tenantId }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.clientId">Client Id</span></dt>
-        <dd>
-          <span>{{ swap.clientId }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.clientName">Client Name</span></dt>
-        <dd>
-          <span>{{ swap.clientName }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.status">Status</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'tuniSalesGatewayApp.SwapStatus.' + swap.status }}">{{ swap.status }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.reason">Reason</span></dt>
-        <dd>
-          <span>{{ swap.reason }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.createdAt">Created At</span></dt>
-        <dd>
-          <span>{{ swap.createdAt | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.resolvedAt">Resolved At</span></dt>
-        <dd>
-          <span>{{ swap.resolvedAt | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.updatedAt">Updated At</span></dt>
-        <dd>
-          <span>{{ swap.updatedAt | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.outgoingItem">Outgoing Item</span></dt>
-        <dd>
-          <div *ngIf="swap.outgoingItem">
-            <a [routerLink]="['/stock-item', swap.outgoingItem.id, 'view']">{{ swap.outgoingItem.imei }}</a>
-          </div>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceSwap.incomingItem">Incoming Item</span></dt>
-        <dd>
-          <div *ngIf="swap.incomingItem">
-            <a [routerLink]="['/stock-item', swap.incomingItem.id, 'view']">{{ swap.incomingItem.imei }}</a>
-          </div>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+  <!-- ── Header ─────────────────────────────────────────────────────── -->
+  <div class="swd-header">
+    <div class="swd-header__left">
+      <button type="button" class="swd-back-btn" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
       </button>
+      <div class="swd-header__icon" [ngClass]="getStatusClass(swap.status)">
+        <fa-icon icon="retweet"></fa-icon>
+      </div>
+      <div>
+        <h1 class="swd-header__title" data-cy="swapDetailsHeading">Échange (Swap)</h1>
+        <p class="swd-header__sub">#{{ swap.id }} · {{ swap.createdAt | formatMediumDatetime }}</p>
+      </div>
+    </div>
+    <button type="button" class="swd-btn swd-btn--primary" [routerLink]="['/swap', swap.id, 'edit']">
+      <fa-icon icon="pencil-alt"></fa-icon>
+      Modifier
+    </button>
+  </div>
 
-      <button type="button" [routerLink]="['/swap', swap.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
-      </button>
+  <!-- ── Hero Banner ────────────────────────────────────────────────── -->
+  <div class="swd-hero" [ngClass]="getStatusClass(swap.status)">
+    <div class="swd-hero__status">
+      <fa-icon [icon]="getStatusIcon(swap.status)" class="swd-hero__status-icon"></fa-icon>
+      <span>{{ getStatusLabel(swap.status) }}</span>
+    </div>
+    <div class="swd-hero__client" *ngIf="swap.clientName">
+      <span class="swd-hero__client-avatar">{{ swap.clientName.charAt(0).toUpperCase() }}</span>
+      <span>{{ swap.clientName }}</span>
+    </div>
+    <div class="swd-hero__meta" *ngIf="swap.reason">
+      <fa-icon icon="comment"></fa-icon>
+      <span>{{ swap.reason }}</span>
     </div>
   </div>
+
+  <!-- ── Cards Grid ─────────────────────────────────────────────────── -->
+  <div class="swd-grid">
+
+    <!-- Informations générales -->
+    <div class="swd-card">
+      <div class="swd-card__head">
+        <div class="swd-card__head-icon swd-card__head-icon--orange">
+          <fa-icon icon="retweet"></fa-icon>
+        </div>
+        <div>
+          <div class="swd-card__title">Informations du Swap</div>
+          <div class="swd-card__sub">Données générales</div>
+        </div>
+      </div>
+      <div class="swd-card__body">
+
+        <div class="swd-row">
+          <div class="swd-row__label"><fa-icon icon="hashtag"></fa-icon>ID</div>
+          <div class="swd-row__val"><span class="swd-chip">{{ swap.id }}</span></div>
+        </div>
+
+        <div class="swd-row">
+          <div class="swd-row__label"><fa-icon icon="tag"></fa-icon>Statut</div>
+          <div class="swd-row__val">
+            <span class="swd-status-pill" [ngClass]="getStatusClass(swap.status)">
+              <fa-icon [icon]="getStatusIcon(swap.status)"></fa-icon>
+              {{ getStatusLabel(swap.status) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="swd-row" *ngIf="swap.clientName">
+          <div class="swd-row__label"><fa-icon icon="user"></fa-icon>Client</div>
+          <div class="swd-row__val">
+            <div class="swd-client">
+              <span class="swd-client__avatar">{{ swap.clientName.charAt(0).toUpperCase() }}</span>
+              <span>{{ swap.clientName }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="swd-row" *ngIf="swap.clientId">
+          <div class="swd-row__label"><fa-icon icon="hashtag"></fa-icon>ID Client</div>
+          <div class="swd-row__val"><span class="swd-chip">{{ swap.clientId }}</span></div>
+        </div>
+
+        <div class="swd-row" *ngIf="swap.reason">
+          <div class="swd-row__label"><fa-icon icon="comment"></fa-icon>Raison</div>
+          <div class="swd-row__val swd-row__val--reason">{{ swap.reason }}</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Dates -->
+    <div class="swd-card">
+      <div class="swd-card__head">
+        <div class="swd-card__head-icon swd-card__head-icon--teal">
+          <fa-icon icon="calendar-alt"></fa-icon>
+        </div>
+        <div>
+          <div class="swd-card__title">Dates</div>
+          <div class="swd-card__sub">Horodatages</div>
+        </div>
+      </div>
+      <div class="swd-card__body">
+
+        <div class="swd-row">
+          <div class="swd-row__label"><fa-icon icon="clock"></fa-icon>Créé le</div>
+          <div class="swd-row__val">{{ swap.createdAt | formatMediumDatetime }}</div>
+        </div>
+
+        <div class="swd-row" *ngIf="swap.resolvedAt">
+          <div class="swd-row__label"><fa-icon icon="check-circle"></fa-icon>Résolu le</div>
+          <div class="swd-row__val">{{ swap.resolvedAt | formatMediumDatetime }}</div>
+        </div>
+
+        <div class="swd-row" *ngIf="swap.updatedAt">
+          <div class="swd-row__label"><fa-icon icon="sync"></fa-icon>Mis à jour</div>
+          <div class="swd-row__val">{{ swap.updatedAt | formatMediumDatetime }}</div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Échange d'articles ──────────────────────────────────────────── -->
+  <div class="swd-card">
+    <div class="swd-card__head">
+      <div class="swd-card__head-icon swd-card__head-icon--blue">
+        <fa-icon icon="exchange-alt"></fa-icon>
+      </div>
+      <div>
+        <div class="swd-card__title">Échange d'articles</div>
+        <div class="swd-card__sub">Article sortant → Article entrant</div>
+      </div>
+    </div>
+    <div class="swd-card__body">
+      <div class="swd-swap-flow">
+
+        <div class="swd-swap-block swd-swap-block--out">
+          <div class="swd-swap-block__label">
+            <fa-icon icon="sign-out-alt"></fa-icon> Article sortant
+          </div>
+          <div class="swd-swap-block__val" *ngIf="swap.outgoingItem">
+            <a [routerLink]="['/stock-item', swap.outgoingItem.id, 'view']" class="swd-swap-link swd-swap-link--out">
+              <fa-icon icon="barcode"></fa-icon>
+              {{ swap.outgoingItem.imei }}
+            </a>
+          </div>
+          <div class="swd-swap-block__val swd-nil" *ngIf="!swap.outgoingItem">Non défini</div>
+        </div>
+
+        <div class="swd-swap-arrow">
+          <fa-icon icon="exchange-alt"></fa-icon>
+        </div>
+
+        <div class="swd-swap-block swd-swap-block--in">
+          <div class="swd-swap-block__label">
+            <fa-icon icon="sign-in-alt"></fa-icon> Article entrant
+          </div>
+          <div class="swd-swap-block__val" *ngIf="swap.incomingItem">
+            <a [routerLink]="['/stock-item', swap.incomingItem.id, 'view']" class="swd-swap-link swd-swap-link--in">
+              <fa-icon icon="barcode"></fa-icon>
+              {{ swap.incomingItem.imei }}
+            </a>
+          </div>
+          <div class="swd-swap-block__val swd-nil" *ngIf="!swap.incomingItem">Non défini</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Actions ────────────────────────────────────────────────────── -->
+  <div class="swd-actions">
+    <button type="button" class="swd-btn swd-btn--ghost" (click)="previousState()">
+      <fa-icon icon="arrow-left"></fa-icon>
+      Retour à la liste
+    </button>
+    <button type="button" class="swd-btn swd-btn--primary" [routerLink]="['/swap', swap.id, 'edit']">
+      <fa-icon icon="pencil-alt"></fa-icon>
+      Modifier ce swap
+    </button>
+  </div>
+
 </div>

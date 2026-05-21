@@ -1,0 +1,209 @@
+$swd-orange: #d97706;
+$swd-amb-l:  #fef3c7;
+$swd-blue:   #2563eb;
+$swd-blue-l: #dbeafe;
+$swd-green:  #16a34a;
+$swd-green-l:#dcfce7;
+$swd-red:    #dc2626;
+$swd-red-l:  #fee2e2;
+$swd-teal:   #0f766e;
+$swd-teal-l: #ccfbf1;
+$swd-gray:   #64748b;
+$swd-border: #e2e8f0;
+$swd-bg:     #f8fafc;
+$swd-white:  #ffffff;
+$swd-text:   #0f172a;
+$swd-muted:  #64748b;
+$swd-shadow: 0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$swd-radius: 12px;
+
+.swd-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: $swd-text;
+}
+
+// ── Header ─────────────────────────────────────────────────────────
+.swd-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.swd-header__left { display: flex; align-items: center; gap: .9rem; }
+.swd-header__icon {
+  width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+  &.swd-status--amber { background: $swd-amb-l;  color: $swd-orange !important; box-shadow: 0 4px 12px rgba($swd-orange,.2); }
+  &.swd-status--blue  { background: $swd-blue-l; color: $swd-blue   !important; box-shadow: 0 4px 12px rgba($swd-blue,.2); }
+  &.swd-status--green { background: $swd-green-l; color: $swd-green  !important; box-shadow: 0 4px 12px rgba($swd-green,.2); }
+  &.swd-status--red   { background: $swd-red-l;  color: $swd-red    !important; box-shadow: 0 4px 12px rgba($swd-red,.2); }
+  &.swd-status--gray  { background: #f1f5f9; color: $swd-gray !important; }
+}
+.swd-header__title { margin: 0; font-size: 1.45rem; font-weight: 800; color: $swd-text; }
+.swd-header__sub   { margin: .2rem 0 0; font-size: .85rem; color: $swd-muted; }
+
+.swd-back-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1.5px solid $swd-border; background: $swd-white;
+  color: $swd-muted; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: .9rem; transition: all .15s; flex-shrink: 0;
+  &:hover { border-color: $swd-orange; color: $swd-orange; background: $swd-amb-l; }
+}
+
+// ── Buttons ────────────────────────────────────────────────────────
+.swd-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .6rem 1.25rem; border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .15s; text-decoration: none;
+}
+.swd-btn--primary { background: $swd-orange; color: #fff !important; border-color: $swd-orange; }
+.swd-btn--primary:hover { background: darken($swd-orange, 6%); box-shadow: 0 3px 10px rgba($swd-orange,.3); }
+.swd-btn--ghost { background: $swd-white; color: $swd-gray !important; border-color: $swd-border; }
+.swd-btn--ghost:hover { border-color: $swd-gray; color: $swd-text !important; background: #f1f5f9; }
+
+// ── Hero Banner ────────────────────────────────────────────────────
+.swd-hero {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 1.25rem;
+  padding: 1.5rem 2rem; border-radius: $swd-radius; position: relative; overflow: hidden;
+  color: $swd-white;
+
+  &.swd-status--amber { background: linear-gradient(135deg, $swd-orange, darken($swd-orange, 10%)); }
+  &.swd-status--blue  { background: linear-gradient(135deg, $swd-blue, darken($swd-blue, 8%)); }
+  &.swd-status--green { background: linear-gradient(135deg, $swd-green, darken($swd-green, 8%)); }
+  &.swd-status--red   { background: linear-gradient(135deg, $swd-red, darken($swd-red, 8%)); }
+  &.swd-status--gray  { background: linear-gradient(135deg, #475569, #334155); }
+
+  &::after {
+    content: ''; position: absolute; right: -30px; top: -30px;
+    width: 160px; height: 160px; border-radius: 50%;
+    background: rgba(255,255,255,.08);
+  }
+}
+.swd-hero__status {
+  display: flex; align-items: center; gap: .65rem;
+  font-size: 1.1rem; font-weight: 700; letter-spacing: .01em;
+  .swd-hero__status-icon { font-size: 1.3rem; }
+}
+.swd-hero__client {
+  display: flex; align-items: center; gap: .6rem;
+  font-size: .9rem; font-weight: 600; opacity: .92;
+  padding: .35rem .85rem; background: rgba(255,255,255,.15); border-radius: 999px;
+}
+.swd-hero__client-avatar {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(255,255,255,.25); display: flex; align-items: center; justify-content: center;
+  font-size: .75rem; font-weight: 800; flex-shrink: 0;
+}
+.swd-hero__meta {
+  display: flex; align-items: center; gap: .4rem;
+  font-size: .85rem; opacity: .8;
+  padding: .35rem .75rem; background: rgba(255,255,255,.12); border-radius: 999px;
+}
+
+// ── Grid ───────────────────────────────────────────────────────────
+.swd-grid { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+
+// ── Card ───────────────────────────────────────────────────────────
+.swd-card {
+  background: $swd-white; border: 1px solid $swd-border;
+  border-radius: $swd-radius; box-shadow: $swd-shadow; overflow: hidden; flex: 1; min-width: 260px;
+}
+.swd-card__head {
+  display: flex; align-items: center; gap: .85rem;
+  padding: 1rem 1.25rem; border-bottom: 1px solid $swd-border; background: $swd-bg;
+}
+.swd-card__head-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;
+}
+.swd-card__head-icon--orange { background: $swd-amb-l;  color: $swd-orange !important; }
+.swd-card__head-icon--blue   { background: $swd-blue-l; color: $swd-blue   !important; }
+.swd-card__head-icon--teal   { background: $swd-teal-l; color: $swd-teal   !important; }
+.swd-card__title { font-size: .95rem; font-weight: 700; color: $swd-text; }
+.swd-card__sub   { font-size: .78rem; color: $swd-muted; margin-top: .1rem; }
+.swd-card__body  { display: flex; flex-direction: column; padding: 1.25rem; gap: .85rem; }
+
+// ── Info Row ───────────────────────────────────────────────────────
+.swd-row {
+  display: flex; align-items: flex-start; gap: 1rem;
+  padding: .55rem 0; border-bottom: 1px solid #f1f5f9;
+  &:last-child { border-bottom: none; }
+}
+.swd-row__label {
+  display: flex; align-items: center; gap: .4rem;
+  min-width: 110px; font-size: .78rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .05em; color: $swd-muted; flex-shrink: 0;
+  fa-icon { font-size: .75rem; }
+}
+.swd-row__val {
+  font-size: .88rem; color: $swd-text; font-weight: 500; flex: 1;
+  &--reason { font-style: italic; color: $swd-muted; }
+}
+
+// ── Status Pill ────────────────────────────────────────────────────
+.swd-status-pill {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .75rem; border-radius: 999px;
+  font-size: .78rem; font-weight: 700;
+  &.swd-status--amber { background: $swd-amb-l;  color: $swd-orange !important; }
+  &.swd-status--blue  { background: $swd-blue-l; color: $swd-blue   !important; }
+  &.swd-status--green { background: $swd-green-l; color: $swd-green  !important; }
+  &.swd-status--red   { background: $swd-red-l;  color: $swd-red    !important; }
+  &.swd-status--gray  { background: #f1f5f9; color: $swd-gray !important; }
+}
+
+// ── Client avatar ──────────────────────────────────────────────────
+.swd-client {
+  display: inline-flex; align-items: center; gap: .5rem;
+  &__avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: $swd-blue-l; color: $swd-blue !important;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; font-weight: 700; flex-shrink: 0;
+  }
+}
+
+// ── Misc ───────────────────────────────────────────────────────────
+.swd-chip {
+  display: inline-block; padding: .15rem .55rem; border-radius: 6px;
+  background: $swd-bg; border: 1px solid $swd-border;
+  font-size: .82rem; font-weight: 600; color: $swd-text;
+}
+.swd-nil { color: #cbd5e1 !important; font-style: italic; font-size: .82rem; }
+
+// ── Swap Flow ──────────────────────────────────────────────────────
+.swd-swap-flow {
+  display: flex; align-items: stretch; gap: .75rem; flex-wrap: wrap;
+  padding: 1rem; border-radius: 10px;
+  background: linear-gradient(135deg, #fff5f5, #eff6ff);
+  border: 1.5px solid $swd-border;
+}
+.swd-swap-block {
+  flex: 1; min-width: 120px; display: flex; flex-direction: column; gap: .4rem;
+}
+.swd-swap-block__label {
+  display: flex; align-items: center; gap: .35rem;
+  font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+}
+.swd-swap-block--out .swd-swap-block__label { color: $swd-red; }
+.swd-swap-block--in  .swd-swap-block__label { color: $swd-green; }
+.swd-swap-block__val { font-size: .88rem; }
+.swd-swap-link {
+  display: inline-flex; align-items: center; gap: .4rem;
+  font-weight: 600; text-decoration: none;
+  padding: .35rem .7rem; border-radius: 7px;
+  fa-icon { font-size: .8rem; }
+  &:hover { text-decoration: underline; }
+  &--out { color: $swd-red   !important; background: $swd-red-l; }
+  &--in  { color: $swd-green !important; background: $swd-green-l; }
+}
+.swd-swap-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; color: $swd-orange; flex-shrink: 0; padding: 0 .25rem;
+}
+
+// ── Actions ────────────────────────────────────────────────────────
+.swd-actions {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: .75rem; padding-top: .25rem;
+}
