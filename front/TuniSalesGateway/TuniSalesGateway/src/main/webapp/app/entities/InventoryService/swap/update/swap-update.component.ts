@@ -73,7 +73,7 @@ export class SwapUpdateComponent implements OnInit {
     return map[status] || 'swu-status--gray';
   }
 
-  getStatusIcon(status: string): string {
+  getStatusIcon(status: string): any {
     const map: Record<string, string> = {
       PENDING:     'clock',
       IN_PROGRESS: 'spinner',
