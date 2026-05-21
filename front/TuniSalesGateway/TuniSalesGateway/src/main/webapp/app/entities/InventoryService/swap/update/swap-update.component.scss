@@ -1,0 +1,179 @@
+$swu-orange: #d97706;
+$swu-amb-l:  #fef3c7;
+$swu-blue:   #2563eb;
+$swu-blue-l: #dbeafe;
+$swu-green:  #16a34a;
+$swu-green-l:#dcfce7;
+$swu-red:    #dc2626;
+$swu-red-l:  #fee2e2;
+$swu-teal:   #0f766e;
+$swu-teal-l: #ccfbf1;
+$swu-gray:   #64748b;
+$swu-border: #e2e8f0;
+$swu-bg:     #f8fafc;
+$swu-white:  #ffffff;
+$swu-text:   #0f172a;
+$swu-muted:  #64748b;
+$swu-shadow: 0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$swu-radius: 12px;
+
+.swu-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: $swu-text;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+// ── Header ─────────────────────────────────────────────────────────
+.swu-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.swu-header__left { display: flex; align-items: center; gap: .9rem; }
+.swu-header__icon {
+  width: 48px; height: 48px; border-radius: 12px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem;
+  background: linear-gradient(135deg, $swu-orange, darken($swu-orange, 10%));
+  color: #fff; box-shadow: 0 4px 12px rgba($swu-orange, .28);
+}
+.swu-header__title { margin: 0; font-size: 1.45rem; font-weight: 800; color: $swu-text; }
+.swu-header__sub   { margin: .2rem 0 0; font-size: .85rem; color: $swu-muted; }
+
+.swu-back-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1.5px solid $swu-border; background: $swu-white;
+  color: $swu-muted; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: .9rem; transition: all .15s; flex-shrink: 0;
+  &:hover { border-color: $swu-orange; color: $swu-orange; background: $swu-amb-l; }
+}
+
+// ── Grid ───────────────────────────────────────────────────────────
+.swu-grid {
+  display: flex; flex-wrap: wrap; gap: 1.25rem;
+}
+
+// ── Cards ──────────────────────────────────────────────────────────
+.swu-card {
+  background: $swu-white; border: 1px solid $swu-border;
+  border-radius: $swu-radius; box-shadow: $swu-shadow; overflow: hidden; flex: 1; min-width: 280px;
+  &--main { flex: 1.4; }
+  &--dates { flex: none; width: 100%; }
+}
+.swu-card__head {
+  display: flex; align-items: center; gap: .85rem;
+  padding: 1rem 1.25rem; border-bottom: 1px solid $swu-border; background: $swu-bg;
+}
+.swu-card__head-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;
+}
+.swu-card__head-icon--orange { background: $swu-amb-l;  color: $swu-orange !important; }
+.swu-card__head-icon--blue   { background: $swu-blue-l; color: $swu-blue   !important; }
+.swu-card__head-icon--teal   { background: $swu-teal-l; color: $swu-teal   !important; }
+.swu-card__title { font-size: .95rem; font-weight: 700; color: $swu-text; }
+.swu-card__sub   { font-size: .78rem; color: $swu-muted; margin-top: .1rem; }
+.swu-card__body  { display: flex; flex-direction: column; padding: 1.25rem; gap: 1rem; }
+
+.swu-dates-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+// ── Fields ─────────────────────────────────────────────────────────
+.swu-field { display: flex; flex-direction: column; gap: .35rem; }
+.swu-label {
+  font-size: .78rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .05em; color: $swu-muted;
+  display: flex; align-items: center; gap: .35rem;
+  fa-icon { font-size: .72rem; }
+}
+.swu-input {
+  padding: .6rem .85rem; border-radius: 8px;
+  border: 1.5px solid $swu-border; background: $swu-white;
+  font-size: .9rem; color: $swu-text; transition: border-color .15s, box-shadow .15s;
+  width: 100%; font-family: inherit;
+  &:focus { outline: none; border-color: $swu-orange; box-shadow: 0 0 0 3px rgba($swu-orange,.12); }
+  &:disabled { background: $swu-bg; color: $swu-muted; cursor: not-allowed; }
+}
+.swu-textarea { resize: vertical; min-height: 90px; }
+.swu-select { appearance: auto; cursor: pointer; }
+.swu-error { font-size: .78rem; color: $swu-red; margin-top: .1rem; }
+
+// ── Status Pills ───────────────────────────────────────────────────
+.swu-status-pills {
+  display: flex; flex-wrap: wrap; gap: .5rem;
+}
+.swu-status-pill {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .45rem .9rem; border-radius: 999px;
+  font-size: .82rem; font-weight: 600; cursor: pointer;
+  border: 2px solid transparent; transition: all .15s;
+  opacity: .65;
+  &.swu-status-pill--active { opacity: 1; border-width: 2px; }
+
+  &.swu-status--amber {
+    background: $swu-amb-l; color: $swu-orange !important;
+    &.swu-status-pill--active { border-color: $swu-orange; box-shadow: 0 2px 8px rgba($swu-orange,.25); }
+  }
+  &.swu-status--blue {
+    background: $swu-blue-l; color: $swu-blue !important;
+    &.swu-status-pill--active { border-color: $swu-blue; box-shadow: 0 2px 8px rgba($swu-blue,.25); }
+  }
+  &.swu-status--green {
+    background: $swu-green-l; color: $swu-green !important;
+    &.swu-status-pill--active { border-color: $swu-green; box-shadow: 0 2px 8px rgba($swu-green,.25); }
+  }
+  &.swu-status--red {
+    background: $swu-red-l; color: $swu-red !important;
+    &.swu-status-pill--active { border-color: $swu-red; box-shadow: 0 2px 8px rgba($swu-red,.25); }
+  }
+}
+
+// ── Swap Flow ──────────────────────────────────────────────────────
+.swu-swap-flow {
+  display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  padding: 1.25rem; border-radius: 10px;
+  background: linear-gradient(135deg, #fff5f5, #eff6ff);
+  border: 1.5px solid $swu-border;
+}
+.swu-swap-slot {
+  flex: 1; min-width: 140px; display: flex; flex-direction: column; gap: .5rem;
+}
+.swu-swap-slot__label {
+  display: flex; align-items: center; gap: .35rem;
+  font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
+  .swu-swap-slot--out & { color: $swu-red; }
+  .swu-swap-slot--in  & { color: $swu-green; }
+}
+.swu-swap-arrow {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; color: $swu-orange; flex-shrink: 0;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: $swu-amb-l; border: 2px solid $swu-orange;
+}
+
+// ── Buttons ────────────────────────────────────────────────────────
+.swu-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .65rem 1.4rem; border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .15s;
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+.swu-btn--primary {
+  background: $swu-orange; color: #fff !important; border-color: $swu-orange;
+  &:hover:not(:disabled) { background: darken($swu-orange, 6%); box-shadow: 0 3px 10px rgba($swu-orange,.3); }
+}
+.swu-btn--ghost {
+  background: $swu-white; color: $swu-gray !important; border-color: $swu-border;
+  &:hover { border-color: $swu-gray; color: $swu-text !important; background: #f1f5f9; }
+}
+
+// ── Actions ────────────────────────────────────────────────────────
+.swu-actions {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: .75rem; padding-top: .25rem;
+}

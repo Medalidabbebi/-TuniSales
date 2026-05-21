@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -14,6 +14,8 @@ import { SwapStatus } from 'app/entities/enumerations/swap-status.model';
 @Component({
   selector: 'jhi-swap-update',
   templateUrl: './swap-update.component.html',
+  styleUrls: ['./swap-update.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class SwapUpdateComponent implements OnInit {
   isSaving = false;
@@ -39,18 +41,52 @@ export class SwapUpdateComponent implements OnInit {
       if (swap) {
         this.updateForm(swap);
       }
-
       this.loadRelationshipsOptions();
     });
+  }
+
+  get isEdit(): boolean {
+    return this.editForm.controls.id.value !== null;
   }
 
   previousState(): void {
     window.history.back();
   }
 
+  getStatusLabel(status: string): string {
+    const map: Record<string, string> = {
+      PENDING:     'En attente',
+      IN_PROGRESS: 'En cours',
+      RESOLVED:    'Résolu',
+      CANCELLED:   'Annulé',
+    };
+    return map[status] || status;
+  }
+
+  getStatusClass(status: string): string {
+    const map: Record<string, string> = {
+      PENDING:     'swu-status--amber',
+      IN_PROGRESS: 'swu-status--blue',
+      RESOLVED:    'swu-status--green',
+      CANCELLED:   'swu-status--red',
+    };
+    return map[status] || 'swu-status--gray';
+  }
+
+  getStatusIcon(status: string): string {
+    const map: Record<string, string> = {
+      PENDING:     'clock',
+      IN_PROGRESS: 'spinner',
+      RESOLVED:    'check-circle',
+      CANCELLED:   'times-circle',
+    };
+    return map[status] || 'clock';
+  }
+
   save(): void {
     this.isSaving = true;
     const swap = this.swapFormService.getSwap(this.editForm);
+    (swap as any).tenantId = (swap as any).tenantId ?? 1;
     if (swap.id !== null) {
       this.subscribeToSaveResponse(this.swapService.update(swap));
     } else {

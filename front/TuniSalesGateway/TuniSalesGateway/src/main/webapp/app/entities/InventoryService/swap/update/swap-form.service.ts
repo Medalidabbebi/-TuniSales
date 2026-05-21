@@ -62,12 +62,8 @@ export class SwapFormService {
           validators: [Validators.required],
         }
       ),
-      tenantId: new FormControl(swapRawValue.tenantId, {
-        validators: [Validators.required],
-      }),
-      clientId: new FormControl(swapRawValue.clientId, {
-        validators: [Validators.required],
-      }),
+      tenantId: new FormControl(swapRawValue.tenantId ?? 1),
+      clientId: new FormControl(swapRawValue.clientId),
       clientName: new FormControl(swapRawValue.clientName, {
         validators: [Validators.maxLength(255)],
       }),
