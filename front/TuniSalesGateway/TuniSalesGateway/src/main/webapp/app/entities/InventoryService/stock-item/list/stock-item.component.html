@@ -90,9 +90,12 @@
 
             <!-- IMEI -->
             <td>
-              <code class="si-imei" *ngIf="g.count === 1 && g.representative.imei">{{ g.representative.imei }}</code>
-              <span class="si-multi-imei" *ngIf="g.count > 1">{{ g.count }} IMEI différents</span>
-              <span class="si-muted" *ngIf="g.count === 1 && !g.representative.imei">—</span>
+              <span *ngIf="g.uniqueImeiCount === 1" class="d-flex align-items-center gap-1 flex-wrap">
+                <code class="si-imei">{{ g.singleImei }}</code>
+                <span *ngIf="g.count > 1" class="badge bg-secondary" style="font-size:.7rem">×{{ g.count }}</span>
+              </span>
+              <span class="si-multi-imei" *ngIf="g.uniqueImeiCount > 1">{{ g.uniqueImeiCount }} IMEI différents</span>
+              <span class="si-muted" *ngIf="g.uniqueImeiCount === 0">—</span>
             </td>
 
             <!-- Quantité -->

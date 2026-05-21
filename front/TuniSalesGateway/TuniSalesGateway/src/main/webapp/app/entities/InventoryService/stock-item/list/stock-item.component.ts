@@ -15,6 +15,8 @@ import { StockItemDeleteDialogComponent } from '../delete/stock-item-delete-dial
 export interface StockGroup {
   representative: IStockItem;
   count: number;
+  uniqueImeiCount: number;
+  singleImei: string | null;
 }
 
 @Component({
@@ -128,17 +130,25 @@ export class StockItemComponent implements OnInit {
   }
 
   private computeGroups(items: IStockItem[]): StockGroup[] {
-    const map = new Map<string, StockGroup>();
+    const map = new Map<string, { group: StockGroup; imeis: Set<string> }>();
     for (const item of items) {
       const sec = item.acquiredAt ? item.acquiredAt.format('YYYY-MM-DDTHH:mm:ss') : 'unknown';
-      const key = `${item.productId}_${sec}_${item.status ?? ''}_${item.warehouse?.id ?? 0}_${item.imei ?? ''}`;
+      const key = `${item.productId}_${sec}_${item.status ?? ''}_${item.warehouse?.id ?? 0}`;
       if (map.has(key)) {
-        map.get(key)!.count++;
+        const entry = map.get(key)!;
+        entry.group.count++;
+        if (item.imei) entry.imeis.add(item.imei);
       } else {
-        map.set(key, { representative: item, count: 1 });
+        const imeis = new Set<string>();
+        if (item.imei) imeis.add(item.imei);
+        map.set(key, { group: { representative: item, count: 1, uniqueImeiCount: 0, singleImei: null }, imeis });
       }
     }
-    return Array.from(map.values());
+    return Array.from(map.values()).map(({ group, imeis }) => {
+      group.uniqueImeiCount = imeis.size;
+      group.singleImei = imeis.size === 1 ? [...imeis][0] : null;
+      return group;
+    });
   }
 
   protected fillComponentAttributesFromResponseBody(data: IStockItem[] | null): IStockItem[] {
