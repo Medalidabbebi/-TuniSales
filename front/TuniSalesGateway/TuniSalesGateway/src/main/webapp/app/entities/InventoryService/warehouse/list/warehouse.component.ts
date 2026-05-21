@@ -14,6 +14,7 @@ import { WarehouseDeleteDialogComponent } from '../delete/warehouse-delete-dialo
 @Component({
   selector: 'jhi-warehouse',
   templateUrl: './warehouse.component.html',
+  styleUrls: ['./warehouse.component.scss'],
 })
 export class WarehouseComponent implements OnInit {
   warehouses?: IWarehouse[];
@@ -34,6 +35,39 @@ export class WarehouseComponent implements OnInit {
   ) {}
 
   trackId = (_index: number, item: IWarehouse): number => this.warehouseService.getWarehouseIdentifier(item);
+
+  get activeCount(): number {
+    return (this.warehouses ?? []).filter(w => w.isActive !== false).length;
+  }
+
+  get totalCapacity(): number {
+    return (this.warehouses ?? []).reduce((sum, w) => sum + (w.minThreshold ?? 0), 0);
+  }
+
+  get cityCount(): number {
+    return new Set((this.warehouses ?? []).map(w => w.city).filter(Boolean)).size;
+  }
+
+  getCapacityPercent(value: number): number {
+    const max = Math.max(...(this.warehouses ?? []).map(w => w.minThreshold ?? 0), 1);
+    return Math.round((value / max) * 100);
+  }
+
+  getTypeKey(type: string | null | undefined): string {
+    const map: Record<string, string> = {
+      LOCAL: 'local', SITE: 'site', SWAP: 'swap',
+      DEFECTIVE: 'defective', MISSING: 'missing',
+    };
+    return map[type ?? ''] ?? 'missing';
+  }
+
+  getTypeLabel(type: string | null | undefined): string {
+    const map: Record<string, string> = {
+      LOCAL: 'Local', SITE: 'Site', SWAP: 'Swap',
+      DEFECTIVE: 'Défectueux', MISSING: 'Manquant',
+    };
+    return map[type ?? ''] ?? (type ?? '—');
+  }
 
   ngOnInit(): void {
     this.load();

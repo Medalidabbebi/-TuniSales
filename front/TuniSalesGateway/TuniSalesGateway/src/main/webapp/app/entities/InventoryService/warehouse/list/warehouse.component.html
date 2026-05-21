@@ -1,82 +1,164 @@
-<div class="container-fluid py-4">
+<div class="wh-page">
 
-  <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Page Header ──────────────────────────────────────────────────────── -->
+  <div class="tsg-page-header">
     <div>
-      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="WarehouseHeading">
-        <fa-icon icon="warehouse" class="me-2 text-primary"></fa-icon>
+      <h1 class="tsg-page-header__title">
+        <fa-icon icon="warehouse" class="wh-header-icon"></fa-icon>
         Gestion des Entrepôts
-      </h2>
-      <small class="text-muted">Liste des entrepôts — {{ totalItems }} entrepôt(s) au total</small>
+      </h1>
+      <p class="tsg-page-header__subtitle">{{ totalItems }} entrepôt(s) au total</p>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+    <div class="wh-header-actions">
+      <button class="wh-btn wh-btn--outline" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
-      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/warehouse/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
+      <a class="wh-btn wh-btn--primary" [routerLink]="['/warehouse/new']" data-cy="entityCreateButton">
+        <fa-icon icon="plus"></fa-icon>
         Nouvel Entrepôt
       </a>
     </div>
   </div>
 
-  <jhi-alert-error></jhi-alert-error>
-  <jhi-alert></jhi-alert>
-
-  <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+  <!-- ── KPI strip ────────────────────────────────────────────────────────── -->
+  <div class="wh-kpis" *ngIf="warehouses && warehouses.length > 0">
+    <div class="wh-kpi wh-kpi--blue">
+      <fa-icon icon="warehouse" class="wh-kpi__icon"></fa-icon>
+      <div class="wh-kpi__body">
+        <div class="wh-kpi__value">{{ totalItems }}</div>
+        <div class="wh-kpi__label">Total entrepôts</div>
+      </div>
+    </div>
+    <div class="wh-kpi wh-kpi--green">
+      <fa-icon icon="check-circle" class="wh-kpi__icon"></fa-icon>
+      <div class="wh-kpi__body">
+        <div class="wh-kpi__value">{{ activeCount }}</div>
+        <div class="wh-kpi__label">Actifs</div>
+      </div>
+    </div>
+    <div class="wh-kpi wh-kpi--indigo">
+      <fa-icon icon="boxes" class="wh-kpi__icon"></fa-icon>
+      <div class="wh-kpi__body">
+        <div class="wh-kpi__value">{{ totalCapacity | number:'1.0-0' }}</div>
+        <div class="wh-kpi__label">Capacité totale</div>
+      </div>
+    </div>
+    <div class="wh-kpi wh-kpi--amber">
+      <fa-icon icon="map-marker-alt" class="wh-kpi__icon"></fa-icon>
+      <div class="wh-kpi__body">
+        <div class="wh-kpi__value">{{ cityCount }}</div>
+        <div class="wh-kpi__label">Villes</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && warehouses?.length === 0">
-    <fa-icon icon="warehouse" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucun entrepôt trouvé. Créez votre premier entrepôt.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/warehouse/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <!-- ── Loading ──────────────────────────────────────────────────────────── -->
+  <div class="wh-loading" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true" size="2x"></fa-icon>
+    <span>Chargement…</span>
+  </div>
+
+  <!-- ── Empty state ──────────────────────────────────────────────────────── -->
+  <div class="wh-empty" *ngIf="!isLoading && warehouses?.length === 0">
+    <div class="wh-empty__icon"><fa-icon icon="warehouse" size="2x"></fa-icon></div>
+    <h3 class="wh-empty__title">Aucun entrepôt trouvé</h3>
+    <p class="wh-empty__sub">Commencez par créer votre premier entrepôt.</p>
+    <a class="wh-btn wh-btn--primary" [routerLink]="['/warehouse/new']">
+      <fa-icon icon="plus"></fa-icon> Ajouter un entrepôt
     </a>
   </div>
 
-  <!-- Table -->
-  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && warehouses && warehouses.length > 0">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
-        <thead class="table-light">
-          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-            <th scope="col" jhiSortBy="name">
-              <div class="d-flex align-items-center gap-1">Nom <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+  <!-- ── Table card ───────────────────────────────────────────────────────── -->
+  <div class="wh-card" *ngIf="!isLoading && warehouses && warehouses.length > 0">
+    <div class="wh-table-wrap">
+      <table class="wh-table" aria-describedby="page-heading"
+             jhiSort [(predicate)]="predicate" [(ascending)]="ascending"
+             (sortChange)="navigateToWithComponentValues()">
+        <thead>
+          <tr>
+            <th jhiSortBy="name" class="wh-table__th wh-table__th--name">
+              Nom <fa-icon icon="sort" class="wh-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="type">
-              <div class="d-flex align-items-center gap-1">Type <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th class="wh-table__th wh-table__th--city">Ville</th>
+            <th jhiSortBy="type" class="wh-table__th wh-table__th--type">
+              Type <fa-icon icon="sort" class="wh-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="minThreshold">
-              <div class="d-flex align-items-center gap-1">Capacité <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th jhiSortBy="minThreshold" class="wh-table__th wh-table__th--cap">
+              Capacité <fa-icon icon="sort" class="wh-sort-icon"></fa-icon>
             </th>
-            <th scope="col" style="width:140px"></th>
+            <th class="wh-table__th wh-table__th--status">Statut</th>
+            <th class="wh-table__th wh-table__th--actions"></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let warehouse of warehouses; trackBy: trackId" data-cy="entityTable">
-            <td>
-              <div class="fw-semibold">{{ warehouse.name }}</div>
-              <small class="text-muted">{{ warehouse.city || '—' }}</small>
+          <tr *ngFor="let warehouse of warehouses; trackBy: trackId; let i = index"
+              class="wh-table__row" data-cy="entityTable">
+
+            <!-- Name + avatar -->
+            <td class="wh-table__td wh-table__td--name">
+              <div class="wh-row-main">
+                <div class="wh-avatar" [ngClass]="'wh-avatar--' + getTypeKey(warehouse.type)">
+                  {{ (warehouse.name || '?')[0].toUpperCase() }}
+                </div>
+                <div>
+                  <div class="wh-row-main__name">{{ warehouse.name }}</div>
+                  <div class="wh-row-main__id">#{{ warehouse.id }}</div>
+                </div>
+              </div>
             </td>
-            <td>
-              <span class="badge bg-info rounded-pill">{{ warehouse.type || '—' }}</span>
+
+            <!-- City -->
+            <td class="wh-table__td wh-table__td--city">
+              <span *ngIf="warehouse.city" class="wh-city">
+                <fa-icon icon="map-marker-alt" class="wh-city__icon"></fa-icon>
+                {{ warehouse.city }}
+              </span>
+              <span *ngIf="!warehouse.city" class="wh-muted">—</span>
             </td>
-            <td>{{ warehouse.minThreshold ?? '—' }}</td>
-            <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/warehouse', warehouse.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+
+            <!-- Type badge -->
+            <td class="wh-table__td wh-table__td--type">
+              <span class="wh-type-badge wh-type-badge--{{ getTypeKey(warehouse.type) }}">
+                <span class="wh-type-badge__dot"></span>
+                {{ getTypeLabel(warehouse.type) }}
+              </span>
+            </td>
+
+            <!-- Capacity with mini bar -->
+            <td class="wh-table__td wh-table__td--cap">
+              <div class="wh-cap">
+                <span class="wh-cap__value">{{ warehouse.minThreshold ?? '—' }}</span>
+                <div class="wh-cap__bar-track" *ngIf="warehouse.minThreshold">
+                  <div class="wh-cap__bar-fill" [style.width.%]="getCapacityPercent(warehouse.minThreshold)"></div>
+                </div>
+              </div>
+            </td>
+
+            <!-- Active status -->
+            <td class="wh-table__td wh-table__td--status">
+              <span class="wh-status-badge" [ngClass]="warehouse.isActive !== false ? 'wh-status-badge--active' : 'wh-status-badge--inactive'">
+                {{ warehouse.isActive !== false ? 'Actif' : 'Inactif' }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td class="wh-table__td wh-table__td--actions">
+              <div class="wh-actions">
+                <a [routerLink]="['/warehouse', warehouse.id, 'view']"
+                   class="wh-action-btn wh-action-btn--view" data-cy="entityDetailsButton" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/warehouse', warehouse.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                <a [routerLink]="['/warehouse', warehouse.id, 'edit']"
+                   class="wh-action-btn wh-action-btn--edit" data-cy="entityEditButton" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(warehouse)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
-                  <fa-icon icon="times"></fa-icon>
+                <button (click)="delete(warehouse)"
+                   class="wh-action-btn wh-action-btn--delete" data-cy="entityDeleteButton" title="Supprimer">
+                  <fa-icon icon="trash"></fa-icon>
                 </button>
               </div>
             </td>
@@ -86,8 +168,8 @@
     </div>
   </div>
 
-  <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="warehouses && warehouses.length > 0">
+  <!-- ── Pagination ───────────────────────────────────────────────────────── -->
+  <div class="wh-pagination" *ngIf="warehouses && warehouses.length > 0">
     <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
     <ngb-pagination
       [collectionSize]="totalItems"
