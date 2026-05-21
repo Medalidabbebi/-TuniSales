@@ -1078,5 +1078,9 @@ h4 { font-size: $font-size-lg; }
 @import '../../app/entities/BusinessService/product/list/product.component';
 @import '../../app/entities/BusinessService/product/update/product-update.component';
 @import '../../app/entities/BusinessService/sales-offer/create/sales-offer-create.component';
+@import '../../app/entities/InventoryService/stock-movement/detail/stock-movement-detail.component';
+@import '../../app/entities/InventoryService/stock-movement/list/stock-movement.component';
+@import '../../app/entities/InventoryService/stock-movement/update/stock-movement-update.component';
+@import '../../app/entities/InventoryService/stock-audit/update/stock-audit-update.component';
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */
