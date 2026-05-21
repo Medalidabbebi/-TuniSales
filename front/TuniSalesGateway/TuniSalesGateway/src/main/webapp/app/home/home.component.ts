@@ -84,6 +84,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   private dashboardContext = '';
   private _rawOrders: IOrder[] = [];
   private _rawInvoices: IInvoice[] = [];
+  private _rawDeliveries: IDelivery[] = [];
 
   kpis: Array<{
     label: string; value: string; sub: string;
@@ -145,8 +146,9 @@ export class HomeComponent implements OnInit, OnDestroy {
           const invoices: IInvoice[]   = invRes.body ?? [];
           const clients: IClient[]     = cliRes.body ?? [];
           const deliveries: IDelivery[] = delRes.body ?? [];
-          this._rawOrders   = orders;
-          this._rawInvoices = invoices;
+          this._rawOrders     = orders;
+          this._rawInvoices   = invoices;
+          this._rawDeliveries = deliveries;
           this.buildKpis(orders, invoices, clients, deliveries);
           this.buildRecentOrders(orders);
           this.buildOrdersByStatus(orders);
@@ -444,7 +446,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   refreshInsights(): void {
     this.dashboardInsight = null;
-    this.loadDashboardInsights(this._rawOrders, this._rawInvoices);
+    this.loadDashboardInsights(this._rawOrders, this._rawInvoices, this._rawDeliveries);
   }
 
   sendChat(): void {
