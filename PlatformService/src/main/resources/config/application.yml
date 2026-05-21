@@ -125,6 +125,10 @@ management:
 spring:
   application:
     name: PlatformService
+  data:
+    web:
+      pageable:
+        max-page-size: 2000
   profiles:
     # The commented value for `active` can be replaced with valid Spring profiles to load.
     # Otherwise, it will be filled in by maven when building the JAR file

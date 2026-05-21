@@ -65,6 +65,12 @@ export class TenantService {
       .pipe(map(res => this.convertResponseArrayFromServer(res)));
   }
 
+  queryAll(): Observable<EntityArrayResponseType> {
+    return this.http
+      .get<RestTenant[]>(`${this.resourceUrl}/all`, { observe: 'response' })
+      .pipe(map(res => this.convertResponseArrayFromServer(res)));
+  }
+
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }

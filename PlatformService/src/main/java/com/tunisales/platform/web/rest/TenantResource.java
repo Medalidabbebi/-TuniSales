@@ -157,6 +157,19 @@ public class TenantResource {
     }
 
     /**
+     * {@code GET  /tenants/all} : get all tenants without pagination (for dropdowns).
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of all tenants in body.
+     */
+    @GetMapping("/tenants/all")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<List<TenantDTO>> getAllTenantsNoPagination() {
+        log.debug("REST request to get all Tenants (no pagination)");
+        List<TenantDTO> tenants = tenantService.findAll();
+        return ResponseEntity.ok().body(tenants);
+    }
+
+    /**
      * {@code GET  /tenants/:id} : get the "id" tenant.
      *
      * @param id the id of the tenantDTO to retrieve.

@@ -4,7 +4,9 @@ import com.tunisales.platform.domain.Tenant;
 import com.tunisales.platform.repository.TenantRepository;
 import com.tunisales.platform.service.dto.TenantDTO;
 import com.tunisales.platform.service.mapper.TenantMapper;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -86,6 +88,17 @@ public class TenantService {
     public Page<TenantDTO> findAll(Pageable pageable) {
         log.debug("Request to get all Tenants");
         return tenantRepository.findAll(pageable).map(tenantMapper::toDto);
+    }
+
+    /**
+     * Get all tenants without pagination (for dropdowns).
+     *
+     * @return the list of all entities.
+     */
+    @Transactional(readOnly = true)
+    public List<TenantDTO> findAll() {
+        log.debug("Request to get all Tenants (no pagination)");
+        return tenantRepository.findAll().stream().map(tenantMapper::toDto).collect(Collectors.toList());
     }
 
     /**
