@@ -1,74 +1,180 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <div *ngIf="stockMovement">
-      <h2 data-cy="stockMovementDetailsHeading">
-        <span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.detail.title">Stock Movement</span>
-      </h2>
+<div class="smd-page" *ngIf="stockMovement">
 
-      <hr />
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
 
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ stockMovement.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.movementType">Movement Type</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'tuniSalesGatewayApp.MovementType.' + stockMovement.movementType }}">{{
-            stockMovement.movementType
-          }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.reason">Reason</span></dt>
-        <dd>
-          <span>{{ stockMovement.reason }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.reference">Reference</span></dt>
-        <dd>
-          <span>{{ stockMovement.reference }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.quantity">Quantity</span></dt>
-        <dd>
-          <span>{{ stockMovement.quantity }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.performedByLogin">Performed By Login</span></dt>
-        <dd>
-          <span>{{ stockMovement.performedByLogin }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.createdAt">Created At</span></dt>
-        <dd>
-          <span>{{ stockMovement.createdAt | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.fromWarehouse">From Warehouse</span></dt>
-        <dd>
-          <div *ngIf="stockMovement.fromWarehouse">
-            <a [routerLink]="['/warehouse', stockMovement.fromWarehouse.id, 'view']">{{ stockMovement.fromWarehouse.name }}</a>
-          </div>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.toWarehouse">To Warehouse</span></dt>
-        <dd>
-          <div *ngIf="stockMovement.toWarehouse">
-            <a [routerLink]="['/warehouse', stockMovement.toWarehouse.id, 'view']">{{ stockMovement.toWarehouse.name }}</a>
-          </div>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.inventoryServiceStockMovement.stockItem">Stock Item</span></dt>
-        <dd>
-          <div *ngIf="stockMovement.stockItem">
-            <a [routerLink]="['/stock-item', stockMovement.stockItem.id, 'view']">{{ stockMovement.stockItem.imei }}</a>
-          </div>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+  <!-- ── Header ─────────────────────────────────────────────────────── -->
+  <div class="smd-header">
+    <div class="smd-header__left">
+      <button type="button" class="smd-back-btn" (click)="previousState()" data-cy="entityDetailsBackButton">
+        <fa-icon icon="arrow-left"></fa-icon>
       </button>
+      <div class="smd-header__icon" [ngClass]="getTypeClass(stockMovement.movementType)">
+        <fa-icon [icon]="getTypeIcon(stockMovement.movementType)"></fa-icon>
+      </div>
+      <div>
+        <h1 class="smd-header__title" data-cy="stockMovementDetailsHeading">Mouvement de Stock</h1>
+        <p class="smd-header__sub">#{{ stockMovement.id }} · {{ stockMovement.createdAt | formatMediumDatetime }}</p>
+      </div>
+    </div>
+    <button type="button" class="smd-btn smd-btn--primary" [routerLink]="['/stock-movement', stockMovement.id, 'edit']">
+      <fa-icon icon="pencil-alt"></fa-icon>
+      Modifier
+    </button>
+  </div>
 
-      <button type="button" [routerLink]="['/stock-movement', stockMovement.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
-      </button>
+  <!-- ── Hero Banner ────────────────────────────────────────────────── -->
+  <div class="smd-hero" [ngClass]="getTypeClass(stockMovement.movementType)">
+    <div class="smd-hero__type">
+      <fa-icon [icon]="getTypeIcon(stockMovement.movementType)" class="smd-hero__type-icon"></fa-icon>
+      <span class="smd-hero__type-label">{{ getTypeLabel(stockMovement.movementType) }}</span>
+    </div>
+    <div class="smd-hero__qty">
+      <span class="smd-hero__qty-val">{{ stockMovement.quantity | number }}</span>
+      <span class="smd-hero__qty-unit">unité(s)</span>
+    </div>
+    <div class="smd-hero__meta" *ngIf="stockMovement.performedByLogin">
+      <fa-icon icon="user-check"></fa-icon>
+      <span>{{ stockMovement.performedByLogin }}</span>
     </div>
   </div>
+
+  <!-- ── Cards Grid ─────────────────────────────────────────────────── -->
+  <div class="smd-grid">
+
+    <!-- Détails du mouvement -->
+    <div class="smd-card">
+      <div class="smd-card__head">
+        <div class="smd-card__head-icon smd-card__head-icon--orange">
+          <fa-icon icon="exchange-alt"></fa-icon>
+        </div>
+        <div>
+          <div class="smd-card__title">Détails du mouvement</div>
+          <div class="smd-card__sub">Informations générales</div>
+        </div>
+      </div>
+      <div class="smd-card__body">
+
+        <div class="smd-row">
+          <div class="smd-row__label"><fa-icon icon="hashtag"></fa-icon>ID</div>
+          <div class="smd-row__val"><span class="smd-chip">{{ stockMovement.id }}</span></div>
+        </div>
+
+        <div class="smd-row">
+          <div class="smd-row__label"><fa-icon icon="tag"></fa-icon>Type</div>
+          <div class="smd-row__val">
+            <span class="smd-type-pill" [ngClass]="getTypeClass(stockMovement.movementType)">
+              <fa-icon [icon]="getTypeIcon(stockMovement.movementType)"></fa-icon>
+              {{ getTypeLabel(stockMovement.movementType) }}
+            </span>
+          </div>
+        </div>
+
+        <div class="smd-row" *ngIf="stockMovement.reference">
+          <div class="smd-row__label"><fa-icon icon="hashtag"></fa-icon>Référence</div>
+          <div class="smd-row__val"><code class="smd-code">{{ stockMovement.reference }}</code></div>
+        </div>
+
+        <div class="smd-row" *ngIf="stockMovement.reason">
+          <div class="smd-row__label"><fa-icon icon="comment"></fa-icon>Raison</div>
+          <div class="smd-row__val smd-row__val--reason">{{ stockMovement.reason }}</div>
+        </div>
+
+        <div class="smd-row">
+          <div class="smd-row__label"><fa-icon icon="clock"></fa-icon>Date</div>
+          <div class="smd-row__val">{{ stockMovement.createdAt | formatMediumDatetime }}</div>
+        </div>
+
+        <div class="smd-row" *ngIf="stockMovement.performedByLogin">
+          <div class="smd-row__label"><fa-icon icon="user"></fa-icon>Opérateur</div>
+          <div class="smd-row__val">
+            <div class="smd-operator">
+              <div class="smd-operator__avatar">{{ stockMovement.performedByLogin.charAt(0).toUpperCase() }}</div>
+              <span>{{ stockMovement.performedByLogin }}</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Logistique -->
+    <div class="smd-card">
+      <div class="smd-card__head">
+        <div class="smd-card__head-icon smd-card__head-icon--blue">
+          <fa-icon icon="warehouse"></fa-icon>
+        </div>
+        <div>
+          <div class="smd-card__title">Logistique</div>
+          <div class="smd-card__sub">Article et entrepôts</div>
+        </div>
+      </div>
+      <div class="smd-card__body">
+
+        <!-- Stock Item -->
+        <div class="smd-row">
+          <div class="smd-row__label"><fa-icon icon="barcode"></fa-icon>Article</div>
+          <div class="smd-row__val">
+            <a *ngIf="stockMovement.stockItem"
+               [routerLink]="['/stock-item', stockMovement.stockItem.id, 'view']"
+               class="smd-link">
+              <fa-icon icon="barcode"></fa-icon>
+              <code>{{ stockMovement.stockItem.imei }}</code>
+            </a>
+            <span *ngIf="!stockMovement.stockItem" class="smd-nil">Non défini</span>
+          </div>
+        </div>
+
+        <!-- Warehouse Flow -->
+        <div class="smd-wh-flow">
+          <div class="smd-wh-block smd-wh-block--from">
+            <div class="smd-wh-block__label">
+              <fa-icon icon="sign-out-alt"></fa-icon>
+              Entrepôt source
+            </div>
+            <div class="smd-wh-block__val" *ngIf="stockMovement.fromWarehouse">
+              <a [routerLink]="['/warehouse', stockMovement.fromWarehouse.id, 'view']" class="smd-wh-link smd-wh-link--from">
+                <fa-icon icon="warehouse"></fa-icon>
+                {{ stockMovement.fromWarehouse.name }}
+              </a>
+            </div>
+            <div class="smd-wh-block__val smd-nil" *ngIf="!stockMovement.fromWarehouse">Non défini</div>
+          </div>
+
+          <div class="smd-wh-arrow">
+            <fa-icon icon="long-arrow-alt-right"></fa-icon>
+          </div>
+
+          <div class="smd-wh-block smd-wh-block--to">
+            <div class="smd-wh-block__label">
+              <fa-icon icon="sign-in-alt"></fa-icon>
+              Entrepôt destination
+            </div>
+            <div class="smd-wh-block__val" *ngIf="stockMovement.toWarehouse">
+              <a [routerLink]="['/warehouse', stockMovement.toWarehouse.id, 'view']" class="smd-wh-link smd-wh-link--to">
+                <fa-icon icon="warehouse"></fa-icon>
+                {{ stockMovement.toWarehouse.name }}
+              </a>
+            </div>
+            <div class="smd-wh-block__val smd-nil" *ngIf="!stockMovement.toWarehouse">Non défini</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Actions ────────────────────────────────────────────────────── -->
+  <div class="smd-actions">
+    <button type="button" class="smd-btn smd-btn--ghost" (click)="previousState()">
+      <fa-icon icon="arrow-left"></fa-icon>
+      Retour à la liste
+    </button>
+    <button type="button" class="smd-btn smd-btn--primary" [routerLink]="['/stock-movement', stockMovement.id, 'edit']">
+      <fa-icon icon="pencil-alt"></fa-icon>
+      Modifier ce mouvement
+    </button>
+  </div>
+
 </div>
