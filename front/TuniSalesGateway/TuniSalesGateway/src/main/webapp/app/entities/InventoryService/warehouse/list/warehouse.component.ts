@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -15,6 +15,7 @@ import { WarehouseDeleteDialogComponent } from '../delete/warehouse-delete-dialo
   selector: 'jhi-warehouse',
   templateUrl: './warehouse.component.html',
   styleUrls: ['./warehouse.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class WarehouseComponent implements OnInit {
   warehouses?: IWarehouse[];
