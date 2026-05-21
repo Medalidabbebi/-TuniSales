@@ -4,6 +4,11 @@ import { IOrder } from 'app/entities/BusinessService/order/order.model';
 import { IInvoice } from 'app/entities/BusinessService/invoice/invoice.model';
 import { IClient } from 'app/entities/BusinessService/client/client.model';
 
+export interface ExportInvoiceOptions {
+  includeStats?: boolean;
+  columns?: Record<string, boolean>;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SalesExcelService {
 
@@ -134,31 +139,31 @@ export class SalesExcelService {
     XLSX.utils.book_append_sheet(wb, ws2, 'Synthèse');
   }
 
-  exportInvoices(invoices: IInvoice[], filename = 'factures-ventes'): void {
+  exportInvoices(invoices: IInvoice[], filename = 'factures-ventes', options?: ExportInvoiceOptions): void {
     const STATUS_FR: Record<string, string> = {
       DRAFT: 'Brouillon', ISSUED: 'Émise', PARTIALLY_PAID: 'Part. payée',
       PAID: 'Payée', OVERDUE: 'En retard', CANCELLED: 'Annulée',
     };
 
-    const headers = [
-      'N° Facture', 'Client', 'Commande liée', 'Statut',
-      'Montant HT (TND)', 'TVA (TND)', 'Montant TTC (TND)',
-      "Date d'émission", "Date d'échéance", 'Payée le', 'Créée le',
+    const include = (key: string): boolean => !options?.columns || options.columns[key] !== false;
+
+    const colDefs: Array<{ key: string; label: string; val: (inv: IInvoice) => string | number }> = [
+      { key: 'invoiceNumber', label: 'N° Facture',       val: inv => inv.invoiceNumber ?? '' },
+      { key: 'client',        label: 'Client',            val: inv => inv.client?.name ?? '' },
+      { key: 'order',         label: 'Commande liée',     val: inv => inv.order?.orderNumber ?? '' },
+      { key: 'status',        label: 'Statut',            val: inv => STATUS_FR[inv.status ?? ''] ?? inv.status ?? '' },
+      { key: 'amountHt',      label: 'Montant HT (TND)',  val: inv => this.fmtNum(inv.amountHt) },
+      { key: 'taxAmount',     label: 'TVA (TND)',          val: inv => this.fmtNum(inv.taxAmount) },
+      { key: 'amountTtc',     label: 'Montant TTC (TND)', val: inv => this.fmtNum(inv.amountTtc) },
+      { key: 'issueDate',     label: "Date d'émission",   val: inv => this.fmtDate(inv.issueDate) },
+      { key: 'dueDate',       label: "Date d'échéance",   val: inv => this.fmtDate(inv.dueDate) },
+      { key: 'paidAt',        label: 'Payée le',          val: inv => this.fmtDate(inv.paidAt) },
+      { key: 'createdAt',     label: 'Créée le',          val: inv => this.fmtDate(inv.createdAt) },
     ];
 
-    const rows = invoices.map(inv => [
-      inv.invoiceNumber ?? '',
-      inv.client?.name ?? '',
-      inv.order?.orderNumber ?? '',
-      STATUS_FR[inv.status ?? ''] ?? inv.status ?? '',
-      this.fmtNum(inv.amountHt),
-      this.fmtNum(inv.taxAmount),
-      this.fmtNum(inv.amountTtc),
-      this.fmtDate(inv.issueDate),
-      this.fmtDate(inv.dueDate),
-      this.fmtDate(inv.paidAt),
-      this.fmtDate(inv.createdAt),
-    ]);
+    const activeCols = colDefs.filter(c => include(c.key));
+    const headers = activeCols.map(c => c.label);
+    const rows = invoices.map(inv => activeCols.map(c => c.val(inv)));
 
     const data = [headers, ...rows];
     const ws = XLSX.utils.aoa_to_sheet(data);
@@ -166,17 +171,23 @@ export class SalesExcelService {
     this.applyHeaderStyle(ws, headers.length);
 
     if (rows.length > 0) {
-      const summaryRow = Array(headers.length).fill('');
+      const summaryRow = Array(activeCols.length).fill('');
       summaryRow[0] = `TOTAL (${rows.length} factures)`;
-      summaryRow[4] = invoices.reduce((s, i) => s + (i.amountHt  ?? 0), 0);
-      summaryRow[5] = invoices.reduce((s, i) => s + (i.taxAmount ?? 0), 0);
-      summaryRow[6] = invoices.reduce((s, i) => s + (i.amountTtc ?? 0), 0);
+      const htIdx  = activeCols.findIndex(c => c.key === 'amountHt');
+      const tvaIdx = activeCols.findIndex(c => c.key === 'taxAmount');
+      const ttcIdx = activeCols.findIndex(c => c.key === 'amountTtc');
+      if (htIdx  >= 0) summaryRow[htIdx]  = invoices.reduce((s, i) => s + (i.amountHt  ?? 0), 0);
+      if (tvaIdx >= 0) summaryRow[tvaIdx] = invoices.reduce((s, i) => s + (i.taxAmount ?? 0), 0);
+      if (ttcIdx >= 0) summaryRow[ttcIdx] = invoices.reduce((s, i) => s + (i.amountTtc ?? 0), 0);
       XLSX.utils.sheet_add_aoa(ws, [summaryRow], { origin: -1 });
     }
 
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Factures');
-    this.addInvoiceStats(wb, invoices, STATUS_FR);
+
+    if (options?.includeStats !== false) {
+      this.addInvoiceStats(wb, invoices, STATUS_FR);
+    }
 
     const date = new Date().toISOString().slice(0, 10);
     XLSX.writeFile(wb, `${filename}-${date}.xlsx`);

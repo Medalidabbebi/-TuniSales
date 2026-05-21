@@ -14,33 +14,10 @@
         <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
         Actualiser
       </button>
-      <div class="dropdown">
-        <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" [disabled]="!filteredInvoices.length">
-          <fa-icon icon="file-excel" class="me-1"></fa-icon>
-          Exporter
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li>
-            <button class="dropdown-item" (click)="exportExcel()">
-              <fa-icon icon="file-excel" class="me-2 text-success"></fa-icon>
-              Exporter Excel (.xlsx)
-            </button>
-          </li>
-          <li>
-            <button class="dropdown-item" (click)="exportPdf()">
-              <fa-icon icon="file-pdf" class="me-2 text-danger"></fa-icon>
-              Exporter PDF
-            </button>
-          </li>
-          <li><hr class="dropdown-divider"></li>
-          <li>
-            <button class="dropdown-item" (click)="exportCsv()">
-              <fa-icon icon="file-excel" class="me-2 text-secondary"></fa-icon>
-              Exporter CSV
-            </button>
-          </li>
-        </ul>
-      </div>
+      <button class="btn btn-success" (click)="openExportModal(exportModal)" [disabled]="!invoices?.length">
+        <fa-icon icon="file-excel" class="me-1"></fa-icon>
+        Exporter Excel
+      </button>
       <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/invoice/new']">
         <fa-icon icon="plus" class="me-1"></fa-icon>
         Nouvelle Facture
@@ -195,3 +172,139 @@
   </div>
 
 </div>
+
+<!-- ── Modal Export Excel ────────────────────────────────────────────── -->
+<ng-template #exportModal let-modal>
+  <div class="modal-header" style="background:linear-gradient(135deg,#1a7a4a,#22c55e);color:#fff">
+    <div class="d-flex align-items-center gap-2">
+      <fa-icon icon="file-excel" style="font-size:1.3rem"></fa-icon>
+      <h5 class="modal-title mb-0 fw-bold">Exporter en Excel</h5>
+    </div>
+    <button type="button" class="btn-close btn-close-white" (click)="modal.dismiss()"></button>
+  </div>
+
+  <div class="modal-body p-4">
+
+    <!-- ── 1. Périmètre ── -->
+    <div class="mb-4">
+      <p class="fw-semibold text-secondary mb-2" style="font-size:.8rem;text-transform:uppercase;letter-spacing:.05em">
+        <fa-icon icon="filter" class="me-1"></fa-icon>Périmètre d'export
+      </p>
+      <div class="row g-3">
+        <div class="col-6">
+          <div class="card h-100 border-2 text-center py-3 px-2"
+               style="cursor:pointer;transition:all .15s"
+               [style.border-color]="exportOptions.scope === 'filtered' ? '#22c55e' : '#e2e8f0'"
+               [style.background]="exportOptions.scope === 'filtered' ? '#f0fdf4' : '#fff'"
+               (click)="exportOptions.scope = 'filtered'">
+            <fa-icon icon="filter" class="mb-2 d-block"
+                     [style.color]="exportOptions.scope === 'filtered' ? '#16a34a' : '#94a3b8'"
+                     style="font-size:1.4rem"></fa-icon>
+            <div class="fw-semibold small">Résultats filtrés</div>
+            <div class="text-muted" style="font-size:.78rem">{{ filteredInvoices.length }} facture(s)</div>
+            <div *ngIf="exportOptions.scope === 'filtered'" class="mt-1">
+              <span class="badge bg-success" style="font-size:.7rem">Sélectionné</span>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="card h-100 border-2 text-center py-3 px-2"
+               style="cursor:pointer;transition:all .15s"
+               [style.border-color]="exportOptions.scope === 'all' ? '#22c55e' : '#e2e8f0'"
+               [style.background]="exportOptions.scope === 'all' ? '#f0fdf4' : '#fff'"
+               (click)="exportOptions.scope = 'all'">
+            <fa-icon icon="list" class="mb-2 d-block"
+                     [style.color]="exportOptions.scope === 'all' ? '#16a34a' : '#94a3b8'"
+                     style="font-size:1.4rem"></fa-icon>
+            <div class="fw-semibold small">Toutes les factures</div>
+            <div class="text-muted" style="font-size:.78rem">{{ invoices?.length ?? 0 }} facture(s)</div>
+            <div *ngIf="exportOptions.scope === 'all'" class="mt-1">
+              <span class="badge bg-success" style="font-size:.7rem">Sélectionné</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-3">
+
+    <!-- ── 2. Colonnes ── -->
+    <div class="mb-4">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <p class="fw-semibold text-secondary mb-0" style="font-size:.8rem;text-transform:uppercase;letter-spacing:.05em">
+          <fa-icon icon="columns" class="me-1"></fa-icon>Colonnes à inclure
+          <span class="badge bg-success ms-2">{{ selectedColumnCount }} / {{ exportColumnList.length }}</span>
+        </p>
+        <div class="d-flex gap-1">
+          <button class="btn btn-outline-secondary btn-sm py-0" style="font-size:.75rem" (click)="selectAllColumns(true)">Tout</button>
+          <button class="btn btn-outline-secondary btn-sm py-0" style="font-size:.75rem" (click)="selectAllColumns(false)">Aucun</button>
+        </div>
+      </div>
+      <div class="row g-2">
+        <div class="col-6 col-md-4" *ngFor="let col of exportColumnList">
+          <div class="form-check form-switch mb-0" style="padding-left:2.5rem">
+            <input class="form-check-input" type="checkbox"
+                   [id]="'xcol-' + col.key"
+                   [(ngModel)]="exportOptions.columns[col.key]"
+                   [ngModelOptions]="{standalone:true}">
+            <label class="form-check-label small" [for]="'xcol-' + col.key">{{ col.label }}</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-3">
+
+    <!-- ── 3. Options ── -->
+    <div>
+      <p class="fw-semibold text-secondary mb-3" style="font-size:.8rem;text-transform:uppercase;letter-spacing:.05em">
+        <fa-icon icon="cog" class="me-1"></fa-icon>Options
+      </p>
+      <div class="row g-3 align-items-start">
+        <div class="col-12 col-md-7">
+          <label class="form-label small fw-semibold mb-1">Nom du fichier</label>
+          <div class="input-group input-group-sm">
+            <span class="input-group-text"><fa-icon icon="file-excel" class="text-success"></fa-icon></span>
+            <input type="text" class="form-control"
+                   [(ngModel)]="exportOptions.filename"
+                   [ngModelOptions]="{standalone:true}"
+                   placeholder="factures-ventes">
+            <span class="input-group-text text-muted" style="font-size:.78rem">.xlsx</span>
+          </div>
+        </div>
+        <div class="col-12 col-md-5">
+          <label class="form-label small fw-semibold mb-1">Feuille de synthèse</label>
+          <div class="form-check form-switch mt-1">
+            <input class="form-check-input" type="checkbox" id="xIncludeStats"
+                   [(ngModel)]="exportOptions.includeStats"
+                   [ngModelOptions]="{standalone:true}">
+            <label class="form-check-label small" for="xIncludeStats">
+              Inclure l'onglet "Synthèse"
+            </label>
+          </div>
+          <div class="text-muted" style="font-size:.73rem">Statistiques par statut, totaux HT/TVA/TTC</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Footer ── -->
+  <div class="modal-footer" style="background:#f8fafc;border-top:1px solid #e2e8f0">
+    <div class="me-auto text-muted small">
+      <fa-icon icon="info-circle" class="me-1"></fa-icon>
+      <strong>{{ exportPreviewCount }}</strong> facture(s) &bull;
+      <strong>{{ selectedColumnCount }}</strong> colonne(s)
+      <span *ngIf="exportOptions.includeStats"> &bull; + onglet Synthèse</span>
+    </div>
+    <button type="button" class="btn btn-outline-secondary" (click)="modal.dismiss()">
+      Annuler
+    </button>
+    <button type="button" class="btn btn-success"
+            [disabled]="selectedColumnCount === 0 || exportPreviewCount === 0"
+            (click)="confirmExport(modal)">
+      <fa-icon icon="file-excel" class="me-1"></fa-icon>
+      Exporter
+    </button>
+  </div>
+</ng-template>

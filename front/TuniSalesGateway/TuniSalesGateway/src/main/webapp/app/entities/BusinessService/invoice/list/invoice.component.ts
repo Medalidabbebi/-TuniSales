@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, TemplateRef, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -7,7 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IInvoice } from '../invoice.model';
 import { InvoiceStatus } from 'app/entities/enumerations/invoice-status.model';
 import { InvoicePdfService } from '../service/invoice-pdf.service';
-import { SalesExcelService } from 'app/shared/service/sales-excel.service';
+import { SalesExcelService, ExportInvoiceOptions } from 'app/shared/service/sales-excel.service';
 
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
@@ -85,67 +85,64 @@ export class InvoiceComponent implements OnInit {
     this.filterDateTo   = '';
   }
 
+  readonly exportColumnList = [
+    { key: 'invoiceNumber', label: 'N° Facture' },
+    { key: 'client',        label: 'Client' },
+    { key: 'order',         label: 'Commande liée' },
+    { key: 'status',        label: 'Statut' },
+    { key: 'amountHt',      label: 'Montant HT' },
+    { key: 'taxAmount',     label: 'TVA' },
+    { key: 'amountTtc',     label: 'Montant TTC' },
+    { key: 'issueDate',     label: "Date d'émission" },
+    { key: 'dueDate',       label: "Date d'échéance" },
+    { key: 'paidAt',        label: 'Payée le' },
+    { key: 'createdAt',     label: 'Créée le' },
+  ];
+
+  exportOptions: {
+    scope: 'filtered' | 'all';
+    includeStats: boolean;
+    filename: string;
+    columns: Record<string, boolean>;
+  } = {
+    scope: 'filtered',
+    includeStats: true,
+    filename: 'factures-ventes',
+    columns: {
+      invoiceNumber: true, client: true, order: true, status: true,
+      amountHt: true, taxAmount: true, amountTtc: true,
+      issueDate: true, dueDate: true, paidAt: true, createdAt: true,
+    },
+  };
+
+  get selectedColumnCount(): number {
+    return this.exportColumnList.filter(c => this.exportOptions.columns[c.key]).length;
+  }
+
+  get exportPreviewCount(): number {
+    return this.exportOptions.scope === 'filtered' ? this.filteredInvoices.length : (this.invoices?.length ?? 0);
+  }
+
+  openExportModal(content: TemplateRef<unknown>): void {
+    this.modalService.open(content, { size: 'lg', centered: true, scrollable: true });
+  }
+
+  confirmExport(modal: { close: () => void }): void {
+    const data = this.exportOptions.scope === 'filtered' ? this.filteredInvoices : (this.invoices ?? []);
+    const opts: ExportInvoiceOptions = {
+      includeStats: this.exportOptions.includeStats,
+      columns: this.exportOptions.columns,
+    };
+    this.excelService.exportInvoices(data, this.exportOptions.filename || 'factures-ventes', opts);
+    modal.close();
+  }
+
+  selectAllColumns(value: boolean): void {
+    this.exportColumnList.forEach(c => { this.exportOptions.columns[c.key] = value; });
+  }
+
   downloadPdf(invoice: IInvoice): void {
     this.pdfService.generate(invoice);
-  }
-
-  exportExcel(): void {
-    this.excelService.exportInvoices(this.filteredInvoices);
-  }
-
-  exportCsv(): void {
-    const headers = ['N° Facture', 'Client', 'Montant HT', 'TVA', 'Montant TTC', 'Statut', 'Date échéance'];
-    const rows = this.filteredInvoices.map(inv => [
-      inv.invoiceNumber ?? '',
-      inv.client?.name ?? '',
-      inv.amountHt ?? 0,
-      inv.taxAmount ?? 0,
-      inv.amountTtc ?? 0,
-      inv.status ?? '',
-      inv.dueDate ? inv.dueDate.format('DD/MM/YYYY') : '',
-    ]);
-    const csvContent = [headers, ...rows]
-      .map(row => row.map(v => `"${String(v).replace(/"/g, '""')}"`).join(';'))
-      .join('\n');
-    const blob = new Blob(['﻿' + csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `factures-${new Date().toISOString().slice(0, 10)}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  exportPdf(): void {
-    if (!this.filteredInvoices.length) return;
-    const printWindow = window.open('', '_blank');
-    if (!printWindow) return;
-    const rows = this.filteredInvoices.map(inv => `
-      <tr>
-        <td>${inv.invoiceNumber ?? ''}</td>
-        <td>${inv.client?.name ?? ''}</td>
-        <td style="text-align:right">${(inv.amountTtc ?? 0).toFixed(2)} TND</td>
-        <td>${inv.status ?? ''}</td>
-        <td>${inv.dueDate ? inv.dueDate.format('DD/MM/YYYY') : ''}</td>
-      </tr>`).join('');
-    printWindow.document.write(`
-      <html><head><title>Factures</title>
-      <style>
-        body{font-family:Arial,sans-serif;font-size:12px;padding:20px}
-        h2{color:#1e3a5f}
-        table{width:100%;border-collapse:collapse;margin-top:16px}
-        th{background:#1e3a5f;color:white;padding:8px;text-align:left}
-        td{padding:6px 8px;border-bottom:1px solid #e2e8f0}
-        tr:nth-child(even){background:#f8fafc}
-      </style></head><body>
-      <h2>Gestion des Factures</h2>
-      <p>Exporté le ${new Date().toLocaleDateString('fr-FR')} — ${this.filteredInvoices.length} facture(s)</p>
-      <table><thead><tr>
-        <th>N° Facture</th><th>Client</th><th>Montant TTC</th><th>Statut</th><th>Échéance</th>
-      </tr></thead><tbody>${rows}</tbody></table>
-      </body></html>`);
-    printWindow.document.close();
-    printWindow.print();
   }
 
   ngOnInit(): void {
