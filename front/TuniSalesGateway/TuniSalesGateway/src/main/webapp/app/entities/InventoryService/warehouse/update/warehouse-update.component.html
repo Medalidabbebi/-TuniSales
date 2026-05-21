@@ -5,6 +5,8 @@
     <div style="display:none">
       <input type="number" formControlName="id" />
       <input type="number" formControlName="tenantId" />
+      <input type="text" formControlName="createdAt" />
+      <input type="text" formControlName="updatedAt" />
     </div>
 
     <!-- ── Header ──────────────────────────────────────────────────── -->
@@ -134,23 +136,6 @@
             </div>
           </div>
 
-          <div class="wu-field">
-            <label class="wu-label" for="field_createdAt">Créé le</label>
-            <input
-              type="datetime-local" class="wu-input" id="field_createdAt"
-              name="createdAt" data-cy="createdAt" formControlName="createdAt"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-
-          <div class="wu-field">
-            <label class="wu-label" for="field_updatedAt">Mis à jour le</label>
-            <input
-              type="datetime-local" class="wu-input" id="field_updatedAt"
-              name="updatedAt" data-cy="updatedAt" formControlName="updatedAt"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
 
         </div>
       </div>

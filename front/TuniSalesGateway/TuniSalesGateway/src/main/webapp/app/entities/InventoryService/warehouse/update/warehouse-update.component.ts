@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
+import dayjs from 'dayjs/esm';
 import { WarehouseFormService, WarehouseFormGroup } from './warehouse-form.service';
 import { IWarehouse } from '../warehouse.model';
 import { WarehouseService } from '../service/warehouse.service';
@@ -48,9 +49,14 @@ export class WarehouseUpdateComponent implements OnInit {
   save(): void {
     this.isSaving = true;
     const warehouse = this.warehouseFormService.getWarehouse(this.editForm);
+    const now = dayjs();
     if (warehouse.id !== null) {
+      (warehouse as any).updatedAt = now;
       this.subscribeToSaveResponse(this.warehouseService.update(warehouse));
     } else {
+      (warehouse as any).createdAt = now;
+      (warehouse as any).updatedAt = now;
+      (warehouse as any).tenantId  = (warehouse as any).tenantId ?? 1;
       this.subscribeToSaveResponse(this.warehouseService.create(warehouse));
     }
   }
@@ -77,7 +83,9 @@ export class WarehouseUpdateComponent implements OnInit {
     this.previousState();
   }
 
-  protected onSaveError(): void {}
+  protected onSaveError(): void {
+    // error displayed via jhi-alert-error
+  }
 
   protected onSaveFinalize(): void {
     this.isSaving = false;

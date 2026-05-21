@@ -60,9 +60,7 @@ export class WarehouseFormService {
           validators: [Validators.required],
         }
       ),
-      tenantId: new FormControl(warehouseRawValue.tenantId, {
-        validators: [Validators.required],
-      }),
+      tenantId: new FormControl(warehouseRawValue.tenantId ?? 1),
       name: new FormControl(warehouseRawValue.name, {
         validators: [Validators.required, Validators.maxLength(255)],
       }),
@@ -78,12 +76,8 @@ export class WarehouseFormService {
       minThreshold: new FormControl(warehouseRawValue.minThreshold, {
         validators: [Validators.min(0)],
       }),
-      isActive: new FormControl(warehouseRawValue.isActive, {
-        validators: [Validators.required],
-      }),
-      createdAt: new FormControl(warehouseRawValue.createdAt, {
-        validators: [Validators.required],
-      }),
+      isActive: new FormControl(warehouseRawValue.isActive),
+      createdAt: new FormControl(warehouseRawValue.createdAt),
       updatedAt: new FormControl(warehouseRawValue.updatedAt),
     });
   }
@@ -107,7 +101,7 @@ export class WarehouseFormService {
 
     return {
       id: null,
-      isActive: false,
+      isActive: true,
       createdAt: currentTime,
       updatedAt: currentTime,
     };
