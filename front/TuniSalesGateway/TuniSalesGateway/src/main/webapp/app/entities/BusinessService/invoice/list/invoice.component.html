@@ -30,37 +30,68 @@
 
   <!-- ── Barre de filtres ──────────────────────────────────────────── -->
   <div class="inv-filter-bar">
-    <div class="inv-filter-bar__fields">
-      <div class="inv-filter-field">
-        <fa-icon icon="user" class="inv-filter-field__icon"></fa-icon>
-        <input type="text" class="inv-filter-input" placeholder="Rechercher un client…"
+    <div class="inv-filter-bar__inner">
+
+      <!-- Client -->
+      <div class="inv-filter-group">
+        <label class="inv-filter-label">
+          <fa-icon icon="user" class="inv-filter-label__icon"></fa-icon>
+          Client
+        </label>
+        <input type="text" class="inv-filter-control" placeholder="Rechercher…"
                [(ngModel)]="filterClient" [ngModelOptions]="{standalone:true}">
+        <span class="inv-filter-active-dot" *ngIf="filterClient"></span>
       </div>
-      <div class="inv-filter-field">
-        <fa-icon icon="tag" class="inv-filter-field__icon"></fa-icon>
-        <select class="inv-filter-select" [(ngModel)]="filterStatus" [ngModelOptions]="{standalone:true}">
-          <option value="">Tous les statuts</option>
+
+      <div class="inv-filter-sep"></div>
+
+      <!-- Statut -->
+      <div class="inv-filter-group">
+        <label class="inv-filter-label">
+          <fa-icon icon="tag" class="inv-filter-label__icon"></fa-icon>
+          Statut
+        </label>
+        <select class="inv-filter-control inv-filter-control--select"
+                [(ngModel)]="filterStatus" [ngModelOptions]="{standalone:true}">
+          <option value="">Tous</option>
           <option *ngFor="let s of INV_STATUS_LABELS" [value]="s.value">{{ s.label }}</option>
         </select>
+        <span class="inv-filter-active-dot" *ngIf="filterStatus"></span>
       </div>
-      <div class="inv-filter-field">
-        <fa-icon icon="calendar-alt" class="inv-filter-field__icon"></fa-icon>
-        <input type="date" class="inv-filter-input inv-filter-input--date"
-               [(ngModel)]="filterDateFrom" [ngModelOptions]="{standalone:true}">
+
+      <div class="inv-filter-sep"></div>
+
+      <!-- Période -->
+      <div class="inv-filter-group inv-filter-group--date">
+        <label class="inv-filter-label">
+          <fa-icon icon="calendar-alt" class="inv-filter-label__icon"></fa-icon>
+          Période
+        </label>
+        <div class="inv-filter-date-range">
+          <input type="date" class="inv-filter-control inv-filter-control--date"
+                 [(ngModel)]="filterDateFrom" [ngModelOptions]="{standalone:true}">
+          <span class="inv-filter-date-sep">→</span>
+          <input type="date" class="inv-filter-control inv-filter-control--date"
+                 [(ngModel)]="filterDateTo" [ngModelOptions]="{standalone:true}">
+        </div>
+        <span class="inv-filter-active-dot" *ngIf="filterDateFrom || filterDateTo"></span>
       </div>
-      <div class="inv-filter-field">
-        <fa-icon icon="calendar-alt" class="inv-filter-field__icon"></fa-icon>
-        <input type="date" class="inv-filter-input inv-filter-input--date"
-               [(ngModel)]="filterDateTo" [ngModelOptions]="{standalone:true}">
-      </div>
+
     </div>
+
+    <!-- Actions -->
     <div class="inv-filter-bar__actions">
-      <span class="inv-filter-count" *ngIf="invoices?.length">
-        {{ filteredInvoices.length }} / {{ invoices!.length }} résultat(s)
-      </span>
-      <button class="btn btn-outline-secondary btn-sm" (click)="resetFilters()"
+      <div class="inv-filter-result" *ngIf="invoices?.length">
+        <span class="inv-filter-result__count">{{ filteredInvoices.length }}</span>
+        <span class="inv-filter-result__sep">/</span>
+        <span class="inv-filter-result__total">{{ invoices!.length }}</span>
+        <span class="inv-filter-result__label">résultat(s)</span>
+      </div>
+      <button class="inv-filter-reset" (click)="resetFilters()"
+              [class.inv-filter-reset--active]="filterClient || filterStatus || filterDateFrom || filterDateTo"
               [disabled]="!filterClient && !filterStatus && !filterDateFrom && !filterDateTo">
-        <fa-icon icon="times" class="me-1"></fa-icon>Effacer
+        <fa-icon icon="times"></fa-icon>
+        Effacer
       </button>
     </div>
   </div>
