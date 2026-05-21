@@ -9,6 +9,9 @@ import { OrderService } from '../service/order.service';
 import { OrderLineService } from 'app/entities/BusinessService/order-line/service/order-line.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { AiSummaryService } from 'app/shared/service/ai-summary.service';
+import { DeliveryService } from 'app/entities/BusinessService/delivery/service/delivery.service';
+import { DeliveryStatus } from 'app/entities/enumerations/delivery-status.model';
+import { IDelivery } from 'app/entities/BusinessService/delivery/delivery.model';
 
 @Component({
   selector: 'jhi-order-detail',
@@ -63,6 +66,7 @@ export class OrderDetailComponent implements OnInit {
     protected accountService: AccountService,
     private router: Router,
     private aiSummaryService: AiSummaryService,
+    private deliveryService: DeliveryService,
   ) {}
 
   ngOnInit(): void {
@@ -130,11 +134,52 @@ export class OrderDetailComponent implements OnInit {
       next: res => {
         this.order = res.body;
         this.isActionLoading = false;
+        this.syncDelivery(next);
         if (res.body?.status === OrderStatus.INVOICED) {
           this.redirectToNewInvoice(res.body);
         }
       },
       error: () => { this.isActionLoading = false; }
+    });
+  }
+
+  private syncDelivery(newOrderStatus: string): void {
+    if (!this.order?.id) return;
+    const orderId = this.order.id;
+    const now = dayjs();
+
+    if (newOrderStatus === OrderStatus.IN_PREPARATION) {
+      const deliveryNumber = `LIV-${now.format('YYYYMMDD')}-${orderId}`;
+      this.deliveryService.create({
+        id: null,
+        deliveryNumber,
+        status: DeliveryStatus.PENDING,
+        createdAt: now,
+        order: { id: orderId, orderNumber: this.order.orderNumber ?? '' },
+      }).subscribe();
+      return;
+    }
+
+    const statusMap: Partial<Record<string, DeliveryStatus>> = {
+      [OrderStatus.SHIPPED]:   DeliveryStatus.SHIPPED,
+      [OrderStatus.DELIVERED]: DeliveryStatus.DELIVERED,
+      CANCELLED:               DeliveryStatus.FAILED,
+    };
+    const newDeliveryStatus = statusMap[newOrderStatus];
+    if (!newDeliveryStatus) return;
+
+    this.deliveryService.query({ 'orderId.equals': orderId, size: 1 }).subscribe({
+      next: res => {
+        const existing: IDelivery | undefined = res.body?.[0] ?? undefined;
+        if (!existing) return;
+        const updated: IDelivery = {
+          ...existing,
+          status: newDeliveryStatus,
+          ...(newOrderStatus === OrderStatus.SHIPPED   ? { shippedAt:   now } : {}),
+          ...(newOrderStatus === OrderStatus.DELIVERED ? { deliveredAt: now } : {}),
+        };
+        this.deliveryService.update(updated).subscribe();
+      },
     });
   }
 
@@ -165,7 +210,11 @@ export class OrderDetailComponent implements OnInit {
     if (!this.order?.id) return;
     this.isActionLoading = true;
     this.orderService.validate(this.order.id, 'CANCELLED').subscribe({
-      next: res => { this.order = res.body; this.isActionLoading = false; },
+      next: res => {
+        this.order = res.body;
+        this.isActionLoading = false;
+        this.syncDelivery('CANCELLED');
+      },
       error: () => { this.isActionLoading = false; }
     });
   }
