@@ -152,6 +152,7 @@ export class OrderDetailComponent implements OnInit {
       const deliveryNumber = `LIV-${now.format('YYYYMMDD')}-${orderId}`;
       this.deliveryService.create({
         id: null,
+        tenantId: this.order.tenantId ?? 1,
         deliveryNumber,
         status: DeliveryStatus.PENDING,
         createdAt: now,
