@@ -1,0 +1,209 @@
+$sa-orange: #d97706;
+$sa-amb-l:  #fef3c7;
+$sa-blue:   #2563eb;
+$sa-blue-l: #dbeafe;
+$sa-green:  #16a34a;
+$sa-green-l:#dcfce7;
+$sa-red:    #dc2626;
+$sa-red-l:  #fee2e2;
+$sa-gray:   #64748b;
+$sa-border: #e2e8f0;
+$sa-bg:     #f8fafc;
+$sa-white:  #ffffff;
+$sa-text:   #0f172a;
+$sa-muted:  #64748b;
+$sa-shadow: 0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$sa-radius: 12px;
+
+.sa-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+// Header
+.sa-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.sa-header__left { display: flex; align-items: center; gap: .9rem; }
+.sa-header__icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, $sa-blue, darken($sa-blue, 10%));
+  color: #fff; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba($sa-blue, .28);
+}
+.sa-header__title { margin: 0; font-size: 1.45rem; font-weight: 800; color: $sa-text; }
+.sa-header__sub   { margin: .25rem 0 0; font-size: .88rem; color: $sa-muted; }
+
+.sa-back-btn {
+  width: 36px; height: 36px; border-radius: 8px;
+  border: 1.5px solid $sa-border; background: $sa-white;
+  color: $sa-muted; display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: .9rem; transition: all .15s; flex-shrink: 0;
+}
+.sa-back-btn:hover { border-color: $sa-blue; color: $sa-blue; background: $sa-blue-l; }
+
+// Buttons
+.sa-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .6rem 1.25rem; border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .9rem; font-weight: 600; cursor: pointer; transition: all .15s;
+  text-decoration: none;
+}
+.sa-btn--primary { background: $sa-blue; color: #fff; border-color: $sa-blue; }
+.sa-btn--primary:hover { background: darken($sa-blue, 6%); color: #fff; box-shadow: 0 3px 10px rgba($sa-blue,.3); }
+.sa-btn--primary:disabled { opacity: .6; cursor: not-allowed; }
+.sa-btn--ghost { background: $sa-white; color: $sa-gray; border-color: $sa-border; }
+.sa-btn--ghost:hover { border-color: $sa-gray; color: $sa-text; background: #f1f5f9; }
+
+// Grid
+.sa-grid { display: flex; flex-wrap: wrap; gap: 1.25rem; }
+
+// Card
+.sa-card {
+  background: $sa-white; border: 1px solid $sa-border;
+  border-radius: $sa-radius; box-shadow: $sa-shadow;
+  overflow: hidden; flex: 1; min-width: 300px;
+}
+.sa-card__head {
+  display: flex; align-items: center; gap: .85rem;
+  padding: 1rem 1.25rem; border-bottom: 1px solid $sa-border; background: $sa-bg;
+}
+.sa-card__head-icon {
+  width: 38px; height: 38px; border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem; flex-shrink: 0;
+}
+.sa-card__head-icon--blue   { background: $sa-blue-l; color: $sa-blue; }
+.sa-card__head-icon--orange { background: $sa-amb-l;  color: $sa-orange; }
+.sa-card__title { font-size: .95rem; font-weight: 700; color: $sa-text; }
+.sa-card__sub   { font-size: .78rem; color: $sa-muted; margin-top: .1rem; }
+.sa-card__body  { display: flex; flex-direction: column; padding: 1.25rem; gap: 1.1rem; }
+
+// Fields
+.sa-field { display: flex; flex-direction: column; gap: .35rem; }
+.sa-label { font-size: .82rem; font-weight: 600; color: $sa-text; letter-spacing: .01em; }
+.sa-required { color: $sa-red; margin-left: .15rem; }
+.sa-error { font-size: .78rem; color: $sa-red; margin-top: .1rem; }
+
+// Input
+.sa-input {
+  width: 100%; padding: .55rem .85rem;
+  border: 1.5px solid $sa-border; border-radius: 8px;
+  font-size: .9rem; color: $sa-text; background: $sa-white;
+  transition: border-color .15s, box-shadow .15s; outline: none; box-sizing: border-box;
+}
+.sa-input:focus { border-color: $sa-blue; box-shadow: 0 0 0 3px rgba($sa-blue,.12); }
+
+// Select
+.sa-select {
+  width: 100%; padding: .55rem .85rem;
+  border: 1.5px solid $sa-border; border-radius: 8px;
+  font-size: .9rem; color: $sa-text; background: $sa-white;
+  outline: none; cursor: pointer; transition: border-color .15s; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .85rem center; padding-right: 2.5rem;
+}
+.sa-select:focus { border-color: $sa-blue; box-shadow: 0 0 0 3px rgba($sa-blue,.12); }
+
+// Input group with addon
+.sa-input-group {
+  display: flex; align-items: stretch;
+  border: 1.5px solid $sa-border; border-radius: 8px; overflow: hidden;
+  transition: border-color .15s, box-shadow .15s;
+}
+.sa-input-group:focus-within { border-color: $sa-blue; box-shadow: 0 0 0 3px rgba($sa-blue,.12); }
+.sa-input-addon {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 .75rem; background: $sa-bg; color: $sa-muted;
+  border-right: 1.5px solid $sa-border; font-size: .9rem; flex-shrink: 0;
+}
+.sa-input--addon { border: none; border-radius: 0; box-shadow: none !important; flex: 1; }
+.sa-select--addon {
+  border: none; border-radius: 0; box-shadow: none !important; flex: 1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%2364748b' d='M1.41 0L6 4.58 10.59 0 12 1.41l-6 6-6-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right .85rem center; padding-right: 2.5rem;
+}
+
+// Textarea
+.sa-textarea {
+  width: 100%; padding: .55rem .85rem;
+  border: 1.5px solid $sa-border; border-radius: 8px;
+  font-size: .9rem; color: $sa-text; background: $sa-white;
+  transition: border-color .15s, box-shadow .15s; outline: none; resize: vertical;
+  box-sizing: border-box; font-family: inherit;
+}
+.sa-textarea:focus { border-color: $sa-blue; box-shadow: 0 0 0 3px rgba($sa-blue,.12); }
+
+// Status radio group
+.sa-status-group { display: flex; gap: .6rem; flex-wrap: wrap; }
+.sa-status-option {
+  display: flex; align-items: center; gap: .45rem;
+  padding: .45rem .85rem; border-radius: 999px;
+  border: 1.5px solid $sa-border; background: $sa-white;
+  font-size: .82rem; font-weight: 600; cursor: pointer;
+  transition: all .15s; user-select: none; color: $sa-muted;
+
+  .sa-status-dot {
+    width: 8px; height: 8px; border-radius: 50%; background: currentColor; flex-shrink: 0;
+  }
+
+  &--active {
+    &.sa-status-option--progress   { border-color: $sa-blue;   background: $sa-blue-l;  color: $sa-blue; }
+    &.sa-status-option--closed     { border-color: $sa-green;  background: $sa-green-l; color: $sa-green; }
+    &.sa-status-option--cancelled  { border-color: $sa-red;    background: $sa-red-l;   color: $sa-red; }
+  }
+
+  &:not(.sa-status-option--active) {
+    &:hover { border-color: $sa-gray; color: $sa-text; background: $sa-bg; }
+  }
+}
+
+// Count cards strip
+.sa-count-strip {
+  display: flex; gap: .85rem; flex-wrap: wrap;
+}
+.sa-count-card {
+  flex: 1; min-width: 90px;
+  display: flex; flex-direction: column; align-items: center; gap: .4rem;
+  padding: 1rem .75rem; border-radius: 10px; border: 1.5px solid $sa-border;
+  background: $sa-bg; text-align: center;
+
+  &--blue  { border-color: #bfdbfe; background: #eff6ff; }
+  &--green { border-color: #bbf7d0; background: #f0fdf4; }
+  &--red   { border-color: #fecaca; background: #fff5f5; }
+
+  .sa-count-card__icon {
+    font-size: 1.1rem;
+  }
+
+  &--blue  .sa-count-card__icon { color: $sa-blue; }
+  &--green .sa-count-card__icon { color: $sa-green; }
+  &--red   .sa-count-card__icon { color: $sa-red; }
+
+  .sa-count-card__label {
+    font-size: .72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .05em; color: $sa-muted;
+  }
+
+  .sa-count-card__input {
+    width: 100%; text-align: center; font-size: 1.1rem; font-weight: 700;
+    border: 1.5px solid $sa-border; border-radius: 7px; padding: .4rem .5rem;
+    background: $sa-white; color: $sa-text; outline: none;
+    transition: border-color .15s, box-shadow .15s;
+    &:focus { border-color: $sa-blue; box-shadow: 0 0 0 3px rgba($sa-blue,.1); }
+    -moz-appearance: textfield;
+    &::-webkit-inner-spin-button, &::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  }
+
+  .sa-error { width: 100%; text-align: center; font-size: .7rem; }
+}
+
+// Actions bar
+.sa-actions {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: .75rem; padding-top: .5rem;
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -14,6 +14,8 @@ import { AuditStatus } from 'app/entities/enumerations/audit-status.model';
 @Component({
   selector: 'jhi-stock-audit-update',
   templateUrl: './stock-audit-update.component.html',
+  styleUrls: ['./stock-audit-update.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class StockAuditUpdateComponent implements OnInit {
   isSaving = false;
@@ -32,6 +34,15 @@ export class StockAuditUpdateComponent implements OnInit {
   ) {}
 
   compareWarehouse = (o1: IWarehouse | null, o2: IWarehouse | null): boolean => this.warehouseService.compareWarehouse(o1, o2);
+
+  getStatusLabel(status: string): string {
+    const map: Record<string, string> = {
+      IN_PROGRESS: 'En cours',
+      CLOSED:      'Clôturé',
+      CANCELLED:   'Annulé',
+    };
+    return map[status] || status;
+  }
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ stockAudit }) => {
