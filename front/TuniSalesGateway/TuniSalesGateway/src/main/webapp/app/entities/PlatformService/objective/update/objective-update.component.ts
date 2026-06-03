@@ -78,7 +78,7 @@ export class ObjectiveUpdateComponent implements OnInit {
   }
 
   selectMetricType(type: string): void {
-    this.editForm.get('metricType')?.setValue(type);
+    this.editForm.get('metricType')?.setValue(type as MetricType);
   }
 
   ngOnInit(): void {
