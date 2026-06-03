@@ -1,116 +1,200 @@
-<div class="container-fluid py-4">
+<div class="ol-page">
 
-  <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-    <div>
-      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="ObjectiveHeading">
-        <fa-icon icon="bullseye" class="me-2 text-primary"></fa-icon>
-        Objectifs
-      </h2>
-      <small class="text-muted">Liste des objectifs — {{ totalItems }} objectif(s) au total</small>
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <div class="ol-header">
+    <div class="ol-header__left">
+      <div class="ol-header__icon">
+        <fa-icon icon="bullseye"></fa-icon>
+      </div>
+      <div>
+        <h1 class="ol-header__title" data-cy="ObjectiveHeading">Objectifs</h1>
+        <p class="ol-header__sub">{{ totalItems }} objectif(s) au total</p>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+    <div class="ol-header__actions">
+      <button class="ol-btn ol-btn--ghost" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
-      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/objective/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
+      <a class="ol-btn ol-btn--primary" id="jh-create-entity" data-cy="entityCreateButton"
+         [routerLink]="['/objective/new']">
+        <fa-icon icon="plus"></fa-icon>
         Nouvel Objectif
       </a>
     </div>
   </div>
 
-  <jhi-alert-error></jhi-alert-error>
-  <jhi-alert></jhi-alert>
-
-  <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+  <!-- ── KPI Strip ───────────────────────────────────────────── -->
+  <div class="ol-kpi-strip">
+    <div class="ol-kpi ol-kpi--total">
+      <div class="ol-kpi__icon"><fa-icon icon="bullseye"></fa-icon></div>
+      <div>
+        <div class="ol-kpi__val">{{ objectives?.length ?? 0 }}</div>
+        <div class="ol-kpi__label">Total</div>
+      </div>
+    </div>
+    <div class="ol-kpi ol-kpi--green">
+      <div class="ol-kpi__icon"><fa-icon icon="check-circle"></fa-icon></div>
+      <div>
+        <div class="ol-kpi__val">{{ achievedCount }}</div>
+        <div class="ol-kpi__label">Atteints</div>
+      </div>
+    </div>
+    <div class="ol-kpi ol-kpi--blue">
+      <div class="ol-kpi__icon"><fa-icon icon="thumbs-up"></fa-icon></div>
+      <div>
+        <div class="ol-kpi__val">{{ onTrackCount }}</div>
+        <div class="ol-kpi__label">En bonne voie</div>
+      </div>
+    </div>
+    <div class="ol-kpi ol-kpi--amber">
+      <div class="ol-kpi__icon"><fa-icon icon="exclamation-triangle"></fa-icon></div>
+      <div>
+        <div class="ol-kpi__val">{{ atRiskCount }}</div>
+        <div class="ol-kpi__label">À risque</div>
+      </div>
+    </div>
+    <div class="ol-kpi ol-kpi--red">
+      <div class="ol-kpi__icon"><fa-icon icon="clock"></fa-icon></div>
+      <div>
+        <div class="ol-kpi__val">{{ notStartedCount }}</div>
+        <div class="ol-kpi__label">Non démarrés</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && objectives?.length === 0">
-    <fa-icon icon="bullseye" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucun objectif trouvé. Créez votre premier objectif.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/objective/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <!-- ── Loading ─────────────────────────────────────────────── -->
+  <div class="ol-loading" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true"></fa-icon>
+    Chargement des objectifs…
+  </div>
+
+  <!-- ── Empty ───────────────────────────────────────────────── -->
+  <div class="ol-empty" *ngIf="!isLoading && objectives?.length === 0">
+    <div class="ol-empty__icon"><fa-icon icon="bullseye"></fa-icon></div>
+    <p class="ol-empty__text">Aucun objectif trouvé. Créez votre premier objectif.</p>
+    <a class="ol-btn ol-btn--primary" [routerLink]="['/objective/new']">
+      <fa-icon icon="plus"></fa-icon> Ajouter
     </a>
   </div>
 
-  <!-- Table -->
-  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && objectives && objectives.length > 0">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
-        <thead class="table-light">
-          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+  <!-- ── Table ───────────────────────────────────────────────── -->
+  <div class="ol-card" id="entities" *ngIf="!isLoading && objectives && objectives.length > 0">
+    <div class="ol-table-wrap">
+      <table class="ol-table" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending"
+              (sortChange)="navigateToWithComponentValues()">
             <th scope="col" jhiSortBy="metricType">
-              <div class="d-flex align-items-center gap-1">Titre <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              Indicateur <fa-icon icon="sort" class="ol-sort-icon"></fa-icon>
             </th>
             <th scope="col" jhiSortBy="assignedToLogin">
-              <div class="d-flex align-items-center gap-1">Commercial <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              Commercial <fa-icon icon="sort" class="ol-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="targetValue">
-              <div class="d-flex align-items-center gap-1">Valeur cible <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th scope="col" jhiSortBy="period">
+              Période <fa-icon icon="sort" class="ol-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="achievedValue">
-              <div class="d-flex align-items-center gap-1">Valeur actuelle <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th scope="col" jhiSortBy="achievedValue" class="ol-th--progress">
+              Progression <fa-icon icon="sort" class="ol-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="period" style="width:130px">
-              <div class="d-flex align-items-center gap-1">Statut <fa-icon icon="sort" class="text-muted"></fa-icon></div>
-            </th>
-            <th scope="col" style="width:140px"></th>
+            <th scope="col" class="ol-th--status">Statut</th>
+            <th scope="col" class="ol-th--actions"></th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let objective of objectives; trackBy: trackId" data-cy="entityTable">
-            <td class="fw-semibold">{{ objective.metricType || '—' }}</td>
-            <td>{{ objective.assignedToLogin || '—' }}</td>
-            <td>{{ objective.targetValue }}</td>
-            <td>{{ objective.achievedValue }}</td>
+
+            <!-- Metric Type -->
             <td>
-              <span class="badge rounded-pill"
-                [ngClass]="{
-                  'bg-success': (objective.achievedValue ?? 0) >= (objective.targetValue ?? 0) && objective.targetValue !== null,
-                  'bg-info text-dark': (objective.achievedValue ?? 0) > 0 && (objective.achievedValue ?? 0) < (objective.targetValue ?? 0),
-                  'bg-warning text-dark': !objective.achievedValue || objective.achievedValue === 0,
-                  'bg-secondary': !objective.targetValue
-                }">
-                {{ objective.period || '—' }}
+              <span class="ol-metric" [ngClass]="getMetricClass(objective.metricType)">
+                <fa-icon [icon]="getMetricIcon(objective.metricType)"></fa-icon>
+                {{ getMetricLabel(objective.metricType) }}
               </span>
             </td>
+
+            <!-- Commercial / assignedToLogin -->
             <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/objective', objective.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+              <div class="ol-user" *ngIf="objective.assignedToLogin; else noUser">
+                <div class="ol-user__avatar">{{ objective.assignedToLogin.charAt(0).toUpperCase() }}</div>
+                <span class="ol-user__name">{{ objective.assignedToLogin }}</span>
+              </div>
+              <ng-template #noUser>
+                <span class="ol-nil">—</span>
+              </ng-template>
+            </td>
+
+            <!-- Period -->
+            <td>
+              <span class="ol-period" *ngIf="objective.period; else noPeriod">
+                <fa-icon icon="calendar-alt"></fa-icon>
+                {{ objective.period }}
+              </span>
+              <ng-template #noPeriod><span class="ol-nil">—</span></ng-template>
+            </td>
+
+            <!-- Progress bar -->
+            <td>
+              <div class="ol-prog-wrap">
+                <div class="ol-prog-bar">
+                  <div class="ol-prog-fill" [ngClass]="getProgressClass(objective)"
+                       [style.width.%]="getProgress(objective) > 100 ? 100 : getProgress(objective)">
+                  </div>
+                </div>
+                <div class="ol-prog-nums">
+                  <span class="ol-prog-val" [ngClass]="getProgressClass(objective)">{{ getProgress(objective) }}%</span>
+                  <span class="ol-prog-detail">{{ objective.achievedValue ?? 0 }} / {{ objective.targetValue ?? 0 }}</span>
+                </div>
+              </div>
+            </td>
+
+            <!-- Status Badge -->
+            <td>
+              <span class="ol-badge" [ngClass]="getStatusClass(objective)">
+                <fa-icon [icon]="getMetricIcon(objective.metricType)"></fa-icon>
+                {{ getStatusLabel(objective) }}
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td>
+              <div class="ol-actions">
+                <a [routerLink]="['/objective', objective.id, 'view']"
+                   class="ol-act ol-act--view" data-cy="entityDetailsButton" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/objective', objective.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                <a [routerLink]="['/objective', objective.id, 'edit']"
+                   class="ol-act ol-act--edit" data-cy="entityEditButton" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(objective)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
+                <button (click)="delete(objective)"
+                        class="ol-act ol-act--del" data-cy="entityDeleteButton" title="Supprimer">
                   <fa-icon icon="times"></fa-icon>
                 </button>
               </div>
             </td>
+
           </tr>
         </tbody>
       </table>
     </div>
-  </div>
 
-  <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="objectives && objectives.length > 0">
-    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
-    <ngb-pagination
-      [collectionSize]="totalItems"
-      [page]="page"
-      [pageSize]="itemsPerPage"
-      [maxSize]="5"
-      [rotate]="true"
-      [boundaryLinks]="true"
-      (pageChange)="navigateToPage($event)"
-    ></ngb-pagination>
+    <!-- Pagination -->
+    <div class="ol-pagination" *ngIf="objectives && objectives.length > 0">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }">
+      </jhi-item-count>
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)">
+      </ngb-pagination>
+    </div>
   </div>
 
 </div>

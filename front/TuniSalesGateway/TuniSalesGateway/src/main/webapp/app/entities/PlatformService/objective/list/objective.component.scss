@@ -1,0 +1,213 @@
+$ol-orange:  #d97706;
+$ol-amb-l:   #fef3c7;
+$ol-blue:    #2563eb;
+$ol-blue-l:  #dbeafe;
+$ol-green:   #16a34a;
+$ol-green-l: #dcfce7;
+$ol-red:     #dc2626;
+$ol-red-l:   #fee2e2;
+$ol-purple:  #7c3aed;
+$ol-purple-l:#ede9fe;
+$ol-gray:    #64748b;
+$ol-border:  #e2e8f0;
+$ol-bg:      #f8fafc;
+$ol-white:   #ffffff;
+$ol-text:    #0f172a;
+$ol-muted:   #64748b;
+$ol-shadow:  0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$ol-radius:  12px;
+
+.ol-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: $ol-text;
+}
+
+// ── Header ─────────────────────────────────────────────────────────
+.ol-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.ol-header__left { display: flex; align-items: center; gap: .9rem; }
+.ol-header__icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, $ol-orange, darken($ol-orange, 10%));
+  color: #fff; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba($ol-orange, .28);
+}
+.ol-header__title { margin: 0; font-size: 1.45rem; font-weight: 800; color: $ol-text; }
+.ol-header__sub   { margin: .25rem 0 0; font-size: .88rem; color: $ol-muted; }
+.ol-header__actions { display: flex; gap: .65rem; flex-wrap: wrap; }
+
+// ── Buttons ────────────────────────────────────────────────────────
+.ol-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .55rem 1.1rem; border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .875rem; font-weight: 600; cursor: pointer; transition: all .15s;
+  text-decoration: none;
+}
+.ol-btn--primary { background: $ol-orange; color: #fff !important; border-color: $ol-orange; }
+.ol-btn--primary:hover { background: darken($ol-orange, 6%); box-shadow: 0 3px 10px rgba($ol-orange,.3); }
+.ol-btn--ghost { background: $ol-white; color: $ol-gray !important; border-color: $ol-border; }
+.ol-btn--ghost:hover { border-color: $ol-gray; color: $ol-text !important; background: #f1f5f9; }
+.ol-btn--ghost:disabled { opacity: .5; cursor: not-allowed; }
+
+// ── KPI Strip ──────────────────────────────────────────────────────
+.ol-kpi-strip { display: flex; gap: 1rem; flex-wrap: wrap; }
+.ol-kpi {
+  flex: 1; min-width: 130px;
+  display: flex; align-items: center; gap: .85rem;
+  padding: 1rem 1.25rem; border-radius: $ol-radius;
+  background: $ol-white; border: 1px solid $ol-border;
+  box-shadow: $ol-shadow;
+}
+.ol-kpi__icon {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+}
+.ol-kpi__val   { font-size: 1.35rem; font-weight: 800; color: $ol-text !important; line-height: 1; }
+.ol-kpi__label { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: $ol-muted !important; margin-top: .2rem; }
+
+.ol-kpi--total .ol-kpi__icon { background: #f1f5f9;     color: $ol-gray   !important; }
+.ol-kpi--green .ol-kpi__icon { background: $ol-green-l; color: $ol-green  !important; }
+.ol-kpi--blue  .ol-kpi__icon { background: $ol-blue-l;  color: $ol-blue   !important; }
+.ol-kpi--amber .ol-kpi__icon { background: $ol-amb-l;   color: $ol-orange !important; }
+.ol-kpi--red   .ol-kpi__icon { background: $ol-red-l;   color: $ol-red    !important; }
+
+// ── States ─────────────────────────────────────────────────────────
+.ol-loading {
+  display: flex; align-items: center; gap: .75rem;
+  justify-content: center; padding: 3rem;
+  font-size: .95rem; color: $ol-muted !important;
+}
+.ol-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1rem; padding: 4rem 2rem; text-align: center;
+  background: $ol-white; border: 1px solid $ol-border;
+  border-radius: $ol-radius; box-shadow: $ol-shadow;
+  .ol-empty__icon { font-size: 3rem; color: #cbd5e1 !important; }
+  .ol-empty__text { color: $ol-muted !important; margin: 0; font-size: .95rem; }
+}
+
+// ── Card / Table ───────────────────────────────────────────────────
+.ol-card {
+  background: $ol-white; border: 1px solid $ol-border;
+  border-radius: $ol-radius; box-shadow: $ol-shadow; overflow: hidden;
+}
+.ol-table-wrap { overflow-x: auto; }
+.ol-table {
+  width: 100%; border-collapse: collapse; color: $ol-text !important;
+  thead tr {
+    background: $ol-bg; border-bottom: 2px solid $ol-border;
+  }
+  th {
+    padding: .75rem 1rem; font-size: .78rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; color: $ol-muted !important;
+    white-space: nowrap; text-align: left;
+  }
+  .ol-th--progress { min-width: 200px; }
+  .ol-th--status   { width: 140px; }
+  .ol-th--actions  { width: 110px; }
+  tbody tr {
+    border-bottom: 1px solid $ol-border; transition: background .1s;
+    &:last-child { border-bottom: none; }
+    &:hover { background: #f9fafb; }
+  }
+  td { padding: .85rem 1rem; vertical-align: middle; color: $ol-text !important; }
+}
+.ol-sort-icon { margin-left: .3rem; opacity: .4; font-size: .7rem; }
+
+// ── Metric type pill ───────────────────────────────────────────────
+.ol-metric {
+  display: inline-flex; align-items: center; gap: .4rem;
+  padding: .3rem .75rem; border-radius: 999px;
+  font-size: .78rem; font-weight: 700; letter-spacing: .02em; white-space: nowrap;
+  fa-icon { font-size: .7rem; }
+}
+.ol-metric--blue   { background: $ol-blue-l;   color: $ol-blue   !important; }
+.ol-metric--green  { background: $ol-green-l;  color: $ol-green  !important; }
+.ol-metric--orange { background: $ol-amb-l;    color: $ol-orange !important; }
+.ol-metric--purple { background: $ol-purple-l; color: $ol-purple !important; }
+.ol-metric--gray   { background: #f1f5f9;      color: $ol-gray   !important; }
+
+// ── User / Commercial ──────────────────────────────────────────────
+.ol-user {
+  display: inline-flex; align-items: center; gap: .5rem;
+  &__avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: $ol-blue-l; color: $ol-blue !important;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; font-weight: 700; flex-shrink: 0;
+  }
+  &__name { font-size: .85rem; color: $ol-text !important; font-weight: 600; }
+}
+
+// ── Period ─────────────────────────────────────────────────────────
+.ol-period {
+  display: inline-flex; align-items: center; gap: .35rem;
+  font-size: .82rem; color: $ol-gray !important;
+  fa-icon { font-size: .75rem; }
+}
+
+// ── Progress ───────────────────────────────────────────────────────
+.ol-prog-wrap { display: flex; flex-direction: column; gap: .35rem; min-width: 160px; }
+.ol-prog-bar {
+  height: 7px; border-radius: 999px;
+  background: #e2e8f0; overflow: hidden;
+}
+.ol-prog-fill {
+  height: 100%; border-radius: 999px; transition: width .3s;
+  &.ol-prog--green  { background: $ol-green; }
+  &.ol-prog--blue   { background: $ol-blue; }
+  &.ol-prog--amber  { background: $ol-orange; }
+  &.ol-prog--red    { background: #cbd5e1; }
+}
+.ol-prog-nums {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ol-prog-val {
+  font-size: .78rem; font-weight: 700;
+  &.ol-prog--green  { color: $ol-green  !important; }
+  &.ol-prog--blue   { color: $ol-blue   !important; }
+  &.ol-prog--amber  { color: $ol-orange !important; }
+  &.ol-prog--red    { color: #94a3b8    !important; }
+}
+.ol-prog-detail { font-size: .72rem; color: $ol-muted !important; }
+
+// ── Status Badge ───────────────────────────────────────────────────
+.ol-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .75rem; border-radius: 999px;
+  font-size: .75rem; font-weight: 700; letter-spacing: .02em; white-space: nowrap;
+  fa-icon { font-size: .7rem; }
+}
+.ol-badge--green { background: $ol-green-l; color: $ol-green  !important; }
+.ol-badge--blue  { background: $ol-blue-l;  color: $ol-blue   !important; }
+.ol-badge--amber { background: $ol-amb-l;   color: $ol-orange !important; }
+.ol-badge--red   { background: #f1f5f9;     color: $ol-gray   !important; }
+
+// ── Actions ────────────────────────────────────────────────────────
+.ol-actions { display: flex; gap: .35rem; justify-content: flex-end; }
+.ol-act {
+  width: 30px; height: 30px; border-radius: 7px; border: 1.5px solid $ol-border;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; cursor: pointer; transition: all .15s;
+  background: $ol-white; text-decoration: none; color: $ol-muted !important;
+}
+.ol-act--view:hover { border-color: $ol-blue;   color: $ol-blue   !important; background: $ol-blue-l; }
+.ol-act--edit:hover { border-color: $ol-orange;  color: $ol-orange !important; background: $ol-amb-l; }
+.ol-act--del:hover  { border-color: $ol-red;     color: $ol-red    !important; background: $ol-red-l; }
+
+// ── Nil ────────────────────────────────────────────────────────────
+.ol-nil { color: #cbd5e1 !important; font-style: italic; font-size: .82rem; }
+
+// ── Pagination ─────────────────────────────────────────────────────
+.ol-pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: .75rem; font-size: .85rem; color: $ol-muted !important;
+  padding: 1rem 1.25rem;
+  border-top: 1px solid $ol-border;
+}

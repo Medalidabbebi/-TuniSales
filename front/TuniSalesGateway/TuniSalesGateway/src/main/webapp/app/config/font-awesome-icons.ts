@@ -106,6 +106,7 @@ import {
   faPlayCircle,
   faHashtag,
   faUserCog,
+  faThumbsUp,
   // jhipster-needle-add-icon-import
 } from '@fortawesome/free-solid-svg-icons';
 
@@ -217,5 +218,6 @@ export const fontAwesomeIcons = [
   faPlayCircle,
   faHashtag,
   faUserCog,
+  faThumbsUp,
   // jhipster-needle-add-icon-import
 ];

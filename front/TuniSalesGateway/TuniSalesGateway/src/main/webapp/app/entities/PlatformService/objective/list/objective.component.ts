@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -14,6 +14,8 @@ import { ObjectiveDeleteDialogComponent } from '../delete/objective-delete-dialo
 @Component({
   selector: 'jhi-objective',
   templateUrl: './objective.component.html',
+  styleUrls: ['./objective.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ObjectiveComponent implements OnInit {
   objectives?: IObjective[];
@@ -35,6 +37,79 @@ export class ObjectiveComponent implements OnInit {
 
   trackId = (_index: number, item: IObjective): number => this.objectiveService.getObjectiveIdentifier(item);
 
+  get achievedCount(): number {
+    return (this.objectives ?? []).filter(o => this.getProgress(o) >= 100).length;
+  }
+  get onTrackCount(): number {
+    return (this.objectives ?? []).filter(o => { const p = this.getProgress(o); return p >= 70 && p < 100; }).length;
+  }
+  get atRiskCount(): number {
+    return (this.objectives ?? []).filter(o => { const p = this.getProgress(o); return p > 0 && p < 70; }).length;
+  }
+  get notStartedCount(): number {
+    return (this.objectives ?? []).filter(o => this.getProgress(o) === 0).length;
+  }
+
+  getProgress(obj: IObjective): number {
+    if (!obj.targetValue || obj.targetValue === 0) return 0;
+    const pct = ((obj.achievedValue ?? 0) / obj.targetValue) * 100;
+    return Math.min(Math.round(pct), 999);
+  }
+
+  getProgressClass(obj: IObjective): string {
+    const p = this.getProgress(obj);
+    if (p >= 100) return 'ol-prog--green';
+    if (p >= 70)  return 'ol-prog--blue';
+    if (p > 0)    return 'ol-prog--amber';
+    return 'ol-prog--red';
+  }
+
+  getStatusLabel(obj: IObjective): string {
+    const p = this.getProgress(obj);
+    if (p >= 100) return 'Atteint';
+    if (p >= 70)  return 'En bonne voie';
+    if (p > 0)    return 'À risque';
+    return 'Non démarré';
+  }
+
+  getStatusClass(obj: IObjective): string {
+    const p = this.getProgress(obj);
+    if (p >= 100) return 'ol-badge--green';
+    if (p >= 70)  return 'ol-badge--blue';
+    if (p > 0)    return 'ol-badge--amber';
+    return 'ol-badge--red';
+  }
+
+  getMetricLabel(type: string | null | undefined): string {
+    const map: Record<string, string> = {
+      CONVERSION_RATE: 'Taux conv.',
+      REVENUE:         'Chiffre d\'affaires',
+      UNIT_VOLUME:     'Volume',
+      VISIT_COUNT:     'Visites',
+    };
+    return type ? (map[type] || type) : '—';
+  }
+
+  getMetricClass(type: string | null | undefined): string {
+    const map: Record<string, string> = {
+      CONVERSION_RATE: 'ol-metric--blue',
+      REVENUE:         'ol-metric--green',
+      UNIT_VOLUME:     'ol-metric--orange',
+      VISIT_COUNT:     'ol-metric--purple',
+    };
+    return type ? (map[type] || 'ol-metric--gray') : 'ol-metric--gray';
+  }
+
+  getMetricIcon(type: string | null | undefined): any {
+    const map: Record<string, string> = {
+      CONVERSION_RATE: 'percent',
+      REVENUE:         'money-bill-wave',
+      UNIT_VOLUME:     'boxes',
+      VISIT_COUNT:     'road',
+    };
+    return type ? (map[type] || 'bullseye') : 'bullseye';
+  }
+
   ngOnInit(): void {
     this.load();
   }
@@ -42,24 +117,19 @@ export class ObjectiveComponent implements OnInit {
   delete(objective: IObjective): void {
     const modalRef = this.modalService.open(ObjectiveDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.objective = objective;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
         switchMap(() => this.loadFromBackendWithRouteInformations())
       )
       .subscribe({
-        next: (res: EntityArrayResponseType) => {
-          this.onResponseSuccess(res);
-        },
+        next: (res: EntityArrayResponseType) => { this.onResponseSuccess(res); },
       });
   }
 
   load(): void {
     this.loadFromBackendWithRouteInformations().subscribe({
-      next: (res: EntityArrayResponseType) => {
-        this.onResponseSuccess(res);
-      },
+      next: (res: EntityArrayResponseType) => { this.onResponseSuccess(res); },
     });
   }
 
@@ -117,7 +187,6 @@ export class ObjectiveComponent implements OnInit {
       size: this.itemsPerPage,
       sort: this.getSortQueryParam(predicate, ascending),
     };
-
     this.router.navigate(['./'], {
       relativeTo: this.activatedRoute,
       queryParams: queryParamsObj,
