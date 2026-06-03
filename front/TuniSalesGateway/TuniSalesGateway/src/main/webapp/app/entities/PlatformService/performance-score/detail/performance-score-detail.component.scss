@@ -1,0 +1,189 @@
+$psd-orange:  #d97706;
+$psd-amb-l:   #fef3c7;
+$psd-blue:    #2563eb;
+$psd-blue-l:  #dbeafe;
+$psd-green:   #16a34a;
+$psd-green-l: #dcfce7;
+$psd-red:     #dc2626;
+$psd-red-l:   #fee2e2;
+$psd-purple:  #7c3aed;
+$psd-purple-l:#ede9fe;
+$psd-gray:    #64748b;
+$psd-border:  #e2e8f0;
+$psd-bg:      #f8fafc;
+$psd-white:   #ffffff;
+$psd-text:    #0f172a;
+$psd-muted:   #64748b;
+$psd-shadow:  0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$psd-radius:  12px;
+
+.psd-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: $psd-text;
+}
+
+// ── Header ─────────────────────────────────────────────────────────
+.psd-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.psd-header__left { display: flex; align-items: center; gap: .9rem; }
+.psd-header__icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, $psd-blue, darken($psd-blue, 10%));
+  color: #fff; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba($psd-blue, .28);
+}
+.psd-header__title { margin: 0; font-size: 1.45rem; font-weight: 800; color: $psd-text; }
+.psd-header__sub   { margin: .25rem 0 0; font-size: .88rem; color: $psd-muted; }
+
+// ── Buttons ────────────────────────────────────────────────────────
+.psd-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .55rem 1.1rem; border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .875rem; font-weight: 600; cursor: pointer; transition: all .15s;
+  text-decoration: none;
+}
+.psd-btn--primary { background: $psd-blue; color: #fff !important; border-color: $psd-blue; }
+.psd-btn--primary:hover { background: darken($psd-blue, 6%); box-shadow: 0 3px 10px rgba($psd-blue,.3); }
+.psd-btn--ghost { background: $psd-white; color: $psd-gray !important; border-color: $psd-border; }
+.psd-btn--ghost:hover { border-color: $psd-gray; color: $psd-text !important; background: #f1f5f9; }
+
+// ── Hero ───────────────────────────────────────────────────────────
+.psd-hero {
+  border-radius: $psd-radius; padding: 2rem 2.5rem;
+  display: flex; align-items: center; gap: 2.5rem; flex-wrap: wrap;
+  color: #fff;
+  &--green { background: linear-gradient(135deg, $psd-green, darken($psd-green,12%)); }
+  &--blue  { background: linear-gradient(135deg, $psd-blue,  darken($psd-blue, 12%)); }
+  &--amber { background: linear-gradient(135deg, $psd-orange, darken($psd-orange,12%)); }
+  &--red   { background: linear-gradient(135deg, $psd-red,   darken($psd-red,  12%)); }
+  &--gray  { background: linear-gradient(135deg, $psd-gray,  darken($psd-gray, 12%)); }
+}
+.psd-hero__score-wrap { display: flex; flex-direction: column; align-items: center; gap: .4rem; }
+.psd-hero__circle {
+  width: 90px; height: 90px; border-radius: 50%;
+  background: rgba(255,255,255,.2); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem; font-weight: 900; color: #fff !important;
+  border: 3px solid rgba(255,255,255,.4);
+}
+.psd-hero__score-label {
+  font-size: .78rem; text-transform: uppercase; letter-spacing: .08em;
+  color: rgba(255,255,255,.8) !important; font-weight: 600;
+}
+.psd-hero__info { display: flex; flex-direction: column; gap: .9rem; }
+.psd-hero__user {
+  display: flex; align-items: center; gap: .5rem;
+  font-size: 1.2rem; font-weight: 700; color: #fff !important;
+  fa-icon { opacity: .7; }
+}
+.psd-hero__badges { display: flex; gap: .65rem; flex-wrap: wrap; }
+
+// ── Cards ──────────────────────────────────────────────────────────
+.psd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.25rem;
+}
+.psd-card {
+  background: $psd-white; border: 1px solid $psd-border;
+  border-radius: $psd-radius; box-shadow: $psd-shadow; overflow: hidden;
+}
+.psd-card__header {
+  display: flex; align-items: center; gap: .75rem;
+  padding: 1rem 1.25rem; border-bottom: 1px solid $psd-border;
+  background: $psd-bg;
+}
+.psd-card__icon {
+  width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: .9rem;
+  &--blue   { background: $psd-blue-l;   color: $psd-blue   !important; }
+  &--purple { background: $psd-purple-l; color: $psd-purple !important; }
+}
+.psd-card__title { font-size: .92rem; font-weight: 700; color: $psd-text; }
+.psd-card__body  { padding: 1.25rem; display: flex; flex-direction: column; gap: .85rem; }
+
+// ── Row ────────────────────────────────────────────────────────────
+.psd-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: .55rem 0;
+  border-bottom: 1px solid $psd-border;
+  &:last-child { border-bottom: none; }
+}
+.psd-label {
+  display: flex; align-items: center; gap: .4rem;
+  font-size: .8rem; font-weight: 700; color: $psd-muted !important;
+  text-transform: uppercase; letter-spacing: .04em; white-space: nowrap;
+  fa-icon { font-size: .75rem; }
+}
+.psd-val { font-size: .9rem; color: $psd-text !important; font-weight: 500; text-align: right; }
+
+// ── Score bubble (in card) ─────────────────────────────────────────
+.psd-score-bubble {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 50%;
+  font-size: .9rem; font-weight: 800; color: #fff !important;
+  &.psd-score--green { background: $psd-green; }
+  &.psd-score--blue  { background: $psd-blue; }
+  &.psd-score--amber { background: $psd-orange; }
+  &.psd-score--red   { background: $psd-red; }
+  &.psd-score--gray  { background: $psd-gray; }
+}
+
+// ── Badge ──────────────────────────────────────────────────────────
+.psd-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .75rem; border-radius: 999px;
+  font-size: .75rem; font-weight: 700; white-space: nowrap;
+  fa-icon { font-size: .7rem; }
+  &.psd-badge--green { background: $psd-green-l; color: $psd-green  !important; }
+  &.psd-badge--blue  { background: $psd-blue-l;  color: $psd-blue   !important; }
+  &.psd-badge--amber { background: $psd-amb-l;   color: $psd-orange !important; }
+  &.psd-badge--red   { background: $psd-red-l;   color: $psd-red    !important; }
+  &.psd-badge--gray  { background: #f1f5f9;      color: $psd-gray   !important; }
+}
+
+// ── Hero badge (white pill on dark bg) ────────────────────────────
+.psd-hero .psd-badge {
+  background: rgba(255,255,255,.25) !important;
+  color: #fff !important;
+  backdrop-filter: blur(4px);
+}
+
+// ── Delta ──────────────────────────────────────────────────────────
+.psd-delta {
+  display: inline-flex; align-items: center; gap: .3rem;
+  padding: .25rem .65rem; border-radius: 6px;
+  font-size: .82rem; font-weight: 700;
+  fa-icon { font-size: .72rem; }
+  &.psd-delta--up      { background: $psd-green-l; color: $psd-green  !important; }
+  &.psd-delta--down    { background: $psd-red-l;   color: $psd-red    !important; }
+  &.psd-delta--neutral { background: #f1f5f9;      color: $psd-gray   !important; }
+}
+.psd-hero .psd-delta {
+  background: rgba(255,255,255,.25) !important;
+  color: #fff !important;
+}
+
+// ── JSON pre ───────────────────────────────────────────────────────
+.psd-json {
+  background: $psd-bg; border: 1px solid $psd-border; border-radius: 8px;
+  padding: 1rem; font-size: .78rem; color: $psd-text !important;
+  white-space: pre-wrap; word-break: break-all; margin: 0;
+}
+
+// ── Misc ───────────────────────────────────────────────────────────
+.psd-nil { color: #cbd5e1 !important; font-style: italic; font-size: .82rem; }
+
+// ── Actions bar ────────────────────────────────────────────────────
+.psd-actions {
+  display: flex; align-items: center; gap: .75rem;
+  padding: 1.25rem; border-radius: $psd-radius;
+  background: $psd-white; border: 1px solid $psd-border;
+  box-shadow: $psd-shadow;
+}
