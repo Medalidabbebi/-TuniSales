@@ -1,259 +1,259 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2
-        id="jhi-objective-heading"
-        data-cy="ObjectiveCreateUpdateHeading"
-        jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.home.createOrEditLabel"
-      >
-        Créer ou éditer un Objective
-      </h2>
+<div class="ouf-page">
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
 
-      <div>
-        <jhi-alert-error></jhi-alert-error>
-
-        <div class="row mb-3" *ngIf="editForm.controls.id.value !== null">
-          <label class="form-label" jhiTranslate="global.field.id" for="field_id">ID</label>
-          <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+    <!-- ── Header ──────────────────────────────────────────────────── -->
+    <div class="ouf-header">
+      <div class="ouf-header__left">
+        <div class="ouf-header__icon">
+          <fa-icon icon="bullseye"></fa-icon>
         </div>
-
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.tenantId" for="field_tenantId"
-            >Tenant Id</label
-          >
-          <input type="number" class="form-control" name="tenantId" id="field_tenantId" data-cy="tenantId" formControlName="tenantId" />
-          <div *ngIf="editForm.get('tenantId')!.invalid && (editForm.get('tenantId')!.dirty || editForm.get('tenantId')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('tenantId')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('tenantId')?.errors?.number"
-              jhiTranslate="entity.validation.number"
-            >
-              Ce champ doit être un nombre.
-            </small>
-          </div>
+        <div>
+          <h1 class="ouf-header__title" id="jhi-objective-heading" data-cy="ObjectiveCreateUpdateHeading">
+            {{ isEdit ? 'Modifier l\'Objectif' : 'Nouvel Objectif' }}
+          </h1>
+          <p class="ouf-header__sub">
+            {{ isEdit ? 'Mettez à jour les informations de l\'objectif' : 'Définissez un nouvel objectif de performance' }}
+          </p>
         </div>
+      </div>
+      <button type="button" class="ouf-btn ouf-btn--ghost" (click)="previousState()">
+        <fa-icon icon="arrow-left"></fa-icon>
+        Retour
+      </button>
+    </div>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.assignedToLogin" for="field_assignedToLogin"
-            >Assigned To Login</label
-          >
-          <input
-            type="text"
-            class="form-control"
-            name="assignedToLogin"
-            id="field_assignedToLogin"
-            data-cy="assignedToLogin"
-            formControlName="assignedToLogin"
-          />
-          <div
-            *ngIf="
-              editForm.get('assignedToLogin')!.invalid &&
-              (editForm.get('assignedToLogin')!.dirty || editForm.get('assignedToLogin')!.touched)
-            "
-          >
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('assignedToLogin')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('assignedToLogin')?.errors?.maxlength"
-              jhiTranslate="entity.validation.maxlength"
-              [translateValues]="{ max: 100 }"
-            >
-              Ce champ doit faire moins de 100 caractères.
-            </small>
+    <jhi-alert-error></jhi-alert-error>
+
+    <div class="ouf-grid">
+
+      <!-- ── Card: Commercial & Indicateur ───────────────────────── -->
+      <div class="ouf-card">
+        <div class="ouf-card__header">
+          <div class="ouf-card__icon ouf-card__icon--blue">
+            <fa-icon icon="user"></fa-icon>
           </div>
+          <span class="ouf-card__title">Commercial &amp; Indicateur</span>
         </div>
+        <div class="ouf-card__body">
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.period" for="field_period">Period</label>
-          <input type="text" class="form-control" name="period" id="field_period" data-cy="period" formControlName="period" />
-          <div *ngIf="editForm.get('period')!.invalid && (editForm.get('period')!.dirty || editForm.get('period')!.touched)">
-            <small class="form-text text-danger" *ngIf="editForm.get('period')?.errors?.required" jhiTranslate="entity.validation.required">
-              Ce champ est obligatoire.
-            </small>
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('period')?.errors?.maxlength"
-              jhiTranslate="entity.validation.maxlength"
-              [translateValues]="{ max: 7 }"
-            >
-              Ce champ doit faire moins de 7 caractères.
-            </small>
+          <!-- assignedToLogin -->
+          <div class="ouf-field">
+            <label class="ouf-label" for="field_assignedToLogin">
+              <fa-icon icon="user"></fa-icon> Commercial
+            </label>
+            <div class="ouf-input-wrap">
+              <fa-icon icon="user" class="ouf-input-icon"></fa-icon>
+              <input
+                type="text"
+                class="ouf-input"
+                id="field_assignedToLogin"
+                data-cy="assignedToLogin"
+                formControlName="assignedToLogin"
+                placeholder="Login du commercial…"
+              />
+            </div>
+            <div class="ouf-error"
+                 *ngIf="editForm.get('assignedToLogin')!.invalid && (editForm.get('assignedToLogin')!.dirty || editForm.get('assignedToLogin')!.touched)">
+              <fa-icon icon="exclamation-circle"></fa-icon>
+              <span *ngIf="editForm.get('assignedToLogin')?.errors?.required">Ce champ est obligatoire.</span>
+              <span *ngIf="editForm.get('assignedToLogin')?.errors?.maxlength">Maximum 100 caractères.</span>
+            </div>
           </div>
+
+          <!-- metricType — visual radio pills -->
+          <div class="ouf-field">
+            <label class="ouf-label">
+              <fa-icon icon="chart-bar"></fa-icon> Type d'indicateur
+            </label>
+            <div class="ouf-metric-pills">
+              <button
+                type="button"
+                *ngFor="let mt of metricTypeValues"
+                class="ouf-pill"
+                [ngClass]="[getMetricClass(mt), editForm.get('metricType')?.value === mt ? 'ouf-pill--active' : '']"
+                (click)="selectMetricType(mt)">
+                <fa-icon [icon]="getMetricIcon(mt)"></fa-icon>
+                {{ getMetricLabel(mt) }}
+              </button>
+            </div>
+            <div class="ouf-error"
+                 *ngIf="editForm.get('metricType')!.invalid && (editForm.get('metricType')!.dirty || editForm.get('metricType')!.touched)">
+              <fa-icon icon="exclamation-circle"></fa-icon>
+              <span>Veuillez sélectionner un indicateur.</span>
+            </div>
+          </div>
+
         </div>
+      </div>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.metricType" for="field_metricType"
-            >Metric Type</label
-          >
-          <select class="form-control" name="metricType" formControlName="metricType" id="field_metricType" data-cy="metricType">
-            <option [ngValue]="null">{{ 'tuniSalesGatewayApp.MetricType.null' | translate }}</option>
-            <option *ngFor="let metricType of metricTypeValues" [value]="metricType">
-              {{ 'tuniSalesGatewayApp.MetricType.' + metricType | translate }}
-            </option>
-          </select>
-          <div *ngIf="editForm.get('metricType')!.invalid && (editForm.get('metricType')!.dirty || editForm.get('metricType')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('metricType')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
+      <!-- ── Card: Objectif & Progression ────────────────────────── -->
+      <div class="ouf-card">
+        <div class="ouf-card__header">
+          <div class="ouf-card__icon ouf-card__icon--orange">
+            <fa-icon icon="bullseye"></fa-icon>
           </div>
+          <span class="ouf-card__title">Objectif &amp; Progression</span>
         </div>
+        <div class="ouf-card__body">
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.targetValue" for="field_targetValue"
-            >Target Value</label
-          >
-          <input
-            type="number"
-            class="form-control"
-            name="targetValue"
-            id="field_targetValue"
-            data-cy="targetValue"
-            formControlName="targetValue"
-          />
-          <div *ngIf="editForm.get('targetValue')!.invalid && (editForm.get('targetValue')!.dirty || editForm.get('targetValue')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('targetValue')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('targetValue')?.errors?.min"
-              jhiTranslate="entity.validation.min"
-              [translateValues]="{ min: 0 }"
-            >
-              Ce champ doit être supérieur à 0.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('targetValue')?.errors?.number"
-              jhiTranslate="entity.validation.number"
-            >
-              Ce champ doit être un nombre.
-            </small>
+          <div class="ouf-row-2">
+            <!-- targetValue -->
+            <div class="ouf-field">
+              <label class="ouf-label" for="field_targetValue">
+                <fa-icon icon="flag"></fa-icon> Valeur cible
+              </label>
+              <div class="ouf-input-wrap">
+                <fa-icon icon="flag" class="ouf-input-icon"></fa-icon>
+                <input
+                  type="number"
+                  class="ouf-input"
+                  id="field_targetValue"
+                  data-cy="targetValue"
+                  formControlName="targetValue"
+                  placeholder="0"
+                  min="0"
+                />
+              </div>
+              <div class="ouf-error"
+                   *ngIf="editForm.get('targetValue')!.invalid && (editForm.get('targetValue')!.dirty || editForm.get('targetValue')!.touched)">
+                <fa-icon icon="exclamation-circle"></fa-icon>
+                <span *ngIf="editForm.get('targetValue')?.errors?.required">Ce champ est obligatoire.</span>
+                <span *ngIf="editForm.get('targetValue')?.errors?.min">Valeur minimale : 0.</span>
+              </div>
+            </div>
+
+            <!-- achievedValue -->
+            <div class="ouf-field">
+              <label class="ouf-label" for="field_achievedValue">
+                <fa-icon icon="check-circle"></fa-icon> Valeur atteinte
+              </label>
+              <div class="ouf-input-wrap">
+                <fa-icon icon="check-circle" class="ouf-input-icon"></fa-icon>
+                <input
+                  type="number"
+                  class="ouf-input"
+                  id="field_achievedValue"
+                  data-cy="achievedValue"
+                  formControlName="achievedValue"
+                  placeholder="0"
+                  min="0"
+                />
+              </div>
+              <div class="ouf-error"
+                   *ngIf="editForm.get('achievedValue')!.invalid && (editForm.get('achievedValue')!.dirty || editForm.get('achievedValue')!.touched)">
+                <fa-icon icon="exclamation-circle"></fa-icon>
+                <span *ngIf="editForm.get('achievedValue')?.errors?.min">Valeur minimale : 0.</span>
+              </div>
+            </div>
           </div>
+
+          <!-- Live progress preview -->
+          <div class="ouf-progress-preview">
+            <div class="ouf-progress-preview__header">
+              <span class="ouf-progress-preview__label">Progression en temps réel</span>
+              <span class="ouf-progress-preview__pct" [ngClass]="progressClass">{{ currentProgress }}%</span>
+            </div>
+            <div class="ouf-progress-bar">
+              <div class="ouf-progress-fill" [ngClass]="progressClass"
+                   [style.width.%]="currentProgress"></div>
+            </div>
+          </div>
+
         </div>
+      </div>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.achievedValue" for="field_achievedValue"
-            >Achieved Value</label
-          >
-          <input
-            type="number"
-            class="form-control"
-            name="achievedValue"
-            id="field_achievedValue"
-            data-cy="achievedValue"
-            formControlName="achievedValue"
-          />
-          <div
-            *ngIf="
-              editForm.get('achievedValue')!.invalid && (editForm.get('achievedValue')!.dirty || editForm.get('achievedValue')!.touched)
-            "
-          >
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('achievedValue')?.errors?.min"
-              jhiTranslate="entity.validation.min"
-              [translateValues]="{ min: 0 }"
-            >
-              Ce champ doit être supérieur à 0.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('achievedValue')?.errors?.number"
-              jhiTranslate="entity.validation.number"
-            >
-              Ce champ doit être un nombre.
-            </small>
+      <!-- ── Card: Période & Dates ────────────────────────────────── -->
+      <div class="ouf-card ouf-card--full">
+        <div class="ouf-card__header">
+          <div class="ouf-card__icon ouf-card__icon--green">
+            <fa-icon icon="calendar-alt"></fa-icon>
           </div>
+          <span class="ouf-card__title">Période &amp; Dates</span>
         </div>
+        <div class="ouf-card__body">
+          <div class="ouf-row-3">
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.createdAt" for="field_createdAt"
-            >Created At</label
-          >
-          <div class="d-flex">
-            <input
-              id="field_createdAt"
-              data-cy="createdAt"
-              type="datetime-local"
-              class="form-control"
-              name="createdAt"
-              formControlName="createdAt"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
-          </div>
-          <div *ngIf="editForm.get('createdAt')!.invalid && (editForm.get('createdAt')!.dirty || editForm.get('createdAt')!.touched)">
-            <small
-              class="form-text text-danger"
-              *ngIf="editForm.get('createdAt')?.errors?.required"
-              jhiTranslate="entity.validation.required"
-            >
-              Ce champ est obligatoire.
-            </small>
-            <small
-              class="form-text text-danger"
-              [hidden]="!editForm.get('createdAt')?.errors?.datetimelocal"
-              jhiTranslate="entity.validation.datetimelocal"
-            >
-              Ce champ doit être une date et une heure.
-            </small>
-          </div>
-        </div>
+            <!-- period -->
+            <div class="ouf-field">
+              <label class="ouf-label" for="field_period">
+                <fa-icon icon="calendar-alt"></fa-icon> Période
+              </label>
+              <div class="ouf-input-wrap">
+                <fa-icon icon="calendar-alt" class="ouf-input-icon"></fa-icon>
+                <input
+                  type="text"
+                  class="ouf-input"
+                  id="field_period"
+                  data-cy="period"
+                  formControlName="period"
+                  placeholder="Ex: 2026-Q1"
+                  maxlength="7"
+                />
+              </div>
+              <div class="ouf-error"
+                   *ngIf="editForm.get('period')!.invalid && (editForm.get('period')!.dirty || editForm.get('period')!.touched)">
+                <fa-icon icon="exclamation-circle"></fa-icon>
+                <span *ngIf="editForm.get('period')?.errors?.required">Ce champ est obligatoire.</span>
+                <span *ngIf="editForm.get('period')?.errors?.maxlength">Maximum 7 caractères.</span>
+              </div>
+            </div>
 
-        <div class="row mb-3">
-          <label class="form-label" jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.updatedAt" for="field_updatedAt"
-            >Updated At</label
-          >
-          <div class="d-flex">
-            <input
-              id="field_updatedAt"
-              data-cy="updatedAt"
-              type="datetime-local"
-              class="form-control"
-              name="updatedAt"
-              formControlName="updatedAt"
-              placeholder="YYYY-MM-DD HH:mm"
-            />
+            <!-- createdAt -->
+            <div class="ouf-field">
+              <label class="ouf-label" for="field_createdAt">
+                <fa-icon icon="clock"></fa-icon> Créé le
+              </label>
+              <div class="ouf-input-wrap">
+                <fa-icon icon="clock" class="ouf-input-icon"></fa-icon>
+                <input
+                  type="datetime-local"
+                  class="ouf-input"
+                  id="field_createdAt"
+                  data-cy="createdAt"
+                  formControlName="createdAt"
+                  placeholder="YYYY-MM-DD HH:mm"
+                />
+              </div>
+            </div>
+
+            <!-- updatedAt -->
+            <div class="ouf-field">
+              <label class="ouf-label" for="field_updatedAt">
+                <fa-icon icon="clock"></fa-icon> Modifié le
+              </label>
+              <div class="ouf-input-wrap">
+                <fa-icon icon="clock" class="ouf-input-icon"></fa-icon>
+                <input
+                  type="datetime-local"
+                  class="ouf-input"
+                  id="field_updatedAt"
+                  data-cy="updatedAt"
+                  formControlName="updatedAt"
+                  placeholder="YYYY-MM-DD HH:mm"
+                />
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
 
-      <div>
-        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
-          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
-        </button>
+    </div>
 
-        <button
-          type="submit"
-          id="save-entity"
-          data-cy="entityCreateSaveButton"
-          [disabled]="editForm.invalid || isSaving"
-          class="btn btn-primary"
-        >
-          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
-        </button>
-      </div>
-    </form>
-  </div>
+    <!-- ── Actions ─────────────────────────────────────────────────── -->
+    <div class="ouf-actions">
+      <button type="button" id="cancel-save" data-cy="entityCreateCancelButton"
+              class="ouf-btn ouf-btn--ghost" (click)="previousState()">
+        <fa-icon icon="ban"></fa-icon>
+        Annuler
+      </button>
+      <button type="submit" id="save-entity" data-cy="entityCreateSaveButton"
+              class="ouf-btn ouf-btn--primary" [disabled]="editForm.invalid || isSaving">
+        <fa-icon icon="save" *ngIf="!isSaving"></fa-icon>
+        <fa-icon icon="spinner" [spin]="true" *ngIf="isSaving"></fa-icon>
+        {{ isSaving ? 'Enregistrement…' : 'Sauvegarder' }}
+      </button>
+    </div>
+
+  </form>
 </div>

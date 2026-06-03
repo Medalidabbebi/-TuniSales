@@ -59,9 +59,7 @@ export class ObjectiveFormService {
           validators: [Validators.required],
         }
       ),
-      tenantId: new FormControl(objectiveRawValue.tenantId, {
-        validators: [Validators.required],
-      }),
+      tenantId: new FormControl(objectiveRawValue.tenantId ?? 1),
       assignedToLogin: new FormControl(objectiveRawValue.assignedToLogin, {
         validators: [Validators.required, Validators.maxLength(100)],
       }),
