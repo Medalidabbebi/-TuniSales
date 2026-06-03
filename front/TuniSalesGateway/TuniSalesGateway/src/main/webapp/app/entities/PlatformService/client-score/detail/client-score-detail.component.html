@@ -1,64 +1,124 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <div *ngIf="clientScore">
-      <h2 data-cy="clientScoreDetailsHeading">
-        <span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.detail.title">Client Score</span>
-      </h2>
+<div class="csd-page" *ngIf="clientScore">
 
-      <hr />
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
 
-      <jhi-alert-error></jhi-alert-error>
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <div class="csd-header">
+    <div class="csd-header__left">
+      <div class="csd-header__icon">
+        <fa-icon icon="star"></fa-icon>
+      </div>
+      <div>
+        <h1 class="csd-header__title" data-cy="clientScoreDetailsHeading">Score Client</h1>
+        <p class="csd-header__sub">#{{ clientScore.id }} — Détail du score</p>
+      </div>
+    </div>
+    <button type="button" class="csd-btn csd-btn--ghost" (click)="previousState()" data-cy="entityDetailsBackButton">
+      <fa-icon icon="arrow-left"></fa-icon>
+      Retour
+    </button>
+  </div>
 
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ clientScore.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.tenantId">Tenant Id</span></dt>
-        <dd>
-          <span>{{ clientScore.tenantId }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.clientId">Client Id</span></dt>
-        <dd>
-          <span>{{ clientScore.clientId }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.clientName">Client Name</span></dt>
-        <dd>
-          <span>{{ clientScore.clientName }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.period">Period</span></dt>
-        <dd>
-          <span>{{ clientScore.period }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.score">Score</span></dt>
-        <dd>
-          <span>{{ clientScore.score }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.classification">Classification</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'tuniSalesGatewayApp.ScoreClassification.' + clientScore.classification }}">{{
-            clientScore.classification
-          }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.breakdownJson">Breakdown Json</span></dt>
-        <dd>
-          <span>{{ clientScore.breakdownJson }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceClientScore.calculatedAt">Calculated At</span></dt>
-        <dd>
-          <span>{{ clientScore.calculatedAt | formatMediumDatetime }}</span>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
-      </button>
-
-      <button type="button" [routerLink]="['/client-score', clientScore.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
-      </button>
+  <!-- ── Hero banner ─────────────────────────────────────────── -->
+  <div class="csd-hero" [ngClass]="getHeroClass(clientScore.score)">
+    <div class="csd-hero__score-wrap">
+      <div class="csd-hero__circle">{{ clientScore.score ?? '—' }}</div>
+      <div class="csd-hero__score-label">Score</div>
+    </div>
+    <div class="csd-hero__info">
+      <div class="csd-hero__client">
+        <div class="csd-hero__avatar">{{ (clientScore.clientName || '?').charAt(0).toUpperCase() }}</div>
+        <div>
+          <div class="csd-hero__name">{{ clientScore.clientName || '—' }}</div>
+          <div class="csd-hero__id" *ngIf="clientScore.clientId">#{{ clientScore.clientId }}</div>
+        </div>
+      </div>
+      <div class="csd-hero__badges">
+        <span class="csd-badge" [ngClass]="getClassBadgeClass(clientScore.classification)">
+          <fa-icon [icon]="getClassIcon(clientScore.classification)"></fa-icon>
+          {{ getClassLabel(clientScore.classification) }}
+        </span>
+        <span class="csd-period-chip" *ngIf="clientScore.period">
+          <fa-icon icon="calendar-alt"></fa-icon>
+          {{ clientScore.period }}
+        </span>
+      </div>
     </div>
   </div>
+
+  <!-- ── Cards grid ─────────────────────────────────────────── -->
+  <div class="csd-grid">
+
+    <!-- Détails -->
+    <div class="csd-card">
+      <div class="csd-card__header">
+        <div class="csd-card__icon csd-card__icon--purple"><fa-icon icon="star"></fa-icon></div>
+        <span class="csd-card__title">Détails du score</span>
+      </div>
+      <div class="csd-card__body">
+
+        <div class="csd-row">
+          <span class="csd-label"><fa-icon icon="user"></fa-icon> Client</span>
+          <span class="csd-val">{{ clientScore.clientName || '—' }}</span>
+        </div>
+
+        <div class="csd-row">
+          <span class="csd-label"><fa-icon icon="hashtag"></fa-icon> ID Client</span>
+          <span class="csd-val">{{ clientScore.clientId ?? '—' }}</span>
+        </div>
+
+        <div class="csd-row">
+          <span class="csd-label"><fa-icon icon="calendar-alt"></fa-icon> Période</span>
+          <span class="csd-val">{{ clientScore.period || '—' }}</span>
+        </div>
+
+        <div class="csd-row">
+          <span class="csd-label"><fa-icon icon="star"></fa-icon> Score</span>
+          <span class="csd-bubble" [ngClass]="getScoreBubbleClass(clientScore.score)">
+            {{ clientScore.score ?? '—' }}
+          </span>
+        </div>
+
+        <div class="csd-row">
+          <span class="csd-label"><fa-icon icon="trophy"></fa-icon> Classification</span>
+          <span class="csd-badge" [ngClass]="getClassBadgeClass(clientScore.classification)">
+            <fa-icon [icon]="getClassIcon(clientScore.classification)"></fa-icon>
+            {{ getClassLabel(clientScore.classification) }}
+          </span>
+        </div>
+
+        <div class="csd-row">
+          <span class="csd-label"><fa-icon icon="clock"></fa-icon> Calculé le</span>
+          <span class="csd-val">{{ clientScore.calculatedAt | formatMediumDatetime }}</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Breakdown JSON -->
+    <div class="csd-card" *ngIf="clientScore.breakdownJson">
+      <div class="csd-card__header">
+        <div class="csd-card__icon csd-card__icon--blue"><fa-icon icon="list-ol"></fa-icon></div>
+        <span class="csd-card__title">Détail du calcul</span>
+      </div>
+      <div class="csd-card__body">
+        <pre class="csd-json">{{ clientScore.breakdownJson }}</pre>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Actions ─────────────────────────────────────────────── -->
+  <div class="csd-actions">
+    <button type="button" class="csd-btn csd-btn--ghost" (click)="previousState()">
+      <fa-icon icon="arrow-left"></fa-icon>
+      Retour
+    </button>
+    <a class="csd-btn csd-btn--primary" [routerLink]="['/client-score', clientScore.id, 'edit']">
+      <fa-icon icon="pencil-alt"></fa-icon>
+      Éditer
+    </a>
+  </div>
+
 </div>

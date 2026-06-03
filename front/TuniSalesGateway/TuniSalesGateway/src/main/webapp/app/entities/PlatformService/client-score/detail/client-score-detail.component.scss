@@ -1,0 +1,184 @@
+$csd-purple:  #7c3aed;
+$csd-purple-l:#ede9fe;
+$csd-orange:  #d97706;
+$csd-amb-l:   #fef3c7;
+$csd-blue:    #2563eb;
+$csd-blue-l:  #dbeafe;
+$csd-green:   #16a34a;
+$csd-green-l: #dcfce7;
+$csd-red:     #dc2626;
+$csd-red-l:   #fee2e2;
+$csd-gray:    #64748b;
+$csd-border:  #e2e8f0;
+$csd-bg:      #f8fafc;
+$csd-white:   #ffffff;
+$csd-text:    #0f172a;
+$csd-muted:   #64748b;
+$csd-shadow:  0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$csd-radius:  12px;
+
+.csd-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: $csd-text;
+}
+
+// ── Header ─────────────────────────────────────────────────────────
+.csd-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.csd-header__left { display: flex; align-items: center; gap: .9rem; }
+.csd-header__icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, $csd-purple, darken($csd-purple, 10%));
+  color: #fff; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba($csd-purple, .28);
+}
+.csd-header__title { margin: 0; font-size: 1.45rem; font-weight: 800; color: $csd-text; }
+.csd-header__sub   { margin: .25rem 0 0; font-size: .88rem; color: $csd-muted; }
+
+// ── Buttons ────────────────────────────────────────────────────────
+.csd-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .55rem 1.1rem; border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .875rem; font-weight: 600; cursor: pointer; transition: all .15s;
+  text-decoration: none;
+}
+.csd-btn--primary { background: $csd-purple; color: #fff !important; border-color: $csd-purple; }
+.csd-btn--primary:hover { background: darken($csd-purple, 6%); box-shadow: 0 3px 10px rgba($csd-purple,.3); }
+.csd-btn--ghost { background: $csd-white; color: $csd-gray !important; border-color: $csd-border; }
+.csd-btn--ghost:hover { border-color: $csd-gray; color: $csd-text !important; background: #f1f5f9; }
+
+// ── Hero ───────────────────────────────────────────────────────────
+.csd-hero {
+  border-radius: $csd-radius; padding: 2rem 2.5rem;
+  display: flex; align-items: center; gap: 2.5rem; flex-wrap: wrap;
+  &--green { background: linear-gradient(135deg, $csd-green,  darken($csd-green,  12%)); }
+  &--blue  { background: linear-gradient(135deg, $csd-blue,   darken($csd-blue,   12%)); }
+  &--amber { background: linear-gradient(135deg, $csd-orange, darken($csd-orange, 12%)); }
+  &--red   { background: linear-gradient(135deg, $csd-red,    darken($csd-red,    12%)); }
+  &--gray  { background: linear-gradient(135deg, $csd-gray,   darken($csd-gray,   12%)); }
+}
+.csd-hero__score-wrap { display: flex; flex-direction: column; align-items: center; gap: .4rem; }
+.csd-hero__circle {
+  width: 90px; height: 90px; border-radius: 50%;
+  background: rgba(255,255,255,.2); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.2rem; font-weight: 900; color: #fff !important;
+  border: 3px solid rgba(255,255,255,.4);
+}
+.csd-hero__score-label {
+  font-size: .78rem; text-transform: uppercase; letter-spacing: .08em;
+  color: rgba(255,255,255,.8) !important; font-weight: 600;
+}
+.csd-hero__info { display: flex; flex-direction: column; gap: .9rem; }
+.csd-hero__client { display: flex; align-items: center; gap: .85rem; }
+.csd-hero__avatar {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(255,255,255,.25); backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; font-weight: 800; color: #fff !important;
+  border: 2px solid rgba(255,255,255,.4); flex-shrink: 0;
+}
+.csd-hero__name { font-size: 1.15rem; font-weight: 700; color: #fff !important; }
+.csd-hero__id   { font-size: .82rem; color: rgba(255,255,255,.75) !important; }
+.csd-hero__badges { display: flex; gap: .65rem; flex-wrap: wrap; }
+
+// ── Hero badges/chips (white on dark bg) ───────────────────────────
+.csd-hero .csd-badge,
+.csd-hero .csd-period-chip {
+  background: rgba(255,255,255,.25) !important;
+  color: #fff !important;
+  backdrop-filter: blur(4px);
+}
+
+// ── Period chip (hero) ─────────────────────────────────────────────
+.csd-period-chip {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .75rem; border-radius: 999px;
+  font-size: .75rem; font-weight: 700;
+  fa-icon { font-size: .7rem; }
+}
+
+// ── Cards ──────────────────────────────────────────────────────────
+.csd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.25rem;
+}
+.csd-card {
+  background: $csd-white; border: 1px solid $csd-border;
+  border-radius: $csd-radius; box-shadow: $csd-shadow; overflow: hidden;
+}
+.csd-card__header {
+  display: flex; align-items: center; gap: .75rem;
+  padding: 1rem 1.25rem; border-bottom: 1px solid $csd-border;
+  background: $csd-bg;
+}
+.csd-card__icon {
+  width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: .9rem;
+  &--purple { background: $csd-purple-l; color: $csd-purple !important; }
+  &--blue   { background: $csd-blue-l;   color: $csd-blue   !important; }
+}
+.csd-card__title { font-size: .92rem; font-weight: 700; color: $csd-text; }
+.csd-card__body  { padding: 1.25rem; display: flex; flex-direction: column; gap: .85rem; }
+
+// ── Row ────────────────────────────────────────────────────────────
+.csd-row {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; padding: .55rem 0;
+  border-bottom: 1px solid $csd-border;
+  &:last-child { border-bottom: none; }
+}
+.csd-label {
+  display: flex; align-items: center; gap: .4rem;
+  font-size: .8rem; font-weight: 700; color: $csd-muted !important;
+  text-transform: uppercase; letter-spacing: .04em; white-space: nowrap;
+  fa-icon { font-size: .75rem; }
+}
+.csd-val { font-size: .9rem; color: $csd-text !important; font-weight: 500; text-align: right; }
+
+// ── Score bubble (in card) ─────────────────────────────────────────
+.csd-bubble {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 50%;
+  font-size: .9rem; font-weight: 800; color: #fff !important;
+  &.csd-bubble--green { background: $csd-green; }
+  &.csd-bubble--blue  { background: $csd-blue; }
+  &.csd-bubble--amber { background: $csd-orange; }
+  &.csd-bubble--red   { background: $csd-red; }
+  &.csd-bubble--gray  { background: $csd-gray; }
+}
+
+// ── Badge ──────────────────────────────────────────────────────────
+.csd-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .75rem; border-radius: 999px;
+  font-size: .75rem; font-weight: 700; white-space: nowrap;
+  fa-icon { font-size: .7rem; }
+  &.csd-badge--green { background: $csd-green-l; color: $csd-green  !important; }
+  &.csd-badge--blue  { background: $csd-blue-l;  color: $csd-blue   !important; }
+  &.csd-badge--amber { background: $csd-amb-l;   color: $csd-orange !important; }
+  &.csd-badge--red   { background: $csd-red-l;   color: $csd-red    !important; }
+  &.csd-badge--gray  { background: #f1f5f9;      color: $csd-gray   !important; }
+}
+
+// ── JSON pre ───────────────────────────────────────────────────────
+.csd-json {
+  background: $csd-bg; border: 1px solid $csd-border; border-radius: 8px;
+  padding: 1rem; font-size: .78rem; color: $csd-text !important;
+  white-space: pre-wrap; word-break: break-all; margin: 0;
+}
+
+// ── Actions bar ────────────────────────────────────────────────────
+.csd-actions {
+  display: flex; align-items: center; gap: .75rem;
+  padding: 1.25rem; border-radius: $csd-radius;
+  background: $csd-white; border: 1px solid $csd-border;
+  box-shadow: $csd-shadow;
+}
