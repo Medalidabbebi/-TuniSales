@@ -1,108 +1,201 @@
-<div class="container-fluid py-4">
+<div class="ps-page">
 
-  <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-    <div>
-      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="PerformanceScoreHeading">
-        <fa-icon icon="chart-bar" class="me-2 text-primary"></fa-icon>
-        Scores de Performance
-      </h2>
-      <small class="text-muted">Liste des scores — {{ totalItems }} score(s) au total</small>
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <div class="ps-header">
+    <div class="ps-header__left">
+      <div class="ps-header__icon">
+        <fa-icon icon="chart-bar"></fa-icon>
+      </div>
+      <div>
+        <h1 class="ps-header__title" data-cy="PerformanceScoreHeading">Scores de Performance</h1>
+        <p class="ps-header__sub">{{ totalItems }} score(s) au total</p>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+    <div class="ps-header__actions">
+      <button class="ps-btn ps-btn--ghost" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
-      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/performance-score/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
+      <a class="ps-btn ps-btn--primary" id="jh-create-entity" data-cy="entityCreateButton"
+         [routerLink]="['/performance-score/new']">
+        <fa-icon icon="plus"></fa-icon>
         Nouveau Score
       </a>
     </div>
   </div>
 
-  <jhi-alert-error></jhi-alert-error>
-  <jhi-alert></jhi-alert>
-
-  <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+  <!-- ── KPI Strip ───────────────────────────────────────────── -->
+  <div class="ps-kpi-strip">
+    <div class="ps-kpi ps-kpi--total">
+      <div class="ps-kpi__icon"><fa-icon icon="chart-bar"></fa-icon></div>
+      <div>
+        <div class="ps-kpi__val">{{ performanceScores?.length ?? 0 }}</div>
+        <div class="ps-kpi__label">Total</div>
+      </div>
+    </div>
+    <div class="ps-kpi ps-kpi--avg">
+      <div class="ps-kpi__icon"><fa-icon icon="tachometer-alt"></fa-icon></div>
+      <div>
+        <div class="ps-kpi__val">{{ avgScore }}</div>
+        <div class="ps-kpi__label">Score moyen</div>
+      </div>
+    </div>
+    <div class="ps-kpi ps-kpi--green">
+      <div class="ps-kpi__icon"><fa-icon icon="trophy"></fa-icon></div>
+      <div>
+        <div class="ps-kpi__val">{{ excellentCount }}</div>
+        <div class="ps-kpi__label">Excellents</div>
+      </div>
+    </div>
+    <div class="ps-kpi ps-kpi--blue">
+      <div class="ps-kpi__icon"><fa-icon icon="thumbs-up"></fa-icon></div>
+      <div>
+        <div class="ps-kpi__val">{{ goodCount }}</div>
+        <div class="ps-kpi__label">Bons</div>
+      </div>
+    </div>
+    <div class="ps-kpi ps-kpi--amber">
+      <div class="ps-kpi__icon"><fa-icon icon="minus-circle"></fa-icon></div>
+      <div>
+        <div class="ps-kpi__val">{{ averageCount }}</div>
+        <div class="ps-kpi__label">Moyens</div>
+      </div>
+    </div>
+    <div class="ps-kpi ps-kpi--red">
+      <div class="ps-kpi__icon"><fa-icon icon="exclamation-triangle"></fa-icon></div>
+      <div>
+        <div class="ps-kpi__val">{{ poorCount }}</div>
+        <div class="ps-kpi__label">Faibles</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && performanceScores?.length === 0">
-    <fa-icon icon="chart-bar" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucun score de performance trouvé.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/performance-score/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <!-- ── Loading ─────────────────────────────────────────────── -->
+  <div class="ps-loading" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true"></fa-icon>
+    Chargement des scores…
+  </div>
+
+  <!-- ── Empty ───────────────────────────────────────────────── -->
+  <div class="ps-empty" *ngIf="!isLoading && performanceScores?.length === 0">
+    <div class="ps-empty__icon"><fa-icon icon="chart-bar"></fa-icon></div>
+    <p class="ps-empty__text">Aucun score trouvé. Créez le premier score de performance.</p>
+    <a class="ps-btn ps-btn--primary" [routerLink]="['/performance-score/new']">
+      <fa-icon icon="plus"></fa-icon> Ajouter
     </a>
   </div>
 
-  <!-- Table -->
-  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && performanceScores && performanceScores.length > 0">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
-        <thead class="table-light">
-          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+  <!-- ── Table ───────────────────────────────────────────────── -->
+  <div class="ps-card" id="entities" *ngIf="!isLoading && performanceScores && performanceScores.length > 0">
+    <div class="ps-table-wrap">
+      <table class="ps-table" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending"
+              (sortChange)="navigateToWithComponentValues()">
             <th scope="col" jhiSortBy="userLogin">
-              <div class="d-flex align-items-center gap-1">Commercial <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              Commercial <fa-icon icon="sort" class="ps-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="score">
-              <div class="d-flex align-items-center gap-1">Score <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th scope="col" jhiSortBy="score" class="ps-th--score">
+              Score <fa-icon icon="sort" class="ps-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="period">
-              <div class="d-flex align-items-center gap-1">Période <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th scope="col" jhiSortBy="classification" class="ps-th--class">
+              Classification <fa-icon icon="sort" class="ps-sort-icon"></fa-icon>
             </th>
-            <th scope="col" style="width:140px"></th>
+            <th scope="col" jhiSortBy="deltaVsPrevious" class="ps-th--delta">
+              Évolution <fa-icon icon="sort" class="ps-sort-icon"></fa-icon>
+            </th>
+            <th scope="col" jhiSortBy="period" class="ps-th--period">
+              Période <fa-icon icon="sort" class="ps-sort-icon"></fa-icon>
+            </th>
+            <th scope="col" class="ps-th--actions"></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let performanceScore of performanceScores; trackBy: trackId" data-cy="entityTable">
-            <td class="fw-semibold">{{ performanceScore.userLogin || '—' }}</td>
+          <tr *ngFor="let score of performanceScores; trackBy: trackId" data-cy="entityTable">
+
+            <!-- Commercial -->
             <td>
-              <span class="badge rounded-pill"
-                [ngClass]="{
-                  'bg-success': (performanceScore.score ?? 0) >= 80,
-                  'bg-warning text-dark': (performanceScore.score ?? 0) >= 50 && (performanceScore.score ?? 0) < 80,
-                  'bg-danger': (performanceScore.score ?? 0) < 50 && performanceScore.score !== null,
-                  'bg-secondary': performanceScore.score === null || performanceScore.score === undefined
-                }">
-                {{ performanceScore.score ?? '—' }}
+              <div class="ps-user" *ngIf="score.userLogin; else noUser">
+                <div class="ps-user__avatar">{{ score.userLogin.charAt(0).toUpperCase() }}</div>
+                <span class="ps-user__name">{{ score.userLogin }}</span>
+              </div>
+              <ng-template #noUser><span class="ps-nil">—</span></ng-template>
+            </td>
+
+            <!-- Score bubble -->
+            <td>
+              <span class="ps-score-bubble" [ngClass]="getScoreBadgeClass(score.score)">
+                {{ score.score ?? '—' }}
               </span>
             </td>
-            <td>{{ performanceScore.period || '—' }}</td>
+
+            <!-- Classification -->
             <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/performance-score', performanceScore.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+              <span class="ps-badge" [ngClass]="getClassBadgeClass(score.classification)">
+                <fa-icon [icon]="getClassIcon(score.classification)"></fa-icon>
+                {{ getClassLabel(score.classification) }}
+              </span>
+            </td>
+
+            <!-- Delta -->
+            <td>
+              <span class="ps-delta" [ngClass]="getDeltaClass(score.deltaVsPrevious)"
+                    *ngIf="score.deltaVsPrevious != null; else noDelta">
+                <fa-icon [icon]="getDeltaIcon(score.deltaVsPrevious)"></fa-icon>
+                {{ score.deltaVsPrevious > 0 ? '+' : '' }}{{ score.deltaVsPrevious }}
+              </span>
+              <ng-template #noDelta><span class="ps-nil">—</span></ng-template>
+            </td>
+
+            <!-- Period -->
+            <td>
+              <span class="ps-period" *ngIf="score.period; else noPeriod">
+                <fa-icon icon="calendar-alt"></fa-icon>
+                {{ score.period }}
+              </span>
+              <ng-template #noPeriod><span class="ps-nil">—</span></ng-template>
+            </td>
+
+            <!-- Actions -->
+            <td>
+              <div class="ps-actions">
+                <a [routerLink]="['/performance-score', score.id, 'view']"
+                   class="ps-act ps-act--view" data-cy="entityDetailsButton" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/performance-score', performanceScore.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                <a [routerLink]="['/performance-score', score.id, 'edit']"
+                   class="ps-act ps-act--edit" data-cy="entityEditButton" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(performanceScore)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
+                <button (click)="delete(score)"
+                        class="ps-act ps-act--del" data-cy="entityDeleteButton" title="Supprimer">
                   <fa-icon icon="times"></fa-icon>
                 </button>
               </div>
             </td>
+
           </tr>
         </tbody>
       </table>
     </div>
-  </div>
 
-  <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="performanceScores && performanceScores.length > 0">
-    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
-    <ngb-pagination
-      [collectionSize]="totalItems"
-      [page]="page"
-      [pageSize]="itemsPerPage"
-      [maxSize]="5"
-      [rotate]="true"
-      [boundaryLinks]="true"
-      (pageChange)="navigateToPage($event)"
-    ></ngb-pagination>
+    <!-- Pagination -->
+    <div class="ps-pagination" *ngIf="performanceScores && performanceScores.length > 0">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }">
+      </jhi-item-count>
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)">
+      </ngb-pagination>
+    </div>
   </div>
 
 </div>

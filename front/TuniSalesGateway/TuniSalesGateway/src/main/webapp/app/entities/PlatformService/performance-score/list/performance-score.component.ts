@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -15,6 +15,8 @@ import { DataUtils } from 'app/core/util/data-util.service';
 @Component({
   selector: 'jhi-performance-score',
   templateUrl: './performance-score.component.html',
+  styleUrls: ['./performance-score.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class PerformanceScoreComponent implements OnInit {
   performanceScores?: IPerformanceScore[];
@@ -37,39 +39,94 @@ export class PerformanceScoreComponent implements OnInit {
 
   trackId = (_index: number, item: IPerformanceScore): number => this.performanceScoreService.getPerformanceScoreIdentifier(item);
 
+  get excellentCount(): number {
+    return (this.performanceScores ?? []).filter(s => s.classification === 'EXCELLENT').length;
+  }
+  get goodCount(): number {
+    return (this.performanceScores ?? []).filter(s => s.classification === 'GOOD').length;
+  }
+  get averageCount(): number {
+    return (this.performanceScores ?? []).filter(s => s.classification === 'AVERAGE').length;
+  }
+  get poorCount(): number {
+    return (this.performanceScores ?? []).filter(s => s.classification === 'POOR').length;
+  }
+  get avgScore(): number {
+    const scores = (this.performanceScores ?? []).filter(s => s.score != null).map(s => s.score as number);
+    if (!scores.length) return 0;
+    return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+  }
+
+  getScoreBadgeClass(score: number | null | undefined): string {
+    if (score == null) return 'ps-score--gray';
+    if (score >= 80) return 'ps-score--green';
+    if (score >= 60) return 'ps-score--blue';
+    if (score >= 40) return 'ps-score--amber';
+    return 'ps-score--red';
+  }
+
+  getClassLabel(cls: string | null | undefined): string {
+    const map: Record<string, string> = {
+      EXCELLENT: 'Excellent',
+      GOOD:      'Bon',
+      AVERAGE:   'Moyen',
+      POOR:      'Faible',
+    };
+    return cls ? (map[cls] || cls) : '—';
+  }
+
+  getClassBadgeClass(cls: string | null | undefined): string {
+    const map: Record<string, string> = {
+      EXCELLENT: 'ps-badge--green',
+      GOOD:      'ps-badge--blue',
+      AVERAGE:   'ps-badge--amber',
+      POOR:      'ps-badge--red',
+    };
+    return cls ? (map[cls] || 'ps-badge--gray') : 'ps-badge--gray';
+  }
+
+  getClassIcon(cls: string | null | undefined): any {
+    const map: Record<string, string> = {
+      EXCELLENT: 'trophy',
+      GOOD:      'thumbs-up',
+      AVERAGE:   'minus-circle',
+      POOR:      'exclamation-triangle',
+    };
+    return cls ? (map[cls] || 'chart-bar') : 'chart-bar';
+  }
+
+  getDeltaClass(delta: number | null | undefined): string {
+    if (delta == null) return 'ps-delta--neutral';
+    if (delta > 0) return 'ps-delta--up';
+    if (delta < 0) return 'ps-delta--down';
+    return 'ps-delta--neutral';
+  }
+
+  getDeltaIcon(delta: number | null | undefined): any {
+    if (delta == null || delta === 0) return 'minus';
+    return delta > 0 ? 'arrow-up' : 'arrow-down';
+  }
+
   ngOnInit(): void {
     this.load();
-  }
-
-  byteSize(base64String: string): string {
-    return this.dataUtils.byteSize(base64String);
-  }
-
-  openFile(base64String: string, contentType: string | null | undefined): void {
-    return this.dataUtils.openFile(base64String, contentType);
   }
 
   delete(performanceScore: IPerformanceScore): void {
     const modalRef = this.modalService.open(PerformanceScoreDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.performanceScore = performanceScore;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
         switchMap(() => this.loadFromBackendWithRouteInformations())
       )
       .subscribe({
-        next: (res: EntityArrayResponseType) => {
-          this.onResponseSuccess(res);
-        },
+        next: (res: EntityArrayResponseType) => { this.onResponseSuccess(res); },
       });
   }
 
   load(): void {
     this.loadFromBackendWithRouteInformations().subscribe({
-      next: (res: EntityArrayResponseType) => {
-        this.onResponseSuccess(res);
-      },
+      next: (res: EntityArrayResponseType) => { this.onResponseSuccess(res); },
     });
   }
 
@@ -127,7 +184,6 @@ export class PerformanceScoreComponent implements OnInit {
       size: this.itemsPerPage,
       sort: this.getSortQueryParam(predicate, ascending),
     };
-
     this.router.navigate(['./'], {
       relativeTo: this.activatedRoute,
       queryParams: queryParamsObj,
