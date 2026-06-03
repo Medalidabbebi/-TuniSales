@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -15,6 +15,8 @@ import { DataUtils } from 'app/core/util/data-util.service';
 @Component({
   selector: 'jhi-client-score',
   templateUrl: './client-score.component.html',
+  styleUrls: ['./client-score.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class ClientScoreComponent implements OnInit {
   clientScores?: IClientScore[];
@@ -37,6 +39,62 @@ export class ClientScoreComponent implements OnInit {
 
   trackId = (_index: number, item: IClientScore): number => this.clientScoreService.getClientScoreIdentifier(item);
 
+  get excellentCount(): number {
+    return (this.clientScores ?? []).filter(s => s.classification === 'EXCELLENT').length;
+  }
+  get goodCount(): number {
+    return (this.clientScores ?? []).filter(s => s.classification === 'GOOD').length;
+  }
+  get averageCount(): number {
+    return (this.clientScores ?? []).filter(s => s.classification === 'AVERAGE').length;
+  }
+  get poorCount(): number {
+    return (this.clientScores ?? []).filter(s => s.classification === 'POOR').length;
+  }
+  get avgScore(): number {
+    const scores = (this.clientScores ?? []).filter(s => s.score != null).map(s => s.score as number);
+    if (!scores.length) return 0;
+    return Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+  }
+
+  getScoreBubbleClass(score: number | null | undefined): string {
+    if (score == null) return 'cs-bubble--gray';
+    if (score >= 80) return 'cs-bubble--green';
+    if (score >= 60) return 'cs-bubble--blue';
+    if (score >= 40) return 'cs-bubble--amber';
+    return 'cs-bubble--red';
+  }
+
+  getClassLabel(cls: string | null | undefined): string {
+    const map: Record<string, string> = {
+      EXCELLENT: 'Excellent',
+      GOOD:      'Bon',
+      AVERAGE:   'Moyen',
+      POOR:      'Faible',
+    };
+    return cls ? (map[cls] || cls) : '—';
+  }
+
+  getClassBadgeClass(cls: string | null | undefined): string {
+    const map: Record<string, string> = {
+      EXCELLENT: 'cs-badge--green',
+      GOOD:      'cs-badge--blue',
+      AVERAGE:   'cs-badge--amber',
+      POOR:      'cs-badge--red',
+    };
+    return cls ? (map[cls] || 'cs-badge--gray') : 'cs-badge--gray';
+  }
+
+  getClassIcon(cls: string | null | undefined): any {
+    const map: Record<string, string> = {
+      EXCELLENT: 'trophy',
+      GOOD:      'thumbs-up',
+      AVERAGE:   'minus-circle',
+      POOR:      'exclamation-triangle',
+    };
+    return cls ? (map[cls] || 'star') : 'star';
+  }
+
   ngOnInit(): void {
     this.load();
   }
@@ -52,24 +110,19 @@ export class ClientScoreComponent implements OnInit {
   delete(clientScore: IClientScore): void {
     const modalRef = this.modalService.open(ClientScoreDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.clientScore = clientScore;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
         switchMap(() => this.loadFromBackendWithRouteInformations())
       )
       .subscribe({
-        next: (res: EntityArrayResponseType) => {
-          this.onResponseSuccess(res);
-        },
+        next: (res: EntityArrayResponseType) => { this.onResponseSuccess(res); },
       });
   }
 
   load(): void {
     this.loadFromBackendWithRouteInformations().subscribe({
-      next: (res: EntityArrayResponseType) => {
-        this.onResponseSuccess(res);
-      },
+      next: (res: EntityArrayResponseType) => { this.onResponseSuccess(res); },
     });
   }
 
@@ -127,7 +180,6 @@ export class ClientScoreComponent implements OnInit {
       size: this.itemsPerPage,
       sort: this.getSortQueryParam(predicate, ascending),
     };
-
     this.router.navigate(['./'], {
       relativeTo: this.activatedRoute,
       queryParams: queryParamsObj,

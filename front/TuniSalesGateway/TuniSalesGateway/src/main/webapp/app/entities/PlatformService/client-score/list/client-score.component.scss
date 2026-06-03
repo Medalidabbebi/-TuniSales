@@ -1,0 +1,189 @@
+$cs-purple:  #7c3aed;
+$cs-purple-l:#ede9fe;
+$cs-orange:  #d97706;
+$cs-amb-l:   #fef3c7;
+$cs-blue:    #2563eb;
+$cs-blue-l:  #dbeafe;
+$cs-green:   #16a34a;
+$cs-green-l: #dcfce7;
+$cs-red:     #dc2626;
+$cs-red-l:   #fee2e2;
+$cs-gray:    #64748b;
+$cs-border:  #e2e8f0;
+$cs-bg:      #f8fafc;
+$cs-white:   #ffffff;
+$cs-text:    #0f172a;
+$cs-muted:   #64748b;
+$cs-shadow:  0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$cs-radius:  12px;
+
+.cs-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: $cs-text;
+}
+
+// ── Header ─────────────────────────────────────────────────────────
+.cs-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.cs-header__left { display: flex; align-items: center; gap: .9rem; }
+.cs-header__icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, $cs-purple, darken($cs-purple, 10%));
+  color: #fff; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba($cs-purple, .28);
+}
+.cs-header__title { margin: 0; font-size: 1.45rem; font-weight: 800; color: $cs-text; }
+.cs-header__sub   { margin: .25rem 0 0; font-size: .88rem; color: $cs-muted; }
+.cs-header__actions { display: flex; gap: .65rem; flex-wrap: wrap; }
+
+// ── Buttons ────────────────────────────────────────────────────────
+.cs-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .55rem 1.1rem; border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .875rem; font-weight: 600; cursor: pointer; transition: all .15s;
+  text-decoration: none;
+}
+.cs-btn--primary { background: $cs-purple; color: #fff !important; border-color: $cs-purple; }
+.cs-btn--primary:hover { background: darken($cs-purple, 6%); box-shadow: 0 3px 10px rgba($cs-purple,.3); }
+.cs-btn--ghost { background: $cs-white; color: $cs-gray !important; border-color: $cs-border; }
+.cs-btn--ghost:hover { border-color: $cs-gray; color: $cs-text !important; background: #f1f5f9; }
+.cs-btn--ghost:disabled { opacity: .5; cursor: not-allowed; }
+
+// ── KPI Strip ──────────────────────────────────────────────────────
+.cs-kpi-strip { display: flex; gap: 1rem; flex-wrap: wrap; }
+.cs-kpi {
+  flex: 1; min-width: 120px;
+  display: flex; align-items: center; gap: .85rem;
+  padding: 1rem 1.1rem; border-radius: $cs-radius;
+  background: $cs-white; border: 1px solid $cs-border;
+  box-shadow: $cs-shadow;
+}
+.cs-kpi__icon {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+}
+.cs-kpi__val   { font-size: 1.35rem; font-weight: 800; color: $cs-text !important; line-height: 1; }
+.cs-kpi__label { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: $cs-muted !important; margin-top: .2rem; }
+
+.cs-kpi--total  .cs-kpi__icon { background: $cs-purple-l; color: $cs-purple !important; }
+.cs-kpi--avg    .cs-kpi__icon { background: $cs-blue-l;   color: $cs-blue   !important; }
+.cs-kpi--green  .cs-kpi__icon { background: $cs-green-l;  color: $cs-green  !important; }
+.cs-kpi--blue   .cs-kpi__icon { background: $cs-blue-l;   color: $cs-blue   !important; }
+.cs-kpi--amber  .cs-kpi__icon { background: $cs-amb-l;    color: $cs-orange !important; }
+.cs-kpi--red    .cs-kpi__icon { background: $cs-red-l;    color: $cs-red    !important; }
+
+// ── States ─────────────────────────────────────────────────────────
+.cs-loading {
+  display: flex; align-items: center; gap: .75rem;
+  justify-content: center; padding: 3rem;
+  font-size: .95rem; color: $cs-muted !important;
+}
+.cs-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1rem; padding: 4rem 2rem; text-align: center;
+  background: $cs-white; border: 1px solid $cs-border;
+  border-radius: $cs-radius; box-shadow: $cs-shadow;
+  .cs-empty__icon { font-size: 3rem; color: #cbd5e1 !important; }
+  .cs-empty__text { color: $cs-muted !important; margin: 0; font-size: .95rem; }
+}
+
+// ── Card / Table ───────────────────────────────────────────────────
+.cs-card {
+  background: $cs-white; border: 1px solid $cs-border;
+  border-radius: $cs-radius; box-shadow: $cs-shadow; overflow: hidden;
+}
+.cs-table-wrap { overflow-x: auto; }
+.cs-table {
+  width: 100%; border-collapse: collapse; color: $cs-text !important;
+  thead tr { background: $cs-bg; border-bottom: 2px solid $cs-border; }
+  th {
+    padding: .75rem 1rem; font-size: .78rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; color: $cs-muted !important;
+    white-space: nowrap; text-align: left;
+  }
+  .cs-th--score   { width: 100px; }
+  .cs-th--grade   { width: 160px; }
+  .cs-th--period  { width: 130px; }
+  .cs-th--actions { width: 110px; }
+  tbody tr {
+    border-bottom: 1px solid $cs-border; transition: background .1s;
+    &:last-child { border-bottom: none; }
+    &:hover { background: #f9fafb; }
+  }
+  td { padding: .85rem 1rem; vertical-align: middle; color: $cs-text !important; }
+}
+.cs-sort-icon { margin-left: .3rem; opacity: .4; font-size: .7rem; }
+
+// ── Client cell ────────────────────────────────────────────────────
+.cs-client {
+  display: flex; align-items: center; gap: .65rem;
+  &__avatar {
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    background: $cs-purple-l; color: $cs-purple !important;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .85rem; font-weight: 700;
+  }
+  &__info { display: flex; flex-direction: column; }
+  &__name { font-size: .88rem; font-weight: 600; color: $cs-text !important; }
+  &__id   { font-size: .72rem; color: $cs-muted !important; }
+}
+
+// ── Score bubble ───────────────────────────────────────────────────
+.cs-bubble {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; border-radius: 50%;
+  font-size: .9rem; font-weight: 800; color: #fff !important;
+  &.cs-bubble--green { background: $cs-green; }
+  &.cs-bubble--blue  { background: $cs-blue; }
+  &.cs-bubble--amber { background: $cs-orange; }
+  &.cs-bubble--red   { background: $cs-red; }
+  &.cs-bubble--gray  { background: $cs-gray; }
+}
+
+// ── Grade badge ────────────────────────────────────────────────────
+.cs-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .75rem; border-radius: 999px;
+  font-size: .75rem; font-weight: 700; letter-spacing: .02em; white-space: nowrap;
+  fa-icon { font-size: .7rem; }
+  &.cs-badge--green { background: $cs-green-l; color: $cs-green  !important; }
+  &.cs-badge--blue  { background: $cs-blue-l;  color: $cs-blue   !important; }
+  &.cs-badge--amber { background: $cs-amb-l;   color: $cs-orange !important; }
+  &.cs-badge--red   { background: $cs-red-l;   color: $cs-red    !important; }
+  &.cs-badge--gray  { background: #f1f5f9;     color: $cs-gray   !important; }
+}
+
+// ── Period ─────────────────────────────────────────────────────────
+.cs-period {
+  display: inline-flex; align-items: center; gap: .35rem;
+  font-size: .82rem; color: $cs-muted !important;
+  fa-icon { font-size: .75rem; }
+}
+
+// ── Actions ────────────────────────────────────────────────────────
+.cs-actions { display: flex; gap: .35rem; justify-content: flex-end; }
+.cs-act {
+  width: 30px; height: 30px; border-radius: 7px; border: 1.5px solid $cs-border;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; cursor: pointer; transition: all .15s;
+  background: $cs-white; text-decoration: none; color: $cs-muted !important;
+}
+.cs-act--view:hover { border-color: $cs-blue;   color: $cs-blue   !important; background: $cs-blue-l; }
+.cs-act--edit:hover { border-color: $cs-orange;  color: $cs-orange !important; background: $cs-amb-l; }
+.cs-act--del:hover  { border-color: $cs-red;     color: $cs-red    !important; background: $cs-red-l; }
+
+// ── Misc ───────────────────────────────────────────────────────────
+.cs-nil { color: #cbd5e1 !important; font-style: italic; font-size: .82rem; }
+
+// ── Pagination ─────────────────────────────────────────────────────
+.cs-pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: .75rem; font-size: .85rem; color: $cs-muted !important;
+  padding: 1rem 1.25rem; border-top: 1px solid $cs-border;
+}

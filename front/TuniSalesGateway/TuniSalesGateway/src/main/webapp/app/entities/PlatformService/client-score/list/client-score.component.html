@@ -1,123 +1,191 @@
-<div class="container-fluid py-4">
+<div class="cs-page">
 
-  <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-    <div>
-      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="ClientScoreHeading">
-        <fa-icon icon="star" class="me-2 text-primary"></fa-icon>
-        Scores Clients
-      </h2>
-      <small class="text-muted">Liste des scores clients — {{ totalItems }} score(s) au total</small>
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Header ─────────────────────────────────────────────── -->
+  <div class="cs-header">
+    <div class="cs-header__left">
+      <div class="cs-header__icon">
+        <fa-icon icon="star"></fa-icon>
+      </div>
+      <div>
+        <h1 class="cs-header__title" data-cy="ClientScoreHeading">Scores Clients</h1>
+        <p class="cs-header__sub">{{ totalItems }} score(s) au total</p>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+    <div class="cs-header__actions">
+      <button class="cs-btn cs-btn--ghost" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
-      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/client-score/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
+      <a class="cs-btn cs-btn--primary" id="jh-create-entity" data-cy="entityCreateButton"
+         [routerLink]="['/client-score/new']">
+        <fa-icon icon="plus"></fa-icon>
         Nouveau Score
       </a>
     </div>
   </div>
 
-  <jhi-alert-error></jhi-alert-error>
-  <jhi-alert></jhi-alert>
-
-  <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+  <!-- ── KPI Strip ───────────────────────────────────────────── -->
+  <div class="cs-kpi-strip">
+    <div class="cs-kpi cs-kpi--total">
+      <div class="cs-kpi__icon"><fa-icon icon="star"></fa-icon></div>
+      <div>
+        <div class="cs-kpi__val">{{ clientScores?.length ?? 0 }}</div>
+        <div class="cs-kpi__label">Total</div>
+      </div>
+    </div>
+    <div class="cs-kpi cs-kpi--avg">
+      <div class="cs-kpi__icon"><fa-icon icon="tachometer-alt"></fa-icon></div>
+      <div>
+        <div class="cs-kpi__val">{{ avgScore }}</div>
+        <div class="cs-kpi__label">Score moyen</div>
+      </div>
+    </div>
+    <div class="cs-kpi cs-kpi--green">
+      <div class="cs-kpi__icon"><fa-icon icon="trophy"></fa-icon></div>
+      <div>
+        <div class="cs-kpi__val">{{ excellentCount }}</div>
+        <div class="cs-kpi__label">Excellents</div>
+      </div>
+    </div>
+    <div class="cs-kpi cs-kpi--blue">
+      <div class="cs-kpi__icon"><fa-icon icon="thumbs-up"></fa-icon></div>
+      <div>
+        <div class="cs-kpi__val">{{ goodCount }}</div>
+        <div class="cs-kpi__label">Bons</div>
+      </div>
+    </div>
+    <div class="cs-kpi cs-kpi--amber">
+      <div class="cs-kpi__icon"><fa-icon icon="minus-circle"></fa-icon></div>
+      <div>
+        <div class="cs-kpi__val">{{ averageCount }}</div>
+        <div class="cs-kpi__label">Moyens</div>
+      </div>
+    </div>
+    <div class="cs-kpi cs-kpi--red">
+      <div class="cs-kpi__icon"><fa-icon icon="exclamation-triangle"></fa-icon></div>
+      <div>
+        <div class="cs-kpi__val">{{ poorCount }}</div>
+        <div class="cs-kpi__label">Faibles</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && clientScores?.length === 0">
-    <fa-icon icon="star" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucun score client trouvé.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/client-score/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <!-- ── Loading ─────────────────────────────────────────────── -->
+  <div class="cs-loading" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true"></fa-icon>
+    Chargement des scores clients…
+  </div>
+
+  <!-- ── Empty ───────────────────────────────────────────────── -->
+  <div class="cs-empty" *ngIf="!isLoading && clientScores?.length === 0">
+    <div class="cs-empty__icon"><fa-icon icon="star"></fa-icon></div>
+    <p class="cs-empty__text">Aucun score client trouvé.</p>
+    <a class="cs-btn cs-btn--primary" [routerLink]="['/client-score/new']">
+      <fa-icon icon="plus"></fa-icon> Ajouter
     </a>
   </div>
 
-  <!-- Table -->
-  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && clientScores && clientScores.length > 0">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
-        <thead class="table-light">
-          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
+  <!-- ── Table ───────────────────────────────────────────────── -->
+  <div class="cs-card" id="entities" *ngIf="!isLoading && clientScores && clientScores.length > 0">
+    <div class="cs-table-wrap">
+      <table class="cs-table" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending"
+              (sortChange)="navigateToWithComponentValues()">
             <th scope="col" jhiSortBy="clientName">
-              <div class="d-flex align-items-center gap-1">Client <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+              Client <fa-icon icon="sort" class="cs-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="score">
-              <div class="d-flex align-items-center gap-1">Score <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th scope="col" jhiSortBy="score" class="cs-th--score">
+              Score <fa-icon icon="sort" class="cs-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="classification" style="width:100px">
-              <div class="d-flex align-items-center gap-1">Grade <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th scope="col" jhiSortBy="classification" class="cs-th--grade">
+              Grade <fa-icon icon="sort" class="cs-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="period">
-              <div class="d-flex align-items-center gap-1">Période <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th scope="col" jhiSortBy="period" class="cs-th--period">
+              Période <fa-icon icon="sort" class="cs-sort-icon"></fa-icon>
             </th>
-            <th scope="col" style="width:140px"></th>
+            <th scope="col" class="cs-th--actions"></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let clientScore of clientScores; trackBy: trackId" data-cy="entityTable">
-            <td class="fw-semibold">{{ clientScore.clientName || ('Client #' + clientScore.clientId) }}</td>
+          <tr *ngFor="let cs of clientScores; trackBy: trackId" data-cy="entityTable">
+
+            <!-- Client -->
             <td>
-              <span class="badge rounded-pill"
-                [ngClass]="{
-                  'bg-success': (clientScore.score ?? 0) >= 80,
-                  'bg-warning text-dark': (clientScore.score ?? 0) >= 50 && (clientScore.score ?? 0) < 80,
-                  'bg-danger': (clientScore.score ?? 0) < 50 && clientScore.score !== null,
-                  'bg-secondary': clientScore.score === null || clientScore.score === undefined
-                }">
-                {{ clientScore.score ?? '—' }}
+              <div class="cs-client" *ngIf="cs.clientName; else noClient">
+                <div class="cs-client__avatar">{{ cs.clientName.charAt(0).toUpperCase() }}</div>
+                <div class="cs-client__info">
+                  <span class="cs-client__name">{{ cs.clientName }}</span>
+                  <span class="cs-client__id" *ngIf="cs.clientId">#{{ cs.clientId }}</span>
+                </div>
+              </div>
+              <ng-template #noClient><span class="cs-nil">—</span></ng-template>
+            </td>
+
+            <!-- Score bubble -->
+            <td>
+              <span class="cs-bubble" [ngClass]="getScoreBubbleClass(cs.score)">
+                {{ cs.score ?? '—' }}
               </span>
             </td>
+
+            <!-- Grade / Classification -->
             <td>
-              <span class="badge rounded-pill"
-                [ngClass]="{
-                  'bg-success': clientScore.classification === 'EXCELLENT',
-                  'bg-info text-dark': clientScore.classification === 'GOOD',
-                  'bg-warning text-dark': clientScore.classification === 'AVERAGE',
-                  'bg-danger': clientScore.classification === 'POOR',
-                  'bg-secondary': !clientScore.classification
-                }">
-                {{ clientScore.classification || '—' }}
+              <span class="cs-badge" [ngClass]="getClassBadgeClass(cs.classification)">
+                <fa-icon [icon]="getClassIcon(cs.classification)"></fa-icon>
+                {{ getClassLabel(cs.classification) }}
               </span>
             </td>
-            <td>{{ clientScore.period || '—' }}</td>
+
+            <!-- Period -->
             <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/client-score', clientScore.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+              <span class="cs-period" *ngIf="cs.period; else noPeriod">
+                <fa-icon icon="calendar-alt"></fa-icon>
+                {{ cs.period }}
+              </span>
+              <ng-template #noPeriod><span class="cs-nil">—</span></ng-template>
+            </td>
+
+            <!-- Actions -->
+            <td>
+              <div class="cs-actions">
+                <a [routerLink]="['/client-score', cs.id, 'view']"
+                   class="cs-act cs-act--view" data-cy="entityDetailsButton" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/client-score', clientScore.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                <a [routerLink]="['/client-score', cs.id, 'edit']"
+                   class="cs-act cs-act--edit" data-cy="entityEditButton" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(clientScore)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
+                <button (click)="delete(cs)"
+                        class="cs-act cs-act--del" data-cy="entityDeleteButton" title="Supprimer">
                   <fa-icon icon="times"></fa-icon>
                 </button>
               </div>
             </td>
+
           </tr>
         </tbody>
       </table>
     </div>
-  </div>
 
-  <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="clientScores && clientScores.length > 0">
-    <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
-    <ngb-pagination
-      [collectionSize]="totalItems"
-      [page]="page"
-      [pageSize]="itemsPerPage"
-      [maxSize]="5"
-      [rotate]="true"
-      [boundaryLinks]="true"
-      (pageChange)="navigateToPage($event)"
-    ></ngb-pagination>
+    <!-- Pagination -->
+    <div class="cs-pagination" *ngIf="clientScores && clientScores.length > 0">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }">
+      </jhi-item-count>
+      <ngb-pagination
+        [collectionSize]="totalItems"
+        [page]="page"
+        [pageSize]="itemsPerPage"
+        [maxSize]="5"
+        [rotate]="true"
+        [boundaryLinks]="true"
+        (pageChange)="navigateToPage($event)">
+      </ngb-pagination>
+    </div>
   </div>
 
 </div>
