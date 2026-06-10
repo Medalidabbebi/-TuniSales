@@ -11,7 +11,7 @@ export interface NavSection {
   translateKey: string;
   icon: IconProp;
   children: NavItem[];
-  requiredAuthority?: string;
+  requiredAuthorities?: string[];
 }
 
 export interface NavItem {
@@ -19,6 +19,7 @@ export interface NavItem {
   translateKey: string;
   icon: IconProp;
   route: string;
+  requiredAuthorities?: string[];
 }
 
 @Component({
@@ -40,63 +41,117 @@ export class SidebarComponent implements OnInit {
       translateKey: 'global.menu.dashboard',
       icon: 'tachometer-alt',
       children: [],
+      requiredAuthorities: [
+        Authority.ADMIN,
+        Authority.ADMIN_SYSTEME,
+        Authority.ADMIN_COMMERCIAL,
+        Authority.COMMERCIAL,
+        Authority.MAGASINIER,
+        Authority.CHEF_PARC,
+        Authority.RESPONSABLE_PV,
+        Authority.VENDEUR,
+        Authority.ADMIN_CLIENT,
+      ],
     },
     {
       label: 'Sales',
       translateKey: 'global.menu.sales',
       icon: 'chart-line',
+      requiredAuthorities: [
+        Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL,
+        Authority.COMMERCIAL, Authority.VENDEUR, Authority.MAGASINIER, Authority.ADMIN_CLIENT,
+      ],
       children: [
-        { label: 'Clients', translateKey: 'global.menu.entities.businessServiceClient', icon: 'users', route: '/client' },
-        { label: 'Orders', translateKey: 'global.menu.entities.businessServiceOrder', icon: 'shopping-cart', route: '/order' },
-        { label: 'Invoices', translateKey: 'global.menu.entities.businessServiceInvoice', icon: 'file-invoice-dollar', route: '/invoice' },
-        { label: 'Products', translateKey: 'global.menu.entities.businessServiceProduct', icon: 'box', route: '/product' },
-        { label: 'Price Lists', translateKey: 'global.menu.entities.businessServicePriceList', icon: 'tags', route: '/price-list' },
+        {
+          label: 'Clients', translateKey: 'global.menu.entities.businessServiceClient', icon: 'users', route: '/client',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.VENDEUR],
+        },
+        {
+          label: 'Orders', translateKey: 'global.menu.entities.businessServiceOrder', icon: 'shopping-cart', route: '/order',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.VENDEUR],
+        },
+        {
+          label: 'Invoices', translateKey: 'global.menu.entities.businessServiceInvoice', icon: 'file-invoice-dollar', route: '/invoice',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.ADMIN_CLIENT],
+        },
+        {
+          label: 'Products', translateKey: 'global.menu.entities.businessServiceProduct', icon: 'box', route: '/product',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.VENDEUR, Authority.MAGASINIER],
+        },
+        {
+          label: 'Price Lists', translateKey: 'global.menu.entities.businessServicePriceList', icon: 'tags', route: '/price-list',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL],
+        },
       ],
     },
     {
       label: 'Operations',
       translateKey: 'global.menu.operations',
       icon: 'truck',
+      requiredAuthorities: [
+        Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL,
+        Authority.COMMERCIAL, Authority.MAGASINIER, Authority.CHEF_PARC, Authority.RESPONSABLE_PV,
+      ],
       children: [
-        { label: 'Deliveries', translateKey: 'global.menu.entities.businessServiceDelivery', icon: 'truck', route: '/delivery' },
-        { label: 'Missions', translateKey: 'global.menu.entities.businessServiceMission', icon: 'map-marked-alt', route: '/mission' },
-        { label: 'Visits', translateKey: 'global.menu.entities.businessServiceVisit', icon: 'calendar-check', route: '/visit' },
+        {
+          label: 'Deliveries', translateKey: 'global.menu.entities.businessServiceDelivery', icon: 'truck', route: '/delivery',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER],
+        },
+        {
+          label: 'Missions', translateKey: 'global.menu.entities.businessServiceMission', icon: 'map-marked-alt', route: '/mission',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.CHEF_PARC, Authority.COMMERCIAL],
+        },
+        {
+          label: 'Visits', translateKey: 'global.menu.entities.businessServiceVisit', icon: 'calendar-check', route: '/visit',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.RESPONSABLE_PV, Authority.COMMERCIAL],
+        },
       ],
     },
     {
       label: 'Inventory',
       translateKey: 'global.menu.inventory',
       icon: 'warehouse',
+      requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER, Authority.CHEF_PARC],
       children: [
-        { label: 'Stock Items', translateKey: 'global.menu.entities.inventoryServiceStockItem', icon: 'cubes', route: '/stock-item' },
-        { label: 'Warehouses', translateKey: 'global.menu.entities.inventoryServiceWarehouse', icon: 'warehouse', route: '/warehouse' },
         {
-          label: 'Movements',
-          translateKey: 'global.menu.entities.inventoryServiceStockMovement',
-          icon: 'exchange-alt',
-          route: '/stock-movement',
+          label: 'Stock Items', translateKey: 'global.menu.entities.inventoryServiceStockItem', icon: 'cubes', route: '/stock-item',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER, Authority.CHEF_PARC],
         },
-        { label: 'Audits', translateKey: 'global.menu.entities.inventoryServiceStockAudit', icon: 'clipboard-check', route: '/stock-audit' },
-        { label: 'Swaps', translateKey: 'global.menu.entities.inventoryServiceSwap', icon: 'retweet', route: '/swap' },
+        {
+          label: 'Warehouses', translateKey: 'global.menu.entities.inventoryServiceWarehouse', icon: 'warehouse', route: '/warehouse',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER, Authority.CHEF_PARC],
+        },
+        {
+          label: 'Movements', translateKey: 'global.menu.entities.inventoryServiceStockMovement', icon: 'exchange-alt', route: '/stock-movement',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER],
+        },
+        {
+          label: 'Audits', translateKey: 'global.menu.entities.inventoryServiceStockAudit', icon: 'clipboard-check', route: '/stock-audit',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER],
+        },
+        {
+          label: 'Swaps', translateKey: 'global.menu.entities.inventoryServiceSwap', icon: 'retweet', route: '/swap',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.CHEF_PARC],
+        },
       ],
     },
     {
       label: 'Performance',
       translateKey: 'global.menu.performance',
       icon: 'bullseye',
+      requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.ADMIN_CLIENT],
       children: [
-        { label: 'Objectives', translateKey: 'global.menu.entities.platformServiceObjective', icon: 'bullseye', route: '/objective' },
         {
-          label: 'Scores',
-          translateKey: 'global.menu.entities.platformServicePerformanceScore',
-          icon: 'chart-bar',
-          route: '/performance-score',
+          label: 'Objectives', translateKey: 'global.menu.entities.platformServiceObjective', icon: 'bullseye', route: '/objective',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL],
         },
         {
-          label: 'Client Scores',
-          translateKey: 'global.menu.entities.platformServiceClientScore',
-          icon: 'star',
-          route: '/client-score',
+          label: 'Scores', translateKey: 'global.menu.entities.platformServicePerformanceScore', icon: 'chart-bar', route: '/performance-score',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL],
+        },
+        {
+          label: 'Client Scores', translateKey: 'global.menu.entities.platformServiceClientScore', icon: 'star', route: '/client-score',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.ADMIN_CLIENT],
         },
       ],
     },
@@ -104,15 +159,36 @@ export class SidebarComponent implements OnInit {
       label: 'Admin',
       translateKey: 'global.menu.admin.main',
       icon: 'cogs',
-      requiredAuthority: Authority.ADMIN,
+      requiredAuthorities: [Authority.ADMIN, Authority.ADMIN_SYSTEME],
       children: [
-        { label: 'Users', translateKey: 'global.menu.admin.userManagement', icon: 'users-cog', route: '/admin/user-management' },
-        { label: 'Gateway', translateKey: 'global.menu.admin.gateway', icon: 'road', route: '/admin/gateway' },
-        { label: 'Metrics', translateKey: 'global.menu.admin.metrics', icon: 'tachometer-alt', route: '/admin/metrics' },
-        { label: 'Health', translateKey: 'global.menu.admin.health', icon: 'heart', route: '/admin/health' },
-        { label: 'Logs', translateKey: 'global.menu.admin.logs', icon: 'tasks', route: '/admin/logs' },
-        { label: 'Audit Logs', translateKey: 'global.menu.entities.platformServiceAuditLog', icon: 'history', route: '/audit-log' },
-        { label: 'Tenants', translateKey: 'global.menu.entities.platformServiceTenant', icon: 'building', route: '/tenant' },
+        {
+          label: 'Users', translateKey: 'global.menu.admin.userManagement', icon: 'users-cog', route: '/admin/user-management',
+          requiredAuthorities: [Authority.ADMIN, Authority.ADMIN_SYSTEME],
+        },
+        {
+          label: 'Gateway', translateKey: 'global.menu.admin.gateway', icon: 'road', route: '/admin/gateway',
+          requiredAuthorities: [Authority.ADMIN],
+        },
+        {
+          label: 'Metrics', translateKey: 'global.menu.admin.metrics', icon: 'tachometer-alt', route: '/admin/metrics',
+          requiredAuthorities: [Authority.ADMIN],
+        },
+        {
+          label: 'Health', translateKey: 'global.menu.admin.health', icon: 'heart', route: '/admin/health',
+          requiredAuthorities: [Authority.ADMIN],
+        },
+        {
+          label: 'Logs', translateKey: 'global.menu.admin.logs', icon: 'tasks', route: '/admin/logs',
+          requiredAuthorities: [Authority.ADMIN],
+        },
+        {
+          label: 'Audit Logs', translateKey: 'global.menu.entities.platformServiceAuditLog', icon: 'history', route: '/audit-log',
+          requiredAuthorities: [Authority.ADMIN, Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL],
+        },
+        {
+          label: 'Tenants', translateKey: 'global.menu.entities.platformServiceTenant', icon: 'building', route: '/tenant',
+          requiredAuthorities: [Authority.ADMIN, Authority.ADMIN_SYSTEME],
+        },
       ],
     },
   ];
@@ -161,9 +237,18 @@ export class SidebarComponent implements OnInit {
   }
 
   hasAuthority(section: NavSection): boolean {
-    if (!section.requiredAuthority) {
-      return true;
-    }
-    return this.account?.authorities?.includes(section.requiredAuthority) ?? false;
+    if (!section.requiredAuthorities || section.requiredAuthorities.length === 0) return true;
+    const userAuthorities = this.account?.authorities ?? [];
+    return section.requiredAuthorities.some(auth => userAuthorities.includes(auth));
+  }
+
+  hasItemAuthority(item: NavItem): boolean {
+    if (!item.requiredAuthorities || item.requiredAuthorities.length === 0) return true;
+    const userAuthorities = this.account?.authorities ?? [];
+    return item.requiredAuthorities.some(auth => userAuthorities.includes(auth));
+  }
+
+  getVisibleChildren(section: NavSection): NavItem[] {
+    return section.children.filter(item => this.hasItemAuthority(item));
   }
 }
