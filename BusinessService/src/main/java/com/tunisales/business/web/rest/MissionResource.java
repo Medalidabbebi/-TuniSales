@@ -30,14 +30,16 @@ import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.tunisales.business.domain.Mission}.
- * create/assign → ROLE_ADMIN_COMMERCIAL; read → ROLE_COMMERCIAL + ROLE_ADMIN_COMMERCIAL.
+ * Access: ROLE_ADMIN, ROLE_ADMIN_SYSTEME, ROLE_ADMIN_COMMERCIAL, ROLE_COMMERCIAL, ROLE_CHEF_PARC.
  */
 @RestController
 @RequestMapping("/api")
 @PreAuthorize(
     "hasAuthority(\"ROLE_ADMIN\") or " +
+    "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
     "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
-    "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\")"
+    "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
+    "hasAuthority(\"" + AuthoritiesConstants.CHEF_PARC + "\")"
 )
 public class MissionResource {
 
