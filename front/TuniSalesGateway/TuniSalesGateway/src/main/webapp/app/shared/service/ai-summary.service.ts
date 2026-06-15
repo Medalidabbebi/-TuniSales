@@ -561,4 +561,3 @@ Cordialement,
     return templates[type] ?? `Objet : Message AfricomFlow\n\nMadame, Monsieur ${clientName},\n\nVeuillez trouver ci-joint notre message.\n\nCordialement,\nÉquipe AfricomFlow`;
   }
 }
-

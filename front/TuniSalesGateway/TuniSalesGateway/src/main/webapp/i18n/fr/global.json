@@ -1,4 +1,4 @@
-
+{
   "global": {
     "title": "AfricomFlow",
     "browsehappy": "Vous utilisez un <strong>ancien</strong> navigateur. Veuillez <a href=\"http://browsehappy.com/?locale=fr\">mettre à jour votre navigateur</a> pour une meilleure expérience.",
@@ -178,4 +178,3 @@
   },
   "footer": "Ceci est votre pied de page"
 }
-

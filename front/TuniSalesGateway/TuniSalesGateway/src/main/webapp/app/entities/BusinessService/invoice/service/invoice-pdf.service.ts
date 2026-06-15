@@ -440,4 +440,3 @@ export class InvoicePdfService {
     doc.save(filename);
   }
 }
-
