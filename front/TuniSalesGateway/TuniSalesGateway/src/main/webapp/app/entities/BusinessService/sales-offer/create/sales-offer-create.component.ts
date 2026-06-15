@@ -21,6 +21,7 @@ import { AiSummaryService } from 'app/shared/service/ai-summary.service';
 import { ClientContactService } from 'app/entities/BusinessService/client-contact/service/client-contact.service';
 import { IClientContact } from 'app/entities/BusinessService/client-contact/client-contact.model';
 import { TwilioSmsService } from 'app/shared/service/twilio-sms.service';
+import { EmailSenderService } from 'app/shared/service/email-sender.service';
 
 interface Step {
   title: string;
@@ -68,6 +69,9 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
   isSendingSms = false;
   smsSent = false;
   smsSendError = '';
+  isSendingEmail = false;
+  emailSent = false;
+  emailSendError = '';
   emailCopied = false;
   smsCopied = false;
   clientContact: IClientContact | null = null;
@@ -103,6 +107,7 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
     private aiSummaryService: AiSummaryService,
     private clientContactService: ClientContactService,
     private twilioSmsService: TwilioSmsService,
+    private emailSenderService: EmailSenderService,
   ) {}
 
   /**
@@ -464,15 +469,27 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
   }
 
   sendByEmail(): void {
-    if (!this.notifEmailContent || !this.notifEmailAddr) return;
+    if (!this.notifEmailContent || !this.notifEmailAddr || this.isSendingEmail) return;
     const lines = this.notifEmailContent.split('\n');
     const subjectLine = lines.find(l => /^objet\s*:/i.test(l.trim()));
     const subject = subjectLine
       ? subjectLine.replace(/^objet\s*:\s*/i, '').trim()
       : 'Confirmation de commande';
-    // Gmail compose URL — works directly in the browser without a native email client
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(this.notifEmailAddr)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(this.notifEmailContent)}`;
-    window.open(gmailUrl, '_blank');
+
+    this.isSendingEmail = true;
+    this.emailSent = false;
+    this.emailSendError = '';
+
+    this.emailSenderService.sendEmail(this.notifEmailAddr, subject, this.notifEmailContent).subscribe(res => {
+      this.isSendingEmail = false;
+      if (res.success) {
+        this.emailSent = true;
+        setTimeout(() => (this.emailSent = false), 4000);
+      } else {
+        this.emailSendError = res.error ?? 'Échec de l\'envoi email.';
+        setTimeout(() => (this.emailSendError = ''), 5000);
+      }
+    });
   }
 
   sendBySms(): void {
@@ -527,6 +544,9 @@ export class SalesOfferCreateComponent implements OnInit, OnDestroy {
     this.isSendingSms = false;
     this.smsSent = false;
     this.smsSendError = '';
+    this.isSendingEmail = false;
+    this.emailSent = false;
+    this.emailSendError = '';
     this.emailCopied = false;
     this.smsCopied = false;
 

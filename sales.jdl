@@ -1,5 +1,5 @@
-﻿// ============================================================
-// AfricomFlow — JHipster Domain Language (JDL)
+// ============================================================
+// TuniSales — JHipster Domain Language (JDL)
 // Version: 3.1 — Mars 2026 (Architecture 3 Microservices)
 // Stack: JHipster 8 / Spring Boot 3 / Angular 17+ / PostgreSQL
 // Architecture: 1 Gateway + 3 Microservices + Consul + Kafka
@@ -29,9 +29,9 @@
 
 application {
   config {
-    baseName AfricomFlow
+    baseName TuniSalesGateway
     applicationType gateway
-    packageName com.AfricomFlow.gateway
+    packageName com.tunisales.gateway
 
     authenticationType jwt
     serviceDiscoveryType eureka
@@ -72,7 +72,7 @@ application {
   config {
     baseName BusinessService
     applicationType microservice
-    packageName com.AfricomFlow.business
+    packageName com.tunisales.business
 
     authenticationType jwt
     serviceDiscoveryType eureka
@@ -104,7 +104,7 @@ application {
   config {
     baseName InventoryService
     applicationType microservice
-    packageName com.AfricomFlow.inventory
+    packageName com.tunisales.inventory
 
     authenticationType jwt
     serviceDiscoveryType eureka
@@ -136,7 +136,7 @@ application {
   config {
     baseName PlatformService
     applicationType microservice
-    packageName com.AfricomFlow.platform
+    packageName com.tunisales.platform
 
     authenticationType jwt
     serviceDiscoveryType eureka
@@ -741,4 +741,3 @@ service * with serviceClass
 filter Product, Client, PriceList, Order, Invoice, Delivery, Mission, Visit
 filter Warehouse, StockItem, StockMovement, Swap, StockAudit
 filter AuditLog, Document, PerformanceScore, ClientScore, Objective, Notification
-

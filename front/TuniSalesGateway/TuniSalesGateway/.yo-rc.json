@@ -1,4 +1,4 @@
-
+{
   "generator-jhipster": {
     "applicationIndex": 0,
     "applicationType": "gateway",
@@ -20,7 +20,7 @@
       }
     },
     "authenticationType": "jwt",
-    "baseName": "AfricomFlow",
+    "baseName": "TuniSalesGateway",
     "blueprints": [],
     "buildTool": "maven",
     "cacheProvider": "no",
@@ -74,8 +74,8 @@
     "messageBroker": false,
     "nativeLanguage": "fr",
     "otherModules": [],
-    "packageFolder": "com/AfricomFlow/gateway",
-    "packageName": "com.AfricomFlow.gateway",
+    "packageFolder": "com/tunisales/gateway",
+    "packageName": "com.tunisales.gateway",
     "pages": [],
     "prodDatabaseType": "postgresql",
     "reactive": true,
@@ -92,4 +92,3 @@
     "withAdminUi": true
   }
 }
-

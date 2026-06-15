@@ -1,5 +1,5 @@
-
-  "applications": ["africomflowGateway", "BusinessService"],
+{
+  "applications": ["TuniSalesGateway", "BusinessService"],
   "changelogDate": "20260309163503",
   "clientRootFolder": "BusinessService",
   "databaseType": "sql",
@@ -97,4 +97,3 @@
   ],
   "service": "serviceClass"
 }
-

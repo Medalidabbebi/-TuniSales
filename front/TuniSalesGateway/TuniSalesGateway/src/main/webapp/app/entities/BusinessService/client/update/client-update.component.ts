@@ -43,7 +43,7 @@ export class ClientUpdateComponent implements OnInit {
     });
 
     this.tenantService
-      .query({ size: 1000 })
+      .queryAll()
       .pipe(map((res: HttpResponse<ITenant[]>) => res.body ?? []))
       .subscribe((tenants: ITenant[]) => (this.tenantsCollection = tenants));
   }

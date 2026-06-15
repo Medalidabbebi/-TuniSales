@@ -1,8 +1,8 @@
 {
-  "name": "africom-flow",
+  "name": "tuni-sales-gateway",
   "version": "0.0.1-SNAPSHOT",
   "private": true,
-  "description": "Description for AfricomFlow",
+  "description": "Description for TuniSalesGateway",
   "license": "UNLICENSED",
   "scripts": {
     "app:start": "./mvnw",
