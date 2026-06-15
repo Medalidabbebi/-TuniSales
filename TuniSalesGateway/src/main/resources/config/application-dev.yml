@@ -1,4 +1,4 @@
-﻿# ===================================================================
+# ===================================================================
 # Spring Boot configuration for the "dev" profile.
 #
 # This configuration overrides the application.yml file.
@@ -136,4 +136,3 @@ application:
     account-sid: 5c5602b1
     auth-token: W0gTMUKB3SvaKNu0
     from-number: africomflow
-

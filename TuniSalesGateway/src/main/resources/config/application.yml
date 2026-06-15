@@ -1,4 +1,4 @@
-﻿# ===================================================================
+# ===================================================================
 # Spring Boot configuration.
 #
 # This configuration will be overridden by the Spring profile you use,
@@ -242,4 +242,3 @@ application:
     account-sid: ${TWILIO_ACCOUNT_SID:}
     auth-token: ${TWILIO_AUTH_TOKEN:}
     from-number: ${TWILIO_FROM_NUMBER:}
-
