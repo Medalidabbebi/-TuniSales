@@ -1,4 +1,4 @@
-﻿{
+
   "applications": ["africomflowGateway", "PlatformService"],
   "changelogDate": "20260309165003",
   "clientRootFolder": "PlatformService",

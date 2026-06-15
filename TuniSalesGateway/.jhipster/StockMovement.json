@@ -1,4 +1,4 @@
-﻿{
+
   "applications": ["africomflowGateway", "InventoryService"],
   "changelogDate": "20260309164803",
   "clientRootFolder": "InventoryService",
