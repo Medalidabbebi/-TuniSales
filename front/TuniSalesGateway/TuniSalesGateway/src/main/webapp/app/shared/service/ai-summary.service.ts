@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import { HttpClient, HttpContext } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
@@ -129,7 +129,7 @@ Génère uniquement le paragraphe, sans titre, sans liste, sans mise en forme.`;
       invoice_overdue: 'avertissement de facture en retard',
     };
 
-    const prompt = `Tu es un assistant commercial pour une entreprise tunisienne (TuniSalesGateway). Génère un email professionnel en français de type "${typeLabels[type] ?? type}".
+    const prompt = `Tu es un assistant commercial pour une entreprise tunisienne (AfricomFlow). Génère un email professionnel en français de type "${typeLabels[type] ?? type}".
 
 Données contextuelles :
 ${Object.entries(data).map(([k, v]) => `- ${k}: ${v}`).join('\n')}
@@ -137,7 +137,7 @@ ${Object.entries(data).map(([k, v]) => `- ${k}: ${v}`).join('\n')}
 Format attendu :
 Objet : [ligne d'objet]
 
-[Corps de l'email complet, avec formule de politesse, contenu professionnel, et signature "Équipe TuniSalesGateway"]
+[Corps de l'email complet, avec formule de politesse, contenu professionnel, et signature "Équipe AfricomFlow"]
 
 Génère uniquement l'email complet (objet + corps), sans commentaires supplémentaires.`;
 
@@ -177,7 +177,7 @@ Client : ${data.clientName}
 Commande : ${data.orderNumber}
 Montant : ${data.totalAmount} TND
 Délai de paiement : ${data.paymentTermsDays ?? 30} jours
-Expéditeur : TuniSalesGateway
+Expéditeur : AfricomFlow
 
 Génère uniquement le texte du SMS, sans guillemets, sans commentaires.`;
 
@@ -221,7 +221,7 @@ Génère uniquement le texte du SMS, sans guillemets, sans commentaires.`;
       {
         model: 'claude-haiku-4-5-20251001',
         max_tokens: 600,
-        system: `Tu es un assistant commercial pour TuniSalesGateway. Réponds en français.\n\nContexte : ${context}`,
+        system: `Tu es un assistant commercial pour AfricomFlow. Réponds en français.\n\nContexte : ${context}`,
         messages,
       },
       {
@@ -306,7 +306,7 @@ Génère uniquement le texte du SMS, sans guillemets, sans commentaires.`;
     const fallback = this.localDashboardInsights(stats);
     if (!apiKey) return of(fallback);
 
-    const prompt = `Tu es un analyste commercial expert pour TuniSalesGateway (entreprise tunisienne). Génère un rapport analytique concis (3-5 phrases en français) sur la performance commerciale actuelle. Identifie les points clés, les risques et donne une recommandation concrète.
+    const prompt = `Tu es un analyste commercial expert pour AfricomFlow (entreprise tunisienne). Génère un rapport analytique concis (3-5 phrases en français) sur la performance commerciale actuelle. Identifie les points clés, les risques et donne une recommandation concrète.
 
 Données du tableau de bord :
 - Chiffre d'affaires total TTC : ${stats.caTtc.toFixed(0)} TND
@@ -361,7 +361,7 @@ Génère uniquement le rapport analytique, sans titre, sans liste, sans mise en 
     const deliveredCount  = orders.filter(o => o.status === 'DELIVERED' || o.status === 'INVOICED' || o.status === 'PAID').length;
     const cancelledCount  = orders.filter(o => o.status === 'CANCELLED' || o.status === 'REJECTED' || o.status === 'REFUSED').length;
 
-    const prompt = `Tu es un analyste commercial pour TuniSalesGateway. Génère une analyse concise (3-4 phrases en français) de l'historique d'achats de ce client. Identifie les tendances, la régularité, les points positifs et les signaux d'alerte éventuels.
+    const prompt = `Tu es un analyste commercial pour AfricomFlow. Génère une analyse concise (3-4 phrases en français) de l'historique d'achats de ce client. Identifie les tendances, la régularité, les points positifs et les signaux d'alerte éventuels.
 
 Client : ${client.name ?? '—'}
 Nombre total de commandes : ${orders.length}
@@ -510,7 +510,7 @@ Génère uniquement le paragraphe, sans titre, sans liste, sans mise en forme.`;
   }
 
   private localSmsFallback(data: { clientName: string; orderNumber: string; totalAmount: string; paymentTermsDays?: number }): string {
-    return `TuniSales: Cmd ${data.orderNumber} confirmée pour ${data.clientName}. Montant: ${data.totalAmount} TND. Règlement sous ${data.paymentTermsDays ?? 30}j. Merci.`;
+    return `AfricomFlow: Cmd ${data.orderNumber} confirmée pour ${data.clientName}. Montant: ${data.totalAmount} TND. Règlement sous ${data.paymentTermsDays ?? 30}j. Merci.`;
   }
 
   private localEmailFallback(type: string, data: any): string {
@@ -525,7 +525,7 @@ Nous avons le plaisir de vous confirmer la bonne réception et le traitement de 
 Nous restons à votre disposition pour tout renseignement complémentaire.
 
 Cordialement,
-Équipe TuniSalesGateway`,
+Équipe AfricomFlow`,
       order_reminder: `Objet : Relance — Commande en attente de validation
 
 Madame, Monsieur ${clientName},
@@ -535,7 +535,7 @@ Nous vous contactons au sujet de votre commande actuellement en attente de trait
 Nous vous remercions de bien vouloir prendre les dispositions nécessaires pour finaliser cette commande.
 
 Cordialement,
-Équipe TuniSalesGateway`,
+Équipe AfricomFlow`,
       invoice_reminder: `Objet : Rappel de paiement — Facture(s) impayée(s)
 
 Madame, Monsieur ${clientName},
@@ -545,7 +545,7 @@ Sauf erreur de notre part, nous n'avons pas encore reçu le règlement de votre 
 Nous vous remercions de bien vouloir effectuer le virement correspondant dans les meilleurs délais.
 
 Cordialement,
-Équipe TuniSalesGateway`,
+Équipe AfricomFlow`,
       invoice_overdue: `Objet : URGENT — Facture(s) en retard de paiement
 
 Madame, Monsieur ${clientName},
@@ -555,9 +555,10 @@ Nous vous informons que ${data.overdueCount ?? 'plusieurs'} facture(s) arrivent 
 Nous vous prions de régulariser cette situation dans les plus brefs délais afin d'éviter toute suspension de compte.
 
 Cordialement,
-Équipe TuniSalesGateway`,
+Équipe AfricomFlow`,
     };
 
-    return templates[type] ?? `Objet : Message TuniSalesGateway\n\nMadame, Monsieur ${clientName},\n\nVeuillez trouver ci-joint notre message.\n\nCordialement,\nÉquipe TuniSalesGateway`;
+    return templates[type] ?? `Objet : Message AfricomFlow\n\nMadame, Monsieur ${clientName},\n\nVeuillez trouver ci-joint notre message.\n\nCordialement,\nÉquipe AfricomFlow`;
   }
 }
+

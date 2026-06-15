@@ -1,17 +1,17 @@
-import { Injectable } from '@angular/core';
+﻿import { Injectable } from '@angular/core';
 import jsPDF from 'jspdf';
 import { IInvoice } from '../invoice.model';
 
 // ── Company profile (update these to match the real company) ─────────────────
 const COMPANY = {
-  name:    'TuniSales SARL',
+  name:    'AfricomFlow SARL',
   tagline: 'Plateforme de Gestion Commerciale',
   address: 'Avenue Habib Bourguiba, Immeuble Business Center',
   city:    '1001 Tunis, Tunisie',
   phone:   '+216 71 000 000',
   fax:     '+216 71 000 001',
-  email:   'contact@tunisales.tn',
-  web:     'www.tunisales.tn',
+  email:   'contact@AfricomFlow.tn',
+  web:     'www.AfricomFlow.tn',
   mf:      '0000000/A/M/000',
   rc:      'B 123456 2020',
   rib:     'TN59 0780 1234 5678 9012 3456',
@@ -440,3 +440,4 @@ export class InvoicePdfService {
     doc.save(filename);
   }
 }
+

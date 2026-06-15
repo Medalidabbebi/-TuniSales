@@ -1,4 +1,4 @@
-<!-- Unauthenticated Landing Page -->
+﻿<!-- Unauthenticated Landing Page -->
 <div *ngIf="!account" class="tsg-landing">
   <!-- Hero Section -->
   <div class="tsg-landing__hero">
@@ -11,7 +11,7 @@
     <nav class="tsg-landing__nav">
       <div class="tsg-landing__nav-brand">
         <div class="tsg-landing__nav-logo">T</div>
-        <span>TuniSalesGateway</span>
+        <span>AfricomFlow</span>
       </div>
       <div class="tsg-landing__nav-actions">
         <a routerLink="/login" class="tsg-landing__nav-link">Sign In</a>
@@ -97,7 +97,7 @@
 
   <!-- Footer -->
   <div class="tsg-landing__footer">
-    <span>&copy; 2026 TuniSalesGateway. Built for Tunisian enterprises.</span>
+    <span>&copy; 2026 AfricomFlow. Built for African enterprises.</span>
   </div>
 </div>
 
@@ -194,8 +194,8 @@
   <!-- ── Charts Row ─────────────────────────────────────────────────────────── -->
   <div class="tsg-dashboard__charts">
 
-    <!-- Sales Over Time — ApexCharts Area (full width) -->
-    <div class="tsg-chart tsg-chart--full">
+    <!-- Sales Over Time — ApexCharts Area -->
+    <div class="tsg-chart">
       <div class="tsg-chart__header">
         <span class="tsg-chart__title">Chiffre d'affaires</span>
         <div class="tsg-filters__group">
@@ -212,6 +212,20 @@
       </div>
       <div class="tsg-chart__body">
         <div id="apex-area-chart"></div>
+      </div>
+    </div>
+
+    <!-- Orders by Status — ApexCharts Donut -->
+    <div class="tsg-chart">
+      <div class="tsg-chart__header">
+        <span class="tsg-chart__title">Commandes par statut</span>
+      </div>
+      <div class="tsg-chart__body">
+        <div id="apex-donut-chart"></div>
+        <div *ngIf="donutSeries.length === 0 && !isLoadingDashboard"
+             style="text-align:center;color:#9ca3af;padding:2rem;font-size:.875rem;">
+          Aucune commande
+        </div>
       </div>
     </div>
   </div>
@@ -259,18 +273,6 @@
 
     <!-- Sidebar panels -->
     <div class="tsg-dashboard__sidebar-panels">
-
-      <!-- Orders by Status — ApexCharts Donut -->
-      <div class="tsg-card">
-        <div class="tsg-card__header">
-          <h3 class="tsg-card__title">Commandes par statut</h3>
-        </div>
-        <div id="apex-donut-chart" style="min-height:260px;"></div>
-        <div *ngIf="donutSeries.length === 0 && !isLoadingDashboard"
-             style="text-align:center;color:#9ca3af;padding:2rem;font-size:.875rem;">
-          Aucune commande
-        </div>
-      </div>
 
       <!-- Top Clients by CA -->
       <div class="tsg-card">
@@ -338,3 +340,4 @@
     </div>
   </div>
 </div>
+

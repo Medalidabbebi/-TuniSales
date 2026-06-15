@@ -1092,5 +1092,7 @@ h4 { font-size: $font-size-lg; }
 @import '../../app/entities/PlatformService/performance-score/detail/performance-score-detail.component';
 @import '../../app/entities/PlatformService/client-score/list/client-score.component';
 @import '../../app/entities/PlatformService/client-score/detail/client-score-detail.component';
+@import '../../app/admin/user-management/list/user-management.component';
+@import '../../app/admin/user-management/update/user-management-update.component';
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */

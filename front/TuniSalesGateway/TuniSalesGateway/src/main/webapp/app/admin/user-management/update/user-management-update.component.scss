@@ -1,0 +1,283 @@
+// ===== User Management Update Form =====
+
+.umu-page {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+// Header
+.umu-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+  }
+
+  &__subtitle {
+    color: #64748b;
+    font-size: 0.85rem;
+    margin: 0;
+  }
+}
+
+// Grid layout
+.umu-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+// Card
+.umu-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 1rem 1.25rem;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.9rem;
+
+    fa-icon { color: #6366f1; }
+  }
+
+  &__body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+// Field
+.umu-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+
+  &--center {
+    justify-content: center;
+  }
+}
+
+.umu-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.umu-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.umu-required {
+  color: #ef4444;
+}
+
+.umu-input {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  color: #0f172a;
+  background: #fff;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+
+  &:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+  }
+}
+
+.umu-select {
+  cursor: pointer;
+}
+
+.umu-error {
+  small {
+    color: #ef4444;
+    font-size: 0.78rem;
+  }
+}
+
+.umu-hint {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin: 0 0 0.5rem;
+}
+
+// Toggle switch
+.umu-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  margin-top: 0.25rem;
+
+  input { display: none; }
+
+  &__slider {
+    position: relative;
+    width: 44px;
+    height: 24px;
+    background: #cbd5e1;
+    border-radius: 12px;
+    transition: background 0.2s;
+    flex-shrink: 0;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 18px;
+      height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    }
+  }
+
+  input:checked ~ .umu-toggle__slider {
+    background: #10b981;
+    &::after { transform: translateX(20px); }
+  }
+
+  input:disabled ~ .umu-toggle__slider {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &__label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+  }
+}
+
+// Roles grid
+.umu-roles-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.625rem;
+}
+
+.umu-role-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border-radius: 10px;
+  border: 2px solid #e2e8f0;
+  background: #f8fafc;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: #374151;
+  transition: all 0.2s;
+  text-align: left;
+
+  &:hover {
+    border-color: var(--role-color, #6366f1);
+    background: #fff;
+    transform: translateY(-1px);
+  }
+
+  &--selected {
+    border-color: var(--role-color, #6366f1);
+    background: #fff;
+    color: var(--role-color, #6366f1);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  &__check {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--role-color, #6366f1);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    flex-shrink: 0;
+  }
+}
+
+// Actions
+.umu-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.umu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+
+  &--primary {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    &:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+  }
+
+  &--outline {
+    background: #fff;
+    color: #6366f1;
+    border: 1.5px solid #e2e8f0;
+    &:hover { border-color: #6366f1; background: #f5f3ff; }
+  }
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}

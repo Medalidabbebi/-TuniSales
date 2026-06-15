@@ -1,4 +1,4 @@
-# ===================================================================
+﻿# ===================================================================
 # Spring Boot configuration for the "dev" profile.
 #
 # This configuration overrides the application.yml file.
@@ -18,7 +18,7 @@ logging:
     ROOT: DEBUG
     tech.jhipster: DEBUG
     org.hibernate.SQL: DEBUG
-    com.tunisales.platform: DEBUG
+    com.africomflow.platform: DEBUG
 
 eureka:
   instance:
@@ -127,3 +127,4 @@ jhipster:
 # ===================================================================
 
 # application:
+

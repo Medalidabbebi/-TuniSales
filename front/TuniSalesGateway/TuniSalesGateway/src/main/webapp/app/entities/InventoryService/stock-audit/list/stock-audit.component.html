@@ -1,97 +1,166 @@
-<div class="container-fluid py-4">
+<div class="sal-page">
 
-  <!-- Header -->
-  <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2">
-    <div>
-      <h2 class="mb-0 fw-bold" id="page-heading" data-cy="StockAuditHeading">
-        <fa-icon icon="clipboard-check" class="me-2 text-primary"></fa-icon>
-        Audits de Stock
-      </h2>
-      <small class="text-muted">Liste des audits — {{ totalItems }} audit(s) au total</small>
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── Header ─────────────────────────────────────────────────────── -->
+  <div class="sal-header">
+    <div class="sal-header__left">
+      <div class="sal-header__icon">
+        <fa-icon icon="clipboard-check"></fa-icon>
+      </div>
+      <div>
+        <h1 class="sal-header__title" id="page-heading" data-cy="StockAuditHeading">Audits de Stock</h1>
+        <p class="sal-header__sub">{{ totalItems }} audit(s) au total</p>
+      </div>
     </div>
-    <div class="d-flex gap-2">
-      <button class="btn btn-outline-secondary" (click)="load()" [disabled]="isLoading">
-        <fa-icon icon="sync" [spin]="isLoading" class="me-1"></fa-icon>
+    <div class="sal-header__actions">
+      <button class="sal-btn sal-btn--ghost" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
         Actualiser
       </button>
-      <a class="btn btn-primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/stock-audit/new']">
-        <fa-icon icon="plus" class="me-1"></fa-icon>
+      <a class="sal-btn sal-btn--primary" id="jh-create-entity" data-cy="entityCreateButton" [routerLink]="['/stock-audit/new']">
+        <fa-icon icon="plus"></fa-icon>
         Nouvel Audit
       </a>
     </div>
   </div>
 
-  <jhi-alert-error></jhi-alert-error>
-  <jhi-alert></jhi-alert>
-
-  <!-- Chargement -->
-  <div class="text-center py-5" *ngIf="isLoading">
-    <fa-icon icon="spinner" [spin]="true" size="2x" class="text-muted"></fa-icon>
-    <p class="text-muted mt-2">Chargement...</p>
+  <!-- ── KPI Strip ──────────────────────────────────────────────────── -->
+  <div class="sal-kpi-strip" *ngIf="!isLoading && stockAudits && stockAudits.length > 0">
+    <div class="sal-kpi sal-kpi--total">
+      <div class="sal-kpi__icon"><fa-icon icon="clipboard-check"></fa-icon></div>
+      <div>
+        <div class="sal-kpi__val">{{ totalItems }}</div>
+        <div class="sal-kpi__label">Total</div>
+      </div>
+    </div>
+    <div class="sal-kpi sal-kpi--blue">
+      <div class="sal-kpi__icon"><fa-icon icon="spinner"></fa-icon></div>
+      <div>
+        <div class="sal-kpi__val">{{ inProgressCount }}</div>
+        <div class="sal-kpi__label">En cours</div>
+      </div>
+    </div>
+    <div class="sal-kpi sal-kpi--green">
+      <div class="sal-kpi__icon"><fa-icon icon="check-circle"></fa-icon></div>
+      <div>
+        <div class="sal-kpi__val">{{ closedCount }}</div>
+        <div class="sal-kpi__label">Clôturés</div>
+      </div>
+    </div>
+    <div class="sal-kpi sal-kpi--red">
+      <div class="sal-kpi__icon"><fa-icon icon="times-circle"></fa-icon></div>
+      <div>
+        <div class="sal-kpi__val">{{ cancelledCount }}</div>
+        <div class="sal-kpi__label">Annulés</div>
+      </div>
+    </div>
+    <div class="sal-kpi sal-kpi--orange">
+      <div class="sal-kpi__icon"><fa-icon icon="exclamation-triangle"></fa-icon></div>
+      <div>
+        <div class="sal-kpi__val">{{ totalDiscrepancies | number }}</div>
+        <div class="sal-kpi__label">Écarts totaux</div>
+      </div>
+    </div>
   </div>
 
-  <!-- Aucun résultat -->
-  <div class="card shadow-sm text-center py-5" *ngIf="!isLoading && stockAudits?.length === 0">
-    <fa-icon icon="clipboard-check" size="3x" class="text-muted mb-3"></fa-icon>
-    <p class="text-muted">Aucun audit de stock trouvé.</p>
-    <a class="btn btn-primary mt-2" [routerLink]="['/stock-audit/new']">
-      <fa-icon icon="plus" class="me-1"></fa-icon> Ajouter
+  <!-- ── Loading ────────────────────────────────────────────────────── -->
+  <div class="sal-loading" *ngIf="isLoading">
+    <fa-icon icon="spinner" [spin]="true"></fa-icon>
+    <span>Chargement des audits…</span>
+  </div>
+
+  <!-- ── Empty ──────────────────────────────────────────────────────── -->
+  <div class="sal-empty" *ngIf="!isLoading && stockAudits?.length === 0">
+    <fa-icon icon="clipboard-check" class="sal-empty__icon"></fa-icon>
+    <p class="sal-empty__text">Aucun audit de stock trouvé.</p>
+    <a class="sal-btn sal-btn--primary" [routerLink]="['/stock-audit/new']">
+      <fa-icon icon="plus"></fa-icon> Ajouter
     </a>
   </div>
 
-  <!-- Table -->
-  <div class="card shadow-sm" id="entities" *ngIf="!isLoading && stockAudits && stockAudits.length > 0">
-    <div class="table-responsive">
-      <table class="table table-hover align-middle mb-0" aria-describedby="page-heading">
-        <thead class="table-light">
+  <!-- ── Table ──────────────────────────────────────────────────────── -->
+  <div class="sal-card" id="entities" *ngIf="!isLoading && stockAudits && stockAudits.length > 0">
+    <div class="sal-table-wrap">
+      <table class="sal-table" aria-describedby="page-heading">
+        <thead>
           <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="navigateToWithComponentValues()">
-            <th scope="col" jhiSortBy="warehouse.name">
-              <div class="d-flex align-items-center gap-1">Entrepôt <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th jhiSortBy="warehouse.name">
+              Entrepôt <fa-icon icon="sort" class="sal-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="status" style="width:130px">
-              <div class="d-flex align-items-center gap-1">Statut <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th jhiSortBy="status" class="sal-th--status">
+              Statut <fa-icon icon="sort" class="sal-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="discrepancyCount">
-              <div class="d-flex align-items-center gap-1">Conflits <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th jhiSortBy="discrepancyCount" class="sal-th--count">
+              Écarts <fa-icon icon="sort" class="sal-sort-icon"></fa-icon>
             </th>
-            <th scope="col" jhiSortBy="startedAt">
-              <div class="d-flex align-items-center gap-1">Date <fa-icon icon="sort" class="text-muted"></fa-icon></div>
+            <th jhiSortBy="auditorLogin">
+              Auditeur <fa-icon icon="sort" class="sal-sort-icon"></fa-icon>
             </th>
-            <th scope="col" style="width:140px"></th>
+            <th jhiSortBy="startedAt">
+              Date début <fa-icon icon="sort" class="sal-sort-icon"></fa-icon>
+            </th>
+            <th class="sal-th--actions"></th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let stockAudit of stockAudits; trackBy: trackId" data-cy="entityTable">
+          <tr *ngFor="let audit of stockAudits; trackBy: trackId" data-cy="entityTable">
+
+            <!-- Entrepôt -->
             <td>
-              <a *ngIf="stockAudit.warehouse" [routerLink]="['/warehouse', stockAudit.warehouse.id, 'view']" class="text-decoration-none fw-semibold">{{ stockAudit.warehouse.name }}</a>
-              <span *ngIf="!stockAudit.warehouse" class="text-muted fst-italic">—</span>
+              <a *ngIf="audit.warehouse"
+                 [routerLink]="['/warehouse', audit.warehouse.id, 'view']"
+                 class="sal-wh-link">
+                <fa-icon icon="warehouse"></fa-icon>
+                {{ audit.warehouse.name }}
+              </a>
+              <span *ngIf="!audit.warehouse" class="sal-nil">—</span>
             </td>
+
+            <!-- Statut -->
             <td>
-              <span class="badge rounded-pill"
-                [ngClass]="{
-                  'bg-success': stockAudit.status === 'CLOSED',
-                  'bg-info text-dark': stockAudit.status === 'IN_PROGRESS',
-                  'bg-danger': stockAudit.status === 'CANCELLED',
-                  'bg-secondary': !stockAudit.status
-                }">
-                {{ stockAudit.status }}
+              <span class="sal-badge" [ngClass]="getStatusClass(audit.status)">
+                <fa-icon [icon]="getStatusIcon(audit.status)"></fa-icon>
+                {{ getStatusLabel(audit.status) }}
               </span>
             </td>
+
+            <!-- Écarts -->
             <td>
-              <span class="badge rounded-pill" [ngClass]="(stockAudit.discrepancyCount && stockAudit.discrepancyCount > 0) ? 'bg-danger' : 'bg-success'">
-                {{ stockAudit.discrepancyCount ?? 0 }}
+              <span class="sal-disc"
+                    [class.sal-disc--warn]="audit.discrepancyCount && audit.discrepancyCount > 0"
+                    [class.sal-disc--ok]="!audit.discrepancyCount || audit.discrepancyCount === 0">
+                <fa-icon [icon]="(audit.discrepancyCount && audit.discrepancyCount > 0) ? 'exclamation-triangle' : 'check'"></fa-icon>
+                {{ audit.discrepancyCount ?? 0 | number }}
               </span>
             </td>
-            <td><span class="text-muted small">{{ stockAudit.startedAt | formatMediumDatetime }}</span></td>
+
+            <!-- Auditeur -->
             <td>
-              <div class="d-flex gap-1 justify-content-end">
-                <a [routerLink]="['/stock-audit', stockAudit.id, 'view']" class="btn btn-outline-info btn-sm" data-cy="entityDetailsButton" title="Voir">
+              <div *ngIf="audit.auditorLogin" class="sal-auditor">
+                <span class="sal-auditor__avatar">{{ audit.auditorLogin.charAt(0).toUpperCase() }}</span>
+                <span class="sal-auditor__name">{{ audit.auditorLogin }}</span>
+              </div>
+              <span *ngIf="!audit.auditorLogin" class="sal-nil">—</span>
+            </td>
+
+            <!-- Date -->
+            <td class="sal-date">{{ audit.startedAt | formatMediumDatetime }}</td>
+
+            <!-- Actions -->
+            <td>
+              <div class="sal-actions">
+                <a [routerLink]="['/stock-audit', audit.id, 'view']"
+                   class="sal-act sal-act--view" data-cy="entityDetailsButton" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </a>
-                <a [routerLink]="['/stock-audit', stockAudit.id, 'edit']" class="btn btn-outline-primary btn-sm" data-cy="entityEditButton" title="Modifier">
+                <a [routerLink]="['/stock-audit', audit.id, 'edit']"
+                   class="sal-act sal-act--edit" data-cy="entityEditButton" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </a>
-                <button (click)="delete(stockAudit)" class="btn btn-outline-danger btn-sm" data-cy="entityDeleteButton" title="Supprimer">
+                <button (click)="delete(audit)"
+                        class="sal-act sal-act--del" data-cy="entityDeleteButton" title="Supprimer">
                   <fa-icon icon="times"></fa-icon>
                 </button>
               </div>
@@ -102,8 +171,8 @@
     </div>
   </div>
 
-  <!-- Pagination -->
-  <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2" *ngIf="stockAudits && stockAudits.length > 0">
+  <!-- ── Pagination ─────────────────────────────────────────────────── -->
+  <div class="sal-pagination" *ngIf="stockAudits && stockAudits.length > 0">
     <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
     <ngb-pagination
       [collectionSize]="totalItems"

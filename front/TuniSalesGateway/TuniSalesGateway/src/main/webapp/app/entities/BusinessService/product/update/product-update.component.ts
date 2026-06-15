@@ -39,7 +39,7 @@ export class ProductUpdateComponent implements OnInit {
     });
 
     this.tenantService
-      .queryAll()
+      .query({ size: 1000 })
       .pipe(map((res: HttpResponse<ITenant[]>) => res.body ?? []))
       .subscribe((tenants: ITenant[]) => (this.tenantsCollection = tenants));
   }

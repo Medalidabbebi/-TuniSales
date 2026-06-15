@@ -1,5 +1,5 @@
-{
-  "applications": ["TuniSalesGateway", "InventoryService"],
+﻿{
+  "applications": ["africomflowGateway", "InventoryService"],
   "changelogDate": "20260309164603",
   "clientRootFolder": "InventoryService",
   "databaseType": "sql",
@@ -53,3 +53,4 @@
   ],
   "service": "serviceClass"
 }
+

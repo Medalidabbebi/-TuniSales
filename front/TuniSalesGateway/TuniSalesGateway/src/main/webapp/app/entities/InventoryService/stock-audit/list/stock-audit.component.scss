@@ -1,0 +1,183 @@
+$sal-orange: #d97706;
+$sal-amb-l:  #fef3c7;
+$sal-blue:   #2563eb;
+$sal-blue-l: #dbeafe;
+$sal-green:  #16a34a;
+$sal-green-l:#dcfce7;
+$sal-red:    #dc2626;
+$sal-red-l:  #fee2e2;
+$sal-gray:   #64748b;
+$sal-border: #e2e8f0;
+$sal-bg:     #f8fafc;
+$sal-white:  #ffffff;
+$sal-text:   #0f172a;
+$sal-muted:  #64748b;
+$sal-shadow: 0 1px 3px rgba(15,23,42,.08), 0 4px 16px rgba(15,23,42,.06);
+$sal-radius: 12px;
+
+.sal-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  color: $sal-text;
+}
+
+// ── Header ─────────────────────────────────────────────────────────
+.sal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+.sal-header__left { display: flex; align-items: center; gap: .9rem; }
+.sal-header__icon {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, $sal-orange, darken($sal-orange, 10%));
+  color: #fff; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.2rem; flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba($sal-orange, .28);
+}
+.sal-header__title { margin: 0; font-size: 1.45rem; font-weight: 800; color: $sal-text; }
+.sal-header__sub   { margin: .25rem 0 0; font-size: .88rem; color: $sal-muted; }
+.sal-header__actions { display: flex; gap: .65rem; flex-wrap: wrap; }
+
+// ── Buttons ────────────────────────────────────────────────────────
+.sal-btn {
+  display: inline-flex; align-items: center; gap: .5rem;
+  padding: .55rem 1.1rem; border-radius: 8px; border: 1.5px solid transparent;
+  font-size: .875rem; font-weight: 600; cursor: pointer; transition: all .15s;
+  text-decoration: none;
+}
+.sal-btn--primary { background: $sal-orange; color: #fff !important; border-color: $sal-orange; }
+.sal-btn--primary:hover { background: darken($sal-orange, 6%); box-shadow: 0 3px 10px rgba($sal-orange,.3); }
+.sal-btn--ghost { background: $sal-white; color: $sal-gray !important; border-color: $sal-border; }
+.sal-btn--ghost:hover { border-color: $sal-gray; color: $sal-text !important; background: #f1f5f9; }
+.sal-btn--ghost:disabled { opacity: .5; cursor: not-allowed; }
+
+// ── KPI Strip ──────────────────────────────────────────────────────
+.sal-kpi-strip { display: flex; gap: 1rem; flex-wrap: wrap; }
+.sal-kpi {
+  flex: 1; min-width: 130px;
+  display: flex; align-items: center; gap: .85rem;
+  padding: 1rem 1.25rem; border-radius: $sal-radius;
+  background: $sal-white; border: 1px solid $sal-border;
+  box-shadow: $sal-shadow;
+}
+.sal-kpi__icon {
+  width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 1rem;
+}
+.sal-kpi__val   { font-size: 1.35rem; font-weight: 800; color: $sal-text !important; line-height: 1; }
+.sal-kpi__label { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: $sal-muted !important; margin-top: .2rem; }
+
+.sal-kpi--total  .sal-kpi__icon { background: #f1f5f9;    color: $sal-gray   !important; }
+.sal-kpi--blue   .sal-kpi__icon { background: $sal-blue-l; color: $sal-blue   !important; }
+.sal-kpi--green  .sal-kpi__icon { background: $sal-green-l; color: $sal-green  !important; }
+.sal-kpi--red    .sal-kpi__icon { background: $sal-red-l;  color: $sal-red    !important; }
+.sal-kpi--orange .sal-kpi__icon { background: $sal-amb-l;  color: $sal-orange !important; }
+
+// ── States ─────────────────────────────────────────────────────────
+.sal-loading {
+  display: flex; align-items: center; gap: .75rem;
+  justify-content: center; padding: 3rem;
+  font-size: .95rem; color: $sal-muted !important;
+}
+.sal-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1rem; padding: 4rem 2rem; text-align: center;
+  background: $sal-white; border: 1px solid $sal-border;
+  border-radius: $sal-radius; box-shadow: $sal-shadow;
+  .sal-empty__icon { font-size: 3rem; color: #cbd5e1 !important; }
+  .sal-empty__text { color: $sal-muted !important; margin: 0; font-size: .95rem; }
+}
+
+// ── Card / Table ───────────────────────────────────────────────────
+.sal-card {
+  background: $sal-white; border: 1px solid $sal-border;
+  border-radius: $sal-radius; box-shadow: $sal-shadow; overflow: hidden;
+}
+.sal-table-wrap { overflow-x: auto; }
+.sal-table {
+  width: 100%; border-collapse: collapse; color: $sal-text !important;
+  thead tr {
+    background: $sal-bg; border-bottom: 2px solid $sal-border;
+  }
+  th {
+    padding: .75rem 1rem; font-size: .78rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .05em; color: $sal-muted !important;
+    white-space: nowrap; text-align: left;
+  }
+  .sal-th--status  { width: 130px; }
+  .sal-th--count   { width: 110px; }
+  .sal-th--actions { width: 110px; }
+  tbody tr {
+    border-bottom: 1px solid $sal-border; transition: background .1s;
+    &:last-child { border-bottom: none; }
+    &:hover { background: #f9fafb; }
+  }
+  td { padding: .85rem 1rem; vertical-align: middle; color: $sal-text !important; }
+}
+.sal-sort-icon { margin-left: .3rem; opacity: .4; font-size: .7rem; }
+
+// ── Status Badges ──────────────────────────────────────────────────
+.sal-badge {
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .3rem .75rem; border-radius: 999px;
+  font-size: .75rem; font-weight: 700; letter-spacing: .02em; white-space: nowrap;
+  fa-icon { font-size: .7rem; }
+}
+.sal-badge--blue  { background: $sal-blue-l;  color: $sal-blue   !important; }
+.sal-badge--green { background: $sal-green-l; color: $sal-green  !important; }
+.sal-badge--red   { background: $sal-red-l;   color: $sal-red    !important; }
+.sal-badge--gray  { background: #f1f5f9;      color: $sal-gray   !important; }
+
+// ── Discrepancy chip ───────────────────────────────────────────────
+.sal-disc {
+  display: inline-flex; align-items: center; gap: .3rem;
+  padding: .25rem .65rem; border-radius: 6px;
+  font-size: .82rem; font-weight: 700;
+  &--warn { background: $sal-red-l;   color: $sal-red   !important; }
+  &--ok   { background: $sal-green-l; color: $sal-green !important; }
+}
+
+// ── Warehouse link ─────────────────────────────────────────────────
+.sal-wh-link {
+  display: inline-flex; align-items: center; gap: .4rem;
+  text-decoration: none; color: $sal-blue !important; font-weight: 600;
+  font-size: .88rem;
+  &:hover { text-decoration: underline; }
+  fa-icon { color: $sal-muted !important; font-size: .8rem; }
+}
+.sal-nil { color: #cbd5e1 !important; font-style: italic; font-size: .82rem; }
+
+// ── Auditor ────────────────────────────────────────────────────────
+.sal-auditor {
+  display: inline-flex; align-items: center; gap: .5rem;
+  &__avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: $sal-blue-l; color: $sal-blue !important;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; font-weight: 700; flex-shrink: 0;
+  }
+  &__name { font-size: .85rem; color: $sal-text !important; }
+}
+
+// ── Date ───────────────────────────────────────────────────────────
+.sal-date { font-size: .78rem; color: $sal-muted !important; white-space: nowrap; }
+
+// ── Actions ────────────────────────────────────────────────────────
+.sal-actions { display: flex; gap: .35rem; justify-content: flex-end; }
+.sal-act {
+  width: 30px; height: 30px; border-radius: 7px; border: 1.5px solid $sal-border;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; cursor: pointer; transition: all .15s;
+  background: $sal-white; text-decoration: none; color: $sal-muted !important;
+}
+.sal-act--view:hover { border-color: $sal-blue;   color: $sal-blue   !important; background: $sal-blue-l; }
+.sal-act--edit:hover { border-color: $sal-orange;  color: $sal-orange !important; background: $sal-amb-l; }
+.sal-act--del:hover  { border-color: $sal-red;     color: $sal-red    !important; background: $sal-red-l; }
+
+// ── Pagination ─────────────────────────────────────────────────────
+.sal-pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: .75rem; font-size: .85rem; color: $sal-muted !important;
+}

@@ -1,6 +1,6 @@
-{
+﻿{
   "global": {
-    "title": "TuniSalesGateway",
+    "title": "AfricomFlow",
     "browsehappy": "أنت تستخدم متصفح <strong>قديم</strong> . من فضلك <a href=\"http://browsehappy.com/?locale=en\">قم بتحديث متصفحك</a> لتحسين تجربتك.",
     "menu": {
       "home": "الصفحة الرئيسية",
@@ -169,3 +169,4 @@
   },
   "footer": "هنا يضع الفووتر"
 }
+

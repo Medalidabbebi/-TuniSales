@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpHeaders } from '@angular/common/http';
 import { ActivatedRoute, Data, ParamMap, Router } from '@angular/router';
 import { combineLatest, filter, Observable, switchMap, tap } from 'rxjs';
@@ -14,6 +14,8 @@ import { StockAuditDeleteDialogComponent } from '../delete/stock-audit-delete-di
 @Component({
   selector: 'jhi-stock-audit',
   templateUrl: './stock-audit.component.html',
+  styleUrls: ['./stock-audit.component.scss'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class StockAuditComponent implements OnInit {
   stockAudits?: IStockAudit[];
@@ -35,6 +37,40 @@ export class StockAuditComponent implements OnInit {
 
   trackId = (_index: number, item: IStockAudit): number => this.stockAuditService.getStockAuditIdentifier(item);
 
+  get inProgressCount(): number { return (this.stockAudits ?? []).filter(a => a.status === 'IN_PROGRESS').length; }
+  get closedCount(): number     { return (this.stockAudits ?? []).filter(a => a.status === 'CLOSED').length; }
+  get cancelledCount(): number  { return (this.stockAudits ?? []).filter(a => a.status === 'CANCELLED').length; }
+  get totalDiscrepancies(): number {
+    return (this.stockAudits ?? []).reduce((sum, a) => sum + (a.discrepancyCount ?? 0), 0);
+  }
+
+  getStatusLabel(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      IN_PROGRESS: 'En cours',
+      CLOSED:      'Clôturé',
+      CANCELLED:   'Annulé',
+    };
+    return status ? (map[status] || status) : '—';
+  }
+
+  getStatusClass(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      IN_PROGRESS: 'sal-badge--blue',
+      CLOSED:      'sal-badge--green',
+      CANCELLED:   'sal-badge--red',
+    };
+    return status ? (map[status] || 'sal-badge--gray') : 'sal-badge--gray';
+  }
+
+  getStatusIcon(status: string | null | undefined): any {
+    const map: Record<string, string> = {
+      IN_PROGRESS: 'spinner',
+      CLOSED:      'check-circle',
+      CANCELLED:   'times-circle',
+    };
+    return status ? (map[status] || 'clipboard-check') : 'clipboard-check';
+  }
+
   ngOnInit(): void {
     this.load();
   }
@@ -42,24 +78,19 @@ export class StockAuditComponent implements OnInit {
   delete(stockAudit: IStockAudit): void {
     const modalRef = this.modalService.open(StockAuditDeleteDialogComponent, { size: 'lg', backdrop: 'static' });
     modalRef.componentInstance.stockAudit = stockAudit;
-    // unsubscribe not needed because closed completes on modal close
     modalRef.closed
       .pipe(
         filter(reason => reason === ITEM_DELETED_EVENT),
         switchMap(() => this.loadFromBackendWithRouteInformations())
       )
       .subscribe({
-        next: (res: EntityArrayResponseType) => {
-          this.onResponseSuccess(res);
-        },
+        next: (res: EntityArrayResponseType) => { this.onResponseSuccess(res); },
       });
   }
 
   load(): void {
     this.loadFromBackendWithRouteInformations().subscribe({
-      next: (res: EntityArrayResponseType) => {
-        this.onResponseSuccess(res);
-      },
+      next: (res: EntityArrayResponseType) => { this.onResponseSuccess(res); },
     });
   }
 
@@ -118,7 +149,6 @@ export class StockAuditComponent implements OnInit {
       size: this.itemsPerPage,
       sort: this.getSortQueryParam(predicate, ascending),
     };
-
     this.router.navigate(['./'], {
       relativeTo: this.activatedRoute,
       queryParams: queryParamsObj,

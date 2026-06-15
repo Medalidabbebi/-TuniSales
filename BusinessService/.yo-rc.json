@@ -1,4 +1,4 @@
-{
+﻿{
   "generator-jhipster": {
     "applicationIndex": 1,
     "applicationType": "microservice",
@@ -43,8 +43,8 @@
     "microfrontend": false,
     "nativeLanguage": "en",
     "otherModules": [],
-    "packageFolder": "com/tunisales/business",
-    "packageName": "com.tunisales.business",
+    "packageFolder": "com/AfricomFlow/business",
+    "packageName": "com.AfricomFlow.business",
     "pages": [],
     "prodDatabaseType": "postgresql",
     "reactive": false,
@@ -60,3 +60,4 @@
     "withAdminUi": false
   }
 }
+
