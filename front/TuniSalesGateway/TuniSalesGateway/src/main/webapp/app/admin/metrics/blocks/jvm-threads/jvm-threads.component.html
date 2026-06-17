@@ -1,55 +1,73 @@
-<h4 jhiTranslate="metrics.jvm.threads.title">Threads</h4>
+<ng-container *ngIf="threadStats.threadDumpAll > 0">
 
-<span><span jhiTranslate="metrics.jvm.threads.runnable">Exécutable</span> {{ threadStats.threadDumpRunnable }}</span>
+  <div class="met-thread-item">
+    <div class="met-thread-header">
+      <span class="met-thread-label met-thread-label--green">
+        <fa-icon icon="play-circle"></fa-icon> Executable
+      </span>
+      <span class="met-thread-count">{{ threadStats.threadDumpRunnable }}</span>
+    </div>
+    <div class="met-bar">
+      <div class="met-bar__fill met-bar__fill--green"
+        [style.width.%]="(threadStats.threadDumpRunnable * 100) / threadStats.threadDumpAll">
+        {{ (threadStats.threadDumpRunnable * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%
+      </div>
+    </div>
+  </div>
 
-<ngb-progressbar
-  [value]="threadStats.threadDumpRunnable"
-  [max]="threadStats.threadDumpAll"
-  [striped]="true"
-  [animated]="false"
-  type="success"
->
-  <span>{{ (threadStats.threadDumpRunnable * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%</span>
-</ngb-progressbar>
+  <div class="met-thread-item">
+    <div class="met-thread-header">
+      <span class="met-thread-label met-thread-label--amber">
+        <fa-icon icon="clock"></fa-icon> Temps d'attente
+      </span>
+      <span class="met-thread-count">{{ threadStats.threadDumpTimedWaiting }}</span>
+    </div>
+    <div class="met-bar">
+      <div class="met-bar__fill met-bar__fill--amber"
+        [style.width.%]="(threadStats.threadDumpTimedWaiting * 100) / threadStats.threadDumpAll">
+        {{ (threadStats.threadDumpTimedWaiting * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%
+      </div>
+    </div>
+  </div>
 
-<span><span jhiTranslate="metrics.jvm.threads.timedwaiting">Temps d'attente</span> ({{ threadStats.threadDumpTimedWaiting }})</span>
+  <div class="met-thread-item">
+    <div class="met-thread-header">
+      <span class="met-thread-label met-thread-label--amber">
+        <fa-icon icon="stop-circle"></fa-icon> En attente
+      </span>
+      <span class="met-thread-count">{{ threadStats.threadDumpWaiting }}</span>
+    </div>
+    <div class="met-bar">
+      <div class="met-bar__fill met-bar__fill--amber"
+        [style.width.%]="(threadStats.threadDumpWaiting * 100) / threadStats.threadDumpAll">
+        {{ (threadStats.threadDumpWaiting * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%
+      </div>
+    </div>
+  </div>
 
-<ngb-progressbar
-  [value]="threadStats.threadDumpTimedWaiting"
-  [max]="threadStats.threadDumpAll"
-  [striped]="true"
-  [animated]="false"
-  type="warning"
->
-  <span>{{ (threadStats.threadDumpTimedWaiting * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%</span>
-</ngb-progressbar>
+  <div class="met-thread-item">
+    <div class="met-thread-header">
+      <span class="met-thread-label met-thread-label--red">
+        <fa-icon icon="times-circle"></fa-icon> Bloque
+      </span>
+      <span class="met-thread-count">{{ threadStats.threadDumpBlocked }}</span>
+    </div>
+    <div class="met-bar">
+      <div class="met-bar__fill met-bar__fill--red"
+        [style.width.%]="(threadStats.threadDumpBlocked * 100) / threadStats.threadDumpAll">
+        {{ (threadStats.threadDumpBlocked * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%
+      </div>
+    </div>
+  </div>
 
-<span><span jhiTranslate="metrics.jvm.threads.waiting">En attente</span> ({{ threadStats.threadDumpWaiting }})</span>
+  <div class="met-thread-total">
+    <span>Total des threads</span>
+    <span>{{ threadStats.threadDumpAll }}</span>
+  </div>
 
-<ngb-progressbar
-  [value]="threadStats.threadDumpWaiting"
-  [max]="threadStats.threadDumpAll"
-  [striped]="true"
-  [animated]="false"
-  type="warning"
->
-  <span>{{ (threadStats.threadDumpWaiting * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%</span>
-</ngb-progressbar>
+</ng-container>
 
-<span><span jhiTranslate="metrics.jvm.threads.blocked">Bloqué</span> ({{ threadStats.threadDumpBlocked }})</span>
-
-<ngb-progressbar
-  [value]="threadStats.threadDumpBlocked"
-  [max]="threadStats.threadDumpAll"
-  [striped]="true"
-  [animated]="false"
-  type="success"
->
-  <span>{{ (threadStats.threadDumpBlocked * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%</span>
-</ngb-progressbar>
-
-<div>Total: {{ threadStats.threadDumpAll }}</div>
-
-<button class="hand btn btn-primary btn-sm" (click)="open()" data-toggle="modal" data-target="#threadDump">
-  <span>Expand</span>
+<button class="met-thread-expand" (click)="open()">
+  <fa-icon icon="list"></fa-icon>
+  Voir tous les threads
 </button>

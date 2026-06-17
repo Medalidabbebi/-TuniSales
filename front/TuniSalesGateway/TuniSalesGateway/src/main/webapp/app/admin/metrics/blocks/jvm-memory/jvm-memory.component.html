@@ -1,28 +1,20 @@
-<h4 jhiTranslate="metrics.jvm.memory.title">Mémoire</h4>
-
 <div *ngIf="!updating && jvmMemoryMetrics">
-  <div *ngFor="let entry of jvmMemoryMetrics | keyvalue">
-    <span *ngIf="entry.value.max !== -1; else other">
-      <span>{{ entry.key }}</span>
-      ({{ entry.value.used / 1048576 | number: '1.0-0' }}M / {{ entry.value.max / 1048576 | number: '1.0-0' }}M)
-    </span>
-
-    <div>Committed : {{ entry.value.committed / 1048576 | number: '1.0-0' }}M</div>
-
-    <ng-template #other
-      ><span
-        ><span>{{ entry.key }}</span> {{ entry.value.used / 1048576 | number: '1.0-0' }}M</span
-      ></ng-template
-    >
-
-    <ngb-progressbar
-      *ngIf="entry.value.max !== -1"
-      type="success"
-      [value]="(100 * entry.value.used) / entry.value.max"
-      [striped]="true"
-      [animated]="false"
-    >
-      <span>{{ (entry.value.used * 100) / entry.value.max | number: '1.0-0' }}%</span>
-    </ngb-progressbar>
+  <div class="met-mem-item" *ngFor="let entry of jvmMemoryMetrics | keyvalue">
+    <div class="met-mem-header">
+      <span class="met-mem-name">{{ entry.key }}</span>
+      <span class="met-mem-size" *ngIf="entry.value.max !== -1">
+        {{ entry.value.used / 1048576 | number: '1.0-0' }}M / {{ entry.value.max / 1048576 | number: '1.0-0' }}M
+      </span>
+      <span class="met-mem-size" *ngIf="entry.value.max === -1">
+        {{ entry.value.used / 1048576 | number: '1.0-0' }}M
+      </span>
+    </div>
+    <div class="met-sub">Commit: {{ entry.value.committed / 1048576 | number: '1.0-0' }}M</div>
+    <div class="met-bar" *ngIf="entry.value.max !== -1">
+      <div class="met-bar__fill met-bar__fill--blue"
+        [style.width.%]="(100 * entry.value.used) / entry.value.max">
+        {{ (entry.value.used * 100) / entry.value.max | number: '1.0-0' }}%
+      </div>
+    </div>
   </div>
 </div>

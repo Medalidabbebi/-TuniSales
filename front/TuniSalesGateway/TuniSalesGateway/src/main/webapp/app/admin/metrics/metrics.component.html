@@ -1,51 +1,158 @@
-<div>
-  <h2>
-    <span id="metrics-page-heading" jhiTranslate="metrics.title" data-cy="metricsPageHeading">Métriques de l'application</span>
+<div class="met-page">
 
-    <button class="btn btn-primary float-end" (click)="refresh()">
-      <fa-icon icon="sync"></fa-icon> <span jhiTranslate="metrics.refresh.button">Rafraîchir</span>
+  <!-- ── Header ── -->
+  <div class="met-header">
+    <div class="met-header__left">
+      <div class="met-header__icon">
+        <fa-icon icon="tachometer-alt"></fa-icon>
+      </div>
+      <div>
+        <h1 class="met-header__title" id="metrics-page-heading" data-cy="metricsPageHeading">
+          Metriques de l'application
+        </h1>
+        <p class="met-header__subtitle">Surveillance JVM et services en temps reel</p>
+      </div>
+    </div>
+    <button class="met-btn" (click)="refresh()" [disabled]="updatingMetrics">
+      <fa-icon icon="sync" [spin]="updatingMetrics"></fa-icon>
+      Rafraichir
     </button>
-  </h2>
-
-  <h3 jhiTranslate="metrics.jvm.title">Métriques de la JVM</h3>
-
-  <div class="row" *ngIf="metrics && !updatingMetrics">
-    <jhi-jvm-memory class="col-md-4" [updating]="updatingMetrics" [jvmMemoryMetrics]="metrics.jvm"></jhi-jvm-memory>
-
-    <jhi-jvm-threads class="col-md-4" [threads]="threads"></jhi-jvm-threads>
-
-    <jhi-metrics-system class="col-md-4" [updating]="updatingMetrics" [systemMetrics]="metrics.processMetrics"></jhi-metrics-system>
   </div>
 
-  <jhi-metrics-garbagecollector
-    *ngIf="metrics && metricsKeyExists('garbageCollector')"
-    [updating]="updatingMetrics"
-    [garbageCollectorMetrics]="metrics.garbageCollector"
-  ></jhi-metrics-garbagecollector>
+  <!-- ── Loading ── -->
+  <div class="met-loading" *ngIf="updatingMetrics">
+    <fa-icon icon="spinner" [spin]="true"></fa-icon>
+    Chargement des metriques...
+  </div>
 
-  <div class="well well-lg" *ngIf="updatingMetrics" jhiTranslate="metrics.updating">Mise à jour...</div>
+  <!-- ── JVM Section ── -->
+  <ng-container *ngIf="metrics && !updatingMetrics">
 
-  <jhi-metrics-request
-    *ngIf="metrics && metricsKeyExists('http.server.requests')"
-    [updating]="updatingMetrics"
-    [requestMetrics]="metrics['http.server.requests']"
-  ></jhi-metrics-request>
+    <div class="met-section">
+      <div class="met-section__title">
+        <fa-icon icon="cubes"></fa-icon>
+        Metriques de la JVM
+      </div>
+      <div class="met-grid-3">
 
-  <jhi-metrics-endpoints-requests
-    *ngIf="metrics && metricsKeyExists('services')"
-    [updating]="updatingMetrics"
-    [endpointsRequestsMetrics]="metrics.services"
-  ></jhi-metrics-endpoints-requests>
+        <div class="met-card">
+          <div class="met-card__header met-card__header--blue">
+            <fa-icon icon="database"></fa-icon> Memoire
+          </div>
+          <div class="met-card__body">
+            <jhi-jvm-memory [updating]="updatingMetrics" [jvmMemoryMetrics]="metrics.jvm"></jhi-jvm-memory>
+          </div>
+        </div>
 
-  <jhi-metrics-cache
-    *ngIf="metrics && metricsKeyExists('cache')"
-    [updating]="updatingMetrics"
-    [cacheMetrics]="metrics.cache"
-  ></jhi-metrics-cache>
+        <div class="met-card">
+          <div class="met-card__header met-card__header--purple">
+            <fa-icon icon="cogs"></fa-icon> Threads
+          </div>
+          <div class="met-card__body">
+            <jhi-jvm-threads [threads]="threads"></jhi-jvm-threads>
+          </div>
+        </div>
 
-  <jhi-metrics-datasource
-    *ngIf="metrics && metricsKeyExistsAndObjectNotEmpty('databases')"
-    [updating]="updatingMetrics"
-    [datasourceMetrics]="metrics.databases"
-  ></jhi-metrics-datasource>
+        <div class="met-card">
+          <div class="met-card__header met-card__header--teal">
+            <fa-icon icon="tachometer-alt"></fa-icon> Systeme
+          </div>
+          <div class="met-card__body">
+            <jhi-metrics-system [updating]="updatingMetrics" [systemMetrics]="metrics.processMetrics"></jhi-metrics-system>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── GC Section ── -->
+    <div class="met-section" *ngIf="metricsKeyExists('garbageCollector')">
+      <div class="met-section__title">
+        <fa-icon icon="trash-alt"></fa-icon>
+        Garbage Collections
+      </div>
+      <div class="met-card">
+        <div class="met-card__header met-card__header--orange">
+          <fa-icon icon="history"></fa-icon> GC Metrics
+        </div>
+        <div class="met-card__body">
+          <jhi-metrics-garbagecollector
+            [updating]="updatingMetrics"
+            [garbageCollectorMetrics]="metrics.garbageCollector"
+          ></jhi-metrics-garbagecollector>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HTTP Requests ── -->
+    <div class="met-section" *ngIf="metricsKeyExists('http.server.requests')">
+      <div class="met-section__title">
+        <fa-icon icon="exchange-alt"></fa-icon>
+        Requetes HTTP (ms)
+      </div>
+      <div class="met-card">
+        <div class="met-card__header met-card__header--blue">
+          <fa-icon icon="chart-bar"></fa-icon> Statistiques HTTP
+        </div>
+        <div class="met-card__body">
+          <jhi-metrics-request
+            [updating]="updatingMetrics"
+            [requestMetrics]="metrics['http.server.requests']"
+          ></jhi-metrics-request>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Endpoints ── -->
+    <div class="met-section" *ngIf="metricsKeyExists('services')">
+      <div class="met-section__title">
+        <fa-icon icon="link"></fa-icon>
+        Requetes par endpoint
+      </div>
+      <div class="met-card">
+        <div class="met-card__header met-card__header--purple">
+          <fa-icon icon="list"></fa-icon> Endpoints
+        </div>
+        <div class="met-card__body">
+          <jhi-metrics-endpoints-requests
+            [updating]="updatingMetrics"
+            [endpointsRequestsMetrics]="metrics.services"
+          ></jhi-metrics-endpoints-requests>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Cache ── -->
+    <div class="met-section" *ngIf="metricsKeyExists('cache')">
+      <div class="met-section__title">
+        <fa-icon icon="database"></fa-icon>
+        Cache
+      </div>
+      <div class="met-card">
+        <div class="met-card__header met-card__header--teal">
+          <fa-icon icon="database"></fa-icon> Cache Metrics
+        </div>
+        <div class="met-card__body">
+          <jhi-metrics-cache [updating]="updatingMetrics" [cacheMetrics]="metrics.cache"></jhi-metrics-cache>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Datasource ── -->
+    <div class="met-section" *ngIf="metricsKeyExistsAndObjectNotEmpty('databases')">
+      <div class="met-section__title">
+        <fa-icon icon="database"></fa-icon>
+        Sources de donnees
+      </div>
+      <div class="met-card">
+        <div class="met-card__header met-card__header--gray">
+          <fa-icon icon="database"></fa-icon> Datasource
+        </div>
+        <div class="met-card__body">
+          <jhi-metrics-datasource [updating]="updatingMetrics" [datasourceMetrics]="metrics.databases"></jhi-metrics-datasource>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
 </div>
