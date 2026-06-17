@@ -16,6 +16,7 @@ const newUser: IUser = {
 @Component({
   selector: 'jhi-user-mgmt-update',
   templateUrl: './user-management-update.component.html',
+  styleUrls: ['./user-management-update.component.scss'],
 })
 export class UserManagementUpdateComponent implements OnInit {
   languages = LANGUAGES;
@@ -75,6 +76,69 @@ export class UserManagementUpdateComponent implements OnInit {
         error: () => this.onSaveError(),
       });
     }
+  }
+
+  isRoleSelected(role: string): boolean {
+    return (this.editForm.get('authorities')?.value ?? []).includes(role);
+  }
+
+  toggleRole(role: string): void {
+    const current: string[] = [...(this.editForm.get('authorities')?.value ?? [])];
+    const idx = current.indexOf(role);
+    if (idx >= 0) {
+      current.splice(idx, 1);
+    } else {
+      current.push(role);
+    }
+    this.editForm.get('authorities')?.setValue(current);
+  }
+
+  getRoleColor(role: string): string {
+    const map: Record<string, string> = {
+      ROLE_ADMIN:             '#ef4444',
+      ROLE_USER:              '#64748b',
+      ROLE_ADMIN_SYSTEME:     '#4f46e5',
+      ROLE_ADMIN_COMMERCIAL:  '#ea580c',
+      ROLE_COMMERCIAL:        '#2563eb',
+      ROLE_MAGASINIER:        '#0d9488',
+      ROLE_CHEF_PARC:         '#16a34a',
+      ROLE_RESPONSABLE_PV:    '#7c3aed',
+      ROLE_VENDEUR:           '#db2777',
+      ROLE_ADMIN_CLIENT:      '#374151',
+    };
+    return map[role] ?? '#6366f1';
+  }
+
+  getRoleIcon(role: string): string {
+    const map: Record<string, string> = {
+      ROLE_ADMIN:             'shield-alt',
+      ROLE_USER:              'user',
+      ROLE_ADMIN_SYSTEME:     'cog',
+      ROLE_ADMIN_COMMERCIAL:  'briefcase',
+      ROLE_COMMERCIAL:        'chart-bar',
+      ROLE_MAGASINIER:        'box',
+      ROLE_CHEF_PARC:         'car',
+      ROLE_RESPONSABLE_PV:    'map-marker-alt',
+      ROLE_VENDEUR:           'tag',
+      ROLE_ADMIN_CLIENT:      'user-circle',
+    };
+    return map[role] ?? 'user-tag';
+  }
+
+  getRoleLabel(role: string): string {
+    const map: Record<string, string> = {
+      ROLE_ADMIN:             'Administrateur',
+      ROLE_USER:              'Utilisateur',
+      ROLE_ADMIN_SYSTEME:     'Admin Systeme',
+      ROLE_ADMIN_COMMERCIAL:  'Admin Commercial',
+      ROLE_COMMERCIAL:        'Commercial',
+      ROLE_MAGASINIER:        'Magasinier',
+      ROLE_CHEF_PARC:         'Chef de Parc',
+      ROLE_RESPONSABLE_PV:    'Responsable PV',
+      ROLE_VENDEUR:           'Vendeur',
+      ROLE_ADMIN_CLIENT:      'Admin Client',
+    };
+    return map[role] ?? role.replace('ROLE_', '');
   }
 
   private onSaveSuccess(): void {
