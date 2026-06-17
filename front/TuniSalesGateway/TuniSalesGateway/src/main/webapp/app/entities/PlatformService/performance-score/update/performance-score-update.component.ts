@@ -15,6 +15,7 @@ import { ScoreClassification } from 'app/entities/enumerations/score-classificat
 @Component({
   selector: 'jhi-performance-score-update',
   templateUrl: './performance-score-update.component.html',
+  styleUrls: ['./performance-score-update.component.scss'],
 })
 export class PerformanceScoreUpdateComponent implements OnInit {
   isSaving = false;
