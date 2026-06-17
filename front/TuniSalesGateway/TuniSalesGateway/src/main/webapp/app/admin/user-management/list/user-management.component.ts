@@ -15,6 +15,7 @@ import { UserManagementDeleteDialogComponent } from '../delete/user-management-d
 @Component({
   selector: 'jhi-user-mgmt',
   templateUrl: './user-management.component.html',
+  styleUrls: ['./user-management.component.scss'],
 })
 export class UserManagementComponent implements OnInit {
   currentAccount: Account | null = null;
@@ -83,6 +84,67 @@ export class UserManagementComponent implements OnInit {
         sort: `${this.predicate},${this.ascending ? ASC : DESC}`,
       },
     });
+  }
+
+  countActive(): number {
+    return this.users?.filter(u => u.activated).length ?? 0;
+  }
+
+  countInactive(): number {
+    return this.users?.filter(u => !u.activated).length ?? 0;
+  }
+
+  countDistinctRoles(): number {
+    const roles = new Set<string>();
+    this.users?.forEach(u => u.authorities?.forEach(r => roles.add(r)));
+    return roles.size;
+  }
+
+  getInitials(login: string): string {
+    return login ? login.substring(0, 2).toUpperCase() : '?';
+  }
+
+  getAvatarClass(login: string): string {
+    const colors = ['indigo', 'blue', 'green', 'teal', 'purple', 'pink', 'orange', 'red', 'dark'];
+    let hash = 0;
+    for (let i = 0; i < login.length; i++) hash = login.charCodeAt(i) + ((hash << 5) - hash);
+    return `um-user__avatar--${colors[Math.abs(hash) % colors.length]}`;
+  }
+
+  getRoleClass(role: string): string {
+    const map: Record<string, string> = {
+      ROLE_ADMIN: 'um-role-badge--red',
+      ROLE_USER: 'um-role-badge--gray',
+      ROLE_ADMIN_SYSTEME: 'um-role-badge--indigo',
+      ROLE_ADMIN_COMMERCIAL: 'um-role-badge--orange',
+      ROLE_COMMERCIAL: 'um-role-badge--blue',
+      ROLE_MAGASINIER: 'um-role-badge--teal',
+      ROLE_CHEF_PARC: 'um-role-badge--green',
+      ROLE_RESPONSABLE_PV: 'um-role-badge--purple',
+      ROLE_VENDEUR: 'um-role-badge--pink',
+      ROLE_ADMIN_CLIENT: 'um-role-badge--dark',
+    };
+    return map[role] ?? 'um-role-badge--gray';
+  }
+
+  getRoleLabel(role: string): string {
+    const map: Record<string, string> = {
+      ROLE_ADMIN: 'ADMIN',
+      ROLE_USER: 'USER',
+      ROLE_ADMIN_SYSTEME: 'ADM.SYS',
+      ROLE_ADMIN_COMMERCIAL: 'ADM.COM',
+      ROLE_COMMERCIAL: 'COMMERCIAL',
+      ROLE_MAGASINIER: 'MAGASIN.',
+      ROLE_CHEF_PARC: 'CH.PARC',
+      ROLE_RESPONSABLE_PV: 'RESP.PV',
+      ROLE_VENDEUR: 'VENDEUR',
+      ROLE_ADMIN_CLIENT: 'ADM.CLI',
+    };
+    return map[role] ?? role.replace('ROLE_', '');
+  }
+
+  getVisibleRoles(authorities: string[] | undefined): string[] {
+    return authorities ? authorities.slice(0, 2) : [];
   }
 
   private handleNavigation(): void {
