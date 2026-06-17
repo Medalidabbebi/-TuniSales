@@ -23,7 +23,7 @@
     <div class="obj-card obj-card--main">
       <div class="obj-card__header">
         <div class="obj-metric-icon">
-          <fa-icon [icon]="getMetricIcon()"></fa-icon>
+          <fa-icon [icon]="$any(getMetricIcon())"></fa-icon>
         </div>
         <div>
           <h2 class="obj-card__title">{{ getMetricLabel() }}</h2>
