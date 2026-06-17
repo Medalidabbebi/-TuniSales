@@ -1,50 +1,74 @@
-<div>
-  <h2>
-    <span id="health-page-heading" jhiTranslate="health.title" data-cy="healthPageHeading">Diagnostics</span>
+<div class="hth-page">
 
-    <button class="btn btn-primary float-end" (click)="refresh()">
-      <fa-icon icon="sync"></fa-icon> <span jhiTranslate="health.refresh.button">Rafraîchir</span>
+  <!-- ── Header ── -->
+  <div class="hth-header">
+    <div class="hth-header__left">
+      <div class="hth-header__icon">
+        <fa-icon icon="heart"></fa-icon>
+      </div>
+      <div>
+        <h1 class="hth-header__title" id="health-page-heading" data-cy="healthPageHeading">Diagnostics</h1>
+        <p class="hth-header__subtitle">Etat de sante des services de l'application</p>
+      </div>
+    </div>
+    <button class="hth-btn" (click)="refresh()">
+      <fa-icon icon="sync"></fa-icon>
+      Rafraichir
     </button>
-  </h2>
-
-  <div class="table-responsive">
-    <table id="healthCheck" class="table table-striped" aria-describedby="health-page-heading">
-      <thead>
-        <tr>
-          <th scope="col" jhiTranslate="health.table.service">Nom du service</th>
-          <th scope="col" class="text-center" jhiTranslate="health.table.status">État</th>
-          <th scope="col" class="text-center" jhiTranslate="health.details.details">Détails</th>
-        </tr>
-      </thead>
-      <tbody *ngIf="health">
-        <tr *ngFor="let componentHealth of health.components | keyvalue">
-          <td>
-            {{ 'health.indicator.' + componentHealth.key | translate }}
-          </td>
-          <td class="text-center">
-            <span
-              class="badge"
-              [ngClass]="getBadgeClass(componentHealth.value!.status)"
-              jhiTranslate="{{ 'health.status.' + componentHealth.value!.status }}"
-            >
-              {{
-                { UNKNOWN: 'INCONNU', UP: 'DISPONIBLE', OUT_OF_SERVICE: 'OUT_OF_SERVICE', DOWN: 'HORS SERVICE' }[
-                  componentHealth.value!.status || 'UNKNOWN'
-                ]
-              }}
-            </span>
-          </td>
-          <td class="text-center">
-            <a
-              class="hand"
-              (click)="showHealth({ key: componentHealth.key, value: componentHealth.value! })"
-              *ngIf="componentHealth.value!.details"
-            >
-              <fa-icon icon="eye"></fa-icon>
-            </a>
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
+
+  <!-- ── KPIs ── -->
+  <div class="hth-kpis" *ngIf="health">
+    <div class="hth-kpi">
+      <div class="hth-kpi__value">{{ getComponentCount() }}</div>
+      <div class="hth-kpi__label">Services surveilles</div>
+    </div>
+    <div class="hth-kpi hth-kpi--green">
+      <div class="hth-kpi__value">{{ countUp() }}</div>
+      <div class="hth-kpi__label">Disponibles</div>
+    </div>
+    <div class="hth-kpi hth-kpi--red">
+      <div class="hth-kpi__value">{{ countDown() }}</div>
+      <div class="hth-kpi__label">Hors service</div>
+    </div>
+    <div class="hth-kpi" [ngClass]="health.status === 'UP' ? 'hth-kpi--green' : 'hth-kpi--red'">
+      <div class="hth-kpi__icon">
+        <fa-icon [icon]="$any(health.status === 'UP' ? 'check-circle' : 'exclamation-circle')"></fa-icon>
+      </div>
+      <div class="hth-kpi__label">Statut global</div>
+    </div>
+  </div>
+
+  <!-- ── Service list ── -->
+  <div class="hth-card" *ngIf="health">
+    <div class="hth-card__header">
+      <fa-icon icon="list"></fa-icon>
+      Services ({{ getComponentCount() }})
+    </div>
+    <div class="hth-list">
+      <div class="hth-row" *ngFor="let componentHealth of health.components | keyvalue">
+        <div class="hth-row__left">
+          <div class="hth-row__icon" [ngClass]="'hth-row__icon--' + getStatusColor(componentHealth.value!.status)">
+            <fa-icon [icon]="$any(getStatusIcon(componentHealth.value!.status))"></fa-icon>
+          </div>
+          <span class="hth-row__name">
+            {{ 'health.indicator.' + componentHealth.key | translate }}
+          </span>
+        </div>
+        <div class="hth-row__right">
+          <span class="hth-badge" [ngClass]="'hth-badge--' + getStatusColor(componentHealth.value!.status)">
+            <span class="hth-badge__dot"></span>
+            {{ getStatusLabel(componentHealth.value!.status) }}
+          </span>
+          <button class="hth-detail-btn"
+            *ngIf="componentHealth.value!.details"
+            (click)="showHealth({ key: componentHealth.key, value: componentHealth.value! })"
+            title="Voir les details">
+            <fa-icon icon="eye"></fa-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
