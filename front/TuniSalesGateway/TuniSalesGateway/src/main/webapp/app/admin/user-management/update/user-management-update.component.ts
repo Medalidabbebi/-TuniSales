@@ -100,11 +100,11 @@ export class UserManagementUpdateComponent implements OnInit {
       ROLE_ADMIN_SYSTEME:     '#4f46e5',
       ROLE_ADMIN_COMMERCIAL:  '#ea580c',
       ROLE_COMMERCIAL:        '#2563eb',
-      ROLE_MAGASINIER:        '#0d9488',
-      ROLE_CHEF_PARC:         '#16a34a',
-      ROLE_RESPONSABLE_PV:    '#7c3aed',
-      ROLE_VENDEUR:           '#db2777',
-      ROLE_ADMIN_CLIENT:      '#374151',
+      ROLE_MAGASINIER:       '#0d9488',
+      ROLE_CHEF_PARC:        '#16a34a',
+      ROLE_RESPONSABLE_PV:   '#7c3aed',
+      ROLE_VENDEUR:          '#db2777',
+      ROLE_ADMIN_CLIENT:     '#374151',
     };
     return map[role] ?? '#6366f1';
   }
@@ -113,16 +113,16 @@ export class UserManagementUpdateComponent implements OnInit {
     const map: Record<string, string> = {
       ROLE_ADMIN:             'shield-alt',
       ROLE_USER:              'user',
-      ROLE_ADMIN_SYSTEME:     'cog',
+      ROLE_ADMIN_SYSTEME:     'cogs',
       ROLE_ADMIN_COMMERCIAL:  'briefcase',
       ROLE_COMMERCIAL:        'chart-bar',
-      ROLE_MAGASINIER:        'box',
+      ROLE_MAGASINIER:        'boxes',
       ROLE_CHEF_PARC:         'car',
       ROLE_RESPONSABLE_PV:    'map-marker-alt',
       ROLE_VENDEUR:           'tag',
       ROLE_ADMIN_CLIENT:      'user-circle',
     };
-    return map[role] ?? 'user-tag';
+    return map[role] ?? 'user';
   }
 
   getRoleLabel(role: string): string {

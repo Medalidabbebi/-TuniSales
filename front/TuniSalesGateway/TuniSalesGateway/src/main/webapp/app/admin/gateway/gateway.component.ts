@@ -39,9 +39,9 @@ export class GatewayComponent implements OnInit {
 
   getServiceIcon(serviceId: string): string {
     const map: Record<string, string> = {
-      platformservice: 'chart-line',
-      inventoryservice: 'box',
-      businessservice: 'briefcase',
+      platformservice:    'chart-line',
+      inventoryservice:   'boxes',
+      businessservice:    'briefcase',
       'jhipster-registry': 'server',
     };
     return map[serviceId?.toLowerCase()] ?? 'globe';
