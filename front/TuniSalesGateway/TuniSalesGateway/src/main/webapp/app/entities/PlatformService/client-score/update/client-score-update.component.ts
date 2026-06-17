@@ -15,6 +15,7 @@ import { ScoreClassification } from 'app/entities/enumerations/score-classificat
 @Component({
   selector: 'jhi-client-score-update',
   templateUrl: './client-score-update.component.html',
+  styleUrls: ['./client-score-update.component.scss'],
 })
 export class ClientScoreUpdateComponent implements OnInit {
   isSaving = false;
@@ -92,6 +93,10 @@ export class ClientScoreUpdateComponent implements OnInit {
 
   protected updateForm(clientScore: IClientScore): void {
     this.clientScore = clientScore;
-    this.clientScoreFormService.resetForm(this.editForm, clientScore);
+    const cleaned = { ...clientScore };
+    if (cleaned.breakdownJson) {
+      try { JSON.parse(cleaned.breakdownJson); } catch { cleaned.breakdownJson = ''; }
+    }
+    this.clientScoreFormService.resetForm(this.editForm, cleaned);
   }
 }
