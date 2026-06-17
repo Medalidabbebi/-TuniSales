@@ -99,14 +99,17 @@
       </div>
     </div>
 
-    <!-- Breakdown JSON -->
-    <div class="psd-card" *ngIf="performanceScore.breakdownJson">
+    <!-- Breakdown JSON — affiché seulement si JSON valide -->
+    <div class="psd-card" *ngIf="isValidJson(performanceScore.breakdownJson)">
       <div class="psd-card__header">
         <div class="psd-card__icon psd-card__icon--purple"><fa-icon icon="list-ol"></fa-icon></div>
         <span class="psd-card__title">Détail du calcul</span>
       </div>
       <div class="psd-card__body">
-        <pre class="psd-json">{{ performanceScore.breakdownJson }}</pre>
+        <div class="psd-breakdown-row" *ngFor="let entry of getBreakdownEntries()">
+          <span class="psd-breakdown-key">{{ entry.key }}</span>
+          <span class="psd-breakdown-val">{{ entry.value }}</span>
+        </div>
       </div>
     </div>
 

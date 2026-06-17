@@ -187,3 +187,24 @@ $psd-radius:  12px;
   background: $psd-white; border: 1px solid $psd-border;
   box-shadow: $psd-shadow;
 }
+
+// ── Breakdown rows ─────────────────────────────────────────────────
+.psd-breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: .5rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  &:last-child { border-bottom: none; }
+}
+.psd-breakdown-key {
+  font-size: .8rem;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: capitalize;
+}
+.psd-breakdown-val {
+  font-size: .875rem;
+  font-weight: 700;
+  color: #111827;
+}

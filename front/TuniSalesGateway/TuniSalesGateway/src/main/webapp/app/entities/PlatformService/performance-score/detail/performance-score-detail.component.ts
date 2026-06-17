@@ -88,4 +88,16 @@ export class PerformanceScoreDetailComponent implements OnInit {
   previousState(): void {
     window.history.back();
   }
+
+  isValidJson(value: string | null | undefined): boolean {
+    if (!value) return false;
+    try { JSON.parse(value); return true; } catch { return false; }
+  }
+
+  getBreakdownEntries(): { key: string; value: unknown }[] {
+    try {
+      const parsed = JSON.parse(this.performanceScore?.breakdownJson ?? '{}');
+      return Object.entries(parsed).map(([key, value]) => ({ key, value }));
+    } catch { return []; }
+  }
 }
