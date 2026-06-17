@@ -121,6 +121,7 @@
 .log-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
 
   thead tr {
     background: #f8fafc;
@@ -138,7 +139,8 @@
     cursor: pointer;
     user-select: none;
 
-    &:last-child { text-align: right; }
+    &:first-child { width: auto; }
+    &:last-child  { width: 310px; text-align: right; }
 
     fa-icon { color: #cbd5e1; margin-left: 0.25rem; }
   }
@@ -154,6 +156,9 @@
   td {
     padding: 0.625rem 1.5rem;
     vertical-align: middle;
+    overflow: hidden;
+
+    &:last-child { white-space: nowrap; }
   }
 }
 
