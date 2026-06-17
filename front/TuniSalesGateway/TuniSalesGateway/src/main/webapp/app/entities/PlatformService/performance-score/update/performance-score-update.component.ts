@@ -93,6 +93,10 @@ export class PerformanceScoreUpdateComponent implements OnInit {
 
   protected updateForm(performanceScore: IPerformanceScore): void {
     this.performanceScore = performanceScore;
-    this.performanceScoreFormService.resetForm(this.editForm, performanceScore);
+    const cleaned = { ...performanceScore };
+    if (cleaned.breakdownJson) {
+      try { JSON.parse(cleaned.breakdownJson); } catch { cleaned.breakdownJson = ''; }
+    }
+    this.performanceScoreFormService.resetForm(this.editForm, cleaned);
   }
 }
