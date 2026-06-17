@@ -1,0 +1,250 @@
+.obj-detail-page {
+  padding: 2rem;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+/* ── Header ── */
+.obj-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  &__subtitle {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin: 0;
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+  }
+}
+
+.obj-back-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #374151;
+  transition: background 0.15s;
+
+  &:hover { background: #f3f4f6; }
+}
+
+.obj-edit-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover { background: #1d4ed8; }
+}
+
+/* ── Grid ── */
+.obj-grid {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 1.5rem;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Cards ── */
+.obj-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.75rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,.07), 0 4px 16px rgba(0,0,0,.04);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.25rem;
+  }
+
+  &__section-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #6b7280;
+    margin: 0 0 1.25rem;
+  }
+}
+
+/* ── Metric icon ── */
+.obj-metric-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 12px;
+  background: #eff6ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.obj-badge {
+  display: inline-block;
+  padding: 0.2rem 0.75rem;
+  background: #f0fdf4;
+  color: #16a34a;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ── Progress ── */
+.obj-progress {
+  margin-bottom: 1.5rem;
+
+  &__labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+  }
+
+  &__pct {
+    font-weight: 700;
+    color: #111827;
+  }
+
+  &__track {
+    height: 10px;
+    background: #f3f4f6;
+    border-radius: 99px;
+    overflow: hidden;
+  }
+
+  &__bar {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.6s ease;
+
+    &--success { background: linear-gradient(90deg, #16a34a, #4ade80); }
+    &--warning { background: linear-gradient(90deg, #d97706, #fbbf24); }
+    &--danger  { background: linear-gradient(90deg, #dc2626, #f87171); }
+  }
+}
+
+/* ── KPI row ── */
+.obj-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.obj-kpi {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+
+  &--achieved {
+    background: #eff6ff;
+  }
+
+  &__label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    color: #6b7280;
+    margin-bottom: 0.4rem;
+  }
+
+  &__value {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+
+    &--gap {
+      color: #dc2626;
+    }
+  }
+}
+
+/* ── Info list ── */
+.obj-info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.obj-info-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid #f3f4f6;
+
+  &:last-child { border-bottom: none; }
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    color: #6b7280;
+    font-weight: 500;
+
+    fa-icon { font-size: 0.75rem; }
+  }
+
+  &__value {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #111827;
+
+    &--user {
+      background: #eff6ff;
+      color: #2563eb;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+  }
+}

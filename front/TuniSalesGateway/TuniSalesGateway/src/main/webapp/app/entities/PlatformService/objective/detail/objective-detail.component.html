@@ -1,62 +1,90 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <div *ngIf="objective">
-      <h2 data-cy="objectiveDetailsHeading">
-        <span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.detail.title">Objective</span>
-      </h2>
+<div class="obj-detail-page" *ngIf="objective">
 
-      <hr />
-
-      <jhi-alert-error></jhi-alert-error>
-
-      <jhi-alert></jhi-alert>
-
-      <dl class="row-md jh-entity-details">
-        <dt><span jhiTranslate="global.field.id">ID</span></dt>
-        <dd>
-          <span>{{ objective.id }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.tenantId">Tenant Id</span></dt>
-        <dd>
-          <span>{{ objective.tenantId }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.assignedToLogin">Assigned To Login</span></dt>
-        <dd>
-          <span>{{ objective.assignedToLogin }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.period">Period</span></dt>
-        <dd>
-          <span>{{ objective.period }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.metricType">Metric Type</span></dt>
-        <dd>
-          <span jhiTranslate="{{ 'tuniSalesGatewayApp.MetricType.' + objective.metricType }}">{{ objective.metricType }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.targetValue">Target Value</span></dt>
-        <dd>
-          <span>{{ objective.targetValue }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.achievedValue">Achieved Value</span></dt>
-        <dd>
-          <span>{{ objective.achievedValue }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.createdAt">Created At</span></dt>
-        <dd>
-          <span>{{ objective.createdAt | formatMediumDatetime }}</span>
-        </dd>
-        <dt><span jhiTranslate="tuniSalesGatewayApp.platformServiceObjective.updatedAt">Updated At</span></dt>
-        <dd>
-          <span>{{ objective.updatedAt | formatMediumDatetime }}</span>
-        </dd>
-      </dl>
-
-      <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
-        <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Retour</span>
+  <!-- Header -->
+  <div class="obj-header">
+    <div class="obj-header__left">
+      <button class="obj-back-btn" (click)="previousState()">
+        <fa-icon icon="arrow-left"></fa-icon>
       </button>
-
-      <button type="button" [routerLink]="['/objective', objective.id, 'edit']" class="btn btn-primary">
-        <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Editer</span>
-      </button>
+      <div>
+        <p class="obj-header__subtitle">Performance &rsaquo; Objectifs</p>
+        <h1 class="obj-header__title">Détail de l'objectif</h1>
+      </div>
     </div>
+    <button type="button" [routerLink]="['/objective', objective.id, 'edit']" class="obj-edit-btn">
+      <fa-icon icon="pencil-alt"></fa-icon>
+      <span>Modifier</span>
+    </button>
+  </div>
+
+  <div class="obj-grid">
+
+    <!-- Main card -->
+    <div class="obj-card obj-card--main">
+      <div class="obj-card__header">
+        <div class="obj-metric-icon">
+          <fa-icon [icon]="getMetricIcon()"></fa-icon>
+        </div>
+        <div>
+          <h2 class="obj-card__title">{{ getMetricLabel() }}</h2>
+          <span class="obj-badge">Période : {{ objective.period }}</span>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="obj-progress">
+        <div class="obj-progress__labels">
+          <span>Progression</span>
+          <span class="obj-progress__pct">{{ getProgressPct() }}%</span>
+        </div>
+        <div class="obj-progress__track">
+          <div class="obj-progress__bar" [ngClass]="getProgressClass()" [style.width.%]="getProgressPct()"></div>
+        </div>
+      </div>
+
+      <!-- KPI row -->
+      <div class="obj-kpi-row">
+        <div class="obj-kpi">
+          <span class="obj-kpi__label">Valeur cible</span>
+          <span class="obj-kpi__value">{{ objective.targetValue | number }}</span>
+        </div>
+        <div class="obj-kpi obj-kpi--achieved">
+          <span class="obj-kpi__label">Valeur atteinte</span>
+          <span class="obj-kpi__value">{{ objective.achievedValue | number }}</span>
+        </div>
+        <div class="obj-kpi">
+          <span class="obj-kpi__label">Écart</span>
+          <span class="obj-kpi__value obj-kpi__value--gap">{{ (objective.achievedValue ?? 0) - (objective.targetValue ?? 0) | number }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info card -->
+    <div class="obj-card obj-card--info">
+      <h3 class="obj-card__section-title">Informations</h3>
+      <ul class="obj-info-list">
+        <li class="obj-info-item">
+          <span class="obj-info-item__label"><fa-icon icon="hashtag"></fa-icon> ID</span>
+          <span class="obj-info-item__value">{{ objective.id }}</span>
+        </li>
+        <li class="obj-info-item">
+          <span class="obj-info-item__label"><fa-icon icon="building"></fa-icon> Tenant</span>
+          <span class="obj-info-item__value">{{ objective.tenantId }}</span>
+        </li>
+        <li class="obj-info-item">
+          <span class="obj-info-item__label"><fa-icon icon="user"></fa-icon> Assigné à</span>
+          <span class="obj-info-item__value obj-info-item__value--user">{{ objective.assignedToLogin }}</span>
+        </li>
+        <li class="obj-info-item">
+          <span class="obj-info-item__label"><fa-icon icon="calendar"></fa-icon> Créé le</span>
+          <span class="obj-info-item__value">{{ objective.createdAt | formatMediumDatetime }}</span>
+        </li>
+        <li class="obj-info-item">
+          <span class="obj-info-item__label"><fa-icon icon="clock"></fa-icon> Modifié le</span>
+          <span class="obj-info-item__value">{{ objective.updatedAt | formatMediumDatetime }}</span>
+        </li>
+      </ul>
+    </div>
+
   </div>
 </div>
