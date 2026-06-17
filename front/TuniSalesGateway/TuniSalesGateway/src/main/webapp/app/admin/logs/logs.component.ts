@@ -6,6 +6,7 @@ import { LogsService } from './logs.service';
 @Component({
   selector: 'jhi-logs',
   templateUrl: './logs.component.html',
+  styleUrls: ['./logs.component.scss'],
 })
 export class LogsComponent implements OnInit {
   loggers?: Log[];
@@ -37,6 +38,10 @@ export class LogsComponent implements OnInit {
       }
       return 0;
     });
+  }
+
+  countByLevel(level: Level): number {
+    return this.loggers?.filter(l => l.level === level).length ?? 0;
   }
 
   private findAndExtractLoggers(): void {
