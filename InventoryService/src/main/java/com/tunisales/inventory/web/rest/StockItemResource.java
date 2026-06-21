@@ -30,7 +30,7 @@ import tech.jhipster.web.util.ResponseUtil;
 
 /**
  * REST controller for managing {@link com.tunisales.inventory.domain.StockItem}.
- * read → ROLE_MAGASINIER + ROLE_COMMERCIAL + ROLE_ADMIN_COMMERCIAL + ROLE_ADMIN_SYSTEME;
+ * read → ROLE_MAGASINIER + ROLE_COMMERCIAL + ROLE_VENDEUR + ROLE_ADMIN_COMMERCIAL + ROLE_ADMIN_SYSTEME;
  * write → ROLE_MAGASINIER + ROLE_ADMIN_COMMERCIAL.
  */
 @RestController
@@ -39,6 +39,7 @@ import tech.jhipster.web.util.ResponseUtil;
     "hasAuthority(\"ROLE_ADMIN\") or " +
     "hasAuthority(\"" + AuthoritiesConstants.MAGASINIER + "\") or " +
     "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
+    "hasAuthority(\"" + AuthoritiesConstants.VENDEUR + "\") or " +
     "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
     "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\")"
 )
@@ -230,6 +231,25 @@ public class StockItemResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
         StockItemDTO result = stockItemService.recover(id);
+        return ResponseEntity.ok().body(result);
+    }
+
+    /**
+     * {@code POST  /stock-items/{id}/mark-sold} : Mark a stock item as SOLD (e.g. by the vendeur who sold it).
+     */
+    @PostMapping("/stock-items/{id}/mark-sold")
+    @PreAuthorize(
+        "hasAuthority(\"ROLE_ADMIN\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.MAGASINIER + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.VENDEUR + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\")"
+    )
+    public ResponseEntity<StockItemDTO> markSold(@PathVariable Long id) {
+        log.debug("REST request to mark StockItem as SOLD : {}", id);
+        if (!stockItemRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+        StockItemDTO result = stockItemService.markSold(id);
         return ResponseEntity.ok().body(result);
     }
 }
