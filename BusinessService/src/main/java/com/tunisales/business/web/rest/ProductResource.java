@@ -37,6 +37,7 @@ import tech.jhipster.web.util.ResponseUtil;
 @PreAuthorize(
     "hasAuthority(\"ROLE_ADMIN\") or " +
     "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
+    "hasAuthority(\"" + AuthoritiesConstants.VENDEUR + "\") or " +
     "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
     "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\")"
 )
