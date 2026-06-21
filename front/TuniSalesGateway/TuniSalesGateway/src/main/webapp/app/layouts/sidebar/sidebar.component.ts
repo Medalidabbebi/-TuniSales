@@ -45,7 +45,6 @@ export class SidebarComponent implements OnInit {
         Authority.ADMIN,
         Authority.ADMIN_SYSTEME,
         Authority.ADMIN_COMMERCIAL,
-        Authority.COMMERCIAL,
         Authority.MAGASINIER,
         Authority.CHEF_PARC,
         Authority.RESPONSABLE_PV,
