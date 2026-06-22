@@ -1,113 +1,145 @@
-<div>
-  <h2>
-    <span id="user-management-page-heading" jhiTranslate="userManagement.home.title" data-cy="userManagementPageHeading">Utilisateurs</span>
+<div class="um-page" *ngIf="users">
 
-    <div class="d-flex justify-content-end">
-      <button class="btn btn-info me-2" (click)="loadAll()" [disabled]="isLoading">
+  <!-- ── Header ── -->
+  <div class="um-header">
+    <div class="um-header__left">
+      <div class="um-header__icon">
+        <fa-icon icon="users-cog"></fa-icon>
+      </div>
+      <div>
+        <h2 id="user-management-page-heading" data-cy="userManagementPageHeading" class="um-header__title">Utilisateurs</h2>
+        <p class="um-header__subtitle">{{ users.length }} utilisateur(s) sur cette page — {{ totalItems }} au total</p>
+      </div>
+    </div>
+    <div class="um-header__actions">
+      <button class="um-btn um-btn--secondary" (click)="loadAll()" [disabled]="isLoading">
         <fa-icon icon="sync" [spin]="isLoading"></fa-icon>
-        <span jhiTranslate="userManagement.home.refreshListLabel">Actualiser la liste</span>
+        <span>Actualiser la liste</span>
       </button>
-      <button class="btn btn-primary jh-create-entity" [routerLink]="['./new']">
-        <fa-icon icon="plus"></fa-icon> <span jhiTranslate="userManagement.home.createLabel">Créer un nouvel utilisateur</span>
+      <button class="um-btn um-btn--primary jh-create-entity" [routerLink]="['./new']">
+        <fa-icon icon="plus"></fa-icon>
+        <span>Créer un nouvel utilisateur</span>
       </button>
     </div>
-  </h2>
-
-  <jhi-alert-error></jhi-alert-error>
-
-  <jhi-alert></jhi-alert>
-
-  <div class="table-responsive" *ngIf="users">
-    <table class="table table-striped" aria-describedby="user-management-page-heading">
-      <thead>
-        <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="transition()">
-          <th scope="col" jhiSortBy="id"><span jhiTranslate="global.field.id">ID</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="login"><span jhiTranslate="userManagement.login">Login</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col" jhiSortBy="email"><span jhiTranslate="userManagement.email">Email</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col"></th>
-          <th scope="col" jhiSortBy="langKey"><span jhiTranslate="userManagement.langKey">Langue</span> <fa-icon icon="sort"></fa-icon></th>
-          <th scope="col"><span jhiTranslate="userManagement.profiles">Droits</span></th>
-          <th scope="col" jhiSortBy="createdDate">
-            <span jhiTranslate="userManagement.createdDate">Créé le</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="lastModifiedBy">
-            <span jhiTranslate="userManagement.lastModifiedBy">Modifié par</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col" jhiSortBy="lastModifiedDate">
-            <span jhiTranslate="userManagement.lastModifiedDate">Modifié le</span> <fa-icon icon="sort"></fa-icon>
-          </th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody *ngIf="users">
-        <tr *ngFor="let user of users; trackBy: trackIdentity">
-          <td>
-            <a [routerLink]="['./', user.login, 'view']">{{ user.id }}</a>
-          </td>
-          <td>{{ user.login }}</td>
-          <td>{{ user.email }}</td>
-          <td>
-            <button
-              class="btn btn-danger btn-sm"
-              (click)="setActive(user, true)"
-              *ngIf="!user.activated"
-              jhiTranslate="userManagement.deactivated"
-            >
-              Désactivé
-            </button>
-            <button
-              class="btn btn-success btn-sm"
-              (click)="setActive(user, false)"
-              *ngIf="user.activated"
-              [disabled]="!currentAccount || currentAccount.login === user.login"
-              jhiTranslate="userManagement.activated"
-            >
-              Activé
-            </button>
-          </td>
-          <td>{{ user.langKey }}</td>
-          <td>
-            <div *ngFor="let authority of user.authorities">
-              <span class="badge bg-info">{{ authority }}</span>
-            </div>
-          </td>
-          <td>{{ user.createdDate | date: 'dd/MM/yy HH:mm' }}</td>
-          <td>{{ user.lastModifiedBy }}</td>
-          <td>{{ user.lastModifiedDate | date: 'dd/MM/yy HH:mm' }}</td>
-          <td class="text-end">
-            <div class="btn-group">
-              <button type="submit" [routerLink]="['./', user.login, 'view']" class="btn btn-info btn-sm">
-                <fa-icon icon="eye"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.view">Voir</span>
-              </button>
-
-              <button type="submit" [routerLink]="['./', user.login, 'edit']" queryParamsHandling="merge" class="btn btn-primary btn-sm">
-                <fa-icon icon="pencil-alt"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Editer</span>
-              </button>
-
-              <button
-                type="button"
-                (click)="deleteUser(user)"
-                class="btn btn-danger btn-sm"
-                [disabled]="!currentAccount || currentAccount.login === user.login"
-              >
-                <fa-icon icon="times"></fa-icon>
-                <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Supprimer</span>
-              </button>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 
-  <div *ngIf="users">
-    <div class="d-flex justify-content-center">
-      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+  <jhi-alert-error></jhi-alert-error>
+  <jhi-alert></jhi-alert>
+
+  <!-- ── KPIs ── -->
+  <div class="um-kpis">
+    <div class="um-kpi um-kpi--indigo">
+      <div class="um-kpi__value">{{ users.length }}</div>
+      <div class="um-kpi__label">Utilisateurs (page)</div>
+    </div>
+    <div class="um-kpi um-kpi--green">
+      <div class="um-kpi__value">{{ countActive() }}</div>
+      <div class="um-kpi__label">Actifs</div>
+    </div>
+    <div class="um-kpi um-kpi--red">
+      <div class="um-kpi__value">{{ countInactive() }}</div>
+      <div class="um-kpi__label">Inactifs</div>
+    </div>
+    <div class="um-kpi um-kpi--amber">
+      <div class="um-kpi__value">{{ countDistinctRoles() }}</div>
+      <div class="um-kpi__label">Rôles distincts</div>
+    </div>
+  </div>
+
+  <!-- ── Card: table ── -->
+  <div class="um-card">
+    <div class="table-responsive">
+      <table class="um-table" aria-describedby="user-management-page-heading">
+        <thead>
+          <tr jhiSort [(predicate)]="predicate" [(ascending)]="ascending" (sortChange)="transition()">
+            <th scope="col" jhiSortBy="id">ID <fa-icon icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="login">Utilisateur <fa-icon icon="sort"></fa-icon></th>
+            <th scope="col"></th>
+            <th scope="col" jhiSortBy="langKey">Langue <fa-icon icon="sort"></fa-icon></th>
+            <th scope="col">Droits</th>
+            <th scope="col" jhiSortBy="createdDate">Créé le <fa-icon icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="lastModifiedBy">Modifié par <fa-icon icon="sort"></fa-icon></th>
+            <th scope="col" jhiSortBy="lastModifiedDate">Modifié le <fa-icon icon="sort"></fa-icon></th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users; trackBy: trackIdentity">
+            <td>
+              <a [routerLink]="['./', user.login, 'view']" class="um-id-link">{{ user.id }}</a>
+            </td>
+            <td>
+              <div class="um-user">
+                <div class="um-avatar" [ngClass]="getAvatarClass(user.login)">{{ getInitials(user.login) }}</div>
+                <div class="um-user__info">
+                  <span class="um-user__login">{{ user.login }}</span>
+                  <span class="um-user__email">{{ user.email }}</span>
+                </div>
+              </div>
+            </td>
+            <td>
+              <button
+                class="um-status um-status--off"
+                (click)="setActive(user, true)"
+                *ngIf="!user.activated"
+              >
+                <span class="um-status__dot"></span>Désactivé
+              </button>
+              <button
+                class="um-status um-status--on"
+                (click)="setActive(user, false)"
+                *ngIf="user.activated"
+                [disabled]="!currentAccount || currentAccount.login === user.login"
+              >
+                <span class="um-status__dot"></span>Activé
+              </button>
+            </td>
+            <td>{{ user.langKey }}</td>
+            <td>
+              <div class="um-roles">
+                <span class="um-role-badge" [ngClass]="getRoleClass(role)" *ngFor="let role of getVisibleRoles(user.authorities)">
+                  {{ getRoleLabel(role) }}
+                </span>
+                <span class="um-role-badge um-role-badge--more" *ngIf="(user.authorities?.length ?? 0) > 3">
+                  +{{ (user.authorities?.length ?? 0) - 3 }}
+                </span>
+              </div>
+            </td>
+            <td class="um-date">{{ user.createdDate | date: 'dd/MM/yy HH:mm' }}</td>
+            <td>{{ user.lastModifiedBy }}</td>
+            <td class="um-date">{{ user.lastModifiedDate | date: 'dd/MM/yy HH:mm' }}</td>
+            <td class="um-actions-cell">
+              <div class="um-actions">
+                <button type="button" [routerLink]="['./', user.login, 'view']" class="um-icon-btn um-icon-btn--info" title="Voir">
+                  <fa-icon icon="eye"></fa-icon>
+                </button>
+                <button
+                  type="button"
+                  [routerLink]="['./', user.login, 'edit']"
+                  queryParamsHandling="merge"
+                  class="um-icon-btn um-icon-btn--primary"
+                  title="Editer"
+                >
+                  <fa-icon icon="pencil-alt"></fa-icon>
+                </button>
+                <button
+                  type="button"
+                  (click)="deleteUser(user)"
+                  class="um-icon-btn um-icon-btn--danger"
+                  [disabled]="!currentAccount || currentAccount.login === user.login"
+                  title="Supprimer"
+                >
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <div class="d-flex justify-content-center">
+    <div class="um-pagination">
+      <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
       <ngb-pagination
         [collectionSize]="totalItems"
         [(page)]="page"
