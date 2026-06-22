@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 import { ClientScoreFormService, ClientScoreFormGroup } from './client-score-form.service';
 import { IClientScore } from '../client-score.model';
@@ -11,15 +11,22 @@ import { AlertError } from 'app/shared/alert/alert-error.model';
 import { EventManager, EventWithContent } from 'app/core/util/event-manager.service';
 import { DataUtils, FileLoadError } from 'app/core/util/data-util.service';
 import { ScoreClassification } from 'app/entities/enumerations/score-classification.model';
+import { ITenant } from 'app/entities/PlatformService/tenant/tenant.model';
+import { TenantService } from 'app/entities/PlatformService/tenant/service/tenant.service';
+import { IClient } from 'app/entities/BusinessService/client/client.model';
+import { ClientService } from 'app/entities/BusinessService/client/service/client.service';
 
 @Component({
   selector: 'jhi-client-score-update',
   templateUrl: './client-score-update.component.html',
+  styleUrls: ['./client-score-update.component.scss'],
 })
 export class ClientScoreUpdateComponent implements OnInit {
   isSaving = false;
   clientScore: IClientScore | null = null;
   scoreClassificationValues = Object.keys(ScoreClassification);
+  tenantsCollection: ITenant[] = [];
+  clientsCollection: IClient[] = [];
 
   editForm: ClientScoreFormGroup = this.clientScoreFormService.createClientScoreFormGroup();
 
@@ -28,6 +35,8 @@ export class ClientScoreUpdateComponent implements OnInit {
     protected eventManager: EventManager,
     protected clientScoreService: ClientScoreService,
     protected clientScoreFormService: ClientScoreFormService,
+    protected tenantService: TenantService,
+    protected clientService: ClientService,
     protected activatedRoute: ActivatedRoute
   ) {}
 
@@ -38,6 +47,24 @@ export class ClientScoreUpdateComponent implements OnInit {
         this.updateForm(clientScore);
       }
     });
+
+    this.tenantService
+      .queryAll()
+      .pipe(map((res: HttpResponse<ITenant[]>) => res.body ?? []))
+      .subscribe((tenants: ITenant[]) => (this.tenantsCollection = tenants));
+
+    this.clientService
+      .query({ size: 1000 })
+      .pipe(map((res: HttpResponse<IClient[]>) => res.body ?? []))
+      .subscribe((clients: IClient[]) => (this.clientsCollection = clients));
+  }
+
+  onClientSelected(event: Event): void {
+    const selectedId = Number((event.target as HTMLSelectElement).value) || null;
+    const selectedClient = this.clientsCollection.find(c => c.id === selectedId);
+    if (selectedClient) {
+      this.editForm.controls.clientName.setValue(selectedClient.name ?? null);
+    }
   }
 
   byteSize(base64String: string): string {
