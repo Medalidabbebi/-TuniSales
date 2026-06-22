@@ -180,6 +180,9 @@
 }
 
 .log-level-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  forced-color-adjust: none;
   padding: 0.2rem 0.6rem;
   border-radius: 6px;
   font-size: 0.68rem;
@@ -191,45 +194,51 @@
   white-space: nowrap;
 
   /* Inactive state */
-  background: #f8fafc;
+  background-color: #f8fafc;
   color: #94a3b8;
   border-color: #e2e8f0;
 
   &:hover { transform: translateY(-1px); box-shadow: 0 2px 6px rgba(0,0,0,.1); }
 
   /* Active states */
-  &--trace-active {
-    background: #f1f5f9; color: #475569;
-    border-color: #94a3b8;
+  &.log-level-btn--trace-active {
+    background-color: #475569;
+    background-image: none;
+    color: #fff; border-color: #475569;
     box-shadow: 0 2px 6px rgba(100,116,139,.3);
   }
 
-  &--debug-active {
-    background: linear-gradient(135deg, #4f46e5, #6366f1);
+  &.log-level-btn--debug-active {
+    background-color: #4f46e5;
+    background-image: linear-gradient(135deg, #4f46e5, #6366f1);
     color: #fff; border-color: #4f46e5;
     box-shadow: 0 2px 8px rgba(99,102,241,.4);
   }
 
-  &--info-active {
-    background: linear-gradient(135deg, #2563eb, #3b82f6);
+  &.log-level-btn--info-active {
+    background-color: #2563eb;
+    background-image: linear-gradient(135deg, #2563eb, #3b82f6);
     color: #fff; border-color: #2563eb;
     box-shadow: 0 2px 8px rgba(37,99,235,.4);
   }
 
-  &--warn-active {
-    background: linear-gradient(135deg, #d97706, #f59e0b);
+  &.log-level-btn--warn-active {
+    background-color: #d97706;
+    background-image: linear-gradient(135deg, #d97706, #f59e0b);
     color: #fff; border-color: #d97706;
     box-shadow: 0 2px 8px rgba(217,119,6,.4);
   }
 
-  &--error-active {
-    background: linear-gradient(135deg, #dc2626, #ef4444);
+  &.log-level-btn--error-active {
+    background-color: #dc2626;
+    background-image: linear-gradient(135deg, #dc2626, #ef4444);
     color: #fff; border-color: #dc2626;
     box-shadow: 0 2px 8px rgba(220,38,38,.4);
   }
 
-  &--off-active {
-    background: linear-gradient(135deg, #374151, #475569);
+  &.log-level-btn--off-active {
+    background-color: #374151;
+    background-image: linear-gradient(135deg, #374151, #475569);
     color: #fff; border-color: #374151;
     box-shadow: 0 2px 8px rgba(55,65,81,.4);
   }
