@@ -31,6 +31,7 @@
         <!-- Commercial menu: orders, clients, deliveries, visits, invoices, missions -->
         <li
           *jhiHasAnyAuthority="['ROLE_COMMERCIAL', 'ROLE_ADMIN_COMMERCIAL']"
+          *ngSwitchCase="true"
           ngbDropdown
           class="nav-item dropdown pointer"
           display="dynamic"
@@ -128,6 +129,7 @@
         <!-- Inventory menu: warehouse, stock -->
         <li
           *jhiHasAnyAuthority="['ROLE_MAGASINIER', 'ROLE_ADMIN_COMMERCIAL', 'ROLE_ADMIN_SYSTEME']"
+          *ngSwitchCase="true"
           ngbDropdown
           class="nav-item dropdown pointer"
           display="dynamic"
@@ -183,6 +185,7 @@
         <!-- Platform / Admin menu: tenants, audit logs, scores, documents -->
         <li
           *jhiHasAnyAuthority="['ROLE_ADMIN_SYSTEME', 'ROLE_ADMIN_COMMERCIAL']"
+          *ngSwitchCase="true"
           ngbDropdown
           class="nav-item dropdown pointer"
           display="dynamic"
