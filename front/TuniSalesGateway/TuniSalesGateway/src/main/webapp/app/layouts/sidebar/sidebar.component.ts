@@ -45,6 +45,7 @@ export class SidebarComponent implements OnInit {
         Authority.ADMIN,
         Authority.ADMIN_SYSTEME,
         Authority.ADMIN_COMMERCIAL,
+        Authority.MAGASINIER,
         Authority.CHEF_PARC,
         Authority.RESPONSABLE_PV,
         Authority.VENDEUR,
@@ -57,7 +58,7 @@ export class SidebarComponent implements OnInit {
       icon: 'chart-line',
       requiredAuthorities: [
         Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL,
-        Authority.COMMERCIAL, Authority.VENDEUR, Authority.ADMIN_CLIENT,
+        Authority.COMMERCIAL, Authority.VENDEUR, Authority.MAGASINIER, Authority.ADMIN_CLIENT,
       ],
       children: [
         {
@@ -88,7 +89,7 @@ export class SidebarComponent implements OnInit {
       icon: 'truck',
       requiredAuthorities: [
         Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL,
-        Authority.COMMERCIAL, Authority.CHEF_PARC, Authority.RESPONSABLE_PV,
+        Authority.COMMERCIAL, Authority.MAGASINIER, Authority.CHEF_PARC, Authority.RESPONSABLE_PV,
       ],
       children: [
         {
