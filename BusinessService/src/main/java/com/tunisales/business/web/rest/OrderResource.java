@@ -72,11 +72,7 @@ public class OrderResource {
      * Status is forced to PENDING; paymentMethod and discountPercent validated here.
      */
     @PostMapping("/orders")
-    @PreAuthorize(
-        "hasAuthority(\"ROLE_ADMIN\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.VENDEUR + "\")"
-    )
+    @PreAuthorize("hasAuthority(\"ROLE_ADMIN\") or hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\")")
     public ResponseEntity<OrderDTO> createOrder(@Valid @RequestBody OrderDTO orderDTO) throws URISyntaxException {
         log.debug("REST request to save Order : {}", orderDTO);
         if (orderDTO.getId() != null) {
@@ -119,11 +115,7 @@ public class OrderResource {
      * PUT /orders/{id}/confirm : Confirm an order after acceptance or renegotiation (ROLE_COMMERCIAL only).
      */
     @PutMapping("/orders/{id}/confirm")
-    @PreAuthorize(
-        "hasAuthority(\"ROLE_ADMIN\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.VENDEUR + "\")"
-    )
+    @PreAuthorize("hasAuthority(\"ROLE_ADMIN\") or hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\")")
     public ResponseEntity<OrderDTO> confirmOrder(@PathVariable Long id) {
         log.debug("REST request to confirm Order {}", id);
         String currentLogin = SecurityUtils.getCurrentUserLogin()
@@ -214,7 +206,6 @@ public class OrderResource {
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.VENDEUR + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_CLIENT + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
     )
@@ -238,7 +229,6 @@ public class OrderResource {
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.VENDEUR + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_CLIENT + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
     )
@@ -256,7 +246,6 @@ public class OrderResource {
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.VENDEUR + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_CLIENT + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
     )
