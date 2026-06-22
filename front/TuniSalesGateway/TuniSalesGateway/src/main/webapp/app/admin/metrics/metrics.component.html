@@ -1,20 +1,33 @@
-<div>
-  <h2>
-    <span id="metrics-page-heading" jhiTranslate="metrics.title" data-cy="metricsPageHeading">Métriques de l'application</span>
+<div class="met-page">
 
-    <button class="btn btn-primary float-end" (click)="refresh()">
-      <fa-icon icon="sync"></fa-icon> <span jhiTranslate="metrics.refresh.button">Rafraîchir</span>
+  <!-- ── Header ── -->
+  <div class="met-header">
+    <div class="met-header__left">
+      <div class="met-header__icon">
+        <fa-icon icon="tachometer-alt"></fa-icon>
+      </div>
+      <div>
+        <h2 id="metrics-page-heading" data-cy="metricsPageHeading" class="met-header__title">Métriques de l'application</h2>
+        <p class="met-header__subtitle">Mémoire, threads, système et performances en temps réel</p>
+      </div>
+    </div>
+    <button class="met-btn" (click)="refresh()">
+      <fa-icon icon="sync"></fa-icon>
+      <span>Rafraîchir</span>
     </button>
-  </h2>
+  </div>
 
-  <h3 jhiTranslate="metrics.jvm.title">Métriques de la JVM</h3>
+  <div class="met-loading" *ngIf="updatingMetrics">
+    <fa-icon icon="spinner" [spin]="true"></fa-icon>
+    Mise à jour...
+  </div>
 
-  <div class="row" *ngIf="metrics && !updatingMetrics">
-    <jhi-jvm-memory class="col-md-4" [updating]="updatingMetrics" [jvmMemoryMetrics]="metrics.jvm"></jhi-jvm-memory>
+  <h3 class="met-section-title">Métriques de la JVM</h3>
 
-    <jhi-jvm-threads class="col-md-4" [threads]="threads"></jhi-jvm-threads>
-
-    <jhi-metrics-system class="col-md-4" [updating]="updatingMetrics" [systemMetrics]="metrics.processMetrics"></jhi-metrics-system>
+  <div class="met-grid" *ngIf="metrics && !updatingMetrics">
+    <jhi-jvm-memory [updating]="updatingMetrics" [jvmMemoryMetrics]="metrics.jvm"></jhi-jvm-memory>
+    <jhi-jvm-threads [threads]="threads"></jhi-jvm-threads>
+    <jhi-metrics-system [updating]="updatingMetrics" [systemMetrics]="metrics.processMetrics"></jhi-metrics-system>
   </div>
 
   <jhi-metrics-garbagecollector
@@ -22,8 +35,6 @@
     [updating]="updatingMetrics"
     [garbageCollectorMetrics]="metrics.garbageCollector"
   ></jhi-metrics-garbagecollector>
-
-  <div class="well well-lg" *ngIf="updatingMetrics" jhiTranslate="metrics.updating">Mise à jour...</div>
 
   <jhi-metrics-request
     *ngIf="metrics && metricsKeyExists('http.server.requests')"

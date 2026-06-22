@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, ViewEncapsulation } from '@angular/core';
 import { combineLatest } from 'rxjs';
 
 import { MetricsService } from './metrics.service';
@@ -7,6 +7,8 @@ import { Metrics, Thread } from './metrics.model';
 @Component({
   selector: 'jhi-metrics',
   templateUrl: './metrics.component.html',
+  styleUrls: ['./metrics.component.scss'],
+  encapsulation: ViewEncapsulation.None,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MetricsComponent implements OnInit {

@@ -1,55 +1,63 @@
-<h4 jhiTranslate="metrics.jvm.threads.title">Threads</h4>
+<div class="met-card">
+  <div class="met-card__header">
+    <fa-icon icon="tasks"></fa-icon>
+    Threads
+  </div>
+  <div class="met-card__body">
 
-<span><span jhiTranslate="metrics.jvm.threads.runnable">Exécutable</span> {{ threadStats.threadDumpRunnable }}</span>
+    <div class="met-metric">
+      <div class="met-metric__top">
+        <span class="met-metric__name">Exécutable</span>
+        <span class="met-metric__value">{{ threadStats.threadDumpRunnable }}</span>
+      </div>
+      <div class="met-bar">
+        <div class="met-bar__fill" [style.width.%]="(threadStats.threadDumpRunnable * 100) / threadStats.threadDumpAll">
+          <span class="met-bar__pct">{{ (threadStats.threadDumpRunnable * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%</span>
+        </div>
+      </div>
+    </div>
 
-<ngb-progressbar
-  [value]="threadStats.threadDumpRunnable"
-  [max]="threadStats.threadDumpAll"
-  [striped]="true"
-  [animated]="false"
-  type="success"
->
-  <span>{{ (threadStats.threadDumpRunnable * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%</span>
-</ngb-progressbar>
+    <div class="met-metric">
+      <div class="met-metric__top">
+        <span class="met-metric__name">Temps d'attente</span>
+        <span class="met-metric__value">{{ threadStats.threadDumpTimedWaiting }}</span>
+      </div>
+      <div class="met-bar">
+        <div class="met-bar__fill met-bar__fill--warn" [style.width.%]="(threadStats.threadDumpTimedWaiting * 100) / threadStats.threadDumpAll">
+          <span class="met-bar__pct">{{ (threadStats.threadDumpTimedWaiting * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%</span>
+        </div>
+      </div>
+    </div>
 
-<span><span jhiTranslate="metrics.jvm.threads.timedwaiting">Temps d'attente</span> ({{ threadStats.threadDumpTimedWaiting }})</span>
+    <div class="met-metric">
+      <div class="met-metric__top">
+        <span class="met-metric__name">En attente</span>
+        <span class="met-metric__value">{{ threadStats.threadDumpWaiting }}</span>
+      </div>
+      <div class="met-bar">
+        <div class="met-bar__fill met-bar__fill--warn" [style.width.%]="(threadStats.threadDumpWaiting * 100) / threadStats.threadDumpAll">
+          <span class="met-bar__pct">{{ (threadStats.threadDumpWaiting * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%</span>
+        </div>
+      </div>
+    </div>
 
-<ngb-progressbar
-  [value]="threadStats.threadDumpTimedWaiting"
-  [max]="threadStats.threadDumpAll"
-  [striped]="true"
-  [animated]="false"
-  type="warning"
->
-  <span>{{ (threadStats.threadDumpTimedWaiting * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%</span>
-</ngb-progressbar>
+    <div class="met-metric">
+      <div class="met-metric__top">
+        <span class="met-metric__name">Bloqué</span>
+        <span class="met-metric__value">{{ threadStats.threadDumpBlocked }}</span>
+      </div>
+      <div class="met-bar">
+        <div class="met-bar__fill met-bar__fill--danger" [style.width.%]="(threadStats.threadDumpBlocked * 100) / threadStats.threadDumpAll">
+          <span class="met-bar__pct">{{ (threadStats.threadDumpBlocked * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%</span>
+        </div>
+      </div>
+    </div>
 
-<span><span jhiTranslate="metrics.jvm.threads.waiting">En attente</span> ({{ threadStats.threadDumpWaiting }})</span>
+    <div class="met-row">
+      <span class="met-row__label">Total</span>
+      <span class="met-row__value">{{ threadStats.threadDumpAll }}</span>
+    </div>
 
-<ngb-progressbar
-  [value]="threadStats.threadDumpWaiting"
-  [max]="threadStats.threadDumpAll"
-  [striped]="true"
-  [animated]="false"
-  type="warning"
->
-  <span>{{ (threadStats.threadDumpWaiting * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%</span>
-</ngb-progressbar>
-
-<span><span jhiTranslate="metrics.jvm.threads.blocked">Bloqué</span> ({{ threadStats.threadDumpBlocked }})</span>
-
-<ngb-progressbar
-  [value]="threadStats.threadDumpBlocked"
-  [max]="threadStats.threadDumpAll"
-  [striped]="true"
-  [animated]="false"
-  type="success"
->
-  <span>{{ (threadStats.threadDumpBlocked * 100) / threadStats.threadDumpAll | number: '1.0-0' }}%</span>
-</ngb-progressbar>
-
-<div>Total: {{ threadStats.threadDumpAll }}</div>
-
-<button class="hand btn btn-primary btn-sm" (click)="open()" data-toggle="modal" data-target="#threadDump">
-  <span>Expand</span>
-</button>
+    <button class="met-expand-btn" (click)="open()">Expand</button>
+  </div>
+</div>

@@ -1,51 +1,79 @@
-<h4>System</h4>
-
-<ng-container *ngIf="!updating && systemMetrics">
-  <div class="row">
-    <div class="col-md-4">Uptime</div>
-    <div class="col-md-8 text-end">{{ convertMillisecondsToDuration(systemMetrics['process.uptime']) }}</div>
+<div class="met-card">
+  <div class="met-card__header">
+    <fa-icon icon="server"></fa-icon>
+    System
   </div>
+  <ng-container *ngIf="!updating && systemMetrics">
+    <div class="met-card__body">
 
-  <div class="row">
-    <div class="col-md-4">Start time</div>
-    <div class="col-md-8 text-end">{{ systemMetrics['process.start.time'] | date: 'full' }}</div>
-  </div>
+      <div class="met-row">
+        <span class="met-row__label">Uptime</span>
+        <span class="met-row__value">{{ convertMillisecondsToDuration(systemMetrics['process.uptime']) }}</span>
+      </div>
 
-  <div class="row">
-    <div class="col-md-9">Process CPU usage</div>
-    <div class="col-md-3 text-end">{{ 100 * systemMetrics['process.cpu.usage'] | number: '1.0-2' }} %</div>
-  </div>
+      <div class="met-row">
+        <span class="met-row__label">Start time</span>
+        <span class="met-row__value">{{ systemMetrics['process.start.time'] | date: 'full' }}</span>
+      </div>
 
-  <ngb-progressbar [value]="100 * systemMetrics['process.cpu.usage']" [striped]="true" [animated]="false" type="success">
-    <span>{{ 100 * systemMetrics['process.cpu.usage'] | number: '1.0-2' }} %</span>
-  </ngb-progressbar>
+      <div class="met-metric">
+        <div class="met-metric__top">
+          <span class="met-metric__name">Process CPU usage</span>
+          <span class="met-metric__value">{{ 100 * systemMetrics['process.cpu.usage'] | number: '1.0-2' }} %</span>
+        </div>
+        <div class="met-bar">
+          <div
+            class="met-bar__fill"
+            [ngClass]="{
+              'met-bar__fill--warn': 100 * systemMetrics['process.cpu.usage'] > 60,
+              'met-bar__fill--danger': 100 * systemMetrics['process.cpu.usage'] > 80
+            }"
+            [style.width.%]="100 * systemMetrics['process.cpu.usage']"
+          >
+            <span class="met-bar__pct">{{ 100 * systemMetrics['process.cpu.usage'] | number: '1.0-0' }}%</span>
+          </div>
+        </div>
+      </div>
 
-  <div class="row">
-    <div class="col-md-9">System CPU usage</div>
-    <div class="col-md-3 text-end">{{ 100 * systemMetrics['system.cpu.usage'] | number: '1.0-2' }} %</div>
-  </div>
+      <div class="met-metric">
+        <div class="met-metric__top">
+          <span class="met-metric__name">System CPU usage</span>
+          <span class="met-metric__value">{{ 100 * systemMetrics['system.cpu.usage'] | number: '1.0-2' }} %</span>
+        </div>
+        <div class="met-bar">
+          <div
+            class="met-bar__fill"
+            [ngClass]="{
+              'met-bar__fill--warn': 100 * systemMetrics['system.cpu.usage'] > 60,
+              'met-bar__fill--danger': 100 * systemMetrics['system.cpu.usage'] > 80
+            }"
+            [style.width.%]="100 * systemMetrics['system.cpu.usage']"
+          >
+            <span class="met-bar__pct">{{ 100 * systemMetrics['system.cpu.usage'] | number: '1.0-0' }}%</span>
+          </div>
+        </div>
+      </div>
 
-  <ngb-progressbar [value]="100 * systemMetrics['system.cpu.usage']" [striped]="true" [animated]="false" type="success">
-    <span>{{ 100 * systemMetrics['system.cpu.usage'] | number: '1.0-2' }} %</span>
-  </ngb-progressbar>
+      <div class="met-row">
+        <span class="met-row__label">System CPU count</span>
+        <span class="met-row__value">{{ systemMetrics['system.cpu.count'] }}</span>
+      </div>
 
-  <div class="row">
-    <div class="col-md-9">System CPU count</div>
-    <div class="col-md-3 text-end">{{ systemMetrics['system.cpu.count'] }}</div>
-  </div>
+      <div class="met-row">
+        <span class="met-row__label">System 1m Load average</span>
+        <span class="met-row__value">{{ systemMetrics['system.load.average.1m'] | number: '1.0-2' }}</span>
+      </div>
 
-  <div class="row">
-    <div class="col-md-9">System 1m Load average</div>
-    <div class="col-md-3 text-end">{{ systemMetrics['system.load.average.1m'] | number: '1.0-2' }}</div>
-  </div>
+      <div class="met-row">
+        <span class="met-row__label">Process files max</span>
+        <span class="met-row__value">{{ systemMetrics['process.files.max'] | number: '1.0-0' }}</span>
+      </div>
 
-  <div class="row">
-    <div class="col-md-9">Process files max</div>
-    <div class="col-md-3 text-end">{{ systemMetrics['process.files.max'] | number: '1.0-0' }}</div>
-  </div>
+      <div class="met-row">
+        <span class="met-row__label">Process files open</span>
+        <span class="met-row__value">{{ systemMetrics['process.files.open'] | number: '1.0-0' }}</span>
+      </div>
 
-  <div class="row">
-    <div class="col-md-9">Process files open</div>
-    <div class="col-md-3 text-end">{{ systemMetrics['process.files.open'] | number: '1.0-0' }}</div>
-  </div>
-</ng-container>
+    </div>
+  </ng-container>
+</div>
