@@ -1,7 +1,14 @@
 package com.tunisales.business.service;
 
 import com.tunisales.business.domain.Delivery;
+import com.tunisales.business.domain.Mission;
+import com.tunisales.business.domain.Visit;
+import com.tunisales.business.domain.enumeration.DeliveryStatus;
+import com.tunisales.business.domain.enumeration.MissionStatus;
+import com.tunisales.business.domain.enumeration.VisitStatus;
 import com.tunisales.business.repository.DeliveryRepository;
+import com.tunisales.business.repository.MissionRepository;
+import com.tunisales.business.repository.VisitRepository;
 import com.tunisales.business.service.dto.DeliveryDTO;
 import com.tunisales.business.service.mapper.DeliveryMapper;
 import java.util.Optional;
@@ -25,9 +32,20 @@ public class DeliveryService {
 
     private final DeliveryMapper deliveryMapper;
 
-    public DeliveryService(DeliveryRepository deliveryRepository, DeliveryMapper deliveryMapper) {
+    private final MissionRepository missionRepository;
+
+    private final VisitRepository visitRepository;
+
+    public DeliveryService(
+        DeliveryRepository deliveryRepository,
+        DeliveryMapper deliveryMapper,
+        MissionRepository missionRepository,
+        VisitRepository visitRepository
+    ) {
         this.deliveryRepository = deliveryRepository;
         this.deliveryMapper = deliveryMapper;
+        this.missionRepository = missionRepository;
+        this.visitRepository = visitRepository;
     }
 
     /**
@@ -40,6 +58,7 @@ public class DeliveryService {
         log.debug("Request to save Delivery : {}", deliveryDTO);
         Delivery delivery = deliveryMapper.toEntity(deliveryDTO);
         delivery = deliveryRepository.save(delivery);
+        cascadeStatusToMissionAndVisit(delivery);
         return deliveryMapper.toDto(delivery);
     }
 
@@ -53,6 +72,7 @@ public class DeliveryService {
         log.debug("Request to update Delivery : {}", deliveryDTO);
         Delivery delivery = deliveryMapper.toEntity(deliveryDTO);
         delivery = deliveryRepository.save(delivery);
+        cascadeStatusToMissionAndVisit(delivery);
         return deliveryMapper.toDto(delivery);
     }
 
@@ -73,7 +93,78 @@ public class DeliveryService {
                 return existingDelivery;
             })
             .map(deliveryRepository::save)
+            .map(delivery -> {
+                cascadeStatusToMissionAndVisit(delivery);
+                return delivery;
+            })
             .map(deliveryMapper::toDto);
+    }
+
+    /**
+     * Reflects a Delivery's status onto its linked Mission and Visit (if any).
+     * The Mission/Visit attached to the mapped Delivery entity may just be a
+     * client-supplied snapshot, so the authoritative record is re-fetched by
+     * id before its status is mutated.
+     */
+    private void cascadeStatusToMissionAndVisit(Delivery delivery) {
+        DeliveryStatus status = delivery.getStatus();
+        if (status == null) {
+            return;
+        }
+
+        Mission missionRef = delivery.getMission();
+        if (missionRef != null && missionRef.getId() != null) {
+            MissionStatus mapped = toMissionStatus(status);
+            if (mapped != null) {
+                missionRepository
+                    .findById(missionRef.getId())
+                    .filter(mission -> mission.getStatus() != mapped)
+                    .ifPresent(mission -> missionRepository.save(mission.status(mapped)));
+            }
+        }
+
+        Visit visitRef = delivery.getVisit();
+        if (visitRef != null && visitRef.getId() != null) {
+            VisitStatus mapped = toVisitStatus(status);
+            if (mapped != null) {
+                visitRepository
+                    .findById(visitRef.getId())
+                    .filter(visit -> visit.getStatus() != mapped)
+                    .ifPresent(visit -> visitRepository.save(visit.status(mapped)));
+            }
+        }
+    }
+
+    private MissionStatus toMissionStatus(DeliveryStatus status) {
+        switch (status) {
+            case PENDING:
+                return MissionStatus.PLANNED;
+            case IN_PREPARATION:
+            case SHIPPED:
+                return MissionStatus.IN_PROGRESS;
+            case DELIVERED:
+                return MissionStatus.COMPLETED;
+            case FAILED:
+                return MissionStatus.CANCELLED;
+            default:
+                return null;
+        }
+    }
+
+    private VisitStatus toVisitStatus(DeliveryStatus status) {
+        switch (status) {
+            case PENDING:
+                return VisitStatus.PLANNED;
+            case IN_PREPARATION:
+            case SHIPPED:
+                return VisitStatus.IN_PROGRESS;
+            case DELIVERED:
+                return VisitStatus.COMPLETED;
+            case FAILED:
+                return VisitStatus.MISSED;
+            default:
+                return null;
+        }
     }
 
     /**
