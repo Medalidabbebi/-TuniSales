@@ -2,6 +2,8 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IVisit } from '../visit.model';
+import { IDelivery } from 'app/entities/BusinessService/delivery/delivery.model';
+import { DeliveryService } from 'app/entities/BusinessService/delivery/service/delivery.service';
 
 @Component({
   selector: 'jhi-visit-detail',
@@ -11,13 +13,45 @@ import { IVisit } from '../visit.model';
 })
 export class VisitDetailComponent implements OnInit {
   visit: IVisit | null = null;
+  deliveries: IDelivery[] = [];
 
-  constructor(protected activatedRoute: ActivatedRoute) {}
+  constructor(protected activatedRoute: ActivatedRoute, private deliveryService: DeliveryService) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ visit }) => {
       this.visit = visit;
+      this.loadDeliveries();
     });
+  }
+
+  /** CSS modifier for a delivery's status badge (reuses the vd-status-badge palette) */
+  getDeliveryStatusClass(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      PENDING: 'vd-status--planned',
+      IN_PREPARATION: 'vd-status--progress',
+      SHIPPED: 'vd-status--progress',
+      DELIVERED: 'vd-status--completed',
+      FAILED: 'vd-status--cancelled',
+    };
+    return map[status ?? ''] || 'vd-status--planned';
+  }
+
+  getDeliveryStatusLabel(status: string | null | undefined): string {
+    const map: Record<string, string> = {
+      PENDING: 'En attente',
+      IN_PREPARATION: 'En préparation',
+      SHIPPED: 'Expédiée',
+      DELIVERED: 'Livrée',
+      FAILED: 'Échouée',
+    };
+    return map[status ?? ''] || 'Inconnu';
+  }
+
+  private loadDeliveries(): void {
+    if (!this.visit?.id) {
+      return;
+    }
+    this.deliveryService.query({ 'visitId.equals': this.visit.id, size: 200 }).subscribe(res => (this.deliveries = res.body ?? []));
   }
 
   previousState(): void {

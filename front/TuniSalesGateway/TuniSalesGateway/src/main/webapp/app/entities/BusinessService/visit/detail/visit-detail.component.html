@@ -192,5 +192,29 @@
       </div>
     </div>
 
+    <!-- Deliveries -->
+    <div class="vd-card vd-card--full" *ngIf="deliveries.length > 0">
+      <div class="vd-card__head">
+        <div class="vd-card__head-icon vd-card__head-icon--teal"><fa-icon icon="truck"></fa-icon></div>
+        <div>
+          <div class="vd-card__title">Livraisons ({{ deliveries.length }})</div>
+          <div class="vd-card__sub">Livraisons effectuées lors de cette visite</div>
+        </div>
+      </div>
+      <div class="vd-info-list">
+        <div class="vd-info-row" *ngFor="let delivery of deliveries">
+          <span class="vd-info-row__label">
+            <a [routerLink]="['/delivery', delivery.id, 'view']">{{ delivery.deliveryNumber || ('Livraison #' + delivery.id) }}</a>
+          </span>
+          <span class="vd-info-row__value">
+            <span class="vd-status-badge" [ngClass]="getDeliveryStatusClass(delivery.status)">
+              <span class="vd-status-badge__dot"></span>
+              {{ getDeliveryStatusLabel(delivery.status) }}
+            </span>
+          </span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

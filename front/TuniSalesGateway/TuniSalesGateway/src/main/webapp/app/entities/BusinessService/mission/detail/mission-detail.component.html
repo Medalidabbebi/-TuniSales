@@ -136,6 +136,30 @@
       </div>
     </section>
 
+    <!-- Card 3 : Livraisons -->
+    <section class="md-card md-card--full" *ngIf="deliveries.length > 0">
+      <div class="md-card__header">
+        <div class="md-card__header-icon">
+          <fa-icon icon="truck"></fa-icon>
+        </div>
+        <h2 class="md-card__title">Livraisons ({{ deliveries.length }})</h2>
+      </div>
+
+      <dl class="md-dl">
+        <div class="md-dl__item md-dl__item--full" *ngFor="let delivery of deliveries">
+          <dt class="md-dl__label">
+            <a [routerLink]="['/delivery', delivery.id, 'view']">{{ delivery.deliveryNumber || ('Livraison #' + delivery.id) }}</a>
+          </dt>
+          <dd class="md-dl__value">
+            <span class="md-status-pill" [ngClass]="getDeliveryStatusClass(delivery.status)">
+              <span class="md-status-pill__dot"></span>
+              {{ getDeliveryStatusLabel(delivery.status) }}
+            </span>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
   </div>
 
 </div>
