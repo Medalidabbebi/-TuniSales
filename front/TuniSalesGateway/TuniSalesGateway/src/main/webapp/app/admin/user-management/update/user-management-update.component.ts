@@ -16,11 +16,38 @@ const newUser: IUser = {
 @Component({
   selector: 'jhi-user-mgmt-update',
   templateUrl: './user-management-update.component.html',
+  styleUrls: ['./user-management-update.component.scss'],
 })
 export class UserManagementUpdateComponent implements OnInit {
   languages = LANGUAGES;
   authorities: string[] = [];
   isSaving = false;
+
+  private readonly roleLabels: Record<string, string> = {
+    ROLE_ADMIN: 'Admin',
+    ROLE_ADMIN_SYSTEME: 'Admin Système',
+    ROLE_ADMIN_COMMERCIAL: 'Admin Commercial',
+    ROLE_COMMERCIAL: 'Commercial',
+    ROLE_MAGASINIER: 'Magasinier',
+    ROLE_CHEF_PARC: 'Chef Parc',
+    ROLE_RESPONSABLE_PV: 'Responsable PV',
+    ROLE_VENDEUR: 'Vendeur',
+    ROLE_ADMIN_CLIENT: 'Admin Client',
+    ROLE_USER: 'User',
+  };
+
+  private readonly roleColors: Record<string, string> = {
+    ROLE_ADMIN: 'uu-role-pill--admin',
+    ROLE_ADMIN_SYSTEME: 'uu-role-pill--system',
+    ROLE_ADMIN_COMMERCIAL: 'uu-role-pill--commercial',
+    ROLE_COMMERCIAL: 'uu-role-pill--commercial',
+    ROLE_MAGASINIER: 'uu-role-pill--magasinier',
+    ROLE_CHEF_PARC: 'uu-role-pill--chefparc',
+    ROLE_RESPONSABLE_PV: 'uu-role-pill--respo',
+    ROLE_VENDEUR: 'uu-role-pill--vendeur',
+    ROLE_ADMIN_CLIENT: 'uu-role-pill--client',
+    ROLE_USER: 'uu-role-pill--user',
+  };
 
   editForm = new FormGroup({
     id: new FormControl(userTemplate.id),
@@ -59,6 +86,28 @@ export class UserManagementUpdateComponent implements OnInit {
 
   previousState(): void {
     window.history.back();
+  }
+
+  isRoleSelected(authority: string): boolean {
+    return (this.editForm.value.authorities ?? []).includes(authority);
+  }
+
+  toggleRole(authority: string): void {
+    const current = this.editForm.value.authorities ?? [];
+    const next = current.includes(authority) ? current.filter(a => a !== authority) : [...current, authority];
+    this.editForm.patchValue({ authorities: next });
+  }
+
+  getRoleLabel(authority: string): string {
+    return this.roleLabels[authority] ?? authority.replace('ROLE_', '').replace(/_/g, ' ');
+  }
+
+  getRoleColor(authority: string): string {
+    return this.roleColors[authority] ?? '';
+  }
+
+  getRoleIcon(_authority: string): string {
+    return 'user';
   }
 
   save(): void {

@@ -1,142 +1,154 @@
-<div class="d-flex justify-content-center">
-  <div class="col-8">
-    <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
-      <h2 id="myUserLabel" jhiTranslate="userManagement.home.createOrEditLabel">Créer ou éditer un utilisateur</h2>
+<div class="uu-page">
+  <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
 
-      <jhi-alert-error></jhi-alert-error>
-
-      <div class="mb-3" [hidden]="!editForm.value.id">
-        <label jhiTranslate="global.field.id">ID</label>
-        <input type="text" class="form-control" name="id" formControlName="id" readonly />
+    <!-- ── Header ── -->
+    <div class="uu-header">
+      <div class="uu-header__icon">
+        <fa-icon icon="user-edit"></fa-icon>
       </div>
+      <div>
+        <h2 id="myUserLabel" class="uu-header__title">Créer ou éditer un utilisateur</h2>
+        <p class="uu-header__subtitle">Compte, accès et droits de l'utilisateur</p>
+      </div>
+    </div>
 
-      <div class="mb-3">
-        <label class="form-label" jhiTranslate="userManagement.login">Login</label>
-        <input type="text" class="form-control" name="login" formControlName="login" />
+    <jhi-alert-error></jhi-alert-error>
 
-        <div *ngIf="editForm.get('login')!.invalid && (editForm.get('login')!.dirty || editForm.get('login')!.touched)">
-          <small class="form-text text-danger" *ngIf="editForm.get('login')?.errors?.required" jhiTranslate="entity.validation.required">
-            Ce champ est obligatoire.
-          </small>
+    <div class="uu-grid">
 
-          <small
-            class="form-text text-danger"
-            *ngIf="editForm.get('login')?.errors?.maxlength"
-            jhiTranslate="entity.validation.maxlength"
-            [translateValues]="{ max: 50 }"
-          >
-            Ce champ doit faire moins de 50 caractères.
-          </small>
+      <!-- ── Card: Identité ── -->
+      <div class="uu-card">
+        <div class="uu-card__header">
+          <fa-icon icon="id-card"></fa-icon>
+          Identité
+        </div>
+        <div class="uu-card__body">
 
-          <small class="form-text text-danger" *ngIf="editForm.get('login')?.errors?.pattern" jhiTranslate="entity.validation.patternLogin">
-            Ce champ ne peut contenir que des lettres, des chiffres ou des adresses e-mail.
-          </small>
+          <div class="uu-field" [hidden]="!editForm.value.id">
+            <label class="uu-field__label">ID</label>
+            <input type="text" class="uu-field__input" name="id" formControlName="id" readonly />
+          </div>
+
+          <div class="uu-field">
+            <label class="uu-field__label">Login</label>
+            <input type="text" class="uu-field__input" name="login" formControlName="login" />
+            <div *ngIf="editForm.get('login')!.invalid && (editForm.get('login')!.dirty || editForm.get('login')!.touched)">
+              <small class="uu-field__error" *ngIf="editForm.get('login')?.errors?.required">Ce champ est obligatoire.</small>
+              <small class="uu-field__error" *ngIf="editForm.get('login')?.errors?.maxlength">
+                Ce champ doit faire moins de 50 caractères.
+              </small>
+              <small class="uu-field__error" *ngIf="editForm.get('login')?.errors?.pattern">
+                Ce champ ne peut contenir que des lettres, des chiffres ou des adresses e-mail.
+              </small>
+            </div>
+          </div>
+
+          <div class="uu-field">
+            <label class="uu-field__label">Prénom</label>
+            <input type="text" class="uu-field__input" name="firstName" formControlName="firstName" />
+            <div *ngIf="editForm.get('firstName')!.invalid && (editForm.get('firstName')!.dirty || editForm.get('firstName')!.touched)">
+              <small class="uu-field__error" *ngIf="editForm.get('firstName')?.errors?.maxlength">
+                Ce champ doit faire moins de 50 caractères.
+              </small>
+            </div>
+          </div>
+
+          <div class="uu-field">
+            <label class="uu-field__label">Nom</label>
+            <input type="text" class="uu-field__input" name="lastName" formControlName="lastName" />
+            <div *ngIf="editForm.get('lastName')!.invalid && (editForm.get('lastName')!.dirty || editForm.get('lastName')!.touched)">
+              <small class="uu-field__error" *ngIf="editForm.get('lastName')?.errors?.maxlength">
+                Ce champ doit faire moins de 50 caractères.
+              </small>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label" jhiTranslate="userManagement.firstName">Prénom</label>
-        <input type="text" class="form-control" name="firstName" formControlName="firstName" />
+      <!-- ── Card: Contact & Paramètres ── -->
+      <div class="uu-card">
+        <div class="uu-card__header">
+          <fa-icon icon="globe"></fa-icon>
+          Contact &amp; Paramètres
+        </div>
+        <div class="uu-card__body">
 
-        <div *ngIf="editForm.get('firstName')!.invalid && (editForm.get('firstName')!.dirty || editForm.get('firstName')!.touched)">
-          <small
-            class="form-text text-danger"
-            *ngIf="editForm.get('firstName')?.errors?.maxlength"
-            jhiTranslate="entity.validation.maxlength"
-            [translateValues]="{ max: 50 }"
-          >
-            Ce champ doit faire moins de 50 caractères.
-          </small>
+          <div class="uu-field">
+            <label class="uu-field__label">Email</label>
+            <input type="email" class="uu-field__input" name="email" formControlName="email" />
+            <div *ngIf="editForm.get('email')!.invalid && (editForm.get('email')!.dirty || editForm.get('email')!.touched)">
+              <small class="uu-field__error" *ngIf="editForm.get('email')?.errors?.required">Ce champ est obligatoire.</small>
+              <small class="uu-field__error" *ngIf="editForm.get('email')?.errors?.maxlength">
+                Ce champ doit faire moins de 100 caractères.
+              </small>
+              <small class="uu-field__error" *ngIf="editForm.get('email')?.errors?.minlength">
+                Ce champ doit faire au minimum 5 caractères.
+              </small>
+              <small class="uu-field__error" *ngIf="editForm.get('email')?.errors?.email">Votre email n'est pas valide.</small>
+            </div>
+          </div>
+
+          <div class="uu-field" *ngIf="languages && languages.length > 0">
+            <label class="uu-field__label">Langue</label>
+            <select class="uu-field__select" id="langKey" name="langKey" formControlName="langKey">
+              <option *ngFor="let language of languages" [value]="language">{{ language | findLanguageFromKey }}</option>
+            </select>
+          </div>
+
+          <div class="uu-field">
+            <label class="uu-field__label">Statut</label>
+            <button
+              type="button"
+              class="uu-toggle"
+              [class.uu-toggle--on]="editForm.value.activated"
+              [disabled]="editForm.value.id === undefined"
+              (click)="editForm.patchValue({ activated: !editForm.value.activated })"
+            >
+              <span class="uu-toggle__knob"></span>
+            </button>
+            <span class="uu-toggle__label">{{ editForm.value.activated ? 'Activé' : 'Désactivé' }}</span>
+          </div>
+
         </div>
       </div>
 
-      <div class="mb-3">
-        <label jhiTranslate="userManagement.lastName">Nom</label>
-        <input type="text" class="form-control" name="lastName" formControlName="lastName" />
-
-        <div *ngIf="editForm.get('lastName')!.invalid && (editForm.get('lastName')!.dirty || editForm.get('lastName')!.touched)">
-          <small
-            class="form-text text-danger"
-            *ngIf="editForm.get('lastName')?.errors?.maxlength"
-            jhiTranslate="entity.validation.maxlength"
-            [translateValues]="{ max: 50 }"
-          >
-            Ce champ doit faire moins de 50 caractères.
-          </small>
+      <!-- ── Card: Droits (full width) ── -->
+      <div class="uu-card uu-card--full">
+        <div class="uu-card__header">
+          <fa-icon icon="users-cog"></fa-icon>
+          Droits
+        </div>
+        <div class="uu-card__body">
+          <div class="uu-roles">
+            <button
+              type="button"
+              class="uu-role-pill"
+              [ngClass]="getRoleColor(authority)"
+              [class.uu-role-pill--active]="isRoleSelected(authority)"
+              *ngFor="let authority of authorities"
+              (click)="toggleRole(authority)"
+            >
+              <fa-icon [icon]="$any(isRoleSelected(authority) ? 'check' : getRoleIcon(authority))"></fa-icon>
+              {{ getRoleLabel(authority) }}
+            </button>
+          </div>
         </div>
       </div>
 
-      <div class="mb-3">
-        <label class="form-label" jhiTranslate="userManagement.email">Email</label>
-        <input type="email" class="form-control" name="email" formControlName="email" />
+    </div>
 
-        <div *ngIf="editForm.get('email')!.invalid && (editForm.get('email')!.dirty || editForm.get('email')!.touched)">
-          <small class="form-text text-danger" *ngIf="editForm.get('email')?.errors?.required" jhiTranslate="entity.validation.required">
-            Ce champ est obligatoire.
-          </small>
-
-          <small
-            class="form-text text-danger"
-            *ngIf="editForm.get('email')?.errors?.maxlength"
-            jhiTranslate="entity.validation.maxlength"
-            [translateValues]="{ max: 100 }"
-          >
-            Ce champ doit faire moins de 100 caractères.
-          </small>
-
-          <small
-            class="form-text text-danger"
-            *ngIf="editForm.get('email')?.errors?.minlength"
-            jhiTranslate="entity.validation.minlength"
-            [translateValues]="{ min: 5 }"
-          >
-            Ce champ doit faire au minimum 5 caractères.
-          </small>
-
-          <small
-            class="form-text text-danger"
-            *ngIf="editForm.get('email')?.errors?.email"
-            jhiTranslate="global.messages.validate.email.invalid"
-          >
-            Votre email n'est pas valide.
-          </small>
-        </div>
-      </div>
-
-      <div class="form-check">
-        <label class="form-check-label" for="activated">
-          <input
-            class="form-check-input"
-            [attr.disabled]="editForm.value.id === undefined ? 'disabled' : null"
-            type="checkbox"
-            id="activated"
-            name="activated"
-            formControlName="activated"
-          />
-          <span jhiTranslate="userManagement.activated">Activé</span>
-        </label>
-      </div>
-
-      <div class="mb-3" *ngIf="languages && languages.length > 0">
-        <label jhiTranslate="userManagement.langKey">Langue</label>
-        <select class="form-control" id="langKey" name="langKey" formControlName="langKey">
-          <option *ngFor="let language of languages" [value]="language">{{ language | findLanguageFromKey }}</option>
-        </select>
-      </div>
-
-      <div class="mb-3">
-        <label jhiTranslate="userManagement.profiles">Droits</label>
-        <select class="form-control" multiple name="authority" formControlName="authorities">
-          <option *ngFor="let authority of authorities" [value]="authority">{{ authority }}</option>
-        </select>
-      </div>
-      <button type="button" class="btn btn-secondary" (click)="previousState()">
-        <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Annuler</span>
+    <!-- ── Actions ── -->
+    <div class="uu-actions">
+      <button type="button" class="uu-btn uu-btn--secondary" (click)="previousState()">
+        <fa-icon icon="ban"></fa-icon>
+        <span>Annuler</span>
       </button>
 
-      <button type="submit" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
-        <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Sauvegarder</span>
+      <button type="submit" [disabled]="editForm.invalid || isSaving" class="uu-btn uu-btn--primary">
+        <fa-icon icon="save"></fa-icon>
+        <span>Sauvegarder</span>
       </button>
-    </form>
-  </div>
+    </div>
+  </form>
 </div>
