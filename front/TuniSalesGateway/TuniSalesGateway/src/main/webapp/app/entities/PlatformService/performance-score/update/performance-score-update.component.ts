@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 import { PerformanceScoreFormService, PerformanceScoreFormGroup } from './performance-score-form.service';
 import { IPerformanceScore } from '../performance-score.model';
@@ -11,6 +11,8 @@ import { AlertError } from 'app/shared/alert/alert-error.model';
 import { EventManager, EventWithContent } from 'app/core/util/event-manager.service';
 import { DataUtils, FileLoadError } from 'app/core/util/data-util.service';
 import { ScoreClassification } from 'app/entities/enumerations/score-classification.model';
+import { ITenant } from 'app/entities/PlatformService/tenant/tenant.model';
+import { TenantService } from 'app/entities/PlatformService/tenant/service/tenant.service';
 
 @Component({
   selector: 'jhi-performance-score-update',
@@ -21,6 +23,7 @@ export class PerformanceScoreUpdateComponent implements OnInit {
   isSaving = false;
   performanceScore: IPerformanceScore | null = null;
   scoreClassificationValues = Object.keys(ScoreClassification);
+  tenantsCollection: ITenant[] = [];
 
   editForm: PerformanceScoreFormGroup = this.performanceScoreFormService.createPerformanceScoreFormGroup();
 
@@ -29,6 +32,7 @@ export class PerformanceScoreUpdateComponent implements OnInit {
     protected eventManager: EventManager,
     protected performanceScoreService: PerformanceScoreService,
     protected performanceScoreFormService: PerformanceScoreFormService,
+    protected tenantService: TenantService,
     protected activatedRoute: ActivatedRoute
   ) {}
 
@@ -39,6 +43,11 @@ export class PerformanceScoreUpdateComponent implements OnInit {
         this.updateForm(performanceScore);
       }
     });
+
+    this.tenantService
+      .queryAll()
+      .pipe(map((res: HttpResponse<ITenant[]>) => res.body ?? []))
+      .subscribe((tenants: ITenant[]) => (this.tenantsCollection = tenants));
   }
 
   byteSize(base64String: string): string {

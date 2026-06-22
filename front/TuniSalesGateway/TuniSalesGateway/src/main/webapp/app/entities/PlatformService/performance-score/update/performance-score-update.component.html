@@ -33,7 +33,10 @@
 
           <div class="ps-field">
             <label class="ps-field__label" for="field_tenantId">Tenant Id</label>
-            <input type="number" class="ps-field__input" name="tenantId" id="field_tenantId" data-cy="tenantId" formControlName="tenantId" />
+            <select class="ps-field__select" name="tenantId" id="field_tenantId" data-cy="tenantId" formControlName="tenantId">
+              <option [ngValue]="null">-- Sélectionner une entreprise --</option>
+              <option *ngFor="let t of tenantsCollection" [value]="t.id">#{{ t.id }} — {{ t.name }}</option>
+            </select>
             <div *ngIf="editForm.get('tenantId')!.invalid && (editForm.get('tenantId')!.dirty || editForm.get('tenantId')!.touched)">
               <small class="ps-field__error" *ngIf="editForm.get('tenantId')?.errors?.required">Ce champ est obligatoire.</small>
               <small class="ps-field__error" [hidden]="!editForm.get('tenantId')?.errors?.number">Ce champ doit être un nombre.</small>
