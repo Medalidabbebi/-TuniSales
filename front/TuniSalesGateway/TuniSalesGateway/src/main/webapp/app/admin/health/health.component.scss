@@ -1,0 +1,164 @@
+.hth-page {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── Header ── */
+.hth-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  &__left { display: flex; align-items: center; gap: 1rem; }
+
+  &__icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #dc2626, #ef4444);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1.25rem; flex-shrink: 0;
+  }
+
+  &__title { font-size: 1.5rem; font-weight: 700; color: #0f172a; margin: 0; }
+  &__subtitle { font-size: 0.85rem; color: #64748b; margin: 0.15rem 0 0; }
+}
+
+.hth-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(99,102,241,.35);
+  transition: all 0.15s;
+
+  &:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,.45); }
+}
+
+/* ── KPI strip ── */
+.hth-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.875rem;
+  margin-bottom: 1.5rem;
+
+  @media (max-width: 768px) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.hth-kpi {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #6366f1;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+
+  &__value { font-size: 1.4rem; font-weight: 700; color: #0f172a; line-height: 1; }
+  &__label { font-size: 0.7rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 0.2rem; }
+  &__icon { font-size: 1.4rem; }
+
+  &--green { border-left-color: #22c55e; .hth-kpi__value, .hth-kpi__icon { color: #16a34a; } }
+  &--red   { border-left-color: #ef4444; .hth-kpi__value, .hth-kpi__icon { color: #dc2626; } }
+}
+
+/* ── Card ── */
+.hth-card {
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+
+  &__header {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.9rem 1.25rem;
+    background: #f8fafc;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    fa-icon { color: #6366f1; }
+  }
+}
+
+/* ── Service rows ── */
+.hth-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.hth-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.25rem;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.12s;
+
+  &:last-child { border-bottom: none; }
+  &:hover { background: #fafbff; }
+
+  &__left { display: flex; align-items: center; gap: 0.75rem; }
+  &__right { display: flex; align-items: center; gap: 0.75rem; }
+  &__name { font-size: 0.875rem; font-weight: 600; color: #334155; }
+
+  &__icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+
+    &--green { background: #dcfce7; color: #16a34a; }
+    &--red   { background: #fee2e2; color: #dc2626; }
+    &--amber { background: #fef3c7; color: #d97706; }
+    &--gray  { background: #f1f5f9; color: #64748b; }
+  }
+}
+
+/* ── Status badge ── */
+.hth-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+
+  &__dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  &--green { background: #dcfce7; color: #16a34a; .hth-badge__dot { background: #22c55e; } }
+  &--red   { background: #fee2e2; color: #dc2626; .hth-badge__dot { background: #ef4444; } }
+  &--amber { background: #fef3c7; color: #d97706; .hth-badge__dot { background: #f59e0b; } }
+  &--gray  { background: #f1f5f9; color: #64748b; .hth-badge__dot { background: #94a3b8; } }
+}
+
+.hth-detail-btn {
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  border: 1.5px solid #e2e8f0;
+  background: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: #0891b2;
+  transition: all 0.15s;
+
+  &:hover { background: #ecfeff; border-color: #67e8f9; }
+}
