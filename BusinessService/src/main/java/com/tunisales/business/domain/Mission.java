@@ -63,6 +63,10 @@ public class Mission implements Serializable {
     @JsonIgnoreProperties(value = { "client", "mission" }, allowSetters = true)
     private Set<Visit> visits = new HashSet<>();
 
+    @OneToMany(mappedBy = "mission")
+    @JsonIgnoreProperties(value = { "order", "mission", "visit" }, allowSetters = true)
+    private Set<Delivery> deliveries = new HashSet<>();
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -210,6 +214,37 @@ public class Mission implements Serializable {
     public Mission removeVisits(Visit visit) {
         this.visits.remove(visit);
         visit.setMission(null);
+        return this;
+    }
+
+    public Set<Delivery> getDeliveries() {
+        return this.deliveries;
+    }
+
+    public void setDeliveries(Set<Delivery> deliveries) {
+        if (this.deliveries != null) {
+            this.deliveries.forEach(i -> i.setMission(null));
+        }
+        if (deliveries != null) {
+            deliveries.forEach(i -> i.setMission(this));
+        }
+        this.deliveries = deliveries;
+    }
+
+    public Mission deliveries(Set<Delivery> deliveries) {
+        this.setDeliveries(deliveries);
+        return this;
+    }
+
+    public Mission addDeliveries(Delivery delivery) {
+        this.deliveries.add(delivery);
+        delivery.setMission(this);
+        return this;
+    }
+
+    public Mission removeDeliveries(Delivery delivery) {
+        this.deliveries.remove(delivery);
+        delivery.setMission(null);
         return this;
     }
 

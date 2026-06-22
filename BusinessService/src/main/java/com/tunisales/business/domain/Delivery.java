@@ -63,6 +63,14 @@ public class Delivery implements Serializable {
     @JsonIgnoreProperties(value = { "orderLines", "deliveries", "invoices", "client" }, allowSetters = true)
     private Order order;
 
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "visits", "deliveries" }, allowSetters = true)
+    private Mission mission;
+
+    @ManyToOne
+    @JsonIgnoreProperties(value = { "client", "mission", "deliveries" }, allowSetters = true)
+    private Visit visit;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
     public Long getId() {
@@ -205,6 +213,32 @@ public class Delivery implements Serializable {
 
     public Delivery order(Order order) {
         this.setOrder(order);
+        return this;
+    }
+
+    public Mission getMission() {
+        return this.mission;
+    }
+
+    public void setMission(Mission mission) {
+        this.mission = mission;
+    }
+
+    public Delivery mission(Mission mission) {
+        this.setMission(mission);
+        return this;
+    }
+
+    public Visit getVisit() {
+        return this.visit;
+    }
+
+    public void setVisit(Visit visit) {
+        this.visit = visit;
+    }
+
+    public Delivery visit(Visit visit) {
+        this.setVisit(visit);
         return this;
     }
 

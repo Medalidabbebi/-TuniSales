@@ -96,6 +96,14 @@
           <span class="dd-info-row__label">Commande liée</span>
           <a [routerLink]="['/order', delivery.order.id, 'view']" class="dd-info-row__link">{{ delivery.order.orderNumber }}</a>
         </div>
+        <div class="dd-info-row" *ngIf="delivery.mission">
+          <span class="dd-info-row__label">Mission liée</span>
+          <a [routerLink]="['/mission', delivery.mission.id, 'view']" class="dd-info-row__link">{{ delivery.mission.title }}</a>
+        </div>
+        <div class="dd-info-row" *ngIf="delivery.visit">
+          <span class="dd-info-row__label">Visite liée</span>
+          <a [routerLink]="['/visit', delivery.visit.id, 'view']" class="dd-info-row__link">#{{ delivery.visit.id }} — {{ delivery.visit.objective }}</a>
+        </div>
         <div class="dd-info-row" *ngIf="delivery.notes">
           <span class="dd-info-row__label">Notes</span>
           <span class="dd-info-row__value">{{ delivery.notes }}</span>

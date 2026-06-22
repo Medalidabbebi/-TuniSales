@@ -41,6 +41,10 @@ public class DeliveryDTO implements Serializable {
 
     private OrderDTO order;
 
+    private MissionDTO mission;
+
+    private VisitDTO visit;
+
     public Long getId() {
         return id;
     }
@@ -129,6 +133,22 @@ public class DeliveryDTO implements Serializable {
         this.order = order;
     }
 
+    public MissionDTO getMission() {
+        return mission;
+    }
+
+    public void setMission(MissionDTO mission) {
+        this.mission = mission;
+    }
+
+    public VisitDTO getVisit() {
+        return visit;
+    }
+
+    public void setVisit(VisitDTO visit) {
+        this.visit = visit;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -165,6 +185,8 @@ public class DeliveryDTO implements Serializable {
             ", notes='" + getNotes() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             ", order=" + getOrder() +
+            ", mission=" + getMission() +
+            ", visit=" + getVisit() +
             "}";
     }
 }

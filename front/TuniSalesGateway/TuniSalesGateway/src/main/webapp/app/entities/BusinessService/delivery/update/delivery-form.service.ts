@@ -44,6 +44,8 @@ type DeliveryFormGroupContent = {
   notes: FormControl<DeliveryFormRawValue['notes']>;
   createdAt: FormControl<DeliveryFormRawValue['createdAt']>;
   order: FormControl<DeliveryFormRawValue['order']>;
+  mission: FormControl<DeliveryFormRawValue['mission']>;
+  visit: FormControl<DeliveryFormRawValue['visit']>;
 };
 
 export type DeliveryFormGroup = FormGroup<DeliveryFormGroupContent>;
@@ -87,6 +89,8 @@ export class DeliveryFormService {
       order: new FormControl(deliveryRawValue.order, {
         validators: [Validators.required],
       }),
+      mission: new FormControl(deliveryRawValue.mission),
+      visit: new FormControl(deliveryRawValue.visit),
     });
   }
 

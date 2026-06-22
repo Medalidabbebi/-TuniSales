@@ -127,6 +127,28 @@
             </div>
           </div>
 
+          <!-- mission -->
+          <div class="du-field">
+            <label class="du-label" for="field_mission">
+              <fa-icon icon="map-marked-alt" class="me-1"></fa-icon>Mission liée
+            </label>
+            <select class="du-input du-select" id="field_mission" data-cy="mission" name="mission" formControlName="mission" [compareWith]="compareMission">
+              <option [ngValue]="null">— Aucune mission —</option>
+              <option [ngValue]="missionOption" *ngFor="let missionOption of missionsSharedCollection">{{ missionOption.title }}</option>
+            </select>
+          </div>
+
+          <!-- visit -->
+          <div class="du-field">
+            <label class="du-label" for="field_visit">
+              <fa-icon icon="calendar-check" class="me-1"></fa-icon>Visite liée
+            </label>
+            <select class="du-input du-select" id="field_visit" data-cy="visit" name="visit" formControlName="visit" [compareWith]="compareVisit">
+              <option [ngValue]="null">— Aucune visite —</option>
+              <option [ngValue]="visitOption" *ngFor="let visitOption of visitsSharedCollection">#{{ visitOption.id }} — {{ visitOption.objective }}</option>
+            </select>
+          </div>
+
         </div>
       </div>
 

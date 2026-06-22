@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="20260622000001-delivery-new-fields" author="tunisales">
+        <addColumn tableName="delivery">
+            <column name="mission_id" type="bigint"/>
+            <column name="visit_id" type="bigint"/>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="20260622000001-delivery-new-constraints" author="tunisales">
+        <addForeignKeyConstraint baseColumnNames="mission_id"
+                                 baseTableName="delivery"
+                                 constraintName="fk_delivery__mission_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="mission"/>
+
+        <addForeignKeyConstraint baseColumnNames="visit_id"
+                                 baseTableName="delivery"
+                                 constraintName="fk_delivery__visit_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="visit"/>
+    </changeSet>
+
+</databaseChangeLog>

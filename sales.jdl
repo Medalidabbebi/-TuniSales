@@ -691,10 +691,15 @@ relationship ManyToOne {
 // Missions & Visites
 relationship OneToMany {
   Mission{visits} to Visit{mission(title) required}
+  Mission{deliveries} to Delivery{mission(title)}
 }
 
 relationship ManyToOne {
   Visit{client(name) required} to Client
+}
+
+relationship OneToMany {
+  Visit{deliveries} to Delivery{visit(objective)}
 }
 
 // ── InventoryService : Relations internes ──
