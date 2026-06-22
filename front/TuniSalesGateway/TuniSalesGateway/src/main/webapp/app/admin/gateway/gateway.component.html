@@ -1,58 +1,77 @@
-<div>
-  <h2>
-    <span id="gateway-page-heading" jhiTranslate="gateway.title">Gateway</span>
+<div class="gw-page">
 
-    <button class="btn btn-primary float-end" (click)="refresh()" (disabled)="(updatingRoutes)">
-      <fa-icon icon="sync"></fa-icon> <span jhiTranslate="gateway.refresh.button">Rafraîchir</span>
+  <!-- ── Header ── -->
+  <div class="gw-header">
+    <div class="gw-header__left">
+      <div class="gw-header__icon">
+        <fa-icon icon="sitemap"></fa-icon>
+      </div>
+      <div>
+        <h2 id="gateway-page-heading" class="gw-header__title">Gateway</h2>
+        <p class="gw-header__subtitle">Routes actuelles et instances disponibles</p>
+      </div>
+    </div>
+    <button class="gw-btn" (click)="refresh()" [disabled]="updatingRoutes">
+      <fa-icon icon="sync" [spin]="updatingRoutes"></fa-icon>
+      <span>Rafraîchir</span>
     </button>
-  </h2>
-
-  <h3 jhiTranslate="gateway.routes.title">Routes actuelles</h3>
-
-  <div class="table-responsive">
-    <table class="table table-striped" aria-describedby="gateway-page-heading">
-      <thead>
-        <tr>
-          <th scope="col" jhiTranslate="gateway.routes.url">URL</th>
-          <th scope="col" jhiTranslate="gateway.routes.service">Service</th>
-          <th scope="col" jhiTranslate="gateway.routes.servers">Serveurs disponibles</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let route of gatewayRoutes">
-          <td>{{ route.path }}</td>
-          <td>{{ route.serviceId }}</td>
-          <td>
-            <div *ngIf="route.serviceInstances.length === 0" class="label label-danger" jhiTranslate="gateway.routes.error">
-              Attention : aucun serveur disponible !
-            </div>
-
-            <div class="table-responsive">
-              <table class="table table-striped" *ngIf="route">
-                <tr *ngFor="let instance of route.serviceInstances">
-                  <td>
-                    <a href="{{ instance.uri }}" target="_blank">{{ instance.uri }}</a>
-                  </td>
-                  <td>
-                    <div *ngIf="instance.instanceInfo" class="badge bg-{{ instance.instanceInfo.status === 'UP' ? 'success' : 'danger' }}">
-                      {{ instance.instanceInfo.status }}
-                    </div>
-                    <div *ngIf="!instance.instanceInfo" class="badge bg-warning">?</div>
-                  </td>
-                  <td>
-                    <span *ngFor="let entry of instance.metadata | keyvalue">
-                      <span class="badge bg-default fw-normal">
-                        <span class="badge rounded-pill bg-info fw-normal">{{ entry.key }}</span>
-                        {{ entry.value }}
-                      </span>
-                    </span>
-                  </td>
-                </tr>
-              </table>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
+
+  <!-- ── KPIs ── -->
+  <div class="gw-kpis">
+    <div class="gw-kpi gw-kpi--indigo">
+      <div class="gw-kpi__value">{{ gatewayRoutes.length }}</div>
+      <div class="gw-kpi__label">Routes</div>
+    </div>
+    <div class="gw-kpi gw-kpi--green">
+      <div class="gw-kpi__value">{{ countServicesUp() }}</div>
+      <div class="gw-kpi__label">UP</div>
+    </div>
+    <div class="gw-kpi gw-kpi--red">
+      <div class="gw-kpi__value">{{ countServicesDown() }}</div>
+      <div class="gw-kpi__label">DOWN</div>
+    </div>
+  </div>
+
+  <!-- ── Route cards ── -->
+  <div class="gw-routes">
+    <div class="gw-route-card" *ngFor="let route of gatewayRoutes">
+      <div class="gw-route-card__header">
+        <div class="gw-route-card__icon" [ngClass]="getServiceColor(route.serviceId)">
+          <fa-icon [icon]="$any(getServiceIcon(route.serviceId))"></fa-icon>
+        </div>
+        <div>
+          <div class="gw-route-card__service">{{ route.serviceId }}</div>
+          <div class="gw-route-card__path">{{ route.path }}</div>
+        </div>
+      </div>
+
+      <div class="gw-route-card__body">
+        <div class="gw-no-instance" *ngIf="route.serviceInstances.length === 0">
+          <fa-icon icon="exclamation-triangle"></fa-icon>
+          Attention : aucun serveur disponible !
+        </div>
+
+        <div class="gw-instance" *ngFor="let instance of route.serviceInstances">
+          <div class="gw-instance__top">
+            <a class="gw-instance__uri" href="{{ instance.uri }}" target="_blank">
+              <fa-icon icon="external-link-alt"></fa-icon>
+              {{ instance.uri }}
+            </a>
+            <span class="gw-status" [ngClass]="instance.instanceInfo?.status === 'UP' ? 'gw-status--up' : 'gw-status--down'">
+              <span class="gw-status__dot"></span>
+              {{ instance.instanceInfo ? instance.instanceInfo.status : '?' }}
+            </span>
+          </div>
+          <div class="gw-meta">
+            <span class="gw-meta__chip" *ngFor="let entry of instance.metadata | keyvalue">
+              <span class="gw-meta__key">{{ entry.key }}</span>
+              <span class="gw-meta__value">{{ entry.value }}</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
