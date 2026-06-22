@@ -148,6 +148,9 @@
 }
 
 .uu-role-pill {
+  appearance: none;
+  -webkit-appearance: none;
+  forced-color-adjust: none;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -156,7 +159,7 @@
   font-size: 0.78rem;
   font-weight: 600;
   border: 1.5px solid #e2e8f0;
-  background: #fff;
+  background-color: #fff;
   color: #64748b;
   cursor: pointer;
   transition: all 0.15s;
@@ -170,15 +173,15 @@
     border-color: transparent;
   }
 
-  &--admin.uu-role-pill--active { background: linear-gradient(135deg, #dc2626, #ef4444); }
-  &--system.uu-role-pill--active { background: linear-gradient(135deg, #6d28d9, #8b5cf6); }
-  &--commercial.uu-role-pill--active { background: linear-gradient(135deg, #1d4ed8, #3b82f6); }
-  &--magasinier.uu-role-pill--active { background: linear-gradient(135deg, #b45309, #f59e0b); }
-  &--chefparc.uu-role-pill--active { background: linear-gradient(135deg, #c2410c, #f97316); }
-  &--respo.uu-role-pill--active { background: linear-gradient(135deg, #0e7490, #06b6d4); }
-  &--vendeur.uu-role-pill--active { background: linear-gradient(135deg, #15803d, #22c55e); }
-  &--client.uu-role-pill--active { background: linear-gradient(135deg, #475569, #64748b); }
-  &--user.uu-role-pill--active { background: linear-gradient(135deg, #334155, #475569); }
+  &--admin.uu-role-pill--active { background-color: #dc2626; background-image: linear-gradient(135deg, #dc2626, #ef4444); }
+  &--system.uu-role-pill--active { background-color: #6d28d9; background-image: linear-gradient(135deg, #6d28d9, #8b5cf6); }
+  &--commercial.uu-role-pill--active { background-color: #1d4ed8; background-image: linear-gradient(135deg, #1d4ed8, #3b82f6); }
+  &--magasinier.uu-role-pill--active { background-color: #b45309; background-image: linear-gradient(135deg, #b45309, #f59e0b); }
+  &--chefparc.uu-role-pill--active { background-color: #c2410c; background-image: linear-gradient(135deg, #c2410c, #f97316); }
+  &--respo.uu-role-pill--active { background-color: #0e7490; background-image: linear-gradient(135deg, #0e7490, #06b6d4); }
+  &--vendeur.uu-role-pill--active { background-color: #15803d; background-image: linear-gradient(135deg, #15803d, #22c55e); }
+  &--client.uu-role-pill--active { background-color: #475569; background-image: linear-gradient(135deg, #475569, #64748b); }
+  &--user.uu-role-pill--active { background-color: #334155; background-image: linear-gradient(135deg, #334155, #475569); }
 }
 
 /* ── Actions ── */
@@ -190,6 +193,9 @@
 }
 
 .uu-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  forced-color-adjust: none;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -202,14 +208,15 @@
   transition: all 0.15s;
 
   &--secondary {
-    background: #fff;
+    background-color: #fff;
     color: #475569;
     border-color: #e2e8f0;
-    &:hover { background: #f8fafc; }
+    &:hover { background-color: #f8fafc; }
   }
 
   &--primary {
-    background: linear-gradient(135deg, #4f46e5, #6366f1);
+    background-color: #4f46e5;
+    background-image: linear-gradient(135deg, #4f46e5, #6366f1);
     color: #fff;
     box-shadow: 0 2px 8px rgba(99,102,241,.35);
     &:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(99,102,241,.45); }
