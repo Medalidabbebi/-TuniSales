@@ -61,10 +61,6 @@ public class DeliveryCriteria implements Serializable, Criteria {
 
     private LongFilter orderId;
 
-    private LongFilter missionId;
-
-    private LongFilter visitId;
-
     private Boolean distinct;
 
     public DeliveryCriteria() {}
@@ -81,8 +77,6 @@ public class DeliveryCriteria implements Serializable, Criteria {
         this.notes = other.notes == null ? null : other.notes.copy();
         this.createdAt = other.createdAt == null ? null : other.createdAt.copy();
         this.orderId = other.orderId == null ? null : other.orderId.copy();
-        this.missionId = other.missionId == null ? null : other.missionId.copy();
-        this.visitId = other.visitId == null ? null : other.visitId.copy();
         this.distinct = other.distinct;
     }
 
@@ -256,36 +250,6 @@ public class DeliveryCriteria implements Serializable, Criteria {
         this.orderId = orderId;
     }
 
-    public LongFilter getMissionId() {
-        return missionId;
-    }
-
-    public LongFilter missionId() {
-        if (missionId == null) {
-            missionId = new LongFilter();
-        }
-        return missionId;
-    }
-
-    public void setMissionId(LongFilter missionId) {
-        this.missionId = missionId;
-    }
-
-    public LongFilter getVisitId() {
-        return visitId;
-    }
-
-    public LongFilter visitId() {
-        if (visitId == null) {
-            visitId = new LongFilter();
-        }
-        return visitId;
-    }
-
-    public void setVisitId(LongFilter visitId) {
-        this.visitId = visitId;
-    }
-
     public Boolean getDistinct() {
         return distinct;
     }
@@ -315,8 +279,6 @@ public class DeliveryCriteria implements Serializable, Criteria {
             Objects.equals(notes, that.notes) &&
             Objects.equals(createdAt, that.createdAt) &&
             Objects.equals(orderId, that.orderId) &&
-            Objects.equals(missionId, that.missionId) &&
-            Objects.equals(visitId, that.visitId) &&
             Objects.equals(distinct, that.distinct)
         );
     }
@@ -335,8 +297,6 @@ public class DeliveryCriteria implements Serializable, Criteria {
             notes,
             createdAt,
             orderId,
-            missionId,
-            visitId,
             distinct
         );
     }
@@ -356,8 +316,6 @@ public class DeliveryCriteria implements Serializable, Criteria {
             (notes != null ? "notes=" + notes + ", " : "") +
             (createdAt != null ? "createdAt=" + createdAt + ", " : "") +
             (orderId != null ? "orderId=" + orderId + ", " : "") +
-            (missionId != null ? "missionId=" + missionId + ", " : "") +
-            (visitId != null ? "visitId=" + visitId + ", " : "") +
             (distinct != null ? "distinct=" + distinct + ", " : "") +
             "}";
     }

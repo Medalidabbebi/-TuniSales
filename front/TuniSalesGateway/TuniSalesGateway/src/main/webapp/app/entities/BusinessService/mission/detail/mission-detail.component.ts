@@ -2,8 +2,6 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 
 import { IMission } from '../mission.model';
-import { IDelivery } from 'app/entities/BusinessService/delivery/delivery.model';
-import { DeliveryService } from 'app/entities/BusinessService/delivery/service/delivery.service';
 
 @Component({
   selector: 'jhi-mission-detail',
@@ -13,47 +11,13 @@ import { DeliveryService } from 'app/entities/BusinessService/delivery/service/d
 })
 export class MissionDetailComponent implements OnInit {
   mission: IMission | null = null;
-  deliveries: IDelivery[] = [];
 
-  constructor(protected activatedRoute: ActivatedRoute, private deliveryService: DeliveryService) {}
+  constructor(protected activatedRoute: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ mission }) => {
       this.mission = mission;
-      this.loadDeliveries();
     });
-  }
-
-  /** CSS modifier for a delivery's status pill */
-  getDeliveryStatusClass(status: string | null | undefined): string {
-    const map: Record<string, string> = {
-      PENDING: 'md-status-pill--planned',
-      IN_PREPARATION: 'md-status-pill--progress',
-      SHIPPED: 'md-status-pill--progress',
-      DELIVERED: 'md-status-pill--done',
-      FAILED: 'md-status-pill--cancelled',
-    };
-    return map[status ?? ''] || 'md-status-pill--cancelled';
-  }
-
-  getDeliveryStatusLabel(status: string | null | undefined): string {
-    const map: Record<string, string> = {
-      PENDING: 'En attente',
-      IN_PREPARATION: 'En préparation',
-      SHIPPED: 'Expédiée',
-      DELIVERED: 'Livrée',
-      FAILED: 'Échouée',
-    };
-    return map[status ?? ''] || 'Inconnu';
-  }
-
-  private loadDeliveries(): void {
-    if (!this.mission?.id) {
-      return;
-    }
-    this.deliveryService
-      .query({ 'missionId.equals': this.mission.id, size: 200 })
-      .subscribe(res => (this.deliveries = res.body ?? []));
   }
 
   previousState(): void {

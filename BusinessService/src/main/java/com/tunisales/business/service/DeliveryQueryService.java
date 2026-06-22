@@ -123,18 +123,6 @@ public class DeliveryQueryService extends QueryService<Delivery> {
                         buildSpecification(criteria.getOrderId(), root -> root.join(Delivery_.order, JoinType.LEFT).get(Order_.id))
                     );
             }
-            if (criteria.getMissionId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(criteria.getMissionId(), root -> root.join(Delivery_.mission, JoinType.LEFT).get(Mission_.id))
-                    );
-            }
-            if (criteria.getVisitId() != null) {
-                specification =
-                    specification.and(
-                        buildSpecification(criteria.getVisitId(), root -> root.join(Delivery_.visit, JoinType.LEFT).get(Visit_.id))
-                    );
-            }
         }
         return specification;
     }
