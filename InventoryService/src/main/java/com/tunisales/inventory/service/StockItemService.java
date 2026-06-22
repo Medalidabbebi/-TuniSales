@@ -164,16 +164,6 @@ public class StockItemService {
             .orElseThrow(() -> new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
     }
 
-    public StockItemDTO markSold(Long id) {
-        log.debug("Request to mark StockItem as SOLD : {}", id);
-        return stockItemRepository.findById(id)
-            .map(item -> {
-                item.setStatus(StockItemStatus.SOLD);
-                return stockItemMapper.toDto(stockItemRepository.save(item));
-            })
-            .orElseThrow(() -> new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound"));
-    }
-
     private void validateImeiUniqueness(StockItemDTO stockItemDTO) {
         validateImeiUniqueness(stockItemDTO, stockItemDTO.getId());
     }

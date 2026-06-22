@@ -109,11 +109,11 @@ export class SidebarComponent implements OnInit {
       label: 'Inventory',
       translateKey: 'global.menu.inventory',
       icon: 'warehouse',
-      requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER, Authority.CHEF_PARC, Authority.VENDEUR],
+      requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER, Authority.CHEF_PARC],
       children: [
         {
           label: 'Stock Items', translateKey: 'global.menu.entities.inventoryServiceStockItem', icon: 'cubes', route: '/stock-item',
-          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER, Authority.CHEF_PARC, Authority.VENDEUR],
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER, Authority.CHEF_PARC],
         },
         {
           label: 'Warehouses', translateKey: 'global.menu.entities.inventoryServiceWarehouse', icon: 'warehouse', route: '/warehouse',
