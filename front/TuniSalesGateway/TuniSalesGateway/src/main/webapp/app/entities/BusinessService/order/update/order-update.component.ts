@@ -371,7 +371,7 @@ export class OrderUpdateComponent implements OnInit {
 
   protected loadRelationshipsOptions(): void {
     this.clientService
-      .query()
+      .query({ size: 50, sort: ['name,asc'] })
       .pipe(map((res: HttpResponse<IClient[]>) => res.body ?? []))
       .subscribe(clients => (this.clientsSharedCollection = clients));
 

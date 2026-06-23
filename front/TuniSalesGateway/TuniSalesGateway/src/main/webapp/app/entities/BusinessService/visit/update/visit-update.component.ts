@@ -152,7 +152,7 @@ export class VisitUpdateComponent implements OnInit {
 
   protected loadRelationshipsOptions(): void {
     this.clientService
-      .query()
+      .query({ size: 50, sort: ['name,asc'] })
       .pipe(map((res: HttpResponse<IClient[]>) => res.body ?? []))
       .pipe(map((clients: IClient[]) => this.clientService.addClientToCollectionIfMissing<IClient>(clients, this.visit?.client)))
       .subscribe((clients: IClient[]) => (this.clientsSharedCollection = clients));
