@@ -171,6 +171,7 @@
     "idnull": "Identifiant invalide",
     "idinvalid": "Invalid Id",
     "idnotfound": "ID cannot be found",
+    "deliverynumberalreadyexists": "Ce numéro de livraison existe déjà !",
     "file": {
       "could.not.extract": "Impossible d'extraire le fichier",
       "not.image": "Le fichier doit être une image et non du type \"{{ fileType }}\""

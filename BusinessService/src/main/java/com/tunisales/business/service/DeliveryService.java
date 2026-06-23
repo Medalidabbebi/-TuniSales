@@ -12,6 +12,7 @@ import com.tunisales.business.repository.MissionRepository;
 import com.tunisales.business.repository.VisitRepository;
 import com.tunisales.business.service.dto.DeliveryDTO;
 import com.tunisales.business.service.mapper.DeliveryMapper;
+import com.tunisales.business.web.rest.errors.BadRequestAlertException;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class DeliveryService {
+
+    private static final String ENTITY_NAME = "businessServiceDelivery";
 
     private final Logger log = LoggerFactory.getLogger(DeliveryService.class);
 
@@ -57,6 +60,7 @@ public class DeliveryService {
      */
     public DeliveryDTO save(DeliveryDTO deliveryDTO) {
         log.debug("Request to save Delivery : {}", deliveryDTO);
+        validateDeliveryNumberUniqueness(deliveryDTO);
         Delivery delivery = deliveryMapper.toEntity(deliveryDTO);
         delivery = deliveryRepository.save(delivery);
         cascadeStatusToMissionAndVisit(delivery);
@@ -71,6 +75,7 @@ public class DeliveryService {
      */
     public DeliveryDTO update(DeliveryDTO deliveryDTO) {
         log.debug("Request to update Delivery : {}", deliveryDTO);
+        validateDeliveryNumberUniqueness(deliveryDTO);
         Delivery delivery = deliveryMapper.toEntity(deliveryDTO);
         delivery = deliveryRepository.save(delivery);
         cascadeStatusToMissionAndVisit(delivery);
@@ -85,6 +90,7 @@ public class DeliveryService {
      */
     public Optional<DeliveryDTO> partialUpdate(DeliveryDTO deliveryDTO) {
         log.debug("Request to partially update Delivery : {}", deliveryDTO);
+        validateDeliveryNumberUniqueness(deliveryDTO);
 
         return deliveryRepository
             .findById(deliveryDTO.getId())
@@ -99,6 +105,25 @@ public class DeliveryService {
                 return delivery;
             })
             .map(deliveryMapper::toDto);
+    }
+
+    /**
+     * Ensures no other delivery already uses this deliveryNumber, throwing a
+     * clean 400 BadRequestAlertException instead of letting the DB's unique
+     * constraint surface as an unhandled 500 at transaction commit time.
+     */
+    private void validateDeliveryNumberUniqueness(DeliveryDTO deliveryDTO) {
+        if (deliveryDTO.getDeliveryNumber() == null) {
+            return;
+        }
+
+        deliveryRepository
+            .findOneByDeliveryNumber(deliveryDTO.getDeliveryNumber())
+            .ifPresent(existingDelivery -> {
+                if (deliveryDTO.getId() == null || !existingDelivery.getId().equals(deliveryDTO.getId())) {
+                    throw new BadRequestAlertException("Delivery number already exists", ENTITY_NAME, "deliverynumberalreadyexists");
+                }
+            });
     }
 
     /**
