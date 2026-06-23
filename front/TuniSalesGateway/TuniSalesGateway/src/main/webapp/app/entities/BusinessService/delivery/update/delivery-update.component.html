@@ -54,6 +54,20 @@
         </div>
         <div class="du-card__body">
 
+          <!-- tenantId -->
+          <div class="du-field">
+            <label class="du-label" for="field_tenantId">
+              <fa-icon icon="building" class="me-1"></fa-icon>Entreprise
+            </label>
+            <select class="du-input du-select" id="field_tenantId" data-cy="tenantId" name="tenantId" formControlName="tenantId">
+              <option [ngValue]="null">-- Sélectionner une entreprise --</option>
+              <option *ngFor="let t of tenantsCollection" [value]="t.id">#{{ t.id }} — {{ t.name }}</option>
+            </select>
+            <div class="du-field-errors" *ngIf="editForm.get('tenantId')!.invalid && (editForm.get('tenantId')!.dirty || editForm.get('tenantId')!.touched)">
+              <small class="du-error" *ngIf="editForm.get('tenantId')?.errors?.required">Ce champ est obligatoire.</small>
+            </div>
+          </div>
+
           <!-- deliveryNumber -->
           <div class="du-field">
             <label class="du-label" for="field_deliveryNumber">

@@ -13,6 +13,8 @@ import { IMission } from 'app/entities/BusinessService/mission/mission.model';
 import { MissionService } from 'app/entities/BusinessService/mission/service/mission.service';
 import { IVisit } from 'app/entities/BusinessService/visit/visit.model';
 import { VisitService } from 'app/entities/BusinessService/visit/service/visit.service';
+import { ITenant } from 'app/entities/PlatformService/tenant/tenant.model';
+import { TenantService } from 'app/entities/PlatformService/tenant/service/tenant.service';
 import { DeliveryStatus } from 'app/entities/enumerations/delivery-status.model';
 
 @Component({
@@ -29,6 +31,7 @@ export class DeliveryUpdateComponent implements OnInit {
   ordersSharedCollection: IOrder[] = [];
   missionsSharedCollection: IMission[] = [];
   visitsSharedCollection: IVisit[] = [];
+  tenantsCollection: ITenant[] = [];
 
   editForm: DeliveryFormGroup = this.deliveryFormService.createDeliveryFormGroup();
 
@@ -38,6 +41,7 @@ export class DeliveryUpdateComponent implements OnInit {
     protected orderService: OrderService,
     protected missionService: MissionService,
     protected visitService: VisitService,
+    protected tenantService: TenantService,
     protected activatedRoute: ActivatedRoute
   ) {}
 
@@ -125,6 +129,11 @@ export class DeliveryUpdateComponent implements OnInit {
       .pipe(map((res: HttpResponse<IVisit[]>) => res.body ?? []))
       .pipe(map((visits: IVisit[]) => this.visitService.addVisitToCollectionIfMissing<IVisit>(visits, this.delivery?.visit)))
       .subscribe((visits: IVisit[]) => (this.visitsSharedCollection = visits));
+
+    this.tenantService
+      .queryAll()
+      .pipe(map((res: HttpResponse<ITenant[]>) => res.body ?? []))
+      .subscribe((tenants: ITenant[]) => (this.tenantsCollection = tenants));
   }
 
   /** Returns du-status--* modifier class for the live status strip */
