@@ -5,6 +5,7 @@ import com.tunisales.business.domain.Mission;
 import com.tunisales.business.domain.Visit;
 import com.tunisales.business.domain.enumeration.DeliveryStatus;
 import com.tunisales.business.domain.enumeration.MissionStatus;
+import com.tunisales.business.domain.enumeration.OrderStatus;
 import com.tunisales.business.domain.enumeration.VisitStatus;
 import com.tunisales.business.repository.DeliveryRepository;
 import com.tunisales.business.repository.MissionRepository;
@@ -98,6 +99,58 @@ public class DeliveryService {
                 return delivery;
             })
             .map(deliveryMapper::toDto);
+    }
+
+    /**
+     * Reflects an Order's status onto every Delivery linked to that order, which in
+     * turn cascades onto each delivery's linked Mission/Visit.
+     *
+     * @param orderId the id of the order whose status changed.
+     * @param orderStatus the order's new status.
+     */
+    public void cascadeFromOrderStatus(Long orderId, OrderStatus orderStatus) {
+        DeliveryStatus mapped = fromOrderStatus(orderStatus);
+        if (mapped == null) {
+            return;
+        }
+        deliveryRepository
+            .findByOrderId(orderId)
+            .forEach(delivery -> {
+                if (delivery.getStatus() != mapped) {
+                    delivery.setStatus(mapped);
+                    deliveryRepository.save(delivery);
+                }
+                cascadeStatusToMissionAndVisit(delivery);
+            });
+    }
+
+    private DeliveryStatus fromOrderStatus(OrderStatus status) {
+        switch (status) {
+            case DRAFT:
+            case PENDING:
+            case SUBMITTED:
+            case UNDER_REVIEW:
+            case APPROVED:
+            case ACCEPTED:
+            case NEGOTIATED:
+            case CONFIRMED:
+                return DeliveryStatus.PENDING;
+            case IN_PREPARATION:
+                return DeliveryStatus.IN_PREPARATION;
+            case SHIPPED:
+                return DeliveryStatus.SHIPPED;
+            case DELIVERED:
+            case INVOICED:
+            case PAID:
+                return DeliveryStatus.DELIVERED;
+            case REFUSED:
+            case REJECTED:
+            case CANCELLED:
+            case RETURNED:
+                return DeliveryStatus.FAILED;
+            default:
+                return null;
+        }
     }
 
     /**

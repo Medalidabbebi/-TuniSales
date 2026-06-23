@@ -35,9 +35,12 @@ public class OrderService {
 
     private final OrderMapper orderMapper;
 
-    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper) {
+    private final DeliveryService deliveryService;
+
+    public OrderService(OrderRepository orderRepository, OrderMapper orderMapper, DeliveryService deliveryService) {
         this.orderRepository = orderRepository;
         this.orderMapper = orderMapper;
+        this.deliveryService = deliveryService;
     }
 
     /**
@@ -63,6 +66,7 @@ public class OrderService {
         log.debug("Request to update Order : {}", orderDTO);
         Order order = orderMapper.toEntity(orderDTO);
         order = orderRepository.save(order);
+        cascadeStatusToDeliveries(order);
         return orderMapper.toDto(order);
     }
 
@@ -83,7 +87,22 @@ public class OrderService {
                 return existingOrder;
             })
             .map(orderRepository::save)
+            .map(order -> {
+                cascadeStatusToDeliveries(order);
+                return order;
+            })
             .map(orderMapper::toDto);
+    }
+
+    /**
+     * Reflects this Order's status onto its linked Deliveries (and, transitively,
+     * onto each delivery's linked Mission/Visit).
+     */
+    private void cascadeStatusToDeliveries(Order order) {
+        if (order.getId() == null || order.getStatus() == null) {
+            return;
+        }
+        deliveryService.cascadeFromOrderStatus(order.getId(), order.getStatus());
     }
 
     /**
@@ -154,7 +173,9 @@ public class OrderService {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         order.setStatus(OrderStatus.valueOf(decision));
         order.setValidatedAt(ZonedDateTime.now());
-        return orderMapper.toDto(orderRepository.save(order));
+        order = orderRepository.save(order);
+        cascadeStatusToDeliveries(order);
+        return orderMapper.toDto(order);
     }
 
     /**
@@ -168,7 +189,9 @@ public class OrderService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Order must be ACCEPTED or NEGOTIATED to confirm");
         }
         order.setStatus(OrderStatus.CONFIRMED);
-        return orderMapper.toDto(orderRepository.save(order));
+        order = orderRepository.save(order);
+        cascadeStatusToDeliveries(order);
+        return orderMapper.toDto(order);
     }
 
     /**
@@ -180,7 +203,9 @@ public class OrderService {
         Order order = orderRepository.findById(id)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         order.setStatus(OrderStatus.RETURNED);
-        return orderMapper.toDto(orderRepository.save(order));
+        order = orderRepository.save(order);
+        cascadeStatusToDeliveries(order);
+        return orderMapper.toDto(order);
     }
 
     /**

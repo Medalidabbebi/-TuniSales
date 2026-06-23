@@ -37,4 +37,6 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long>, JpaSp
 
     @Query("select delivery from Delivery delivery left join fetch delivery.order where delivery.id =:id")
     Optional<Delivery> findOneWithToOneRelationships(@Param("id") Long id);
+
+    List<Delivery> findByOrderId(Long orderId);
 }
