@@ -45,7 +45,6 @@ export class SidebarComponent implements OnInit {
         Authority.ADMIN,
         Authority.ADMIN_SYSTEME,
         Authority.ADMIN_COMMERCIAL,
-        Authority.COMMERCIAL,
         Authority.MAGASINIER,
         Authority.CHEF_PARC,
         Authority.RESPONSABLE_PV,
@@ -72,7 +71,7 @@ export class SidebarComponent implements OnInit {
         },
         {
           label: 'Invoices', translateKey: 'global.menu.entities.businessServiceInvoice', icon: 'file-invoice-dollar', route: '/invoice',
-          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.ADMIN_CLIENT],
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.ADMIN_CLIENT],
         },
         {
           label: 'Products', translateKey: 'global.menu.entities.businessServiceProduct', icon: 'box', route: '/product',
