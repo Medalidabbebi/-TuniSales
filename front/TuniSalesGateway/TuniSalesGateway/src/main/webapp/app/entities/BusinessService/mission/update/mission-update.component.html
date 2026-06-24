@@ -105,9 +105,12 @@
                  jhiTranslate="tuniSalesGatewayApp.businessServiceMission.assignedToLogin">Assignée à</label>
           <div class="mu-input-with-icon">
             <fa-icon icon="user" class="mu-input-with-icon__icon"></fa-icon>
-            <input type="text" class="mu-input mu-input--icon-left" name="assignedToLogin"
-                   id="field_assignedToLogin" data-cy="assignedToLogin"
-                   formControlName="assignedToLogin" placeholder="Login du responsable" />
+            <select class="mu-input mu-input--icon-left" name="assignedToLogin"
+                    id="field_assignedToLogin" data-cy="assignedToLogin"
+                    formControlName="assignedToLogin">
+              <option [ngValue]="null">-- Sélectionner un utilisateur --</option>
+              <option *ngFor="let u of usersCollection" [value]="u.login">{{ u.login }}</option>
+            </select>
           </div>
           <div *ngIf="editForm.get('assignedToLogin')!.invalid && (editForm.get('assignedToLogin')!.dirty || editForm.get('assignedToLogin')!.touched)">
             <small class="mu-error" *ngIf="editForm.get('assignedToLogin')?.errors?.required"

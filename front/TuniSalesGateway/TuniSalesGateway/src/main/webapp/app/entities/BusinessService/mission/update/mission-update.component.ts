@@ -2,12 +2,14 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 import { MissionFormService, MissionFormGroup } from './mission-form.service';
 import { IMission } from '../mission.model';
 import { MissionService } from '../service/mission.service';
 import { MissionStatus } from 'app/entities/enumerations/mission-status.model';
+import { IUser } from 'app/entities/user/user.model';
+import { UserService } from 'app/entities/user/user.service';
 
 @Component({
   selector: 'jhi-mission-update',
@@ -19,12 +21,14 @@ export class MissionUpdateComponent implements OnInit {
   isSaving = false;
   mission: IMission | null = null;
   missionStatusValues = Object.keys(MissionStatus);
+  usersCollection: IUser[] = [];
 
   editForm: MissionFormGroup = this.missionFormService.createMissionFormGroup();
 
   constructor(
     protected missionService: MissionService,
     protected missionFormService: MissionFormService,
+    protected userService: UserService,
     protected activatedRoute: ActivatedRoute
   ) {}
 
@@ -35,6 +39,11 @@ export class MissionUpdateComponent implements OnInit {
         this.updateForm(mission);
       }
     });
+
+    this.userService
+      .query({ page: 0, size: 100, sort: ['login,asc'] })
+      .pipe(map((res: HttpResponse<IUser[]>) => res.body ?? []))
+      .subscribe((users: IUser[]) => (this.usersCollection = users));
   }
 
   previousState(): void {
