@@ -118,7 +118,8 @@ public class StockItemResource {
     @PreAuthorize(
         "hasAuthority(\"ROLE_ADMIN\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.MAGASINIER + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\")"
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\")"
     )
     public ResponseEntity<StockItemDTO> partialUpdateStockItem(
         @PathVariable(value = "id", required = false) final Long id,
