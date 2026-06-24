@@ -4,14 +4,14 @@ import { IInvoice } from '../invoice.model';
 
 // ── Company profile (update these to match the real company) ─────────────────
 const COMPANY = {
-  name:    'TuniSales SARL',
+  name:    'AFRICOM SERVICES',
   tagline: 'Plateforme de Gestion Commerciale',
   address: 'Avenue Habib Bourguiba, Immeuble Business Center',
   city:    '1001 Tunis, Tunisie',
   phone:   '+216 71 000 000',
   fax:     '+216 71 000 001',
-  email:   'contact@tunisales.tn',
-  web:     'www.tunisales.tn',
+  email:   'contact@africomservices.tn',
+  web:     'www.africomservices.tn',
   mf:      '0000000/A/M/000',
   rc:      'B 123456 2020',
   rib:     'TN59 0780 1234 5678 9012 3456',
@@ -116,7 +116,7 @@ export class InvoicePdfService {
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(13);
     doc.setTextColor(...C.white);
-    doc.text('TS', logoX + logoSize / 2, logoY + 14.5, { align: 'center' });
+    doc.text('AS', logoX + logoSize / 2, logoY + 14.5, { align: 'center' });
 
     // Company name & details (left of logo)
     const compX = ML + logoSize + 5;
@@ -350,18 +350,43 @@ export class InvoicePdfService {
     doc.setTextColor(...C.primary);
     doc.text('CACHET & SIGNATURE', stampX + stampW / 2, stampY + 7, { align: 'center' });
 
+    // vertical divider splitting the box into a signature zone and a stamp zone
+    const dividerX = stampX + 40;
     doc.setDrawColor(...C.border);
     doc.setLineWidth(0.3);
-    // circle for stamp
-    const cx = stampX + stampW / 2, cy = stampY + stampH / 2 + 3, cr = 14;
+    doc.line(dividerX, stampY + 9, dividerX, stampY + stampH - 2);
+
+    // ── Signature numérique (left half) ──────────────────────────────
+    const sigCx = stampX + 20;
+    doc.setFont('times', 'italic');
+    doc.setFontSize(14);
+    doc.setTextColor(...C.accent);
+    doc.text(COMPANY.name.split(' ')[0], sigCx, stampY + stampH - 13, { align: 'center' });
+
+    doc.setDrawColor(...C.dark);
+    doc.setLineWidth(0.3);
+    doc.line(stampX + 5, stampY + stampH - 9, stampX + 35, stampY + stampH - 9);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(6);
+    doc.setTextColor(...C.muted);
+    doc.text('Signature numérique', sigCx, stampY + stampH - 5.5, { align: 'center' });
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(5.5);
+    doc.text(`Document signé électroniquement le ${fmtDate(invoice.issueDate)}`, sigCx, stampY + stampH - 2, { align: 'center' });
+
+    // ── Cachet (right half) ───────────────────────────────────────────
+    doc.setDrawColor(...C.border);
+    doc.setLineWidth(0.3);
+    const cx = stampX + 40 + (stampW - 40) / 2, cy = stampY + stampH / 2 + 4, cr = 12;
     doc.circle(cx, cy, cr, 'S');
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(7);
+    doc.setFontSize(6.5);
     doc.setTextColor(...C.muted);
     doc.text(COMPANY.name, cx, cy - 3, { align: 'center', maxWidth: cr * 2 - 2 });
-    doc.setFontSize(6);
+    doc.setFontSize(5.5);
     doc.text('Cachet officiel', cx, cy + 1.5, { align: 'center' });
-    doc.text(COMPANY.mf, cx, cy + 6, { align: 'center' });
+    doc.text(COMPANY.mf, cx, cy + 5.5, { align: 'center' });
 
     y += 8;
 
