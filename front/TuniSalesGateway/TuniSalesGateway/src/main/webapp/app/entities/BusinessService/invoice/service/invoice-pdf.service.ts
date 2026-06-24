@@ -350,43 +350,40 @@ export class InvoicePdfService {
     doc.setTextColor(...C.primary);
     doc.text('CACHET & SIGNATURE', stampX + stampW / 2, stampY + 7, { align: 'center' });
 
-    // vertical divider splitting the box into a signature zone and a stamp zone
-    const dividerX = stampX + 40;
+    // horizontal divider splitting the box into a signature zone (top) and a stamp zone (bottom)
+    const sigCx = stampX + stampW / 2;
+    const dividerY = stampY + 19;
     doc.setDrawColor(...C.border);
     doc.setLineWidth(0.3);
-    doc.line(dividerX, stampY + 9, dividerX, stampY + stampH - 2);
+    doc.line(stampX + 4, dividerY, stampX + stampW - 4, dividerY);
 
-    // ── Signature numérique (left half) ──────────────────────────────
-    const sigCx = stampX + 20;
+    // ── Signature numérique (top zone) ────────────────────────────────
     doc.setFont('times', 'italic');
-    doc.setFontSize(14);
+    doc.setFontSize(15);
     doc.setTextColor(...C.accent);
-    doc.text(COMPANY.name.split(' ')[0], sigCx, stampY + stampH - 13, { align: 'center' });
+    doc.text(COMPANY.name.split(' ')[0], sigCx, stampY + 13.5, { align: 'center' });
 
     doc.setDrawColor(...C.dark);
     doc.setLineWidth(0.3);
-    doc.line(stampX + 5, stampY + stampH - 9, stampX + 35, stampY + stampH - 9);
+    doc.line(sigCx - 24, stampY + 16, sigCx + 24, stampY + 16);
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(6);
     doc.setTextColor(...C.muted);
-    doc.text('Signature numérique', sigCx, stampY + stampH - 5.5, { align: 'center' });
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(5.5);
-    doc.text(`Document signé électroniquement le ${fmtDate(invoice.issueDate)}`, sigCx, stampY + stampH - 2, { align: 'center' });
+    doc.text(`Signature numérique — signé le ${fmtDate(invoice.issueDate)}`, sigCx, stampY + 18.3, { align: 'center' });
 
-    // ── Cachet (right half) ───────────────────────────────────────────
+    // ── Cachet (bottom zone) ───────────────────────────────────────────
     doc.setDrawColor(...C.border);
     doc.setLineWidth(0.3);
-    const cx = stampX + 40 + (stampW - 40) / 2, cy = stampY + stampH / 2 + 4, cr = 12;
+    const cx = sigCx, cy = dividerY + (stampY + stampH - dividerY) / 2, cr = Math.min(11, (stampH - 19) / 2 - 1);
     doc.circle(cx, cy, cr, 'S');
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(6.5);
     doc.setTextColor(...C.muted);
-    doc.text(COMPANY.name, cx, cy - 3, { align: 'center', maxWidth: cr * 2 - 2 });
+    doc.text(COMPANY.name, cx, cy - 2.8, { align: 'center', maxWidth: cr * 2 - 2 });
     doc.setFontSize(5.5);
     doc.text('Cachet officiel', cx, cy + 1.5, { align: 'center' });
-    doc.text(COMPANY.mf, cx, cy + 5.5, { align: 'center' });
+    doc.text(COMPANY.mf, cx, cy + 5, { align: 'center' });
 
     y += 8;
 
