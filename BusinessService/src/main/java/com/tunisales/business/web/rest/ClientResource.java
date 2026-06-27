@@ -38,7 +38,8 @@ import tech.jhipster.web.util.ResponseUtil;
     "hasAuthority(\"ROLE_ADMIN\") or " +
     "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
     "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
-    "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\")"
+    "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
+    "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
 )
 public class ClientResource {
 

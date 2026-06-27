@@ -35,5 +35,6 @@
     <include file="config/liquibase/changelog/20260513000001_update_entity_Order.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260513000002_update_entity_Invoice.xml" relativeToChangelogFile="false"/>
     <include file="config/liquibase/changelog/20260622000001_update_entity_Delivery.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20260626190000_added_entity_Claim.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

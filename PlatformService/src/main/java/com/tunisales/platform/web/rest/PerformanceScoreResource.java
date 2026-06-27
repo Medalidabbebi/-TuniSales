@@ -178,7 +178,8 @@ public class PerformanceScoreResource {
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.CHEF_PARC + "\")"
+        "hasAuthority(\"" + AuthoritiesConstants.CHEF_PARC + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
     )
     public ResponseEntity<List<PerformanceScoreDTO>> getAllPerformanceScores(
         PerformanceScoreCriteria criteria,
@@ -202,7 +203,8 @@ public class PerformanceScoreResource {
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.CHEF_PARC + "\")"
+        "hasAuthority(\"" + AuthoritiesConstants.CHEF_PARC + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
     )
     public ResponseEntity<Long> countPerformanceScores(PerformanceScoreCriteria criteria) {
         log.debug("REST request to count PerformanceScores by criteria: {}", criteria);
@@ -221,7 +223,8 @@ public class PerformanceScoreResource {
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.CHEF_PARC + "\")"
+        "hasAuthority(\"" + AuthoritiesConstants.CHEF_PARC + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
     )
     public ResponseEntity<PerformanceScoreDTO> getPerformanceScore(@PathVariable Long id) {
         log.debug("REST request to get PerformanceScore : {}", id);

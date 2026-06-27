@@ -72,7 +72,11 @@ public class OrderResource {
      * Status is forced to PENDING; paymentMethod and discountPercent validated here.
      */
     @PostMapping("/orders")
-    @PreAuthorize("hasAuthority(\"ROLE_ADMIN\") or hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\")")
+    @PreAuthorize(
+        "hasAuthority(\"ROLE_ADMIN\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
+    )
     public ResponseEntity<OrderDTO> createOrder(@Valid @RequestBody OrderDTO orderDTO) throws URISyntaxException {
         log.debug("REST request to save Order : {}", orderDTO);
         if (orderDTO.getId() != null) {
@@ -207,7 +211,8 @@ public class OrderResource {
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_CLIENT + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.VENDEUR + "\")"
     )
     public ResponseEntity<List<OrderDTO>> getAllOrders(
         OrderCriteria criteria,
@@ -230,7 +235,8 @@ public class OrderResource {
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_CLIENT + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.VENDEUR + "\")"
     )
     public ResponseEntity<Long> countOrders(OrderCriteria criteria) {
         log.debug("REST request to count Orders by criteria: {}", criteria);
@@ -247,7 +253,8 @@ public class OrderResource {
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_CLIENT + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.VENDEUR + "\")"
     )
     public ResponseEntity<OrderDTO> getOrder(@PathVariable Long id) {
         log.debug("REST request to get Order : {}", id);

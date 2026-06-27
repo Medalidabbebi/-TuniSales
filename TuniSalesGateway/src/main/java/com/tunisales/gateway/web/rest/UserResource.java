@@ -81,7 +81,10 @@ public class UserResource {
      * Only ROLE_ADMIN_SYSTEME may create users.
      */
     @PostMapping("/users")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\")")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
+    )
     public Mono<ResponseEntity<User>> createUser(@Valid @RequestBody AdminUserDTO userDTO) {
         log.debug("REST request to save User : {}", userDTO);
 
@@ -125,7 +128,10 @@ public class UserResource {
      * ROLE_ADMIN_SYSTEME only.
      */
     @PutMapping("/users")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\")")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
+    )
     public Mono<ResponseEntity<AdminUserDTO>> updateUser(@Valid @RequestBody AdminUserDTO userDTO) {
         log.debug("REST request to update User : {}", userDTO);
         return userRepository
@@ -162,7 +168,8 @@ public class UserResource {
     @PatchMapping("/users/{login}/activate")
     @PreAuthorize(
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\")"
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
     )
     public Mono<ResponseEntity<AdminUserDTO>> setUserActivation(
         @PathVariable @Pattern(regexp = Constants.LOGIN_REGEX) String login,
@@ -187,7 +194,8 @@ public class UserResource {
     @GetMapping("/users")
     @PreAuthorize(
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\")"
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
     )
     public Mono<ResponseEntity<Flux<AdminUserDTO>>> getAllUsers(
         @org.springdoc.api.annotations.ParameterObject ServerHttpRequest request,
@@ -216,7 +224,8 @@ public class UserResource {
     @GetMapping("/users/{login}")
     @PreAuthorize(
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\")"
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
     )
     public Mono<AdminUserDTO> getUser(@PathVariable String login) {
         log.debug("REST request to get User : {}", login);
@@ -231,7 +240,10 @@ public class UserResource {
      * ROLE_ADMIN_SYSTEME only.
      */
     @DeleteMapping("/users/{login}")
-    @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\")")
+    @PreAuthorize(
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
+    )
     public Mono<ResponseEntity<Void>> deleteUser(@PathVariable @Pattern(regexp = Constants.LOGIN_REGEX) String login) {
         log.debug("REST request to delete User: {}", login);
         return userService

@@ -16,6 +16,7 @@
       "entities": {
         "main": "Entités",
         "platformServiceAuditLog": "Audit Log",
+        "businessServiceClaim": "Réclamation",
         "businessServiceClient": "Client",
         "businessServiceClientContact": "Client Contact",
         "platformServiceClientScore": "Client Score",

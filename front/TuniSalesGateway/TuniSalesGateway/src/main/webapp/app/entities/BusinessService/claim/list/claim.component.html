@@ -1,0 +1,66 @@
+<div class="container-fluid py-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h2 class="mb-0">
+        <fa-icon icon="exclamation-triangle" class="me-2"></fa-icon>
+        Réclamations &amp; Récupérations
+      </h2>
+      <p class="text-muted mb-0">Réclamations et demandes de récupération déposées par les points de vente.</p>
+    </div>
+    <a *ngIf="canCreate" class="btn btn-primary" routerLink="new">
+      <fa-icon icon="plus"></fa-icon> Nouvelle réclamation
+    </a>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="table-responsive">
+      <table class="table table-hover mb-0" *ngIf="claims.length > 0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Sujet</th>
+            <th>Statut</th>
+            <th>Déposée par</th>
+            <th>Créée le</th>
+            <th *ngIf="canResolve">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let claim of claims">
+            <td>{{ claim.id }}</td>
+            <td>{{ typeLabel(claim.type) }}</td>
+            <td>{{ claim.subject }}</td>
+            <td>
+              <span class="badge"
+                    [class.bg-warning]="claim.status === ClaimStatus.OPEN"
+                    [class.bg-info]="claim.status === ClaimStatus.IN_PROGRESS"
+                    [class.bg-success]="claim.status === ClaimStatus.RESOLVED"
+                    [class.bg-danger]="claim.status === ClaimStatus.REJECTED">
+                {{ statusLabel(claim.status) }}
+              </span>
+            </td>
+            <td>{{ claim.createdByLogin }}</td>
+            <td>{{ claim.createdAt | formatMediumDatetime }}</td>
+            <td *ngIf="canResolve">
+              <div class="btn-group btn-group-sm" *ngIf="claim.status === ClaimStatus.OPEN || claim.status === ClaimStatus.IN_PROGRESS">
+                <button type="button" class="btn btn-outline-info" (click)="resolve(claim, ClaimStatus.IN_PROGRESS)" *ngIf="claim.status === ClaimStatus.OPEN">
+                  Prendre en charge
+                </button>
+                <button type="button" class="btn btn-outline-success" (click)="resolve(claim, ClaimStatus.RESOLVED)">
+                  Résoudre
+                </button>
+                <button type="button" class="btn btn-outline-danger" (click)="resolve(claim, ClaimStatus.REJECTED)">
+                  Rejeter
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="text-center text-muted py-5" *ngIf="claims.length === 0 && !isLoading">
+        Aucune réclamation pour le moment.
+      </div>
+    </div>
+  </div>
+</div>

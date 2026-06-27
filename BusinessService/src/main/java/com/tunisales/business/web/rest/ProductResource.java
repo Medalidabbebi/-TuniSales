@@ -159,6 +159,14 @@ public class ProductResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of products in body.
      */
     @GetMapping("/products")
+    @PreAuthorize(
+        "hasAuthority(\"ROLE_ADMIN\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.MAGASINIER + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
+    )
     public ResponseEntity<List<ProductDTO>> getAllProducts(
         ProductCriteria criteria,
         @org.springdoc.api.annotations.ParameterObject Pageable pageable
@@ -188,6 +196,14 @@ public class ProductResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the productDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/products/{id}")
+    @PreAuthorize(
+        "hasAuthority(\"ROLE_ADMIN\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.MAGASINIER + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
+    )
     public ResponseEntity<ProductDTO> getProduct(@PathVariable Long id) {
         log.debug("REST request to get Product : {}", id);
         Optional<ProductDTO> productDTO = productService.findOne(id);

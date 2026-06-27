@@ -36,7 +36,8 @@ import tech.jhipster.web.util.ResponseUtil;
 @PreAuthorize(
     "hasAuthority(\"ROLE_ADMIN\") or " +
     "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
-    "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\")"
+    "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
+    "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
 )
 public class ClientContactResource {
 

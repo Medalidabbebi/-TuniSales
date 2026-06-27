@@ -40,7 +40,9 @@ import tech.jhipster.web.util.ResponseUtil;
     "hasAuthority(\"" + AuthoritiesConstants.MAGASINIER + "\") or " +
     "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
     "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
-    "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\")"
+    "hasAuthority(\"" + AuthoritiesConstants.ADMIN_SYSTEME + "\") or " +
+    "hasAuthority(\"" + AuthoritiesConstants.VENDEUR + "\") or " +
+    "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
 )
 public class StockItemResource {
 
@@ -119,7 +121,8 @@ public class StockItemResource {
         "hasAuthority(\"ROLE_ADMIN\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.MAGASINIER + "\") or " +
         "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\") or " +
-        "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\")"
+        "hasAuthority(\"" + AuthoritiesConstants.COMMERCIAL + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\")"
     )
     public ResponseEntity<StockItemDTO> partialUpdateStockItem(
         @PathVariable(value = "id", required = false) final Long id,
@@ -231,6 +234,26 @@ public class StockItemResource {
             throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
         }
         StockItemDTO result = stockItemService.recover(id);
+        return ResponseEntity.ok().body(result);
+    }
+
+    /**
+     * {@code POST  /stock-items/{id}/mark-sold} : Mark a stock item as SOLD.
+     */
+    @PostMapping("/stock-items/{id}/mark-sold")
+    @PreAuthorize(
+        "hasAuthority(\"ROLE_ADMIN\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.MAGASINIER + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.VENDEUR + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.RESPONSABLE_PV + "\") or " +
+        "hasAuthority(\"" + AuthoritiesConstants.ADMIN_COMMERCIAL + "\")"
+    )
+    public ResponseEntity<StockItemDTO> markSold(@PathVariable Long id) {
+        log.debug("REST request to mark StockItem as sold : {}", id);
+        if (!stockItemRepository.existsById(id)) {
+            throw new BadRequestAlertException("Entity not found", ENTITY_NAME, "idnotfound");
+        }
+        StockItemDTO result = stockItemService.markSold(id);
         return ResponseEntity.ok().body(result);
     }
 }

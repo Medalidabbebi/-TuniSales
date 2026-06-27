@@ -12,6 +12,8 @@ import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/co
 import { ASC, DESC, SORT, ITEM_DELETED_EVENT, DEFAULT_SORT_DATA } from 'app/config/navigation.constants';
 import { EntityArrayResponseType, OrderService } from '../service/order.service';
 import { OrderDeleteDialogComponent } from '../delete/order-delete-dialog.component';
+import { AccountService } from 'app/core/auth/account.service';
+import { Authority } from 'app/config/authority.constants';
 
 @Component({
   selector: 'jhi-order',
@@ -30,13 +32,28 @@ export class OrderComponent implements OnInit {
   totalItems = 0;
   page = 1;
 
+  canCreate = false;
+  canEdit = false;
+  canDelete = false;
+
   constructor(
     protected orderService: OrderService,
     protected activatedRoute: ActivatedRoute,
     public router: Router,
     protected modalService: NgbModal,
-    private excelService: SalesExcelService
-  ) {}
+    private excelService: SalesExcelService,
+    private accountService: AccountService
+  ) {
+    this.canCreate = this.accountService.hasAnyAuthority([
+      Authority.ADMIN,
+      Authority.ADMIN_SYSTEME,
+      Authority.ADMIN_COMMERCIAL,
+      Authority.COMMERCIAL,
+      Authority.RESPONSABLE_PV,
+    ]);
+    this.canEdit = this.accountService.hasAnyAuthority([Authority.ADMIN, Authority.ADMIN_COMMERCIAL]);
+    this.canDelete = this.accountService.hasAnyAuthority([Authority.ADMIN, Authority.ADMIN_SYSTEME]);
+  }
 
   trackId = (_index: number, item: IOrder): number => this.orderService.getOrderIdentifier(item);
 

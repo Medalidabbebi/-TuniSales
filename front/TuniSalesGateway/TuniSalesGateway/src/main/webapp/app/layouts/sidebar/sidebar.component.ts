@@ -46,8 +46,6 @@ export class SidebarComponent implements OnInit {
         Authority.ADMIN_SYSTEME,
         Authority.ADMIN_COMMERCIAL,
         Authority.CHEF_PARC,
-        Authority.RESPONSABLE_PV,
-        Authority.VENDEUR,
         Authority.ADMIN_CLIENT,
       ],
     },
@@ -57,16 +55,16 @@ export class SidebarComponent implements OnInit {
       icon: 'chart-line',
       requiredAuthorities: [
         Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL,
-        Authority.COMMERCIAL, Authority.VENDEUR, Authority.ADMIN_CLIENT,
+        Authority.COMMERCIAL, Authority.VENDEUR, Authority.ADMIN_CLIENT, Authority.RESPONSABLE_PV,
       ],
       children: [
         {
           label: 'Clients', translateKey: 'global.menu.entities.businessServiceClient', icon: 'users', route: '/client',
-          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.VENDEUR],
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.RESPONSABLE_PV],
         },
         {
           label: 'Orders', translateKey: 'global.menu.entities.businessServiceOrder', icon: 'shopping-cart', route: '/order',
-          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.VENDEUR],
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.VENDEUR, Authority.RESPONSABLE_PV],
         },
         {
           label: 'Invoices', translateKey: 'global.menu.entities.businessServiceInvoice', icon: 'file-invoice-dollar', route: '/invoice',
@@ -74,7 +72,7 @@ export class SidebarComponent implements OnInit {
         },
         {
           label: 'Products', translateKey: 'global.menu.entities.businessServiceProduct', icon: 'box', route: '/product',
-          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.VENDEUR, Authority.MAGASINIER],
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.MAGASINIER, Authority.RESPONSABLE_PV],
         },
         {
           label: 'Price Lists', translateKey: 'global.menu.entities.businessServicePriceList', icon: 'tags', route: '/price-list',
@@ -93,7 +91,7 @@ export class SidebarComponent implements OnInit {
       children: [
         {
           label: 'Deliveries', translateKey: 'global.menu.entities.businessServiceDelivery', icon: 'truck', route: '/delivery',
-          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER],
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER, Authority.RESPONSABLE_PV],
         },
         {
           label: 'Missions', translateKey: 'global.menu.entities.businessServiceMission', icon: 'map-marked-alt', route: '/mission',
@@ -101,7 +99,11 @@ export class SidebarComponent implements OnInit {
         },
         {
           label: 'Visits', translateKey: 'global.menu.entities.businessServiceVisit', icon: 'calendar-check', route: '/visit',
-          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.RESPONSABLE_PV, Authority.COMMERCIAL],
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL],
+        },
+        {
+          label: 'Claims', translateKey: 'global.menu.entities.businessServiceClaim', icon: 'exclamation-triangle', route: '/claim',
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.RESPONSABLE_PV],
         },
       ],
     },
@@ -109,11 +111,11 @@ export class SidebarComponent implements OnInit {
       label: 'Inventory',
       translateKey: 'global.menu.inventory',
       icon: 'warehouse',
-      requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER, Authority.CHEF_PARC],
+      requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER, Authority.CHEF_PARC, Authority.VENDEUR, Authority.RESPONSABLE_PV],
       children: [
         {
           label: 'Stock Items', translateKey: 'global.menu.entities.inventoryServiceStockItem', icon: 'cubes', route: '/stock-item',
-          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER, Authority.CHEF_PARC],
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.MAGASINIER, Authority.CHEF_PARC, Authority.VENDEUR, Authority.RESPONSABLE_PV],
         },
         {
           label: 'Warehouses', translateKey: 'global.menu.entities.inventoryServiceWarehouse', icon: 'warehouse', route: '/warehouse',
@@ -137,7 +139,7 @@ export class SidebarComponent implements OnInit {
       label: 'Performance',
       translateKey: 'global.menu.performance',
       icon: 'bullseye',
-      requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.ADMIN_CLIENT],
+      requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.ADMIN_CLIENT, Authority.RESPONSABLE_PV],
       children: [
         {
           label: 'Objectives', translateKey: 'global.menu.entities.platformServiceObjective', icon: 'bullseye', route: '/objective',
@@ -145,7 +147,7 @@ export class SidebarComponent implements OnInit {
         },
         {
           label: 'Scores', translateKey: 'global.menu.entities.platformServicePerformanceScore', icon: 'chart-bar', route: '/performance-score',
-          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL],
+          requiredAuthorities: [Authority.ADMIN_SYSTEME, Authority.ADMIN_COMMERCIAL, Authority.COMMERCIAL, Authority.RESPONSABLE_PV],
         },
         {
           label: 'Client Scores', translateKey: 'global.menu.entities.platformServiceClientScore', icon: 'star', route: '/client-score',

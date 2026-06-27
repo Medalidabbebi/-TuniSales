@@ -61,6 +61,11 @@ import { RouterModule } from '@angular/router';
         loadChildren: () => import('./BusinessService/order/order.module').then(m => m.BusinessServiceOrderModule),
       },
       {
+        path: 'claim',
+        data: { pageTitle: 'Réclamations' },
+        loadChildren: () => import('./BusinessService/claim/claim.module').then(m => m.BusinessServiceClaimModule),
+      },
+      {
         path: 'order-line',
         data: { pageTitle: 'tuniSalesGatewayApp.businessServiceOrderLine.home.title' },
         loadChildren: () => import('./BusinessService/order-line/order-line.module').then(m => m.BusinessServiceOrderLineModule),

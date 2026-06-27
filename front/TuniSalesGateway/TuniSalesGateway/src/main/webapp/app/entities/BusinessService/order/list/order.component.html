@@ -20,7 +20,7 @@
         <fa-icon icon="file-excel"></fa-icon>
         <span>Exporter Excel</span>
       </button>
-      <button class="ol-btn ol-btn--primary" [routerLink]="['/sales-offer']">
+      <button class="ol-btn ol-btn--primary" *ngIf="canCreate" [routerLink]="['/sales-offer']">
         <fa-icon icon="plus"></fa-icon>
         <span>Nouvel Ordre</span>
       </button>
@@ -116,7 +116,7 @@
     <div class="ol-empty__icon"><fa-icon icon="shopping-cart"></fa-icon></div>
     <div class="ol-empty__title">Aucune commande trouvée</div>
     <div class="ol-empty__sub">Créez votre première commande pour démarrer le suivi.</div>
-    <button class="ol-btn ol-btn--primary" [routerLink]="['/sales-offer']">
+    <button class="ol-btn ol-btn--primary" *ngIf="canCreate" [routerLink]="['/sales-offer']">
       <fa-icon icon="plus"></fa-icon> Créer un ordre
     </button>
   </div>
@@ -204,11 +204,11 @@
                   class="ol-icon-btn ol-icon-btn--view" title="Voir">
                   <fa-icon icon="eye"></fa-icon>
                 </button>
-                <button type="button" [routerLink]="['/order', order.id, 'edit']"
+                <button type="button" *ngIf="canEdit" [routerLink]="['/order', order.id, 'edit']"
                   class="ol-icon-btn ol-icon-btn--edit" title="Modifier">
                   <fa-icon icon="pencil-alt"></fa-icon>
                 </button>
-                <button type="button" (click)="delete(order)"
+                <button type="button" *ngIf="canDelete" (click)="delete(order)"
                   class="ol-icon-btn ol-icon-btn--delete" title="Supprimer">
                   <fa-icon icon="trash"></fa-icon>
                 </button>
